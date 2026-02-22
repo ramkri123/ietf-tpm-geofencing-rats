@@ -530,12 +530,12 @@ The external verifier (management plane) performs the following validation:
 
 ## Deployment Option C: Cloud-based Virtual TPM (vTPM)
 
-In cloud environments, physical TPM access is typically virtualized. Cloud providers (e.g., AWS, GCP, Azure) provide a Virtual TPM (vTPM) to each guest Virtual Machine (VM). This vTPM is a software-emulated TPM 2.0 device that is cryptographically bound to the physical hardware's Silicon Root of Trust (e.g., AWS Nitro Security Chip).
+In cloud environments, physical TPM access is typically virtualized. Cloud providers (e.g., AWS, GCP, Azure) provide a Virtual TPM (vTPM) to each guest Virtual Machine (VM). This vTPM is a software-emulated TPM 2.0 device that is cryptographically bound to the physical hardware's Silicon Root of Trust (e.g., AWS Nitro Security Chip). This architecture is a primary enabler for securing containerized workloads at scale, such as **Amazon EKS node worker attestation**.
 
 ### Architecture
 
-1. **Virtual TPM (vTPM):** Provided by the hypervisor to the guest VM. It supports standard TPM 2.0 commands, including PCR extension and Quote generation. For example, **AWS NitroTPM** conforms to the TPM 2.0 specification and provides a series of Nitro-specific PCR values that reflect the instance state.
-2. **Guest OS Agent (SPIRE Agent):** Runs as a system daemon within the VM. It interacts with the vTPM to record boot measurements and workload identities. On AWS, the **`nitro-tpm-attest`** utility can be used at runtime to retrieve a signed Attestation Document for the instance.
+1. **Virtual TPM (vTPM):** Provided by the hypervisor to the guest VM. It supports standard TPM 2.0 commands, including PCR extension and Quote generation. For example, **AWS NitroTPM** conforms to the TPM 2.0 specification and provides a series of Nitro-specific PCR values that reflect the instance state. When used with **Amazon EKS**, each worker node in a Managed Node Group can be equipped with a NitroTPM manually (via AMI settings) to enable hardware-rooted host attestation.
+2. **Guest OS Agent (SPIRE Agent):** Runs as a system daemon within the VM (or EKS node). It interacts with the vTPM to record boot measurements and workload identities. On AWS, the **`nitro-tpm-attest`** utility can be used at runtime to retrieve a signed Attestation Document for the instance.
 3. **Cloud Attestation Service:** Most cloud providers offer an API or hypervisor-level service that provides a signed document containing the vTPM measurements, VM identity, and potentially the host hardware's status. The AWS Nitro Hypervisor generates these documents in **CBOR/COSE** format, signed by the AWS Nitro Attestation PKI.
 
 ### Advantages

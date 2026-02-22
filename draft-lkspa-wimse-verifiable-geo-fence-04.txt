@@ -1221,10 +1221,10 @@ Internet-Draft                    GeoW                     February 2026
    to each guest Virtual Machine (VM).  This vTPM is a software-emulated
    TPM 2.0 device that is cryptographically bound to the physical
    hardware's Silicon Root of Trust (e.g., AWS Nitro Security Chip).
+   This architecture is a primary enabler for securing containerized
+   workloads at scale, such as *Amazon EKS node worker attestation*.
 
 7.6.1.  Architecture
-
-
 
 
 
@@ -1238,12 +1238,15 @@ Internet-Draft                    GeoW                     February 2026
        It supports standard TPM 2.0 commands, including PCR extension
        and Quote generation.  For example, *AWS NitroTPM* conforms to
        the TPM 2.0 specification and provides a series of Nitro-specific
-       PCR values that reflect the instance state.
+       PCR values that reflect the instance state.  When used with
+       *Amazon EKS*, each worker node in a Managed Node Group can be
+       equipped with a NitroTPM manually (via AMI settings) to enable
+       hardware-rooted host attestation.
    2.  *Guest OS Agent (SPIRE Agent):* Runs as a system daemon within
-       the VM.  It interacts with the vTPM to record boot measurements
-       and workload identities.  On AWS, the *nitro-tpm-attest* utility
-       can be used at runtime to retrieve a signed Attestation Document
-       for the instance.
+       the VM (or EKS node).  It interacts with the vTPM to record boot
+       measurements and workload identities.  On AWS, the *nitro-tpm-
+       attest* utility can be used at runtime to retrieve a signed
+       Attestation Document for the instance.
    3.  *Cloud Attestation Service:* Most cloud providers offer an API or
        hypervisor-level service that provides a signed document
        containing the vTPM measurements, VM identity, and potentially
@@ -1275,9 +1278,6 @@ Internet-Draft                    GeoW                     February 2026
    *  *Provider-Specific APIs:* While the TPM interface is standard, the
       mechanism for verifying the "outer" cloud attestation document
       varies by provider.
-
-
-
 
 
 

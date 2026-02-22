@@ -17,10 +17,10 @@ status = "informational"
 [[author]]
 initials = "R."
 surname = "Krishnan"
-fullname = "Ramki Krishnan"
-organization = "Intel"
+fullname = "Ram Krishnan"
+organization = "JPMorgan Chase & Co."
   [author.address]
-  email = "ramki.krishnan@intel.com"
+  email = "ramkri123@gmail.com"
 
 [[author]]
 initials = "N."

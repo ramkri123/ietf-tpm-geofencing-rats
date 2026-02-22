@@ -3,9 +3,10 @@
 
 
 Workload Identity in Multi System Environments               R. Krishnan
-Internet-Draft                                                  N. Smith
-Intended status: Informational                                     Intel
-Expires: 26 August 2026                                         D. Lopez
+Internet-Draft                                      JPMorgan Chase & Co.
+Intended status: Informational                                  N. Smith
+Expires: 26 August 2026                                            Intel
+                                                                D. Lopez
                                                               Telefonica
                                                                A. Prasad
                                                                   Oracle
@@ -49,7 +50,6 @@ Status of This Memo
    and may be updated, replaced, or obsoleted by other documents at any
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
-
 
 
 
@@ -1536,9 +1536,9 @@ Internet-Draft                    GeoW                     February 2026
 
 Authors' Addresses
 
-   Ramki Krishnan
-   Intel
-   Email: ramki.krishnan@intel.com
+   Ram Krishnan
+   JPMorgan Chase & Co.
+   Email: ramkri123@gmail.com
 
 
    Ned Smith

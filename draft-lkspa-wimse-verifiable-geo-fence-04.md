@@ -431,6 +431,18 @@ To ensure that the attestation measurements themselves are trustworthy, the mana
 
 **Protection 5 -- Kernel Lockdown Mode:** Linux Kernel Lockdown (integrity or confidentiality mode) prevents even the root user from modifying kernel memory via /dev/mem, replacing the running kernel via kexec, or accessing sensitive debug interfaces that could be used to bypass IMA checks.
 
+### Root Adversary and IMA Tampering
+
+A key question is whether an adversary with root access to the host OS can tamper with IMA measurements themselves. The answer is that a root adversary has limited ability to interfere with IMA, but the protections above are specifically designed to detect such tampering:
+
+* **What a root adversary CAN do:** A compromised kernel can disable or bypass the IMA subsystem, preventing future measurements from being recorded. The adversary can also tamper with the IMA event log in kernel memory to hide evidence of malicious binaries being loaded.
+
+* **What a root adversary CANNOT do:** The adversary cannot roll back or modify TPM PCR 10, because PCR extension is a one-way cryptographic operation (PCR_new = Hash(PCR_old || measurement)). The adversary also cannot forge a TPM Quote, because the TPM signs PCR values with its hardware-protected Attestation Key, which is inaccessible to the host OS. Finally, the adversary cannot intercept or spoof the management processor's out-of-band attestation path (I2C/private bus).
+
+* **How tampering is detected:** The remote verifier recomputes the expected PCR value by replaying the IMA event log. If the adversary has tampered with the log (e.g., removed an entry for a malicious binary), the recomputed PCR value will not match the hardware-signed TPM Quote obtained via the OOB path. This log-vs-PCR mismatch triggers a trust failure. If the adversary stops IMA from extending new measurements entirely, the PCR freezes at a state that does not account for subsequently loaded binaries, which the verifier detects as a stale or incomplete log.
+
+* **Residual risk (TOCTOU):** A root adversary could theoretically load a malicious binary between attestation cycles (time-of-check-time-of-use). This is mitigated by IMA Appraisal Mode (Protection 3) blocking unsigned binaries at load time, Kernel Lockdown (Protection 5) preventing kernel memory modification, and frequent attestation polling intervals.
+
 ### TPM Swap Attack Protection
 
 In modern server implementations (e.g., HPE Gen11), the management processor acts as a gatekeeper during the boot process. It uses its independent path to verify that the TPM is authentic. If the management processor detects that the TPM has been physically replaced (a "TPM Swap" attack), it can prevent the Host CPU from starting, effectively blocking the server until an administrator intervenes.

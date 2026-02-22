@@ -1436,19 +1436,22 @@ li > p:last-of-type:only-child {
                     <p id="section-toc.1-1.7.2.5.2.2.1"><a href="#section-7.5.2" class="auto internal xref">7.5.2</a>.  <a href="#name-silicon-root-of-trust-and-i" class="internal xref">Silicon Root of Trust and IMA Integrity Protection</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.5.2.3">
-                    <p id="section-toc.1-1.7.2.5.2.3.1"><a href="#section-7.5.3" class="auto internal xref">7.5.3</a>.  <a href="#name-tpm-swap-attack-protection" class="internal xref">TPM Swap Attack Protection</a></p>
+                    <p id="section-toc.1-1.7.2.5.2.3.1"><a href="#section-7.5.3" class="auto internal xref">7.5.3</a>.  <a href="#name-root-adversary-and-ima-tamp" class="internal xref">Root Adversary and IMA Tampering</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.5.2.4">
-                    <p id="section-toc.1-1.7.2.5.2.4.1"><a href="#section-7.5.4" class="auto internal xref">7.5.4</a>.  <a href="#name-architecture-2" class="internal xref">Architecture</a></p>
+                    <p id="section-toc.1-1.7.2.5.2.4.1"><a href="#section-7.5.4" class="auto internal xref">7.5.4</a>.  <a href="#name-tpm-swap-attack-protection" class="internal xref">TPM Swap Attack Protection</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.5.2.5">
-                    <p id="section-toc.1-1.7.2.5.2.5.1"><a href="#section-7.5.5" class="auto internal xref">7.5.5</a>.  <a href="#name-attestation-flow" class="internal xref">Attestation Flow</a></p>
+                    <p id="section-toc.1-1.7.2.5.2.5.1"><a href="#section-7.5.5" class="auto internal xref">7.5.5</a>.  <a href="#name-architecture-2" class="internal xref">Architecture</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.5.2.6">
-                    <p id="section-toc.1-1.7.2.5.2.6.1"><a href="#section-7.5.6" class="auto internal xref">7.5.6</a>.  <a href="#name-advantages-2" class="internal xref">Advantages</a></p>
+                    <p id="section-toc.1-1.7.2.5.2.6.1"><a href="#section-7.5.6" class="auto internal xref">7.5.6</a>.  <a href="#name-attestation-flow" class="internal xref">Attestation Flow</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.5.2.7">
-                    <p id="section-toc.1-1.7.2.5.2.7.1"><a href="#section-7.5.7" class="auto internal xref">7.5.7</a>.  <a href="#name-limitations-2" class="internal xref">Limitations</a></p>
+                    <p id="section-toc.1-1.7.2.5.2.7.1"><a href="#section-7.5.7" class="auto internal xref">7.5.7</a>.  <a href="#name-advantages-2" class="internal xref">Advantages</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.5.2.8">
+                    <p id="section-toc.1-1.7.2.5.2.8.1"><a href="#section-7.5.8" class="auto internal xref">7.5.8</a>.  <a href="#name-limitations-2" class="internal xref">Limitations</a></p>
 </li>
                 </ul>
 </li>
@@ -2187,87 +2190,109 @@ li > p:last-of-type:only-child {
 <p id="section-7.5.2-6"><strong>Protection 5 -- Kernel Lockdown Mode:</strong> Linux Kernel Lockdown (integrity or confidentiality mode) prevents even the root user from modifying kernel memory via /dev/mem, replacing the running kernel via kexec, or accessing sensitive debug interfaces that could be used to bypass IMA checks.<a href="#section-7.5.2-6" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="tpm-swap-attack-protection">
+<div id="root-adversary-and-ima-tampering">
 <section id="section-7.5.3">
-          <h4 id="name-tpm-swap-attack-protection">
-<a href="#section-7.5.3" class="section-number selfRef">7.5.3. </a><a href="#name-tpm-swap-attack-protection" class="section-name selfRef">TPM Swap Attack Protection</a>
+          <h4 id="name-root-adversary-and-ima-tamp">
+<a href="#section-7.5.3" class="section-number selfRef">7.5.3. </a><a href="#name-root-adversary-and-ima-tamp" class="section-name selfRef">Root Adversary and IMA Tampering</a>
           </h4>
-<p id="section-7.5.3-1">In modern server implementations (e.g., HPE Gen11), the management processor acts as a gatekeeper during the boot process. It uses its independent path to verify that the TPM is authentic. If the management processor detects that the TPM has been physically replaced (a "TPM Swap" attack), it can prevent the Host CPU from starting, effectively blocking the server until an administrator intervenes.<a href="#section-7.5.3-1" class="pilcrow">¶</a></p>
+<p id="section-7.5.3-1">A key question is whether an adversary with root access to the host OS can tamper with IMA measurements themselves. The answer is that a root adversary has limited ability to interfere with IMA, but the protections above are specifically designed to detect such tampering:<a href="#section-7.5.3-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-7.5.3-2.1">
+              <p id="section-7.5.3-2.1.1"><strong>What a root adversary CAN do:</strong> A compromised kernel can disable or bypass the IMA subsystem, preventing future measurements from being recorded. The adversary can also tamper with the IMA event log in kernel memory to hide evidence of malicious binaries being loaded.<a href="#section-7.5.3-2.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-7.5.3-2.2">
+              <p id="section-7.5.3-2.2.1"><strong>What a root adversary CANNOT do:</strong> The adversary cannot roll back or modify TPM PCR 10, because PCR extension is a one-way cryptographic operation (PCR_new = Hash(PCR_old || measurement)). The adversary also cannot forge a TPM Quote, because the TPM signs PCR values with its hardware-protected Attestation Key, which is inaccessible to the host OS. Finally, the adversary cannot intercept or spoof the management processor's out-of-band attestation path (I2C/private bus).<a href="#section-7.5.3-2.2.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-7.5.3-2.3">
+              <p id="section-7.5.3-2.3.1"><strong>How tampering is detected:</strong> The remote verifier recomputes the expected PCR value by replaying the IMA event log. If the adversary has tampered with the log (e.g., removed an entry for a malicious binary), the recomputed PCR value will not match the hardware-signed TPM Quote obtained via the OOB path. This log-vs-PCR mismatch triggers a trust failure. If the adversary stops IMA from extending new measurements entirely, the PCR freezes at a state that does not account for subsequently loaded binaries, which the verifier detects as a stale or incomplete log.<a href="#section-7.5.3-2.3.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-7.5.3-2.4">
+              <p id="section-7.5.3-2.4.1"><strong>Residual risk (TOCTOU):</strong> A root adversary could theoretically load a malicious binary between attestation cycles (time-of-check-time-of-use). This is mitigated by IMA Appraisal Mode (Protection 3) blocking unsigned binaries at load time, Kernel Lockdown (Protection 5) preventing kernel memory modification, and frequent attestation polling intervals.<a href="#section-7.5.3-2.4.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+</section>
+</div>
+<div id="tpm-swap-attack-protection">
+<section id="section-7.5.4">
+          <h4 id="name-tpm-swap-attack-protection">
+<a href="#section-7.5.4" class="section-number selfRef">7.5.4. </a><a href="#name-tpm-swap-attack-protection" class="section-name selfRef">TPM Swap Attack Protection</a>
+          </h4>
+<p id="section-7.5.4-1">In modern server implementations (e.g., HPE Gen11), the management processor acts as a gatekeeper during the boot process. It uses its independent path to verify that the TPM is authentic. If the management processor detects that the TPM has been physically replaced (a "TPM Swap" attack), it can prevent the Host CPU from starting, effectively blocking the server until an administrator intervenes.<a href="#section-7.5.4-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="architecture-1">
-<section id="section-7.5.4">
+<section id="section-7.5.5">
           <h4 id="name-architecture-2">
-<a href="#section-7.5.4" class="section-number selfRef">7.5.4. </a><a href="#name-architecture-2" class="section-name selfRef">Architecture</a>
+<a href="#section-7.5.5" class="section-number selfRef">7.5.5. </a><a href="#name-architecture-2" class="section-name selfRef">Architecture</a>
           </h4>
-<ol start="1" type="1" class="compact type-1" id="section-7.5.4-1">
-<li id="section-7.5.4-1.1">
-              <strong>Management Processor (e.g., HPE iLO):</strong> Has direct access to the host TPM via a dedicated bus (I2C/private bus), independent of the host CPU and OS. The management processor collects TPM measurements and can perform attestation even when the host OS is not running or is compromised.<a href="#section-7.5.4-1.1" class="pilcrow">¶</a>
+<ol start="1" type="1" class="compact type-1" id="section-7.5.5-1">
+<li id="section-7.5.5-1.1">
+              <strong>Management Processor (e.g., HPE iLO):</strong> Has direct access to the host TPM via a dedicated bus (I2C/private bus), independent of the host CPU and OS. The management processor collects TPM measurements and can perform attestation even when the host OS is not running or is compromised.<a href="#section-7.5.5-1.1" class="pilcrow">¶</a>
 </li>
-            <li id="section-7.5.4-1.2">
-              <strong>External Management Plane (e.g., HPE OneView, HPE GreenLake):</strong> Centralized management platform that receives attestation evidence from the management processor. Validates TPM quotes against golden measurements maintained in the management platform's database. Provides fleet-wide attestation visibility and policy enforcement.<a href="#section-7.5.4-1.2" class="pilcrow">¶</a>
+            <li id="section-7.5.5-1.2">
+              <strong>External Management Plane (e.g., HPE OneView, HPE GreenLake):</strong> Centralized management platform that receives attestation evidence from the management processor. Validates TPM quotes against golden measurements maintained in the management platform's database. Provides fleet-wide attestation visibility and policy enforcement.<a href="#section-7.5.5-1.2" class="pilcrow">¶</a>
 </li>
           </ol>
 </section>
 </div>
 <div id="attestation-flow">
-<section id="section-7.5.5">
+<section id="section-7.5.6">
           <h4 id="name-attestation-flow">
-<a href="#section-7.5.5" class="section-number selfRef">7.5.5. </a><a href="#name-attestation-flow" class="section-name selfRef">Attestation Flow</a>
+<a href="#section-7.5.6" class="section-number selfRef">7.5.6. </a><a href="#name-attestation-flow" class="section-name selfRef">Attestation Flow</a>
           </h4>
-<ol start="1" type="1" class="compact type-1" id="section-7.5.5-1">
-<li id="section-7.5.5-1.1">The management processor reads TPM PCR values and the TCGLog independently of the host OS via its dedicated hardware bus.<a href="#section-7.5.5-1.1" class="pilcrow">¶</a>
+<ol start="1" type="1" class="compact type-1" id="section-7.5.6-1">
+<li id="section-7.5.6-1.1">The management processor reads TPM PCR values and the TCGLog independently of the host OS via its dedicated hardware bus.<a href="#section-7.5.6-1.1" class="pilcrow">¶</a>
 </li>
-            <li id="section-7.5.5-1.2">The management processor signs the attestation evidence using its own identity key (e.g., iLO certificate signed by the OEM CA).<a href="#section-7.5.5-1.2" class="pilcrow">¶</a>
+            <li id="section-7.5.6-1.2">The management processor signs the attestation evidence using its own identity key (e.g., iLO certificate signed by the OEM CA).<a href="#section-7.5.6-1.2" class="pilcrow">¶</a>
 </li>
-            <li id="section-7.5.5-1.3">
-              <p id="section-7.5.5-1.3.1">The management plane receives the attestation evidence via the dedicated management NIC (Redfish API) and validates:<a href="#section-7.5.5-1.3.1" class="pilcrow">¶</a></p>
+            <li id="section-7.5.6-1.3">
+              <p id="section-7.5.6-1.3.1">The management plane receives the attestation evidence via the dedicated management NIC (Redfish API) and validates:<a href="#section-7.5.6-1.3.1" class="pilcrow">¶</a></p>
 <ul class="compact">
-<li class="compact" id="section-7.5.5-1.3.2.1">TPM quote integrity and PCR values against golden reference measurements.<a href="#section-7.5.5-1.3.2.1" class="pilcrow">¶</a>
+<li class="compact" id="section-7.5.6-1.3.2.1">TPM quote integrity and PCR values against golden reference measurements.<a href="#section-7.5.6-1.3.2.1" class="pilcrow">¶</a>
 </li>
-                <li class="compact" id="section-7.5.5-1.3.2.2">Management processor identity (OEM CA chain).<a href="#section-7.5.5-1.3.2.2" class="pilcrow">¶</a>
+                <li class="compact" id="section-7.5.6-1.3.2.2">Management processor identity (OEM CA chain).<a href="#section-7.5.6-1.3.2.2" class="pilcrow">¶</a>
 </li>
-                <li class="compact" id="section-7.5.5-1.3.2.3">Freshness via nonce or timestamp.<a href="#section-7.5.5-1.3.2.3" class="pilcrow">¶</a>
+                <li class="compact" id="section-7.5.6-1.3.2.3">Freshness via nonce or timestamp.<a href="#section-7.5.6-1.3.2.3" class="pilcrow">¶</a>
 </li>
-                <li class="compact" id="section-7.5.5-1.3.2.4">PCR 10 (IMA measurements) against the expected IMA log.<a href="#section-7.5.5-1.3.2.4" class="pilcrow">¶</a>
+                <li class="compact" id="section-7.5.6-1.3.2.4">PCR 10 (IMA measurements) against the expected IMA log.<a href="#section-7.5.6-1.3.2.4" class="pilcrow">¶</a>
 </li>
               </ul>
 </li>
-            <li id="section-7.5.5-1.4">Upon successful validation, the management plane provides attestation results to the Workload Identity Manager.<a href="#section-7.5.5-1.4" class="pilcrow">¶</a>
+            <li id="section-7.5.6-1.4">Upon successful validation, the management plane provides attestation results to the Workload Identity Manager.<a href="#section-7.5.6-1.4" class="pilcrow">¶</a>
 </li>
           </ol>
 </section>
 </div>
 <div id="advantages-1">
-<section id="section-7.5.6">
+<section id="section-7.5.7">
           <h4 id="name-advantages-2">
-<a href="#section-7.5.6" class="section-number selfRef">7.5.6. </a><a href="#name-advantages-2" class="section-name selfRef">Advantages</a>
+<a href="#section-7.5.7" class="section-number selfRef">7.5.7. </a><a href="#name-advantages-2" class="section-name selfRef">Advantages</a>
           </h4>
 <ul class="compact">
-<li class="compact" id="section-7.5.6-1.1">Out-of-band attestation: works even when the host OS is compromised, rebooting, or offline.<a href="#section-7.5.6-1.1" class="pilcrow">¶</a>
+<li class="compact" id="section-7.5.7-1.1">Out-of-band attestation: works even when the host OS is compromised, rebooting, or offline.<a href="#section-7.5.7-1.1" class="pilcrow">¶</a>
 </li>
-            <li class="compact" id="section-7.5.6-1.2">Hardware-isolated attestation path: the management processor is physically separate from the host CPU.<a href="#section-7.5.6-1.2" class="pilcrow">¶</a>
+            <li class="compact" id="section-7.5.7-1.2">Hardware-isolated attestation path: the management processor is physically separate from the host CPU.<a href="#section-7.5.7-1.2" class="pilcrow">¶</a>
 </li>
-            <li class="compact" id="section-7.5.6-1.3">Detects compromised kernel / IMA subversion through hardware-signed TPM quotes.<a href="#section-7.5.6-1.3" class="pilcrow">¶</a>
+            <li class="compact" id="section-7.5.7-1.3">Detects compromised kernel / IMA subversion through hardware-signed TPM quotes.<a href="#section-7.5.7-1.3" class="pilcrow">¶</a>
 </li>
-            <li class="compact" id="section-7.5.6-1.4">TPM Swap attack protection at boot time.<a href="#section-7.5.6-1.4" class="pilcrow">¶</a>
+            <li class="compact" id="section-7.5.7-1.4">TPM Swap attack protection at boot time.<a href="#section-7.5.7-1.4" class="pilcrow">¶</a>
 </li>
-            <li class="compact" id="section-7.5.6-1.5">Enterprise fleet management integration (HPE OneView, Dell iDRAC, Lenovo XClarity, etc.).<a href="#section-7.5.6-1.5" class="pilcrow">¶</a>
+            <li class="compact" id="section-7.5.7-1.5">Enterprise fleet management integration (HPE OneView, Dell iDRAC, Lenovo XClarity, etc.).<a href="#section-7.5.7-1.5" class="pilcrow">¶</a>
 </li>
           </ul>
 </section>
 </div>
 <div id="limitations-1">
-<section id="section-7.5.7">
+<section id="section-7.5.8">
           <h4 id="name-limitations-2">
-<a href="#section-7.5.7" class="section-number selfRef">7.5.7. </a><a href="#name-limitations-2" class="section-name selfRef">Limitations</a>
+<a href="#section-7.5.8" class="section-number selfRef">7.5.8. </a><a href="#name-limitations-2" class="section-name selfRef">Limitations</a>
           </h4>
 <ul class="compact">
-<li class="compact" id="section-7.5.7-1.1">Vendor-specific management processor implementations.<a href="#section-7.5.7-1.1" class="pilcrow">¶</a>
+<li class="compact" id="section-7.5.8-1.1">Vendor-specific management processor implementations.<a href="#section-7.5.8-1.1" class="pilcrow">¶</a>
 </li>
-            <li class="compact" id="section-7.5.7-1.2">Requires enterprise management plane infrastructure.<a href="#section-7.5.7-1.2" class="pilcrow">¶</a>
+            <li class="compact" id="section-7.5.8-1.2">Requires enterprise management plane infrastructure.<a href="#section-7.5.8-1.2" class="pilcrow">¶</a>
 </li>
-            <li class="compact" id="section-7.5.7-1.3">Management processor firmware must itself be trusted and kept up to date.<a href="#section-7.5.7-1.3" class="pilcrow">¶</a>
+            <li class="compact" id="section-7.5.8-1.3">Management processor firmware must itself be trusted and kept up to date.<a href="#section-7.5.8-1.3" class="pilcrow">¶</a>
 </li>
           </ul>
 </section>

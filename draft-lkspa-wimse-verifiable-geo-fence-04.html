@@ -1448,10 +1448,13 @@ li > p:last-of-type:only-child {
                     <p id="section-toc.1-1.7.2.5.2.6.1"><a href="#section-7.5.6" class="auto internal xref">7.5.6</a>.  <a href="#name-attestation-flow" class="internal xref">Attestation Flow</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.5.2.7">
-                    <p id="section-toc.1-1.7.2.5.2.7.1"><a href="#section-7.5.7" class="auto internal xref">7.5.7</a>.  <a href="#name-advantages-2" class="internal xref">Advantages</a></p>
+                    <p id="section-toc.1-1.7.2.5.2.7.1"><a href="#section-7.5.7" class="auto internal xref">7.5.7</a>.  <a href="#name-periodic-attestation-cycle-" class="internal xref">Periodic Attestation Cycle: Step-by-Step</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.5.2.8">
-                    <p id="section-toc.1-1.7.2.5.2.8.1"><a href="#section-7.5.8" class="auto internal xref">7.5.8</a>.  <a href="#name-limitations-2" class="internal xref">Limitations</a></p>
+                    <p id="section-toc.1-1.7.2.5.2.8.1"><a href="#section-7.5.8" class="auto internal xref">7.5.8</a>.  <a href="#name-advantages-2" class="internal xref">Advantages</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.5.2.9">
+                    <p id="section-toc.1-1.7.2.5.2.9.1"><a href="#section-7.5.9" class="auto internal xref">7.5.9</a>.  <a href="#name-limitations-2" class="internal xref">Limitations</a></p>
 </li>
                 </ul>
 </li>
@@ -2272,36 +2275,130 @@ li > p:last-of-type:only-child {
           </ol>
 </section>
 </div>
-<div id="advantages-1">
+<div id="periodic-attestation-cycle-step-by-step">
 <section id="section-7.5.7">
+          <h4 id="name-periodic-attestation-cycle-">
+<a href="#section-7.5.7" class="section-number selfRef">7.5.7. </a><a href="#name-periodic-attestation-cycle-" class="section-name selfRef">Periodic Attestation Cycle: Step-by-Step</a>
+          </h4>
+<p id="section-7.5.7-1">The following describes what happens during each periodic attestation cycle (e.g., every 20-60 seconds) across the three components, and how each step detects IMA or kernel compromise.<a href="#section-7.5.7-1" class="pilcrow">¶</a></p>
+<p id="section-7.5.7-2"><strong>Step 1 -- Host OS: Normal Operation (Continuous)</strong><a href="#section-7.5.7-2" class="pilcrow">¶</a></p>
+<p id="section-7.5.7-3">During normal operation, the Linux kernel's IMA subsystem continuously measures every binary, library, and kernel module loaded on the host. Each measurement is extended into TPM PCR 10 via the in-band LPC/SPI bus. The IMA event log accumulates in kernel memory at /sys/kernel/security/ima/ascii_runtime_measurements.<a href="#section-7.5.7-3" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="section-7.5.7-4.1">
+              <em>Compromise detection:</em> If the kernel is compromised and IMA is disabled, measurements stop being extended into PCR 10. The PCR freezes at its last legitimate value. No new entries appear in the IMA log.<a href="#section-7.5.7-4.1" class="pilcrow">¶</a>
+</li>
+          </ul>
+<p id="section-7.5.7-5"><strong>Step 2 -- Management Processor (iLO): Fetch TPM Quote (OOB)</strong><a href="#section-7.5.7-5" class="pilcrow">¶</a></p>
+<p id="section-7.5.7-6">At each attestation interval, the management processor sends a TPM2_Quote command to the TPM via its dedicated I2C/private bus, including a fresh nonce (from the management plane or locally generated). The TPM returns a signed Quote containing all PCR values (including PCR 10) and the nonce, signed by the TPM's Attestation Key. The management processor also reads the TCG Boot Event Log from firmware memory.<a href="#section-7.5.7-6" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="section-7.5.7-7.1">
+              <em>Compromise detection:</em> This step is entirely independent of the host OS. A compromised kernel cannot intercept, delay, or modify the Quote because it has no access to the I2C/private bus or the management processor's execution environment.<a href="#section-7.5.7-7.1" class="pilcrow">¶</a>
+</li>
+          </ul>
+<p id="section-7.5.7-8"><strong>Step 3 -- Host OS: Provide IMA Log (In-Band)</strong><a href="#section-7.5.7-8" class="pilcrow">¶</a></p>
+<p id="section-7.5.7-9">The management plane (or Keylime Verifier) requests the current IMA event log from the host OS via the host network stack (SSH/gRPC). The IMA log is transmitted as untrusted input.<a href="#section-7.5.7-9" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="section-7.5.7-10.1">
+              <em>Compromise detection:</em> A compromised kernel can tamper with this log (remove entries, alter hashes, truncate). This is expected behavior and is why the log is treated as untrusted. The verifier will detect any tampering in Step 5.<a href="#section-7.5.7-10.1" class="pilcrow">¶</a>
+</li>
+            <li class="compact" id="section-7.5.7-10.2">
+              <em>Compromise detection:</em> A compromised kernel may refuse to deliver the log entirely (e.g., kill the agent). In this case, the verifier has a TPM Quote (from Step 2) but no log to verify against it, which triggers a trust failure.<a href="#section-7.5.7-10.2" class="pilcrow">¶</a>
+</li>
+          </ul>
+<p id="section-7.5.7-11"><strong>Step 4 -- Management Processor (iLO): Forward Evidence to Management Plane</strong><a href="#section-7.5.7-11" class="pilcrow">¶</a></p>
+<p id="section-7.5.7-12">The management processor transmits the hardware-signed TPM Quote and the TCG Boot Event Log to the external management plane (e.g., HPE OneView/GreenLake) via the dedicated management NIC using the Redfish API. The management processor signs this transmission with its own OEM CA-chained identity key.<a href="#section-7.5.7-12" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="section-7.5.7-13.1">
+              <em>Compromise detection:</em> The management processor's identity is verified by the OEM CA chain. A spoofed or tampered management processor would fail certificate validation.<a href="#section-7.5.7-13.1" class="pilcrow">¶</a>
+</li>
+          </ul>
+<p id="section-7.5.7-14"><strong>Step 5 -- External Verifier: Validate Evidence</strong><a href="#section-7.5.7-14" class="pilcrow">¶</a></p>
+<p id="section-7.5.7-15">The external verifier (management plane or Keylime Verifier) performs the following validation:<a href="#section-7.5.7-15" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="compact type-1" id="section-7.5.7-16">
+<li id="section-7.5.7-16.1">
+              <strong>Verify TPM Quote signature</strong> using the TPM's AK public key. If invalid, the TPM or Quote has been tampered with.<a href="#section-7.5.7-16.1" class="pilcrow">¶</a>
+</li>
+            <li id="section-7.5.7-16.2">
+              <strong>Verify nonce</strong> in the Quote matches the challenge nonce. If mismatched, the Quote is a replay of an older attestation.<a href="#section-7.5.7-16.2" class="pilcrow">¶</a>
+</li>
+            <li id="section-7.5.7-16.3">
+              <strong>Verify TPM clock</strong> monotonicity: the clock value must be greater than the previous attestation cycle's clock value. A rollback indicates tampering.<a href="#section-7.5.7-16.3" class="pilcrow">¶</a>
+</li>
+            <li id="section-7.5.7-16.4">
+              <strong>Replay the IMA log</strong> entry by entry, recomputing PCR 10: for each log entry, compute Hash(entry) and extend it into a running PCR accumulator starting from the initial PCR value (all zeros after reset).<a href="#section-7.5.7-16.4" class="pilcrow">¶</a>
+</li>
+            <li id="section-7.5.7-16.5">
+              <p id="section-7.5.7-16.5.1"><strong>Compare the recomputed PCR 10</strong> against the hardware-signed PCR 10 from the TPM Quote:<a href="#section-7.5.7-16.5.1" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="section-7.5.7-16.5.2.1">
+                  <strong>Match:</strong> The IMA log is consistent with the TPM's measurements. The system is running approved software.<a href="#section-7.5.7-16.5.2.1" class="pilcrow">¶</a>
+</li>
+                <li class="compact" id="section-7.5.7-16.5.2.2">
+                  <strong>Mismatch:</strong> The IMA log has been tampered with (entries removed, altered, or fabricated). The verifier raises a trust failure alert.<a href="#section-7.5.7-16.5.2.2" class="pilcrow">¶</a>
+</li>
+              </ul>
+</li>
+            <li id="section-7.5.7-16.6">
+              <strong>Compare PCR 10 against golden reference values</strong> to detect unexpected binaries (even if the log is consistent, a new/unknown binary triggers a policy violation).<a href="#section-7.5.7-16.6" class="pilcrow">¶</a>
+</li>
+            <li id="section-7.5.7-16.7">
+              <strong>Check for log staleness:</strong> Compare the number of IMA log entries and the TPM clock against the previous cycle. If the system is active (network traffic, CPU load) but the log has not grown, IMA may have been disabled by a compromised kernel.<a href="#section-7.5.7-16.7" class="pilcrow">¶</a>
+</li>
+          </ol>
+<ul class="compact">
+<li class="compact" id="section-7.5.7-17.1">
+              <p id="section-7.5.7-17.1.1"><em>Compromise detection summary:</em><a href="#section-7.5.7-17.1.1" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="section-7.5.7-17.1.2.1">
+                  <strong>Tampered IMA log</strong> → detected at sub-step 5 (log-vs-PCR mismatch).<a href="#section-7.5.7-17.1.2.1" class="pilcrow">¶</a>
+</li>
+                <li class="compact" id="section-7.5.7-17.1.2.2">
+                  <strong>Disabled IMA</strong> → detected at sub-step 7 (stale log with active system).<a href="#section-7.5.7-17.1.2.2" class="pilcrow">¶</a>
+</li>
+                <li class="compact" id="section-7.5.7-17.1.2.3">
+                  <strong>Replayed old Quote</strong> → detected at sub-steps 2-3 (nonce/clock mismatch).<a href="#section-7.5.7-17.1.2.3" class="pilcrow">¶</a>
+</li>
+                <li class="compact" id="section-7.5.7-17.1.2.4">
+                  <strong>Unauthorized binary loaded</strong> → detected at sub-step 6 (policy violation).<a href="#section-7.5.7-17.1.2.4" class="pilcrow">¶</a>
+</li>
+                <li class="compact" id="section-7.5.7-17.1.2.5">
+                  <strong>Log delivery suppressed</strong> → detected by absence of log (trust failure due to missing evidence).<a href="#section-7.5.7-17.1.2.5" class="pilcrow">¶</a>
+</li>
+              </ul>
+</li>
+          </ul>
+</section>
+</div>
+<div id="advantages-1">
+<section id="section-7.5.8">
           <h4 id="name-advantages-2">
-<a href="#section-7.5.7" class="section-number selfRef">7.5.7. </a><a href="#name-advantages-2" class="section-name selfRef">Advantages</a>
+<a href="#section-7.5.8" class="section-number selfRef">7.5.8. </a><a href="#name-advantages-2" class="section-name selfRef">Advantages</a>
           </h4>
 <ul class="compact">
-<li class="compact" id="section-7.5.7-1.1">Out-of-band attestation: works even when the host OS is compromised, rebooting, or offline.<a href="#section-7.5.7-1.1" class="pilcrow">¶</a>
+<li class="compact" id="section-7.5.8-1.1">Out-of-band attestation: works even when the host OS is compromised, rebooting, or offline.<a href="#section-7.5.8-1.1" class="pilcrow">¶</a>
 </li>
-            <li class="compact" id="section-7.5.7-1.2">Hardware-isolated attestation path: the management processor is physically separate from the host CPU.<a href="#section-7.5.7-1.2" class="pilcrow">¶</a>
+            <li class="compact" id="section-7.5.8-1.2">Hardware-isolated attestation path: the management processor is physically separate from the host CPU.<a href="#section-7.5.8-1.2" class="pilcrow">¶</a>
 </li>
-            <li class="compact" id="section-7.5.7-1.3">Detects compromised kernel / IMA subversion through hardware-signed TPM quotes.<a href="#section-7.5.7-1.3" class="pilcrow">¶</a>
+            <li class="compact" id="section-7.5.8-1.3">Detects compromised kernel / IMA subversion through hardware-signed TPM quotes.<a href="#section-7.5.8-1.3" class="pilcrow">¶</a>
 </li>
-            <li class="compact" id="section-7.5.7-1.4">TPM Swap attack protection at boot time.<a href="#section-7.5.7-1.4" class="pilcrow">¶</a>
+            <li class="compact" id="section-7.5.8-1.4">TPM Swap attack protection at boot time.<a href="#section-7.5.8-1.4" class="pilcrow">¶</a>
 </li>
-            <li class="compact" id="section-7.5.7-1.5">Enterprise fleet management integration (HPE OneView, Dell iDRAC, Lenovo XClarity, etc.).<a href="#section-7.5.7-1.5" class="pilcrow">¶</a>
+            <li class="compact" id="section-7.5.8-1.5">Enterprise fleet management integration (HPE OneView, Dell iDRAC, Lenovo XClarity, etc.).<a href="#section-7.5.8-1.5" class="pilcrow">¶</a>
 </li>
           </ul>
 </section>
 </div>
 <div id="limitations-1">
-<section id="section-7.5.8">
+<section id="section-7.5.9">
           <h4 id="name-limitations-2">
-<a href="#section-7.5.8" class="section-number selfRef">7.5.8. </a><a href="#name-limitations-2" class="section-name selfRef">Limitations</a>
+<a href="#section-7.5.9" class="section-number selfRef">7.5.9. </a><a href="#name-limitations-2" class="section-name selfRef">Limitations</a>
           </h4>
 <ul class="compact">
-<li class="compact" id="section-7.5.8-1.1">Vendor-specific management processor implementations.<a href="#section-7.5.8-1.1" class="pilcrow">¶</a>
+<li class="compact" id="section-7.5.9-1.1">Vendor-specific management processor implementations.<a href="#section-7.5.9-1.1" class="pilcrow">¶</a>
 </li>
-            <li class="compact" id="section-7.5.8-1.2">Requires enterprise management plane infrastructure.<a href="#section-7.5.8-1.2" class="pilcrow">¶</a>
+            <li class="compact" id="section-7.5.9-1.2">Requires enterprise management plane infrastructure.<a href="#section-7.5.9-1.2" class="pilcrow">¶</a>
 </li>
-            <li class="compact" id="section-7.5.8-1.3">Management processor firmware must itself be trusted and kept up to date.<a href="#section-7.5.8-1.3" class="pilcrow">¶</a>
+            <li class="compact" id="section-7.5.9-1.3">Management processor firmware must itself be trusted and kept up to date.<a href="#section-7.5.9-1.3" class="pilcrow">¶</a>
 </li>
           </ul>
 </section>

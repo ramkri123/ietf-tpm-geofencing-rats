@@ -111,6 +111,14 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 - **IPSEC**: Internet Protocol Security
 - **BMC**: Baseboard Management Controller
 - **WIA**: Workload Identity Agent
+- **OOB**: Out-of-Band
+- **EAT**: Entity Attestation Token
+- **DAA**: Direct Anonymous Attestation
+- **EPID**: Enhanced Privacy ID
+- **DCAP**: Data Center Attestation Primitives
+- **EK**: Endorsement Key
+- **AK**: Attestation Key
+- **IMA**: Integrity Measurement Architecture
 
 **Key Terms:**
 
@@ -162,7 +170,7 @@ The three layers are:
 
 Together, the complete chain is:
 
-  * TPM Hardware -> WIA (this draft, Layers 2) -> Workload (transitive attestation draft, Layer 1)
+  * TPM Hardware -> WIA (this draft, Layer 2) -> Workload (transitive attestation draft, Layer 1)
   * TPM/Geolocation Hardware -> WIA (this draft, Layers 2+3) -> Workload (transitive attestation draft, Layer 1)
 
 This document focuses exclusively on Layers 2 and 3: the hardware-dependent attestation of the WIA itself. For how workloads prove they are co-located with an attested WIA, and for the data-plane protocol flows (mTLS PoR, DPoR), see [[I-D.mw-wimse-transitive-attestation]].
@@ -271,7 +279,7 @@ For the workload-level attestation that builds on top of the WIA attestation des
 
 ## Server Hosts - Solution highlights
 
-Assumptions: The maximum round-trip delay within a data center typically ranges from 500-1000 microseconds.
+This section assumes that the maximum round-trip delay within a data center typically ranges from 500-1000 microseconds.
 
 Scalable hierarchical approach -- enhancements to Workload Identity (SPIFFE/SPIRE) solution:
 
@@ -315,7 +323,7 @@ TPM Platform Attestation establishes three properties:
 
 ## Measured Boot and OS Integrity Attestation
 
-As part of system boot/reboot process, boot loader-based measured system boot with remote Workload Identity Manager verification is used to ensure only approved OS is running on an approved hardware platform.
+As part of the system boot/reboot process, a boot-loader-based measured system boot with remote Workload Identity Manager verification is used to ensure that only an approved OS is running on an approved hardware platform.
 
 **Measurement Collection**: During the boot process, the boot loader collects measurements (hashes) of the boot components and configurations. The boot components are Firmware/BIOS/UEFI, bootloader, OS, drivers, location devices, and initial programs. All the location devices (e.g., GNSS sensor, mobile sensor) version/firmware in a platform are measured during each boot -- this is a boot loader enhancement. Any new location device which is hot-swapped in will be evaluated for inclusion only during next reboot.
 
@@ -329,7 +337,7 @@ As part of system boot/reboot process, boot loader-based measured system boot wi
 
 ## WIA Attestation and Identity Issuance
 
-The Workload Identity Agent TPM plugin is a process with elevated privileges with access to TPM and location sensor hardware. Linux IMA and Workload Identity Agent public/private key attestation are the changes compared to the original SPIFFE/SPIRE architecture with the TPM plugin.
+The Workload Identity Agent TPM plugin is a process with elevated privileges that has access to TPM and location sensor hardware. Linux IMA measurement and Workload Identity Agent public/private key attestation are the changes compared to the original SPIFFE/SPIRE architecture with the TPM plugin.
 
 **Measurement Collection**: For the Workload Identity Agent start case, the Agent executable is measured by Linux IMA, for example through cloud init and stored in TPM PCR through tools e.g., Linux ima-evm-utils before it is loaded. For the Workload Identity Agent restart case, it is not clear how the storage in TPM PCR will be accomplished - ideally this should be natively handled in the IMA measurement process with an ability to retrigger on restart or refresh cycles (OPEN ISSUES 1).
 
@@ -366,7 +374,7 @@ Step 2 (Workload Identity Agent ID issuance):
 
 In this option, the TPM attestation agent runs on the host operating system with direct TPM access. An external Keylime Verifier performs remote verification.
 
-**Architecture:**
+### Architecture
 
 1. **Keylime Agent (on host):** The rust-keylime agent starts on the host OS, registers with the Keylime Registrar, and stores the host's EK, AK, UUID, and mTLS certificate. The agent has direct access to the TPM 2.0 device.
 2. **Keylime Registrar:** Stores agent registration data (UUID, IP, port, TPM keys, mTLS certificate) and serves as a lookup service for the Verifier.
@@ -376,17 +384,17 @@ In this option, the TPM attestation agent runs on the host operating system with
     - The nonce for freshness (anti-replay).
     - The App Key certificate (TPM2_Certify output) proving the App Key exists in the TPM and was certified by the AK.
 
-**Integration with SPIRE:**
+### Integration with SPIRE
 
 The SPIRE Agent TPM Plugin Server runs as an out-of-process sidecar (gRPC/HTTP via Unix socket). The plugin generates an App Key in the TPM, obtains an App Key certificate via the Keylime agent's delegated certification endpoint (TPM2_Certify), and assembles a SovereignAttestation message for the SPIRE Server. The SPIRE Server delegates verification to the external Keylime Verifier, which performs on-demand TPM quote fetching and validation.
 
-**Advantages:**
+### Advantages
 
 - Mature open-source ecosystem (rust-keylime, SPIRE TPM plugin).
 - Fine-grained PCR policy (per-PCR allowlists).
 - Suitable for cloud and on-premises environments.
 
-**Limitations:**
+### Limitations
 
 - Requires the host OS to be operational and the Keylime agent process to be running.
 - Agent compromise could potentially affect attestation integrity (mitigated by TPM-bound keys).
@@ -413,15 +421,15 @@ While both paths share the same physical TPM silicon, their roles are logically 
 
 To ensure that the attestation measurements themselves are trustworthy, the management processor architecture provides multiple layers of protection against the "who watches the watcher" problem:
 
-**Layer 1 -- Secure Boot / Silicon Root of Trust:** Before the OS starts, the management processor ASIC (e.g., HPE iLO) verifies the UEFI BIOS firmware. The BIOS then verifies the Bootloader (GRUB), and the Bootloader verifies the Linux Kernel signature. This ensures that the version of the Linux kernel -- and thus the IMA subsystem code -- being loaded is the authentic, signed version.
+**Protection 1 -- Secure Boot / Silicon Root of Trust:** Before the OS starts, the management processor ASIC (e.g., HPE iLO) verifies the UEFI BIOS firmware. The BIOS then verifies the Bootloader (GRUB), and the Bootloader verifies the Linux Kernel signature. This ensures that the version of the Linux kernel -- and thus the IMA subsystem code -- being loaded is the authentic, signed version.
 
-**Layer 2 -- TPM PCR Extension (Hardware Enforcement):** Linux IMA does not just keep a list of hashes in RAM; it extends those hashes into TPM PCR 10. PCR extension is a one-way operation -- data can be added (extended) to a PCR, but it cannot be overwritten or deleted without a full system reboot. Even if a compromised kernel tries to stop IMA from recording a malicious binary, it cannot undo the previous clean measurements in the TPM. A remote verifier will detect that the aggregate hash in PCR 10 no longer matches the provided IMA log, triggering a trust failure.
+**Protection 2 -- TPM PCR Extension (Hardware Enforcement):** Linux IMA does not just keep a list of hashes in RAM; it extends those hashes into TPM PCR 10. PCR extension is a one-way operation -- data can be added (extended) to a PCR, but it cannot be overwritten or deleted without a full system reboot. Even if a compromised kernel tries to stop IMA from recording a malicious binary, it cannot undo the previous clean measurements in the TPM. A remote verifier will detect that the aggregate hash in PCR 10 no longer matches the provided IMA log, triggering a trust failure.
 
-**Layer 3 -- IMA Appraisal Mode:** By default, IMA only measures (logs). In IMA Appraisal mode, the kernel refuses to execute any binary or load any library that does not have a valid cryptographic signature (stored as an extended attribute on the file). IMA policies can themselves be digitally signed, preventing tampering.
+**Protection 3 -- IMA Appraisal Mode:** By default, IMA only measures (logs). In IMA Appraisal mode, the kernel refuses to execute any binary or load any library that does not have a valid cryptographic signature (stored as an extended attribute on the file). IMA policies can themselves be digitally signed, preventing tampering.
 
-**Layer 4 -- Out-of-Band (OOB) Attestation:** This is the critical layer. Since the kernel could potentially be tricked into lying about its internal state, the remote verifier asks the management processor for a TPM Quote. The management processor talks directly to the TPM (bypassing the Host CPU/Kernel), and the TPM signs the PCR values with its internal, hardware-protected key. The verifier compares this hardware-signed value against the software-reported IMA log. Any discrepancy means the Linux kernel/IMA subsystem has been tampered with.
+**Protection 4 -- Out-of-Band (OOB) Attestation:** This is the critical layer. Since the kernel could potentially be tricked into lying about its internal state, the remote verifier asks the management processor for a TPM Quote. The management processor talks directly to the TPM (bypassing the Host CPU/Kernel), and the TPM signs the PCR values with its internal, hardware-protected key. The verifier compares this hardware-signed value against the software-reported IMA log. Any discrepancy means the Linux kernel/IMA subsystem has been tampered with.
 
-**Layer 5 -- Kernel Lockdown Mode:** Linux Kernel Lockdown (integrity or confidentiality mode) prevents even the root user from modifying kernel memory via /dev/mem, replacing the running kernel via kexec, or accessing sensitive debug interfaces that could be used to bypass IMA checks.
+**Protection 5 -- Kernel Lockdown Mode:** Linux Kernel Lockdown (integrity or confidentiality mode) prevents even the root user from modifying kernel memory via /dev/mem, replacing the running kernel via kexec, or accessing sensitive debug interfaces that could be used to bypass IMA checks.
 
 ### TPM Swap Attack Protection
 
@@ -489,7 +497,7 @@ Geolocation HW-Based Attestation establishes two additional properties beyond TP
 The Host geolocation sensor composition manager runs outside of the host. In addition to obtaining location from device location sources (e.g., GNSS), it connects to mobile location service providers (e.g., Telefonica) using the GSMA Location API. The process described below is run periodically (e.g., every 5 minutes) to check if the host hardware composition has changed. Host hardware composition comprises TPM EK, GNSS sensor hardware ID, mobile sensor hardware ID (IMEI), and mobile-SIM IMSI. Note that this workflow is feasible only in enterprise environments where the host hardware is owned and managed by the enterprise.
 
 1. The Workload Identity Agent periodically gathers host composition details (e.g., mobile sensor hardware ID (IMEI), mobile-SIM IMSI) and sends them to the Host geolocation sensor composition manager.
-2. The Host geolocation sensor composition manager cross-verifies that the components of the host are still intact or detects if anything has been removed. (Plugging out components can decrease the quality of location. Host hardware composition comprises TPM EK, GNSS sensor hardware ID, mobile sensor hardware ID (IMEI), and mobile-SIM IMSI. Note that e-SIM does not have the plugging out problem like standard SIM but could be subject to e-SIM swap attack.)
+2. The Host geolocation sensor composition manager cross-verifies that the components of the host are still intact or detects if anything has been removed. Plugging out components can decrease the quality of location. Note that e-SIM does not have the plugging out problem like standard SIM but could be subject to e-SIM swap attack.
 
 ## Geolocation Gathering Workflow
 
@@ -514,7 +522,7 @@ If the location is gathered only using existing OS APIs, it may be done in the w
 
 In this option, the Keylime agent collects geolocation sensor data on the host OS and extends TPM PCR 15 with a hash of the geolocation evidence, binding the location to the TPM attestation.
 
-**Architecture:**
+### Architecture
 
 1. **Keylime Agent (on host):** In addition to its TPM attestation role (Layer 2), the agent interfaces with GNSS sensors and mobile modems attached to the host. It collects:
     - **TPM-Attested Data (Mobile):** sensor_id, sensor_imei, sim_imsi.
@@ -527,17 +535,17 @@ In this option, the Keylime agent collects geolocation sensor data on the host O
     - Validates the PCR 15 value against the expected hash.
     - Cross-verifies the claimed location against the mobile network operator's location service (GSMA/CAMARA API) using the IMEI/IMSI from the TPM-attested data.
 
-**Mobile Location Verification:**
+### Mobile Location Verification
 
 A mobile location verification microservice acts as a thin CAMARA API wrapper. It receives the MSISDN (from SVID claims or Keylime DB lookup via IMEI+IMSI) and queries the mobile network operator's location service to obtain an independent location fix and cross-verify the GNSS-reported location.
 
-**Advantages:**
+### Advantages
 
 - Reuses the same Keylime infrastructure as Layer 2. 
 - PCR 15 binding provides cryptographic linkage between geolocation and TPM identity.
 - Mobile network cross-verification mitigates GNSS spoofing.
 
-**Limitations:**
+### Limitations
 
 - Requires GNSS sensor and/or mobile modem to be physically attached to the host.
 - Host OS compromise could potentially affect sensor readings before they are extended into the PCR (mitigated by TPM binding and cross-verification).
@@ -589,7 +597,7 @@ Having a geolocation sensor on every host is not scalable from a deployment and 
 
 ## End user location anchor host
 
-Goal is to provide an easy to use wireless solution that can be used by end users without requiring them to install a geolocation sensor on their laptop/desktop host.
+The goal is to provide an easy-to-use wireless solution that can be used by end users without requiring them to install a geolocation sensor on their laptop/desktop host.
 
 The smartphone can be used as a location anchor host for the laptop/desktop host. The smartphone connects to the laptop/desktop host using Bluetooth Low Energy (BLE) or Ultra-Wideband (UWB) technology and continuously measures the following:
 
@@ -600,7 +608,7 @@ Host proximity manager periodically verifies that the smartphone provides proof 
 
 ## Data center location anchor host
 
-Goal is to provide an easy to use solution that can be used by data center operators without requiring them to install a geolocation sensor on every data center host.
+The goal is to provide an easy-to-use solution that can be used by data center operators without requiring them to install a geolocation sensor on every data center host.
 
 PTP is a network protocol that enables precise synchronization of clocks across a computer network and can be used to measure the round-trip time (RTT) between the location anchor host and other data center hosts with sub-microsecond accuracy. To provide cryptographically verifiable proof of residency on the host -- referred to as "attested PTP" -- the PTP software/hardware can be enhanced so that all PTP messages are signed with a private key.
 
@@ -747,9 +755,9 @@ For the workload identity agent restart case, it is not clear how the storage in
 
 The current approach includes some location privacy options for the geolocation in the Geolocation Information Cache. This may need to be expanded further in the future.
 
-## OPEN ISSUES 3: Attested PTP
+## OPEN ISSUES 3: Attested PTP (Partially Addressed)
 
-Attested PTP is a software/hardware-based solution using Precision Time Protocol (PTP) for measuring proximity between hosts in a data center. For a detailed specification, see [[I-D.ramki-ptp-hardware-rooted-attestation]].
+Attested PTP is a software/hardware-based solution using Precision Time Protocol (PTP) for measuring proximity between hosts in a data center. For a detailed specification, see [[I-D.ramki-ptp-hardware-rooted-attestation]]. Standardization of the attested PTP mechanism is ongoing.
 
 ## OPEN ISSUES 4: Geotagging textual data
 

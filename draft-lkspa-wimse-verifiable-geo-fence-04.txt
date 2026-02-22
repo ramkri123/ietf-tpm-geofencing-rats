@@ -131,14 +131,14 @@ Internet-Draft                    GeoW                     February 2026
      7.7.  Workload Identity Fusion: Periodic SPIRE
            Re-Attestation  . . . . . . . . . . . . . . . . . . . . .  23
      7.8.  Privacy Options for TPM-Based Attestation . . . . . . . .  25
-   8.  Geolocation HW-Based Attestation (Layer 3)  . . . . . . . . .  25
+   8.  Geolocation HW-Based Attestation (Layer 3)  . . . . . . . . .  26
      8.1.  Overview  . . . . . . . . . . . . . . . . . . . . . . . .  26
      8.2.  Sensor Composition and Binding to TPM EK  . . . . . . . .  26
-     8.3.  Geolocation Gathering Workflow  . . . . . . . . . . . . .  26
+     8.3.  Geolocation Gathering Workflow  . . . . . . . . . . . . .  27
      8.4.  Deployment Option A: Host OS-Based (Keylime)  . . . . . .  28
        8.4.1.  Architecture  . . . . . . . . . . . . . . . . . . . .  28
        8.4.2.  Mobile Location Verification  . . . . . . . . . . . .  28
-       8.4.3.  Advantages  . . . . . . . . . . . . . . . . . . . . .  28
+       8.4.3.  Advantages  . . . . . . . . . . . . . . . . . . . . .  29
        8.4.4.  Limitations . . . . . . . . . . . . . . . . . . . . .  29
      8.5.  Deployment Option B: External Management Processor (e.g.,
            HPE iLO)  . . . . . . . . . . . . . . . . . . . . . . . .  29
@@ -1236,15 +1236,20 @@ Internet-Draft                    GeoW                     February 2026
 
    1.  *Virtual TPM (vTPM):* Provided by the hypervisor to the guest VM.
        It supports standard TPM 2.0 commands, including PCR extension
-       and Quote generation.  The vTPM's state is preserved across VM
-       reboots and migrations.
+       and Quote generation.  For example, *AWS NitroTPM* conforms to
+       the TPM 2.0 specification and provides a series of Nitro-specific
+       PCR values that reflect the instance state.
    2.  *Guest OS Agent (SPIRE Agent):* Runs as a system daemon within
        the VM.  It interacts with the vTPM to record boot measurements
-       and workload identities.
-   3.  *Cloud Attestation Service:* Most cloud providers offer an API
-       (e.g., AWS Nitro Enclaves Attestation, GCP Instance Identity)
-       that provides a signed document containing the vTPM measurements,
-       VM identity, and potentially the host hardware's status.
+       and workload identities.  On AWS, the *nitro-tpm-attest* utility
+       can be used at runtime to retrieve a signed Attestation Document
+       for the instance.
+   3.  *Cloud Attestation Service:* Most cloud providers offer an API or
+       hypervisor-level service that provides a signed document
+       containing the vTPM measurements, VM identity, and potentially
+       the host hardware's status.  The AWS Nitro Hypervisor generates
+       these documents in *CBOR/COSE* format, signed by the AWS Nitro
+       Attestation PKI.
 
 7.6.2.  Advantages
 
@@ -1276,12 +1281,7 @@ Internet-Draft                    GeoW                     February 2026
    physical or virtual TPM), creating a cryptographic binding between
    the workload SVID and the platform's hardware-attested state.
 
-   *In-band implementation (Option A):* In the reference implementation
-   [[AegisSovereignAI]], the SPIRE Server sends a challenge nonce to the
-   SPIRE Agent, which assembles a SovereignAttestation message.  The
-   SPIRE Server delegates verification to the Keylime Verifier, which
-   contacts the in-band Keylime agent to fetch a fresh TPM Quote using
-   the same nonce.  The verifier validates the Quote, IMA log, and
+
 
 
 
@@ -1290,6 +1290,12 @@ Krishnan, et al.         Expires 26 August 2026                [Page 23]
 Internet-Draft                    GeoW                     February 2026
 
 
+   *In-band implementation (Option A):* In the reference implementation
+   [[AegisSovereignAI]], the SPIRE Server sends a challenge nonce to the
+   SPIRE Agent, which assembles a SovereignAttestation message.  The
+   SPIRE Server delegates verification to the Keylime Verifier, which
+   contacts the in-band Keylime agent to fetch a fresh TPM Quote using
+   the same nonce.  The verifier validates the Quote, IMA log, and
    geolocation, then returns attested claims to the SPIRE Server for
    SVID issuance.  This flow is entirely in-band: the TPM Quote travels
    through the host OS network stack.
@@ -1310,11 +1316,12 @@ Internet-Draft                    GeoW                     February 2026
    *Cloud vTPM (Option C):* In a cloud deployment, the SPIRE Server
    sends a challenge nonce to the SPIRE Agent running as a system daemon
    on the guest VM.  The agent utilizes the vTPM to certify its identity
-   and potentially fetches a cloud attestation document (e.g., AWS Nitro
-   document) that includes the challenge nonce.  The SPIRE Server (or a
-   delegated verifier) validates the cloud provider's signature and the
-   vTPM Quote, ensuring the VM is running in a trusted environment
-   before issuing the SVID.
+   and potentially fetches a cloud attestation document (e.g., *AWS
+   Nitro Attestation Document*) that includes the challenge nonce.  The
+   SPIRE Server (or a delegated verifier) validates the cloud provider's
+   signature and the vTPM Quote (potentially mapped to the COSE
+   signature over the CBOR document), ensuring the VM is running in a
+   trusted environment before issuing the SVID.
 
    *Periodic re-attestation:* The SPIRE Agent's SVID has a short
    programmable TTL (e.g., 30 seconds) and is periodically re-issued.
@@ -1328,15 +1335,8 @@ Internet-Draft                    GeoW                     February 2026
 
    This fusion achieves several properties:
 
-   1.  *Single nonce, dual binding:* The same cryptographic nonce binds
-       both the workload identity proof (TPM App Key certification) and
-       the host platform integrity proof (TPM Quote via OOB path),
-       preventing an attacker from combining a valid workload credential
-       with a compromised host.
-   2.  *Continuous assurance:* Unlike one-time boot attestation, the
-       short SVID TTL forces re-attestation at a programmable interval
-       (e.g., every 30 seconds), ensuring that host compromise is
-       detected within one attestation cycle.
+
+
 
 
 
@@ -1346,6 +1346,15 @@ Krishnan, et al.         Expires 26 August 2026                [Page 24]
 Internet-Draft                    GeoW                     February 2026
 
 
+   1.  *Single nonce, dual binding:* The same cryptographic nonce binds
+       both the workload identity proof (TPM App Key certification) and
+       the host platform integrity proof (TPM Quote via OOB path),
+       preventing an attacker from combining a valid workload credential
+       with a compromised host.
+   2.  *Continuous assurance:* Unlike one-time boot attestation, the
+       short SVID TTL forces re-attestation at a programmable interval
+       (e.g., every 30 seconds), ensuring that host compromise is
+       detected within one attestation cycle.
    3.  *Automatic revocation:* SVID non-renewal on attestation failure
        is an implicit revocation mechanism that requires no revocation
        lists or OCSP infrastructure.
@@ -1385,6 +1394,14 @@ Internet-Draft                    GeoW                     February 2026
       standard TPM AK model, while TPM DAA offers unlinkable, anonymous
       proofs of TPM possession.
 
+
+
+
+Krishnan, et al.         Expires 26 August 2026                [Page 25]
+
+Internet-Draft                    GeoW                     February 2026
+
+
 8.  Geolocation HW-Based Attestation (Layer 3)
 
    This section describes how the geolocation of an attested host is
@@ -1393,14 +1410,6 @@ Internet-Draft                    GeoW                     February 2026
    platform attestation is a prerequisite for geolocation attestation,
    because the geolocation sensor identities are cryptographically bound
    to the host TPM identity.
-
-
-
-
-Krishnan, et al.         Expires 26 August 2026                [Page 25]
-
-Internet-Draft                    GeoW                     February 2026
-
 
 8.1.  Overview
 
@@ -1440,15 +1449,6 @@ Internet-Draft                    GeoW                     February 2026
        plugging out problem like standard SIM but could be subject to
        e-SIM swap attack.
 
-8.3.  Geolocation Gathering Workflow
-
-   The process described below is run at a programmable interval (e.g.,
-   every 30 seconds for frequently mobile hosts such as smartphones;
-   every 5 minutes for less frequently mobile hosts such as laptops;
-   every 50 minutes for stationary hosts) to check if the host's
-   location has changed and to obtain an attested location.
-
-
 
 
 
@@ -1457,6 +1457,14 @@ Krishnan, et al.         Expires 26 August 2026                [Page 26]
 
 Internet-Draft                    GeoW                     February 2026
 
+
+8.3.  Geolocation Gathering Workflow
+
+   The process described below is run at a programmable interval (e.g.,
+   every 30 seconds for frequently mobile hosts such as smartphones;
+   every 5 minutes for less frequently mobile hosts such as laptops;
+   every 50 minutes for stationary hosts) to check if the host's
+   location has changed and to obtain an attested location.
 
    1.  The Workload Identity Agent gathers the location using the
        geolocation plugin (a) directly from host-local location sensors
@@ -1496,14 +1504,6 @@ Internet-Draft                    GeoW                     February 2026
    is up-to-date.  This information is used only by workloads in the
    host and never leaves the host.
 
-   If the location is gathered only using existing OS APIs, it may be
-   done in the workload (thick client) or browser extension (thin
-   client).  The Geolocation Information Cache is stored in thick client
-   memory (relevant only to specific client) or browser extension memory
-   (relevant to all thin clients and indexed using user in OAuth bearer
-   token/server website URL).
-
-
 
 
 
@@ -1513,6 +1513,13 @@ Krishnan, et al.         Expires 26 August 2026                [Page 27]
 
 Internet-Draft                    GeoW                     February 2026
 
+
+   If the location is gathered only using existing OS APIs, it may be
+   done in the workload (thick client) or browser extension (thin
+   client).  The Geolocation Information Cache is stored in thick client
+   memory (relevant only to specific client) or browser extension memory
+   (relevant to all thin clients and indexed using user in OAuth bearer
+   token/server website URL).
 
 8.4.  Deployment Option A: Host OS-Based (Keylime)
 
@@ -1554,13 +1561,6 @@ Internet-Draft                    GeoW                     February 2026
    location service to obtain an independent location fix and cross-
    verify the GNSS-reported location.
 
-8.4.3.  Advantages
-
-   *  Reuses the same Keylime infrastructure as Layer 2.
-   *  PCR 15 binding provides cryptographic linkage between geolocation
-      and TPM identity.
-   *  Mobile network cross-verification mitigates GNSS spoofing.
-
 
 
 
@@ -1569,6 +1569,13 @@ Krishnan, et al.         Expires 26 August 2026                [Page 28]
 
 Internet-Draft                    GeoW                     February 2026
 
+
+8.4.3.  Advantages
+
+   *  Reuses the same Keylime infrastructure as Layer 2.
+   *  PCR 15 binding provides cryptographic linkage between geolocation
+      and TPM identity.
+   *  Mobile network cross-verification mitigates GNSS spoofing.
 
 8.4.4.  Limitations
 
@@ -1610,13 +1617,6 @@ Internet-Draft                    GeoW                     February 2026
        via the management processor's dedicated TPM bus, providing the
        same PCR binding as the Keylime option but through the out-of-
        band path.
-   3.  *External Management Plane:* The management plane receives
-       geolocation evidence from the management processor via the
-       dedicated management NIC (Redfish API) and validates:
-       *  Sensor identity against registered sensor inventory.
-       *  Location reading against geofence policies.
-       *  Cross-verification with mobile network operator location
-          services.
 
 
 
@@ -1626,6 +1626,13 @@ Krishnan, et al.         Expires 26 August 2026                [Page 29]
 Internet-Draft                    GeoW                     February 2026
 
 
+   3.  *External Management Plane:* The management plane receives
+       geolocation evidence from the management processor via the
+       dedicated management NIC (Redfish API) and validates:
+       *  Sensor identity against registered sensor inventory.
+       *  Location reading against geofence policies.
+       *  Cross-verification with mobile network operator location
+          services.
        *  Association with the TPM EK identity from the Layer 2
           attestation.
        *  Consistency between the hardware-signed TPM Quote (obtained
@@ -1667,13 +1674,6 @@ Internet-Draft                    GeoW                     February 2026
        geolocation sensor is available, the sensor is offline, or the
        GNSS signal is weak (e.g., data center hosts deep inside a
        building), an auditor-mediated endorsement can provide a
-       cryptographically verifiable physical position claim.  As
-       described in [[I-D.richardson-rats-pop-endorsement]], a human
-       auditor physically visits the device, connects via a USB or
-       serial console cable, and collects a signed Entity Attestation
-       Token (EAT) from the device's TPM Attestation Key. The auditor
-       then creates a signed Endorsement binding the device identity to
-       its physical position (e.g., "Building 4, Aisle 37, Cabinet 9,
 
 
 
@@ -1682,6 +1682,13 @@ Krishnan, et al.         Expires 26 August 2026                [Page 30]
 Internet-Draft                    GeoW                     February 2026
 
 
+       cryptographically verifiable physical position claim.  As
+       described in [[I-D.richardson-rats-pop-endorsement]], a human
+       auditor physically visits the device, connects via a USB or
+       serial console cable, and collects a signed Entity Attestation
+       Token (EAT) from the device's TPM Attestation Key. The auditor
+       then creates a signed Endorsement binding the device identity to
+       its physical position (e.g., "Building 4, Aisle 37, Cabinet 9,
        Rack Unit 2-3").  This endorsement is periodically renewed
        through re-audit and provides a level of position precision
        (rack-level) that GPS cannot achieve indoors.  The endorsement
@@ -1724,19 +1731,16 @@ Internet-Draft                    GeoW                     February 2026
    *  round-trip time (RTT) between the smartphone and laptop/desktop
       host
 
-   Host proximity manager periodically verifies that the smartphone
-   provides proof that the laptop/desktop host is in proximity using the
-   measured signal strength and RTT.
-
-
-
-
 
 
 Krishnan, et al.         Expires 26 August 2026                [Page 31]
 
 Internet-Draft                    GeoW                     February 2026
 
+
+   Host proximity manager periodically verifies that the smartphone
+   provides proof that the laptop/desktop host is in proximity using the
+   measured signal strength and RTT.
 
 9.2.  Data center location anchor host
 
@@ -1780,10 +1784,6 @@ Internet-Draft                    GeoW                     February 2026
    hardware and software.  For a detailed specification of hardware-
    rooted attestation for PTP, including verifiable residency and
    proximity proofs, see [[I-D.ramki-ptp-hardware-rooted-attestation]].
-
-
-
-
 
 
 

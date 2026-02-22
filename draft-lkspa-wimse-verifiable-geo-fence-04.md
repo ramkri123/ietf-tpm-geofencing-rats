@@ -534,9 +534,9 @@ In cloud environments, physical TPM access is typically virtualized. Cloud provi
 
 ### Architecture
 
-1. **Virtual TPM (vTPM):** Provided by the hypervisor to the guest VM. It supports standard TPM 2.0 commands, including PCR extension and Quote generation. The vTPM's state is preserved across VM reboots and migrations.
-2. **Guest OS Agent (SPIRE Agent):** Runs as a system daemon within the VM. It interacts with the vTPM to record boot measurements and workload identities.
-3. **Cloud Attestation Service:** Most cloud providers offer an API (e.g., AWS Nitro Enclaves Attestation, GCP Instance Identity) that provides a signed document containing the vTPM measurements, VM identity, and potentially the host hardware's status.
+1. **Virtual TPM (vTPM):** Provided by the hypervisor to the guest VM. It supports standard TPM 2.0 commands, including PCR extension and Quote generation. For example, **AWS NitroTPM** conforms to the TPM 2.0 specification and provides a series of Nitro-specific PCR values that reflect the instance state.
+2. **Guest OS Agent (SPIRE Agent):** Runs as a system daemon within the VM. It interacts with the vTPM to record boot measurements and workload identities. On AWS, the **`nitro-tpm-attest`** utility can be used at runtime to retrieve a signed Attestation Document for the instance.
+3. **Cloud Attestation Service:** Most cloud providers offer an API or hypervisor-level service that provides a signed document containing the vTPM measurements, VM identity, and potentially the host hardware's status. The AWS Nitro Hypervisor generates these documents in **CBOR/COSE** format, signed by the AWS Nitro Attestation PKI.
 
 ### Advantages
 
@@ -557,7 +557,7 @@ The three deployment options (A, B, and C) can integrate periodic SPIRE Agent re
 
 **OOB upgrade (Option B):** When a management processor is available, the verification step is upgraded to use the OOB path. The SPIRE Server still sends a challenge nonce to the SPIRE Agent, and the SPIRE Agent still assembles a SovereignAttestation message. However, the management plane verifier (e.g., HPE OneView/GreenLake) forwards the nonce to the management processor (iLO) instead of the in-band agent. The management processor fetches the TPM Quote via its dedicated I2C/private bus, and the IMA log is collected separately as untrusted input from the host. The verifier performs the full validation, and the attested claims -- including platform integrity and geolocation -- are returned to the SPIRE Server for SVID issuance.
 
-**Cloud vTPM (Option C):** In a cloud deployment, the SPIRE Server sends a challenge nonce to the SPIRE Agent running as a system daemon on the guest VM. The agent utilizes the vTPM to certify its identity and potentially fetches a cloud attestation document (e.g., AWS Nitro document) that includes the challenge nonce. The SPIRE Server (or a delegated verifier) validates the cloud provider's signature and the vTPM Quote, ensuring the VM is running in a trusted environment before issuing the SVID.
+**Cloud vTPM (Option C):** In a cloud deployment, the SPIRE Server sends a challenge nonce to the SPIRE Agent running as a system daemon on the guest VM. The agent utilizes the vTPM to certify its identity and potentially fetches a cloud attestation document (e.g., **AWS Nitro Attestation Document**) that includes the challenge nonce. The SPIRE Server (or a delegated verifier) validates the cloud provider's signature and the vTPM Quote (potentially mapped to the COSE signature over the CBOR document), ensuring the VM is running in a trusted environment before issuing the SVID.
 
 **Periodic re-attestation:** The SPIRE Agent's SVID has a short programmable TTL (e.g., 30 seconds) and is periodically re-issued. Each re-attestation cycle triggers the full OOB verification flow, meaning the workload identity is continuously re-bound to the host's current hardware-attested state. If the host platform fails attestation (e.g., IMA log tampering detected, unauthorized binary loaded), the SPIRE Server refuses to re-issue the SVID, effectively revoking the workload's identity and blocking it from communicating with other services.
 

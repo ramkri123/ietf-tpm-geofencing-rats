@@ -122,13 +122,13 @@ Internet-Draft                    GeoW                     February 2026
        7.5.4.  Root Adversary and IMA Tampering  . . . . . . . . . .  18
        7.5.5.  TPM Swap Attack Protection  . . . . . . . . . . . . .  19
        7.5.6.  Periodic Attestation Cycle: Step-by-Step  . . . . . .  19
-       7.5.7.  Workload Identity Fusion: SPIRE Re-Attestation via
-               Management Processor  . . . . . . . . . . . . . . . .  22
-       7.5.8.  Advantages  . . . . . . . . . . . . . . . . . . . . .  23
-       7.5.9.  Limitations . . . . . . . . . . . . . . . . . . . . .  23
-     7.6.  Privacy Options for TPM-Based Attestation . . . . . . . .  24
+       7.5.7.  Advantages  . . . . . . . . . . . . . . . . . . . . .  22
+       7.5.8.  Limitations . . . . . . . . . . . . . . . . . . . . .  22
+     7.6.  Workload Identity Fusion: Periodic SPIRE
+           Re-Attestation  . . . . . . . . . . . . . . . . . . . . .  22
+     7.7.  Privacy Options for TPM-Based Attestation . . . . . . . .  24
    8.  Geolocation HW-Based Attestation (Layer 3)  . . . . . . . . .  24
-     8.1.  Overview  . . . . . . . . . . . . . . . . . . . . . . . .  24
+     8.1.  Overview  . . . . . . . . . . . . . . . . . . . . . . . .  25
      8.2.  Sensor Composition and Binding to TPM EK  . . . . . . . .  25
      8.3.  Geolocation Gathering Workflow  . . . . . . . . . . . . .  25
      8.4.  Deployment Option A: Host OS-Based (Keylime)  . . . . . .  27
@@ -1195,8 +1195,26 @@ Internet-Draft                    GeoW                     February 2026
       -  *Log delivery suppressed* → detected by absence of log at Step
          4 (trust failure due to missing evidence).
 
-7.5.7.  Workload Identity Fusion: SPIRE Re-Attestation via Management
-        Processor
+7.5.7.  Advantages
+
+   *  Out-of-band attestation: works even when the host OS is
+      compromised, rebooting, or offline.
+   *  Hardware-isolated attestation path: the management processor is
+      physically separate from the host CPU.
+   *  Detects compromised kernel / IMA subversion through hardware-
+      signed TPM quotes.
+   *  TPM Swap attack protection at boot time.
+   *  Enterprise fleet management integration (HPE OneView, Dell iDRAC,
+      Lenovo XClarity, etc.).
+
+7.5.8.  Limitations
+
+   *  Vendor-specific management processor implementations.
+   *  Requires enterprise management plane infrastructure.
+   *  Management processor firmware must itself be trusted and kept up
+      to date.
+
+7.6.  Workload Identity Fusion: Periodic SPIRE Re-Attestation
 
    Both deployment options (A and B) can integrate periodic SPIRE Agent
    re-attestation with host platform attestation to fuse workload
@@ -1205,6 +1223,16 @@ Internet-Draft                    GeoW                     February 2026
    attestation verifier, which uses it to fetch a fresh TPM Quote,
    creating a cryptographic binding between the workload SVID and the
    host's hardware-attested state.
+
+
+
+
+
+
+Krishnan, et al.         Expires 26 August 2026                [Page 22]
+
+Internet-Draft                    GeoW                     February 2026
+
 
    *In-band implementation (Option A):* In the reference implementation
    [[AegisSovereignAI]], the SPIRE Server sends a challenge nonce to the
@@ -1226,14 +1254,6 @@ Internet-Draft                    GeoW                     February 2026
    dedicated I2C/private bus (Step 3 of the Periodic Attestation Cycle),
    and the IMA log is collected separately as untrusted input from the
    host (Step 4).  The verifier performs the full validation (Step 6),
-
-
-
-Krishnan, et al.         Expires 26 August 2026                [Page 22]
-
-Internet-Draft                    GeoW                     February 2026
-
-
    and the attested claims -- including platform integrity, IMA status,
    and geolocation -- are returned to the SPIRE Server for SVID
    issuance.
@@ -1262,26 +1282,6 @@ Internet-Draft                    GeoW                     February 2026
    3.  *Automatic revocation:* SVID non-renewal on attestation failure
        is an implicit revocation mechanism that requires no revocation
        lists or OCSP infrastructure.
-   4.  *Defense in depth:* The OOB path ensures that even if the in-band
-       SPIRE Agent and Keylime Agent are both compromised, the
-       management processor's independent TPM Quote reveals the true
-       platform state.
-
-7.5.8.  Advantages
-
-   *  Out-of-band attestation: works even when the host OS is
-      compromised, rebooting, or offline.
-   *  Hardware-isolated attestation path: the management processor is
-      physically separate from the host CPU.
-   *  Detects compromised kernel / IMA subversion through hardware-
-      signed TPM quotes.
-   *  TPM Swap attack protection at boot time.
-   *  Enterprise fleet management integration (HPE OneView, Dell iDRAC,
-      Lenovo XClarity, etc.).
-
-7.5.9.  Limitations
-
-   *  Vendor-specific management processor implementations.
 
 
 
@@ -1290,11 +1290,12 @@ Krishnan, et al.         Expires 26 August 2026                [Page 23]
 Internet-Draft                    GeoW                     February 2026
 
 
-   *  Requires enterprise management plane infrastructure.
-   *  Management processor firmware must itself be trusted and kept up
-      to date.
+   4.  *Defense in depth:* The OOB path ensures that even if the in-band
+       SPIRE Agent and Keylime Agent are both compromised, the
+       management processor's independent TPM Quote reveals the true
+       platform state.
 
-7.6.  Privacy Options for TPM-Based Attestation
+7.7.  Privacy Options for TPM-Based Attestation
 
    From a privacy standpoint, sharing TPM details--especially the EK
    certificate--across organizational boundaries can be problematic.
@@ -1334,10 +1335,9 @@ Internet-Draft                    GeoW                     February 2026
    because the geolocation sensor identities are cryptographically bound
    to the host TPM identity.
 
-8.1.  Overview
 
-   Geolocation HW-Based Attestation establishes two additional
-   properties beyond TPM Platform Attestation:
+
+
 
 
 
@@ -1345,6 +1345,11 @@ Krishnan, et al.         Expires 26 August 2026                [Page 24]
 
 Internet-Draft                    GeoW                     February 2026
 
+
+8.1.  Overview
+
+   Geolocation HW-Based Attestation establishes two additional
+   properties beyond TPM Platform Attestation:
 
    1.  *Sensor Integrity:* The geolocation sensors (GNSS, mobile modem)
        attached to the host are genuine, their firmware is measured, and
@@ -1386,11 +1391,6 @@ Internet-Draft                    GeoW                     February 2026
    minutes for less frequently mobile hosts such as laptops; every 50
    minutes for stationary hosts) to check if the host's location has
    changed and to obtain an attested location.
-
-
-
-
-
 
 
 

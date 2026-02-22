@@ -514,7 +514,23 @@ The external verifier (management plane) performs the following validation:
     * **Unauthorized binary loaded** → detected at Step 6 sub-step 6 (policy violation).
     * **Log delivery suppressed** → detected by absence of log at Step 4 (trust failure due to missing evidence).
 
-### Workload Identity Fusion: SPIRE Re-Attestation via Management Processor
+
+
+### Advantages
+
+- Out-of-band attestation: works even when the host OS is compromised, rebooting, or offline.
+- Hardware-isolated attestation path: the management processor is physically separate from the host CPU.
+- Detects compromised kernel / IMA subversion through hardware-signed TPM quotes.
+- TPM Swap attack protection at boot time.
+- Enterprise fleet management integration (HPE OneView, Dell iDRAC, Lenovo XClarity, etc.).
+
+### Limitations
+
+- Vendor-specific management processor implementations.
+- Requires enterprise management plane infrastructure.
+- Management processor firmware must itself be trusted and kept up to date.
+
+## Workload Identity Fusion: Periodic SPIRE Re-Attestation
 
 Both deployment options (A and B) can integrate periodic SPIRE Agent re-attestation with host platform attestation to fuse workload identity with hardware-verified host integrity. The core pattern is: the SPIRE Server's challenge nonce is forwarded to the host attestation verifier, which uses it to fetch a fresh TPM Quote, creating a cryptographic binding between the workload SVID and the host's hardware-attested state.
 
@@ -530,20 +546,6 @@ This fusion achieves several properties:
 2. **Continuous assurance:** Unlike one-time boot attestation, the short SVID TTL forces re-attestation every 20-60 seconds, ensuring that host compromise is detected within one attestation cycle.
 3. **Automatic revocation:** SVID non-renewal on attestation failure is an implicit revocation mechanism that requires no revocation lists or OCSP infrastructure.
 4. **Defense in depth:** The OOB path ensures that even if the in-band SPIRE Agent and Keylime Agent are both compromised, the management processor's independent TPM Quote reveals the true platform state.
-
-### Advantages
-
-- Out-of-band attestation: works even when the host OS is compromised, rebooting, or offline.
-- Hardware-isolated attestation path: the management processor is physically separate from the host CPU.
-- Detects compromised kernel / IMA subversion through hardware-signed TPM quotes.
-- TPM Swap attack protection at boot time.
-- Enterprise fleet management integration (HPE OneView, Dell iDRAC, Lenovo XClarity, etc.).
-
-### Limitations
-
-- Vendor-specific management processor implementations.
-- Requires enterprise management plane infrastructure.
-- Management processor firmware must itself be trusted and kept up to date.
 
 ## Privacy Options for TPM-Based Attestation
 

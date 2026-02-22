@@ -502,21 +502,6 @@
 </ul>
 </section>
 
-<section anchor="workload-identity-fusion-spire-re-attestation-via-management-processor"><name>Workload Identity Fusion: SPIRE Re-Attestation via Management Processor</name>
-<t>Both deployment options (A and B) can integrate periodic SPIRE Agent re-attestation with host platform attestation to fuse workload identity with hardware-verified host integrity. The core pattern is: the SPIRE Server's challenge nonce is forwarded to the host attestation verifier, which uses it to fetch a fresh TPM Quote, creating a cryptographic binding between the workload SVID and the host's hardware-attested state.</t>
-<t><strong>In-band implementation (Option A):</strong> In the reference implementation [[AegisSovereignAI]], the SPIRE Server sends a challenge nonce to the SPIRE Agent, which assembles a SovereignAttestation message. The SPIRE Server delegates verification to the Keylime Verifier, which contacts the in-band Keylime agent to fetch a fresh TPM Quote using the same nonce. The verifier validates the Quote, IMA log, and geolocation, then returns attested claims to the SPIRE Server for SVID issuance. This flow is entirely in-band: the TPM Quote travels through the host OS network stack.</t>
-<t><strong>OOB upgrade (Option B):</strong> When a management processor is available, the verification step is upgraded to use the OOB path. The SPIRE Server still sends a challenge nonce to the SPIRE Agent, and the SPIRE Agent still assembles a SovereignAttestation message. However, the management plane verifier (e.g., HPE OneView/GreenLake) forwards the nonce to the management processor (iLO) instead of the in-band agent. The management processor fetches the TPM Quote via its dedicated I2C/private bus (Step 3 of the Periodic Attestation Cycle), and the IMA log is collected separately as untrusted input from the host (Step 4). The verifier performs the full validation (Step 6), and the attested claims -- including platform integrity, IMA status, and geolocation -- are returned to the SPIRE Server for SVID issuance.</t>
-<t><strong>Periodic re-attestation:</strong> The SPIRE Agent's SVID has a short TTL (e.g., 60 seconds) and is periodically re-issued. Each re-attestation cycle triggers the full OOB verification flow, meaning the workload identity is continuously re-bound to the host's current hardware-attested state. If the host platform fails attestation (e.g., IMA log tampering detected, unauthorized binary loaded), the SPIRE Server refuses to re-issue the SVID, effectively revoking the workload's identity and blocking it from communicating with other services.</t>
-<t>This fusion achieves several properties:</t>
-
-<ol spacing="compact">
-<li><strong>Single nonce, dual binding:</strong> The same cryptographic nonce binds both the workload identity proof (TPM App Key certification) and the host platform integrity proof (TPM Quote via OOB path), preventing an attacker from combining a valid workload credential with a compromised host.</li>
-<li><strong>Continuous assurance:</strong> Unlike one-time boot attestation, the short SVID TTL forces re-attestation every 20-60 seconds, ensuring that host compromise is detected within one attestation cycle.</li>
-<li><strong>Automatic revocation:</strong> SVID non-renewal on attestation failure is an implicit revocation mechanism that requires no revocation lists or OCSP infrastructure.</li>
-<li><strong>Defense in depth:</strong> The OOB path ensures that even if the in-band SPIRE Agent and Keylime Agent are both compromised, the management processor's independent TPM Quote reveals the true platform state.</li>
-</ol>
-</section>
-
 <section anchor="advantages-1"><name>Advantages</name>
 
 <ul spacing="compact">
@@ -536,6 +521,21 @@
 <li>Management processor firmware must itself be trusted and kept up to date.</li>
 </ul>
 </section>
+</section>
+
+<section anchor="workload-identity-fusion-periodic-spire-re-attestation"><name>Workload Identity Fusion: Periodic SPIRE Re-Attestation</name>
+<t>Both deployment options (A and B) can integrate periodic SPIRE Agent re-attestation with host platform attestation to fuse workload identity with hardware-verified host integrity. The core pattern is: the SPIRE Server's challenge nonce is forwarded to the host attestation verifier, which uses it to fetch a fresh TPM Quote, creating a cryptographic binding between the workload SVID and the host's hardware-attested state.</t>
+<t><strong>In-band implementation (Option A):</strong> In the reference implementation [[AegisSovereignAI]], the SPIRE Server sends a challenge nonce to the SPIRE Agent, which assembles a SovereignAttestation message. The SPIRE Server delegates verification to the Keylime Verifier, which contacts the in-band Keylime agent to fetch a fresh TPM Quote using the same nonce. The verifier validates the Quote, IMA log, and geolocation, then returns attested claims to the SPIRE Server for SVID issuance. This flow is entirely in-band: the TPM Quote travels through the host OS network stack.</t>
+<t><strong>OOB upgrade (Option B):</strong> When a management processor is available, the verification step is upgraded to use the OOB path. The SPIRE Server still sends a challenge nonce to the SPIRE Agent, and the SPIRE Agent still assembles a SovereignAttestation message. However, the management plane verifier (e.g., HPE OneView/GreenLake) forwards the nonce to the management processor (iLO) instead of the in-band agent. The management processor fetches the TPM Quote via its dedicated I2C/private bus (Step 3 of the Periodic Attestation Cycle), and the IMA log is collected separately as untrusted input from the host (Step 4). The verifier performs the full validation (Step 6), and the attested claims -- including platform integrity, IMA status, and geolocation -- are returned to the SPIRE Server for SVID issuance.</t>
+<t><strong>Periodic re-attestation:</strong> The SPIRE Agent's SVID has a short TTL (e.g., 60 seconds) and is periodically re-issued. Each re-attestation cycle triggers the full OOB verification flow, meaning the workload identity is continuously re-bound to the host's current hardware-attested state. If the host platform fails attestation (e.g., IMA log tampering detected, unauthorized binary loaded), the SPIRE Server refuses to re-issue the SVID, effectively revoking the workload's identity and blocking it from communicating with other services.</t>
+<t>This fusion achieves several properties:</t>
+
+<ol spacing="compact">
+<li><strong>Single nonce, dual binding:</strong> The same cryptographic nonce binds both the workload identity proof (TPM App Key certification) and the host platform integrity proof (TPM Quote via OOB path), preventing an attacker from combining a valid workload credential with a compromised host.</li>
+<li><strong>Continuous assurance:</strong> Unlike one-time boot attestation, the short SVID TTL forces re-attestation every 20-60 seconds, ensuring that host compromise is detected within one attestation cycle.</li>
+<li><strong>Automatic revocation:</strong> SVID non-renewal on attestation failure is an implicit revocation mechanism that requires no revocation lists or OCSP infrastructure.</li>
+<li><strong>Defense in depth:</strong> The OOB path ensures that even if the in-band SPIRE Agent and Keylime Agent are both compromised, the management processor's independent TPM Quote reveals the true platform state.</li>
+</ol>
 </section>
 
 <section anchor="privacy-options-for-tpm-based-attestation"><name>Privacy Options for TPM-Based Attestation</name>

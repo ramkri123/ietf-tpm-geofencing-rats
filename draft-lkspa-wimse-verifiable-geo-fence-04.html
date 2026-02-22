@@ -1448,18 +1448,18 @@ li > p:last-of-type:only-child {
                     <p id="section-toc.1-1.7.2.5.2.6.1"><a href="#section-7.5.6" class="auto internal xref">7.5.6</a>.  <a href="#name-periodic-attestation-cycle-" class="internal xref">Periodic Attestation Cycle: Step-by-Step</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.5.2.7">
-                    <p id="section-toc.1-1.7.2.5.2.7.1"><a href="#section-7.5.7" class="auto internal xref">7.5.7</a>.  <a href="#name-workload-identity-fusion-sp" class="internal xref">Workload Identity Fusion: SPIRE Re-Attestation via Management Processor</a></p>
+                    <p id="section-toc.1-1.7.2.5.2.7.1"><a href="#section-7.5.7" class="auto internal xref">7.5.7</a>.  <a href="#name-advantages-2" class="internal xref">Advantages</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.5.2.8">
-                    <p id="section-toc.1-1.7.2.5.2.8.1"><a href="#section-7.5.8" class="auto internal xref">7.5.8</a>.  <a href="#name-advantages-2" class="internal xref">Advantages</a></p>
-</li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.5.2.9">
-                    <p id="section-toc.1-1.7.2.5.2.9.1"><a href="#section-7.5.9" class="auto internal xref">7.5.9</a>.  <a href="#name-limitations-2" class="internal xref">Limitations</a></p>
+                    <p id="section-toc.1-1.7.2.5.2.8.1"><a href="#section-7.5.8" class="auto internal xref">7.5.8</a>.  <a href="#name-limitations-2" class="internal xref">Limitations</a></p>
 </li>
                 </ul>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.6">
-                <p id="section-toc.1-1.7.2.6.1"><a href="#section-7.6" class="auto internal xref">7.6</a>.  <a href="#name-privacy-options-for-tpm-bas" class="internal xref">Privacy Options for TPM-Based Attestation</a></p>
+                <p id="section-toc.1-1.7.2.6.1"><a href="#section-7.6" class="auto internal xref">7.6</a>.  <a href="#name-workload-identity-fusion-pe" class="internal xref">Workload Identity Fusion: Periodic SPIRE Re-Attestation</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.7">
+                <p id="section-toc.1-1.7.2.7.1"><a href="#section-7.7" class="auto internal xref">7.7</a>.  <a href="#name-privacy-options-for-tpm-bas" class="internal xref">Privacy Options for TPM-Based Attestation</a></p>
 </li>
             </ul>
 </li>
@@ -2348,102 +2348,102 @@ li > p:last-of-type:only-child {
           </ul>
 </section>
 </div>
-<div id="workload-identity-fusion-spire-re-attestation-via-management-processor">
-<section id="section-7.5.7">
-          <h4 id="name-workload-identity-fusion-sp">
-<a href="#section-7.5.7" class="section-number selfRef">7.5.7. </a><a href="#name-workload-identity-fusion-sp" class="section-name selfRef">Workload Identity Fusion: SPIRE Re-Attestation via Management Processor</a>
-          </h4>
-<p id="section-7.5.7-1">Both deployment options (A and B) can integrate periodic SPIRE Agent re-attestation with host platform attestation to fuse workload identity with hardware-verified host integrity. The core pattern is: the SPIRE Server's challenge nonce is forwarded to the host attestation verifier, which uses it to fetch a fresh TPM Quote, creating a cryptographic binding between the workload SVID and the host's hardware-attested state.<a href="#section-7.5.7-1" class="pilcrow">¶</a></p>
-<p id="section-7.5.7-2"><strong>In-band implementation (Option A):</strong> In the reference implementation [[AegisSovereignAI]], the SPIRE Server sends a challenge nonce to the SPIRE Agent, which assembles a SovereignAttestation message. The SPIRE Server delegates verification to the Keylime Verifier, which contacts the in-band Keylime agent to fetch a fresh TPM Quote using the same nonce. The verifier validates the Quote, IMA log, and geolocation, then returns attested claims to the SPIRE Server for SVID issuance. This flow is entirely in-band: the TPM Quote travels through the host OS network stack.<a href="#section-7.5.7-2" class="pilcrow">¶</a></p>
-<p id="section-7.5.7-3"><strong>OOB upgrade (Option B):</strong> When a management processor is available, the verification step is upgraded to use the OOB path. The SPIRE Server still sends a challenge nonce to the SPIRE Agent, and the SPIRE Agent still assembles a SovereignAttestation message. However, the management plane verifier (e.g., HPE OneView/GreenLake) forwards the nonce to the management processor (iLO) instead of the in-band agent. The management processor fetches the TPM Quote via its dedicated I2C/private bus (Step 3 of the Periodic Attestation Cycle), and the IMA log is collected separately as untrusted input from the host (Step 4). The verifier performs the full validation (Step 6), and the attested claims -- including platform integrity, IMA status, and geolocation -- are returned to the SPIRE Server for SVID issuance.<a href="#section-7.5.7-3" class="pilcrow">¶</a></p>
-<p id="section-7.5.7-4"><strong>Periodic re-attestation:</strong> The SPIRE Agent's SVID has a short TTL (e.g., 60 seconds) and is periodically re-issued. Each re-attestation cycle triggers the full OOB verification flow, meaning the workload identity is continuously re-bound to the host's current hardware-attested state. If the host platform fails attestation (e.g., IMA log tampering detected, unauthorized binary loaded), the SPIRE Server refuses to re-issue the SVID, effectively revoking the workload's identity and blocking it from communicating with other services.<a href="#section-7.5.7-4" class="pilcrow">¶</a></p>
-<p id="section-7.5.7-5">This fusion achieves several properties:<a href="#section-7.5.7-5" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="compact type-1" id="section-7.5.7-6">
-<li id="section-7.5.7-6.1">
-              <strong>Single nonce, dual binding:</strong> The same cryptographic nonce binds both the workload identity proof (TPM App Key certification) and the host platform integrity proof (TPM Quote via OOB path), preventing an attacker from combining a valid workload credential with a compromised host.<a href="#section-7.5.7-6.1" class="pilcrow">¶</a>
-</li>
-            <li id="section-7.5.7-6.2">
-              <strong>Continuous assurance:</strong> Unlike one-time boot attestation, the short SVID TTL forces re-attestation every 20-60 seconds, ensuring that host compromise is detected within one attestation cycle.<a href="#section-7.5.7-6.2" class="pilcrow">¶</a>
-</li>
-            <li id="section-7.5.7-6.3">
-              <strong>Automatic revocation:</strong> SVID non-renewal on attestation failure is an implicit revocation mechanism that requires no revocation lists or OCSP infrastructure.<a href="#section-7.5.7-6.3" class="pilcrow">¶</a>
-</li>
-            <li id="section-7.5.7-6.4">
-              <strong>Defense in depth:</strong> The OOB path ensures that even if the in-band SPIRE Agent and Keylime Agent are both compromised, the management processor's independent TPM Quote reveals the true platform state.<a href="#section-7.5.7-6.4" class="pilcrow">¶</a>
-</li>
-          </ol>
-</section>
-</div>
 <div id="advantages-1">
-<section id="section-7.5.8">
+<section id="section-7.5.7">
           <h4 id="name-advantages-2">
-<a href="#section-7.5.8" class="section-number selfRef">7.5.8. </a><a href="#name-advantages-2" class="section-name selfRef">Advantages</a>
+<a href="#section-7.5.7" class="section-number selfRef">7.5.7. </a><a href="#name-advantages-2" class="section-name selfRef">Advantages</a>
           </h4>
 <ul class="compact">
-<li class="compact" id="section-7.5.8-1.1">Out-of-band attestation: works even when the host OS is compromised, rebooting, or offline.<a href="#section-7.5.8-1.1" class="pilcrow">¶</a>
+<li class="compact" id="section-7.5.7-1.1">Out-of-band attestation: works even when the host OS is compromised, rebooting, or offline.<a href="#section-7.5.7-1.1" class="pilcrow">¶</a>
 </li>
-            <li class="compact" id="section-7.5.8-1.2">Hardware-isolated attestation path: the management processor is physically separate from the host CPU.<a href="#section-7.5.8-1.2" class="pilcrow">¶</a>
+            <li class="compact" id="section-7.5.7-1.2">Hardware-isolated attestation path: the management processor is physically separate from the host CPU.<a href="#section-7.5.7-1.2" class="pilcrow">¶</a>
 </li>
-            <li class="compact" id="section-7.5.8-1.3">Detects compromised kernel / IMA subversion through hardware-signed TPM quotes.<a href="#section-7.5.8-1.3" class="pilcrow">¶</a>
+            <li class="compact" id="section-7.5.7-1.3">Detects compromised kernel / IMA subversion through hardware-signed TPM quotes.<a href="#section-7.5.7-1.3" class="pilcrow">¶</a>
 </li>
-            <li class="compact" id="section-7.5.8-1.4">TPM Swap attack protection at boot time.<a href="#section-7.5.8-1.4" class="pilcrow">¶</a>
+            <li class="compact" id="section-7.5.7-1.4">TPM Swap attack protection at boot time.<a href="#section-7.5.7-1.4" class="pilcrow">¶</a>
 </li>
-            <li class="compact" id="section-7.5.8-1.5">Enterprise fleet management integration (HPE OneView, Dell iDRAC, Lenovo XClarity, etc.).<a href="#section-7.5.8-1.5" class="pilcrow">¶</a>
+            <li class="compact" id="section-7.5.7-1.5">Enterprise fleet management integration (HPE OneView, Dell iDRAC, Lenovo XClarity, etc.).<a href="#section-7.5.7-1.5" class="pilcrow">¶</a>
 </li>
           </ul>
 </section>
 </div>
 <div id="limitations-1">
-<section id="section-7.5.9">
+<section id="section-7.5.8">
           <h4 id="name-limitations-2">
-<a href="#section-7.5.9" class="section-number selfRef">7.5.9. </a><a href="#name-limitations-2" class="section-name selfRef">Limitations</a>
+<a href="#section-7.5.8" class="section-number selfRef">7.5.8. </a><a href="#name-limitations-2" class="section-name selfRef">Limitations</a>
           </h4>
 <ul class="compact">
-<li class="compact" id="section-7.5.9-1.1">Vendor-specific management processor implementations.<a href="#section-7.5.9-1.1" class="pilcrow">¶</a>
+<li class="compact" id="section-7.5.8-1.1">Vendor-specific management processor implementations.<a href="#section-7.5.8-1.1" class="pilcrow">¶</a>
 </li>
-            <li class="compact" id="section-7.5.9-1.2">Requires enterprise management plane infrastructure.<a href="#section-7.5.9-1.2" class="pilcrow">¶</a>
+            <li class="compact" id="section-7.5.8-1.2">Requires enterprise management plane infrastructure.<a href="#section-7.5.8-1.2" class="pilcrow">¶</a>
 </li>
-            <li class="compact" id="section-7.5.9-1.3">Management processor firmware must itself be trusted and kept up to date.<a href="#section-7.5.9-1.3" class="pilcrow">¶</a>
+            <li class="compact" id="section-7.5.8-1.3">Management processor firmware must itself be trusted and kept up to date.<a href="#section-7.5.8-1.3" class="pilcrow">¶</a>
 </li>
           </ul>
 </section>
 </div>
 </section>
 </div>
-<div id="privacy-options-for-tpm-based-attestation">
+<div id="workload-identity-fusion-periodic-spire-re-attestation">
 <section id="section-7.6">
-        <h3 id="name-privacy-options-for-tpm-bas">
-<a href="#section-7.6" class="section-number selfRef">7.6. </a><a href="#name-privacy-options-for-tpm-bas" class="section-name selfRef">Privacy Options for TPM-Based Attestation</a>
+        <h3 id="name-workload-identity-fusion-pe">
+<a href="#section-7.6" class="section-number selfRef">7.6. </a><a href="#name-workload-identity-fusion-pe" class="section-name selfRef">Workload Identity Fusion: Periodic SPIRE Re-Attestation</a>
         </h3>
-<p id="section-7.6-1">From a privacy standpoint, sharing TPM details--especially the EK certificate--across organizational boundaries can be problematic. Below are two approaches that let you attest workload identities without exposing raw EK data.<a href="#section-7.6-1" class="pilcrow">¶</a></p>
+<p id="section-7.6-1">Both deployment options (A and B) can integrate periodic SPIRE Agent re-attestation with host platform attestation to fuse workload identity with hardware-verified host integrity. The core pattern is: the SPIRE Server's challenge nonce is forwarded to the host attestation verifier, which uses it to fetch a fresh TPM Quote, creating a cryptographic binding between the workload SVID and the host's hardware-attested state.<a href="#section-7.6-1" class="pilcrow">¶</a></p>
+<p id="section-7.6-2"><strong>In-band implementation (Option A):</strong> In the reference implementation [[AegisSovereignAI]], the SPIRE Server sends a challenge nonce to the SPIRE Agent, which assembles a SovereignAttestation message. The SPIRE Server delegates verification to the Keylime Verifier, which contacts the in-band Keylime agent to fetch a fresh TPM Quote using the same nonce. The verifier validates the Quote, IMA log, and geolocation, then returns attested claims to the SPIRE Server for SVID issuance. This flow is entirely in-band: the TPM Quote travels through the host OS network stack.<a href="#section-7.6-2" class="pilcrow">¶</a></p>
+<p id="section-7.6-3"><strong>OOB upgrade (Option B):</strong> When a management processor is available, the verification step is upgraded to use the OOB path. The SPIRE Server still sends a challenge nonce to the SPIRE Agent, and the SPIRE Agent still assembles a SovereignAttestation message. However, the management plane verifier (e.g., HPE OneView/GreenLake) forwards the nonce to the management processor (iLO) instead of the in-band agent. The management processor fetches the TPM Quote via its dedicated I2C/private bus (Step 3 of the Periodic Attestation Cycle), and the IMA log is collected separately as untrusted input from the host (Step 4). The verifier performs the full validation (Step 6), and the attested claims -- including platform integrity, IMA status, and geolocation -- are returned to the SPIRE Server for SVID issuance.<a href="#section-7.6-3" class="pilcrow">¶</a></p>
+<p id="section-7.6-4"><strong>Periodic re-attestation:</strong> The SPIRE Agent's SVID has a short TTL (e.g., 60 seconds) and is periodically re-issued. Each re-attestation cycle triggers the full OOB verification flow, meaning the workload identity is continuously re-bound to the host's current hardware-attested state. If the host platform fails attestation (e.g., IMA log tampering detected, unauthorized binary loaded), the SPIRE Server refuses to re-issue the SVID, effectively revoking the workload's identity and blocking it from communicating with other services.<a href="#section-7.6-4" class="pilcrow">¶</a></p>
+<p id="section-7.6-5">This fusion achieves several properties:<a href="#section-7.6-5" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="compact type-1" id="section-7.6-6">
+<li id="section-7.6-6.1">
+            <strong>Single nonce, dual binding:</strong> The same cryptographic nonce binds both the workload identity proof (TPM App Key certification) and the host platform integrity proof (TPM Quote via OOB path), preventing an attacker from combining a valid workload credential with a compromised host.<a href="#section-7.6-6.1" class="pilcrow">¶</a>
+</li>
+          <li id="section-7.6-6.2">
+            <strong>Continuous assurance:</strong> Unlike one-time boot attestation, the short SVID TTL forces re-attestation every 20-60 seconds, ensuring that host compromise is detected within one attestation cycle.<a href="#section-7.6-6.2" class="pilcrow">¶</a>
+</li>
+          <li id="section-7.6-6.3">
+            <strong>Automatic revocation:</strong> SVID non-renewal on attestation failure is an implicit revocation mechanism that requires no revocation lists or OCSP infrastructure.<a href="#section-7.6-6.3" class="pilcrow">¶</a>
+</li>
+          <li id="section-7.6-6.4">
+            <strong>Defense in depth:</strong> The OOB path ensures that even if the in-band SPIRE Agent and Keylime Agent are both compromised, the management processor's independent TPM Quote reveals the true platform state.<a href="#section-7.6-6.4" class="pilcrow">¶</a>
+</li>
+        </ol>
+</section>
+</div>
+<div id="privacy-options-for-tpm-based-attestation">
+<section id="section-7.7">
+        <h3 id="name-privacy-options-for-tpm-bas">
+<a href="#section-7.7" class="section-number selfRef">7.7. </a><a href="#name-privacy-options-for-tpm-bas" class="section-name selfRef">Privacy Options for TPM-Based Attestation</a>
+        </h3>
+<p id="section-7.7-1">From a privacy standpoint, sharing TPM details--especially the EK certificate--across organizational boundaries can be problematic. Below are two approaches that let you attest workload identities without exposing raw EK data.<a href="#section-7.7-1" class="pilcrow">¶</a></p>
 <ul class="compact">
-<li class="compact" id="section-7.6-2.1">
-            <p id="section-7.6-2.1.1">Option 1 -- Pseudonymity:<a href="#section-7.6-2.1.1" class="pilcrow">¶</a></p>
+<li class="compact" id="section-7.7-2.1">
+            <p id="section-7.7-2.1.1">Option 1 -- Pseudonymity:<a href="#section-7.7-2.1.1" class="pilcrow">¶</a></p>
 <ul class="compact">
-<li class="compact" id="section-7.6-2.1.2.1">Only the Workload Identity Agent's TPM APP public key and Host identity agent's (e.g. Keylime agent) TPM AK public key are shared outside the host-owner organization.<a href="#section-7.6-2.1.2.1" class="pilcrow">¶</a>
+<li class="compact" id="section-7.7-2.1.2.1">Only the Workload Identity Agent's TPM APP public key and Host identity agent's (e.g. Keylime agent) TPM AK public key are shared outside the host-owner organization.<a href="#section-7.7-2.1.2.1" class="pilcrow">¶</a>
 </li>
-              <li class="compact" id="section-7.6-2.1.2.2">The consuming organization's Workload Identity Manager verifies that AK against its own list of trusted AK public keys.<a href="#section-7.6-2.1.2.2" class="pilcrow">¶</a>
+              <li class="compact" id="section-7.7-2.1.2.2">The consuming organization's Workload Identity Manager verifies that AK against its own list of trusted AK public keys.<a href="#section-7.7-2.1.2.2" class="pilcrow">¶</a>
 </li>
-              <li class="compact" id="section-7.6-2.1.2.3">A unique TPM AK is generated and attested per tenant, so no single AK maps across tenants.<a href="#section-7.6-2.1.2.3" class="pilcrow">¶</a>
+              <li class="compact" id="section-7.7-2.1.2.3">A unique TPM AK is generated and attested per tenant, so no single AK maps across tenants.<a href="#section-7.7-2.1.2.3" class="pilcrow">¶</a>
 </li>
-              <li class="compact" id="section-7.6-2.1.2.4">Supported by all TPM 2.0+ devices, this gives you per-tenant pseudonymity without ever revealing the EK.<a href="#section-7.6-2.1.2.4" class="pilcrow">¶</a>
+              <li class="compact" id="section-7.7-2.1.2.4">Supported by all TPM 2.0+ devices, this gives you per-tenant pseudonymity without ever revealing the EK.<a href="#section-7.7-2.1.2.4" class="pilcrow">¶</a>
 </li>
             </ul>
 </li>
-          <li class="compact" id="section-7.6-2.2">
-            <p id="section-7.6-2.2.1">Option 2 -- Full Anonymity:<a href="#section-7.6-2.2.1" class="pilcrow">¶</a></p>
+          <li class="compact" id="section-7.7-2.2">
+            <p id="section-7.7-2.2.1">Option 2 -- Full Anonymity:<a href="#section-7.7-2.2.1" class="pilcrow">¶</a></p>
 <ul class="compact">
-<li class="compact" id="section-7.6-2.2.2.1">Leverage TPM 2.0+ Direct Anonymous Attestation (DAA) or EPID. Note that this requires TPM 2.0+ devices with DAA support.<a href="#section-7.6-2.2.2.1" class="pilcrow">¶</a>
+<li class="compact" id="section-7.7-2.2.2.1">Leverage TPM 2.0+ Direct Anonymous Attestation (DAA) or EPID. Note that this requires TPM 2.0+ devices with DAA support.<a href="#section-7.7-2.2.2.1" class="pilcrow">¶</a>
 </li>
-              <li class="compact" id="section-7.6-2.2.2.2">Each host's TPM runs the DAA Join protocol with a Privacy CA to obtain a group credential.<a href="#section-7.6-2.2.2.2" class="pilcrow">¶</a>
+              <li class="compact" id="section-7.7-2.2.2.2">Each host's TPM runs the DAA Join protocol with a Privacy CA to obtain a group credential.<a href="#section-7.7-2.2.2.2" class="pilcrow">¶</a>
 </li>
-              <li class="compact" id="section-7.6-2.2.2.3">The Workload Identity Agent signs its public key with that DAA credential (using a session-specific basename).<a href="#section-7.6-2.2.2.3" class="pilcrow">¶</a>
+              <li class="compact" id="section-7.7-2.2.2.3">The Workload Identity Agent signs its public key with that DAA credential (using a session-specific basename).<a href="#section-7.7-2.2.2.3" class="pilcrow">¶</a>
 </li>
-              <li class="compact" id="section-7.6-2.2.2.4">The Workload Identity Manager verifies the signature against the DAA group public key--proving membership without exposing or linking any device identity.<a href="#section-7.6-2.2.2.4" class="pilcrow">¶</a>
+              <li class="compact" id="section-7.7-2.2.2.4">The Workload Identity Manager verifies the signature against the DAA group public key--proving membership without exposing or linking any device identity.<a href="#section-7.7-2.2.2.4" class="pilcrow">¶</a>
 </li>
             </ul>
 </li>
-          <li class="compact" id="section-7.6-2.3">Both options remove direct TPM EK exposure. Pseudonymity uses the standard TPM AK model, while TPM DAA offers unlinkable, anonymous proofs of TPM possession.<a href="#section-7.6-2.3" class="pilcrow">¶</a>
+          <li class="compact" id="section-7.7-2.3">Both options remove direct TPM EK exposure. Pseudonymity uses the standard TPM AK model, while TPM DAA offers unlinkable, anonymous proofs of TPM possession.<a href="#section-7.7-2.3" class="pilcrow">¶</a>
 </li>
         </ul>
 </section>

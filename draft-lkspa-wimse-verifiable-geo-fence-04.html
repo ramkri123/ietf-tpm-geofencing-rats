@@ -2303,7 +2303,7 @@ li > p:last-of-type:only-child {
 </li>
           </ul>
 <p id="section-7.5.7-11"><strong>Step 4 -- Host OS: Provide IMA Log (In-Band)</strong><a href="#section-7.5.7-11" class="pilcrow">¶</a></p>
-<p id="section-7.5.7-12">The management plane (or Keylime Verifier) requests the current IMA event log from the host OS via the host network stack (SSH/gRPC). The IMA log is transmitted as untrusted input.<a href="#section-7.5.7-12" class="pilcrow">¶</a></p>
+<p id="section-7.5.7-12">The external management plane (e.g., HPE OneView/GreenLake) requests the current IMA event log from the host OS via the host network stack (SSH/gRPC). The IMA log is transmitted as untrusted input.<a href="#section-7.5.7-12" class="pilcrow">¶</a></p>
 <ul class="compact">
 <li class="compact" id="section-7.5.7-13.1">
               <em>Compromise detection:</em> A compromised kernel can tamper with this log (remove entries, alter hashes, truncate). This is expected behavior and is why the log is treated as untrusted. The verifier will detect any tampering in Step 6.<a href="#section-7.5.7-13.1" class="pilcrow">¶</a>

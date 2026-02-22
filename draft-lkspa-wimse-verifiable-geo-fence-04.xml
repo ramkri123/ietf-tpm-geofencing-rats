@@ -476,7 +476,7 @@
 <li><em>Compromise detection:</em> This step is entirely independent of the host OS. A compromised kernel cannot intercept, delay, or modify the Quote because it has no access to the I2C/private bus or the management processor's execution environment. The nonce is embedded inside the TPM-signed Quote, so it cannot be stripped or replaced without invalidating the signature.</li>
 </ul>
 <t><strong>Step 4 -- Host OS: Provide IMA Log (In-Band)</strong></t>
-<t>The management plane (or Keylime Verifier) requests the current IMA event log from the host OS via the host network stack (SSH/gRPC). The IMA log is transmitted as untrusted input.</t>
+<t>The external management plane (e.g., HPE OneView/GreenLake) requests the current IMA event log from the host OS via the host network stack (SSH/gRPC). The IMA log is transmitted as untrusted input.</t>
 
 <ul spacing="compact">
 <li><em>Compromise detection:</em> A compromised kernel can tamper with this log (remove entries, alter hashes, truncate). This is expected behavior and is why the log is treated as untrusted. The verifier will detect any tampering in Step 6.</li>

@@ -493,7 +493,7 @@ The management processor passes the verifier's nonce to the TPM via the TPM2_Quo
 
 **Step 4 -- Host OS: Provide IMA Log (In-Band)**
 
-The management plane (or Keylime Verifier) requests the current IMA event log from the host OS via the host network stack (SSH/gRPC). The IMA log is transmitted as untrusted input.
+The external management plane (e.g., HPE OneView/GreenLake) requests the current IMA event log from the host OS via the host network stack (SSH/gRPC). The IMA log is transmitted as untrusted input.
 
 * _Compromise detection:_ A compromised kernel can tamper with this log (remove entries, alter hashes, truncate). This is expected behavior and is why the log is treated as untrusted. The verifier will detect any tampering in Step 6.
 * _Compromise detection:_ A compromised kernel may refuse to deliver the log entirely (e.g., kill the agent). In this case, the verifier has a TPM Quote (from Step 3) but no log to verify against it, which triggers a trust failure.

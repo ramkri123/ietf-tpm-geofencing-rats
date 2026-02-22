@@ -17,7 +17,7 @@ Expires: 26 August 2026                                            Intel
 
 Zero-Trust Sovereign AI: Verifiable Geofencing and Residency Proofs for
                          Cybersecure Workloads
-             draft-lkspa-wimse-verifiable-geo-fence-latest
+               draft-lkspa-wimse-verifiable-geo-fence-00
 
 Abstract
 

@@ -2,7 +2,7 @@
 title = "Zero-Trust Sovereign AI: Verifiable Geofencing and Residency Proofs for Cybersecure Workloads"
 abbrev = "GeoW"
 category = "info"
-docName = "draft-lkspa-wimse-verifiable-geo-fence-latest"
+docName = "draft-lkspa-wimse-verifiable-geo-fence-00"
 ipr = "trust200902"
 area = "Security"
 workgroup = "Workload Identity in Multi System Environments"
@@ -10,7 +10,7 @@ keyword = ["geofencing", "attestation", "workload identity", "residency", "TPM",
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "draft-lkspa-wimse-verifiable-geo-fence-latest"
+value = "draft-lkspa-wimse-verifiable-geo-fence-00"
 stream = "IETF"
 status = "informational"
 

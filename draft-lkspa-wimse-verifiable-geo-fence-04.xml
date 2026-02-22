@@ -547,7 +547,7 @@
 <section anchor="limitations-2"><name>Limitations</name>
 
 <ul spacing="compact">
-<li><strong>Trust in Hypervisor:</strong> The cloud consumer must trust the provider's hypervisor to correctly emulate the TPM and not tamper with the guest's PCR values.</li>
+<li><strong>Trust in Hypervisor:</strong> The cloud consumer must trust the provider's hypervisor to correctly emulate the TPM and not tamper with the guest's PCR values. Note that advanced implementations like <strong>AWS NitroTPM</strong> utilize a dedicated hardware security chip (the Nitro Security Chip) to provide hardware-backed and physically isolated TPM functionality, which significantly reduces the software attack surface and the degree of trust required in the hypervisor itself.</li>
 <li><strong>Provider-Specific APIs:</strong> While the TPM interface is standard, the mechanism for verifying the &quot;outer&quot; cloud attestation document varies by provider.</li>
 </ul>
 </section>

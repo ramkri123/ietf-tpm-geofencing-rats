@@ -546,7 +546,7 @@ In cloud environments, physical TPM access is typically virtualized. Cloud provi
 
 ### Limitations
 
-- **Trust in Hypervisor:** The cloud consumer must trust the provider's hypervisor to correctly emulate the TPM and not tamper with the guest's PCR values.
+- **Trust in Hypervisor:** The cloud consumer must trust the provider's hypervisor to correctly emulate the TPM and not tamper with the guest's PCR values. Note that advanced implementations like **AWS NitroTPM** utilize a dedicated hardware security chip (the Nitro Security Chip) to provide hardware-backed and physically isolated TPM functionality, which significantly reduces the software attack surface and the degree of trust required in the hypervisor itself.
 - **Provider-Specific APIs:** While the TPM interface is standard, the mechanism for verifying the "outer" cloud attestation document varies by provider.
 
 ## Workload Identity Fusion: Periodic SPIRE Re-Attestation

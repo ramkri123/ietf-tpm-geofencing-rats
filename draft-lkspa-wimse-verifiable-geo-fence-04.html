@@ -2447,7 +2447,7 @@ li > p:last-of-type:only-child {
           </h4>
 <ul class="compact">
 <li class="compact" id="section-7.6.3-1.1">
-              <strong>Trust in Hypervisor:</strong> The cloud consumer must trust the provider's hypervisor to correctly emulate the TPM and not tamper with the guest's PCR values.<a href="#section-7.6.3-1.1" class="pilcrow">¶</a>
+              <strong>Trust in Hypervisor:</strong> The cloud consumer must trust the provider's hypervisor to correctly emulate the TPM and not tamper with the guest's PCR values. Note that advanced implementations like <strong>AWS NitroTPM</strong> utilize a dedicated hardware security chip (the Nitro Security Chip) to provide hardware-backed and physically isolated TPM functionality, which significantly reduces the software attack surface and the degree of trust required in the hypervisor itself.<a href="#section-7.6.3-1.1" class="pilcrow">¶</a>
 </li>
             <li class="compact" id="section-7.6.3-1.2">
               <strong>Provider-Specific APIs:</strong> While the TPM interface is standard, the mechanism for verifying the "outer" cloud attestation document varies by provider.<a href="#section-7.6.3-1.2" class="pilcrow">¶</a>

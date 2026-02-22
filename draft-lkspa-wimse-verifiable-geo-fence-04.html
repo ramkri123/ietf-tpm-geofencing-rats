@@ -1433,28 +1433,25 @@ li > p:last-of-type:only-child {
                     <p id="section-toc.1-1.7.2.5.2.1.1"><a href="#section-7.5.1" class="auto internal xref">7.5.1</a>.  <a href="#name-dual-tpm-access-paths" class="internal xref">Dual TPM Access Paths</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.5.2.2">
-                    <p id="section-toc.1-1.7.2.5.2.2.1"><a href="#section-7.5.2" class="auto internal xref">7.5.2</a>.  <a href="#name-silicon-root-of-trust-and-i" class="internal xref">Silicon Root of Trust and IMA Integrity Protection</a></p>
+                    <p id="section-toc.1-1.7.2.5.2.2.1"><a href="#section-7.5.2" class="auto internal xref">7.5.2</a>.  <a href="#name-architecture-2" class="internal xref">Architecture</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.5.2.3">
-                    <p id="section-toc.1-1.7.2.5.2.3.1"><a href="#section-7.5.3" class="auto internal xref">7.5.3</a>.  <a href="#name-root-adversary-and-ima-tamp" class="internal xref">Root Adversary and IMA Tampering</a></p>
+                    <p id="section-toc.1-1.7.2.5.2.3.1"><a href="#section-7.5.3" class="auto internal xref">7.5.3</a>.  <a href="#name-silicon-root-of-trust-and-i" class="internal xref">Silicon Root of Trust and IMA Integrity Protection</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.5.2.4">
-                    <p id="section-toc.1-1.7.2.5.2.4.1"><a href="#section-7.5.4" class="auto internal xref">7.5.4</a>.  <a href="#name-tpm-swap-attack-protection" class="internal xref">TPM Swap Attack Protection</a></p>
+                    <p id="section-toc.1-1.7.2.5.2.4.1"><a href="#section-7.5.4" class="auto internal xref">7.5.4</a>.  <a href="#name-root-adversary-and-ima-tamp" class="internal xref">Root Adversary and IMA Tampering</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.5.2.5">
-                    <p id="section-toc.1-1.7.2.5.2.5.1"><a href="#section-7.5.5" class="auto internal xref">7.5.5</a>.  <a href="#name-architecture-2" class="internal xref">Architecture</a></p>
+                    <p id="section-toc.1-1.7.2.5.2.5.1"><a href="#section-7.5.5" class="auto internal xref">7.5.5</a>.  <a href="#name-tpm-swap-attack-protection" class="internal xref">TPM Swap Attack Protection</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.5.2.6">
-                    <p id="section-toc.1-1.7.2.5.2.6.1"><a href="#section-7.5.6" class="auto internal xref">7.5.6</a>.  <a href="#name-attestation-flow" class="internal xref">Attestation Flow</a></p>
+                    <p id="section-toc.1-1.7.2.5.2.6.1"><a href="#section-7.5.6" class="auto internal xref">7.5.6</a>.  <a href="#name-periodic-attestation-cycle-" class="internal xref">Periodic Attestation Cycle: Step-by-Step</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.5.2.7">
-                    <p id="section-toc.1-1.7.2.5.2.7.1"><a href="#section-7.5.7" class="auto internal xref">7.5.7</a>.  <a href="#name-periodic-attestation-cycle-" class="internal xref">Periodic Attestation Cycle: Step-by-Step</a></p>
+                    <p id="section-toc.1-1.7.2.5.2.7.1"><a href="#section-7.5.7" class="auto internal xref">7.5.7</a>.  <a href="#name-advantages-2" class="internal xref">Advantages</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.5.2.8">
-                    <p id="section-toc.1-1.7.2.5.2.8.1"><a href="#section-7.5.8" class="auto internal xref">7.5.8</a>.  <a href="#name-advantages-2" class="internal xref">Advantages</a></p>
-</li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.5.2.9">
-                    <p id="section-toc.1-1.7.2.5.2.9.1"><a href="#section-7.5.9" class="auto internal xref">7.5.9</a>.  <a href="#name-limitations-2" class="internal xref">Limitations</a></p>
+                    <p id="section-toc.1-1.7.2.5.2.8.1"><a href="#section-7.5.8" class="auto internal xref">7.5.8</a>.  <a href="#name-limitations-2" class="internal xref">Limitations</a></p>
 </li>
                 </ul>
 </li>
@@ -2189,187 +2186,159 @@ li > p:last-of-type:only-child {
           </ul>
 </section>
 </div>
-<div id="silicon-root-of-trust-and-ima-integrity-protection">
+<div id="architecture-1">
 <section id="section-7.5.2">
-          <h4 id="name-silicon-root-of-trust-and-i">
-<a href="#section-7.5.2" class="section-number selfRef">7.5.2. </a><a href="#name-silicon-root-of-trust-and-i" class="section-name selfRef">Silicon Root of Trust and IMA Integrity Protection</a>
+          <h4 id="name-architecture-2">
+<a href="#section-7.5.2" class="section-number selfRef">7.5.2. </a><a href="#name-architecture-2" class="section-name selfRef">Architecture</a>
           </h4>
-<p id="section-7.5.2-1">To ensure that the attestation measurements themselves are trustworthy, the management processor architecture provides multiple layers of protection against the "who watches the watcher" problem:<a href="#section-7.5.2-1" class="pilcrow">¶</a></p>
-<p id="section-7.5.2-2"><strong>Protection 1 -- Secure Boot / Silicon Root of Trust:</strong> Before the OS starts, the management processor ASIC (e.g., HPE iLO) verifies the UEFI BIOS firmware. The BIOS then verifies the Bootloader (GRUB), and the Bootloader verifies the Linux Kernel signature. This ensures that the version of the Linux kernel -- and thus the IMA subsystem code -- being loaded is the authentic, signed version.<a href="#section-7.5.2-2" class="pilcrow">¶</a></p>
-<p id="section-7.5.2-3"><strong>Protection 2 -- TPM PCR Extension (Hardware Enforcement):</strong> Linux IMA does not just keep a list of hashes in RAM; it extends those hashes into TPM PCR 10. PCR extension is a one-way operation -- data can be added (extended) to a PCR, but it cannot be overwritten or deleted without a full system reboot. Even if a compromised kernel tries to stop IMA from recording a malicious binary, it cannot undo the previous clean measurements in the TPM. To verify integrity, the remote verifier obtains two pieces of evidence: (1) the IMA event log, which is software-provided from the host OS and could be tampered with, and (2) the TPM Quote, which is hardware-signed by the TPM's Attestation Key and cannot be forged. The verifier replays the IMA log to recompute the expected PCR 10 value and compares it against the hardware-signed TPM Quote. Any mismatch -- such as a missing or altered log entry -- means the IMA log has been tampered with, triggering a trust failure.<a href="#section-7.5.2-3" class="pilcrow">¶</a></p>
-<p id="section-7.5.2-4"><strong>Protection 3 -- IMA Appraisal Mode:</strong> By default, IMA only measures (logs). In IMA Appraisal mode, the kernel refuses to execute any binary or load any library that does not have a valid cryptographic signature (stored as an extended attribute on the file). IMA policies can themselves be digitally signed, preventing tampering.<a href="#section-7.5.2-4" class="pilcrow">¶</a></p>
-<p id="section-7.5.2-5"><strong>Protection 4 -- Out-of-Band (OOB) Attestation:</strong> This is the critical layer. Since the kernel could potentially be tricked into lying about its internal state, the remote verifier asks the management processor for a TPM Quote. The management processor talks directly to the TPM (bypassing the Host CPU/Kernel), and the TPM signs the PCR values with its internal, hardware-protected key. The verifier compares this hardware-signed value against the software-reported IMA log. Any discrepancy means the Linux kernel/IMA subsystem has been tampered with.<a href="#section-7.5.2-5" class="pilcrow">¶</a></p>
-<p id="section-7.5.2-6"><strong>Protection 5 -- Kernel Lockdown Mode:</strong> Linux Kernel Lockdown (integrity or confidentiality mode) prevents even the root user from modifying kernel memory via /dev/mem, replacing the running kernel via kexec, or accessing sensitive debug interfaces that could be used to bypass IMA checks.<a href="#section-7.5.2-6" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="compact type-1" id="section-7.5.2-1">
+<li id="section-7.5.2-1.1">
+              <strong>Management Processor (e.g., HPE iLO):</strong> Has direct access to the host TPM via a dedicated bus (I2C/private bus), independent of the host CPU and OS. The management processor collects TPM measurements and can perform attestation even when the host OS is not running or is compromised.<a href="#section-7.5.2-1.1" class="pilcrow">¶</a>
+</li>
+            <li id="section-7.5.2-1.2">
+              <strong>External Management Plane (e.g., HPE OneView, HPE GreenLake):</strong> Centralized management platform that receives attestation evidence from the management processor. Validates TPM quotes against golden measurements maintained in the management platform's database. Provides fleet-wide attestation visibility and policy enforcement.<a href="#section-7.5.2-1.2" class="pilcrow">¶</a>
+</li>
+          </ol>
+</section>
+</div>
+<div id="silicon-root-of-trust-and-ima-integrity-protection">
+<section id="section-7.5.3">
+          <h4 id="name-silicon-root-of-trust-and-i">
+<a href="#section-7.5.3" class="section-number selfRef">7.5.3. </a><a href="#name-silicon-root-of-trust-and-i" class="section-name selfRef">Silicon Root of Trust and IMA Integrity Protection</a>
+          </h4>
+<p id="section-7.5.3-1">To ensure that the attestation measurements themselves are trustworthy, the management processor architecture provides multiple layers of protection against the "who watches the watcher" problem:<a href="#section-7.5.3-1" class="pilcrow">¶</a></p>
+<p id="section-7.5.3-2"><strong>Protection 1 -- Secure Boot / Silicon Root of Trust:</strong> Before the OS starts, the management processor ASIC (e.g., HPE iLO) verifies the UEFI BIOS firmware. The BIOS then verifies the Bootloader (GRUB), and the Bootloader verifies the Linux Kernel signature. This ensures that the version of the Linux kernel -- and thus the IMA subsystem code -- being loaded is the authentic, signed version.<a href="#section-7.5.3-2" class="pilcrow">¶</a></p>
+<p id="section-7.5.3-3"><strong>Protection 2 -- TPM PCR Extension (Hardware Enforcement):</strong> Linux IMA extends measurement hashes into TPM PCR 10. PCR extension is a one-way operation -- data can be added (extended) to a PCR, but it cannot be overwritten or deleted without a full system reboot. Even if a compromised kernel stops IMA from recording a malicious binary, it cannot undo the previous clean measurements in the TPM. See Step 6 of the Periodic Attestation Cycle below for the full verification procedure.<a href="#section-7.5.3-3" class="pilcrow">¶</a></p>
+<p id="section-7.5.3-4"><strong>Protection 3 -- IMA Appraisal Mode:</strong> By default, IMA only measures (logs). In IMA Appraisal mode, the kernel refuses to execute any binary or load any library that does not have a valid cryptographic signature (stored as an extended attribute on the file). IMA policies can themselves be digitally signed, preventing tampering.<a href="#section-7.5.3-4" class="pilcrow">¶</a></p>
+<p id="section-7.5.3-5"><strong>Protection 4 -- Out-of-Band (OOB) Attestation:</strong> The management processor fetches the TPM Quote via its dedicated I2C/private bus, bypassing the Host CPU and OS entirely. The TPM signs the PCR values with its hardware-protected key. This ensures a compromised kernel cannot intercept, delay, or suppress the attestation evidence. See Step 3 of the Periodic Attestation Cycle for the detailed flow.<a href="#section-7.5.3-5" class="pilcrow">¶</a></p>
+<p id="section-7.5.3-6"><strong>Protection 5 -- Kernel Lockdown Mode:</strong> Linux Kernel Lockdown (integrity or confidentiality mode) prevents even the root user from modifying kernel memory via /dev/mem, replacing the running kernel via kexec, or accessing sensitive debug interfaces that could be used to bypass IMA checks.<a href="#section-7.5.3-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="root-adversary-and-ima-tampering">
-<section id="section-7.5.3">
+<section id="section-7.5.4">
           <h4 id="name-root-adversary-and-ima-tamp">
-<a href="#section-7.5.3" class="section-number selfRef">7.5.3. </a><a href="#name-root-adversary-and-ima-tamp" class="section-name selfRef">Root Adversary and IMA Tampering</a>
+<a href="#section-7.5.4" class="section-number selfRef">7.5.4. </a><a href="#name-root-adversary-and-ima-tamp" class="section-name selfRef">Root Adversary and IMA Tampering</a>
           </h4>
-<p id="section-7.5.3-1">A key question is whether an adversary with root access to the host OS can tamper with IMA measurements themselves. The answer is that a root adversary has limited ability to interfere with IMA, but the protections above are specifically designed to detect such tampering:<a href="#section-7.5.3-1" class="pilcrow">¶</a></p>
+<p id="section-7.5.4-1">A key question is whether an adversary with root access to the host OS can tamper with IMA measurements themselves. The answer is that a root adversary has limited ability to interfere with IMA, but the protections above are specifically designed to detect such tampering:<a href="#section-7.5.4-1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-7.5.3-2.1">
-              <p id="section-7.5.3-2.1.1"><strong>What a root adversary CAN do:</strong> A compromised kernel can disable or bypass the IMA subsystem, preventing future measurements from being recorded. The adversary can also tamper with the IMA event log in kernel memory to hide evidence of malicious binaries being loaded.<a href="#section-7.5.3-2.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-7.5.4-2.1">
+              <p id="section-7.5.4-2.1.1"><strong>What a root adversary CAN do:</strong> A compromised kernel can disable or bypass the IMA subsystem, preventing future measurements from being recorded. The adversary can also tamper with the IMA event log in kernel memory to hide evidence of malicious binaries being loaded.<a href="#section-7.5.4-2.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-7.5.3-2.2">
-              <p id="section-7.5.3-2.2.1"><strong>What a root adversary CANNOT do:</strong> The adversary cannot roll back or modify TPM PCR 10, because PCR extension is a one-way cryptographic operation (PCR_new = Hash(PCR_old || measurement)). The adversary also cannot forge a TPM Quote, because the TPM signs PCR values with its hardware-protected Attestation Key, which is inaccessible to the host OS. Finally, the adversary cannot intercept or spoof the management processor's out-of-band attestation path (I2C/private bus).<a href="#section-7.5.3-2.2.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-7.5.4-2.2">
+              <p id="section-7.5.4-2.2.1"><strong>What a root adversary CANNOT do:</strong> The adversary cannot roll back or modify TPM PCR 10, because PCR extension is a one-way cryptographic operation (PCR_new = Hash(PCR_old || measurement)). The adversary also cannot forge a TPM Quote, because the TPM signs PCR values with its hardware-protected Attestation Key, which is inaccessible to the host OS. Finally, the adversary cannot intercept or spoof the management processor's out-of-band attestation path (I2C/private bus).<a href="#section-7.5.4-2.2.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-7.5.3-2.3">
-              <p id="section-7.5.3-2.3.1"><strong>How tampering is detected:</strong> The remote verifier recomputes the expected PCR value by replaying the IMA event log. If the adversary has tampered with the log (e.g., removed an entry for a malicious binary), the recomputed PCR value will not match the hardware-signed TPM Quote obtained via the OOB path. This log-vs-PCR mismatch triggers a trust failure. If the adversary stops IMA from extending new measurements entirely, the PCR freezes at a state that does not account for subsequently loaded binaries, which the verifier detects as a stale or incomplete log.<a href="#section-7.5.3-2.3.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-7.5.4-2.3">
+              <p id="section-7.5.4-2.3.1"><strong>How tampering is detected:</strong> The verifier replays the IMA log against the hardware-signed TPM Quote obtained via the OOB path. Any mismatch triggers a trust failure. See Step 6 of the Periodic Attestation Cycle for the full detection procedure.<a href="#section-7.5.4-2.3.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-7.5.3-2.4">
-              <p id="section-7.5.3-2.4.1"><strong>Residual risk (TOCTOU):</strong> A root adversary could theoretically load a malicious binary between attestation cycles (time-of-check-time-of-use). This is mitigated by IMA Appraisal Mode (Protection 3) blocking unsigned binaries at load time, Kernel Lockdown (Protection 5) preventing kernel memory modification, and frequent attestation polling intervals.<a href="#section-7.5.3-2.4.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-7.5.4-2.4">
+              <p id="section-7.5.4-2.4.1"><strong>Residual risk (TOCTOU):</strong> A root adversary could theoretically load a malicious binary between attestation cycles (time-of-check-time-of-use). This is mitigated by IMA Appraisal Mode (Protection 3) blocking unsigned binaries at load time, Kernel Lockdown (Protection 5) preventing kernel memory modification, and frequent attestation polling intervals.<a href="#section-7.5.4-2.4.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
 </section>
 </div>
 <div id="tpm-swap-attack-protection">
-<section id="section-7.5.4">
-          <h4 id="name-tpm-swap-attack-protection">
-<a href="#section-7.5.4" class="section-number selfRef">7.5.4. </a><a href="#name-tpm-swap-attack-protection" class="section-name selfRef">TPM Swap Attack Protection</a>
-          </h4>
-<p id="section-7.5.4-1">In modern server implementations (e.g., HPE Gen11), the management processor acts as a gatekeeper during the boot process. It uses its independent path to verify that the TPM is authentic. If the management processor detects that the TPM has been physically replaced (a "TPM Swap" attack), it can prevent the Host CPU from starting, effectively blocking the server until an administrator intervenes.<a href="#section-7.5.4-1" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="architecture-1">
 <section id="section-7.5.5">
-          <h4 id="name-architecture-2">
-<a href="#section-7.5.5" class="section-number selfRef">7.5.5. </a><a href="#name-architecture-2" class="section-name selfRef">Architecture</a>
+          <h4 id="name-tpm-swap-attack-protection">
+<a href="#section-7.5.5" class="section-number selfRef">7.5.5. </a><a href="#name-tpm-swap-attack-protection" class="section-name selfRef">TPM Swap Attack Protection</a>
           </h4>
-<ol start="1" type="1" class="compact type-1" id="section-7.5.5-1">
-<li id="section-7.5.5-1.1">
-              <strong>Management Processor (e.g., HPE iLO):</strong> Has direct access to the host TPM via a dedicated bus (I2C/private bus), independent of the host CPU and OS. The management processor collects TPM measurements and can perform attestation even when the host OS is not running or is compromised.<a href="#section-7.5.5-1.1" class="pilcrow">¶</a>
-</li>
-            <li id="section-7.5.5-1.2">
-              <strong>External Management Plane (e.g., HPE OneView, HPE GreenLake):</strong> Centralized management platform that receives attestation evidence from the management processor. Validates TPM quotes against golden measurements maintained in the management platform's database. Provides fleet-wide attestation visibility and policy enforcement.<a href="#section-7.5.5-1.2" class="pilcrow">¶</a>
-</li>
-          </ol>
-</section>
-</div>
-<div id="attestation-flow">
-<section id="section-7.5.6">
-          <h4 id="name-attestation-flow">
-<a href="#section-7.5.6" class="section-number selfRef">7.5.6. </a><a href="#name-attestation-flow" class="section-name selfRef">Attestation Flow</a>
-          </h4>
-<ol start="1" type="1" class="compact type-1" id="section-7.5.6-1">
-<li id="section-7.5.6-1.1">The management processor reads TPM PCR values and the TCGLog independently of the host OS via its dedicated hardware bus.<a href="#section-7.5.6-1.1" class="pilcrow">¶</a>
-</li>
-            <li id="section-7.5.6-1.2">The management processor signs the attestation evidence using its own identity key (e.g., iLO certificate signed by the OEM CA).<a href="#section-7.5.6-1.2" class="pilcrow">¶</a>
-</li>
-            <li id="section-7.5.6-1.3">
-              <p id="section-7.5.6-1.3.1">The management plane receives the attestation evidence via the dedicated management NIC (Redfish API) and validates:<a href="#section-7.5.6-1.3.1" class="pilcrow">¶</a></p>
-<ul class="compact">
-<li class="compact" id="section-7.5.6-1.3.2.1">TPM quote integrity and PCR values against golden reference measurements.<a href="#section-7.5.6-1.3.2.1" class="pilcrow">¶</a>
-</li>
-                <li class="compact" id="section-7.5.6-1.3.2.2">Management processor identity (OEM CA chain).<a href="#section-7.5.6-1.3.2.2" class="pilcrow">¶</a>
-</li>
-                <li class="compact" id="section-7.5.6-1.3.2.3">Freshness via nonce or timestamp.<a href="#section-7.5.6-1.3.2.3" class="pilcrow">¶</a>
-</li>
-                <li class="compact" id="section-7.5.6-1.3.2.4">PCR 10 (IMA measurements) against the expected IMA log.<a href="#section-7.5.6-1.3.2.4" class="pilcrow">¶</a>
-</li>
-              </ul>
-</li>
-            <li id="section-7.5.6-1.4">Upon successful validation, the management plane provides attestation results to the Workload Identity Manager.<a href="#section-7.5.6-1.4" class="pilcrow">¶</a>
-</li>
-          </ol>
+<p id="section-7.5.5-1">In modern server implementations (e.g., HPE Gen11), the management processor acts as a gatekeeper during the boot process. It uses its independent path to verify that the TPM is authentic. If the management processor detects that the TPM has been physically replaced (a "TPM Swap" attack), it can prevent the Host CPU from starting, effectively blocking the server until an administrator intervenes.<a href="#section-7.5.5-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="periodic-attestation-cycle-step-by-step">
-<section id="section-7.5.7">
+<section id="section-7.5.6">
           <h4 id="name-periodic-attestation-cycle-">
-<a href="#section-7.5.7" class="section-number selfRef">7.5.7. </a><a href="#name-periodic-attestation-cycle-" class="section-name selfRef">Periodic Attestation Cycle: Step-by-Step</a>
+<a href="#section-7.5.6" class="section-number selfRef">7.5.6. </a><a href="#name-periodic-attestation-cycle-" class="section-name selfRef">Periodic Attestation Cycle: Step-by-Step</a>
           </h4>
-<p id="section-7.5.7-1">The following describes what happens during each periodic attestation cycle (e.g., every 20-60 seconds) across the three components, and how each step detects IMA or kernel compromise. A challenge nonce is used end-to-end to guarantee freshness.<a href="#section-7.5.7-1" class="pilcrow">¶</a></p>
-<p id="section-7.5.7-2"><strong>Step 1 -- External Verifier: Initiate Attestation Challenge</strong><a href="#section-7.5.7-2" class="pilcrow">¶</a></p>
-<p id="section-7.5.7-3">The external management plane verifier (e.g., HPE OneView/GreenLake) generates a cryptographically random nonce and sends it to the management processor (iLO) via the dedicated management NIC (Redfish API). This nonce will be embedded in the TPM Quote to prove that the attestation evidence is fresh and was produced in response to this specific request.<a href="#section-7.5.7-3" class="pilcrow">¶</a></p>
+<p id="section-7.5.6-1">The following describes what happens during each periodic attestation cycle (e.g., every 20-60 seconds) across the three components, and how each step detects IMA or kernel compromise. A challenge nonce is used end-to-end to guarantee freshness.<a href="#section-7.5.6-1" class="pilcrow">¶</a></p>
+<p id="section-7.5.6-2"><strong>Step 1 -- External Verifier: Initiate Attestation Challenge</strong><a href="#section-7.5.6-2" class="pilcrow">¶</a></p>
+<p id="section-7.5.6-3">The external management plane verifier (e.g., HPE OneView/GreenLake) generates a cryptographically random nonce and sends it to the management processor (iLO) via the dedicated management NIC (Redfish API). This nonce will be embedded in the TPM Quote to prove that the attestation evidence is fresh and was produced in response to this specific request.<a href="#section-7.5.6-3" class="pilcrow">¶</a></p>
 <ul class="compact">
-<li class="compact" id="section-7.5.7-4.1">
-              <em>Compromise detection:</em> The nonce originates outside the host entirely (at the management plane). The host OS never sees or handles this nonce because it travels over the dedicated management network to iLO.<a href="#section-7.5.7-4.1" class="pilcrow">¶</a>
+<li class="compact" id="section-7.5.6-4.1">
+              <em>Compromise detection:</em> The nonce originates outside the host entirely (at the management plane). The host OS never sees or handles this nonce because it travels over the dedicated management network to iLO.<a href="#section-7.5.6-4.1" class="pilcrow">¶</a>
 </li>
           </ul>
-<p id="section-7.5.7-5"><strong>Step 2 -- Host OS: Normal Operation (Continuous)</strong><a href="#section-7.5.7-5" class="pilcrow">¶</a></p>
-<p id="section-7.5.7-6">During normal operation, the Linux kernel's IMA subsystem continuously measures every binary, library, and kernel module loaded on the host. Each measurement is extended into TPM PCR 10 via the in-band LPC/SPI bus. The IMA event log accumulates in kernel memory at /sys/kernel/security/ima/ascii_runtime_measurements.<a href="#section-7.5.7-6" class="pilcrow">¶</a></p>
+<p id="section-7.5.6-5"><strong>Step 2 -- Host OS: Normal Operation (Continuous)</strong><a href="#section-7.5.6-5" class="pilcrow">¶</a></p>
+<p id="section-7.5.6-6">During normal operation, the Linux kernel's IMA subsystem continuously measures every binary, library, and kernel module loaded on the host. Each measurement is extended into TPM PCR 10 via the in-band LPC/SPI bus. The IMA event log accumulates in kernel memory at /sys/kernel/security/ima/ascii_runtime_measurements.<a href="#section-7.5.6-6" class="pilcrow">¶</a></p>
 <ul class="compact">
-<li class="compact" id="section-7.5.7-7.1">
-              <em>Compromise detection:</em> If the kernel is compromised and IMA is disabled, measurements stop being extended into PCR 10. The PCR freezes at its last legitimate value. No new entries appear in the IMA log.<a href="#section-7.5.7-7.1" class="pilcrow">¶</a>
+<li class="compact" id="section-7.5.6-7.1">
+              <em>Compromise detection:</em> If the kernel is compromised and IMA is disabled, measurements stop being extended into PCR 10. The PCR freezes at its last legitimate value. No new entries appear in the IMA log.<a href="#section-7.5.6-7.1" class="pilcrow">¶</a>
 </li>
           </ul>
-<p id="section-7.5.7-8"><strong>Step 3 -- Management Processor (iLO): Fetch TPM Quote (OOB)</strong><a href="#section-7.5.7-8" class="pilcrow">¶</a></p>
-<p id="section-7.5.7-9">The management processor passes the verifier's nonce to the TPM via the TPM2_Quote command over its dedicated I2C/private bus. The TPM constructs a Quote structure containing: (a) all PCR values (including PCR 10), (b) the verifier's nonce, and (c) the TPM's internal clock value (TPMS_CLOCK_INFO). The TPM signs this entire structure with its hardware-protected Attestation Key (AK). The management processor also reads the TCG Boot Event Log from firmware memory.<a href="#section-7.5.7-9" class="pilcrow">¶</a></p>
+<p id="section-7.5.6-8"><strong>Step 3 -- Management Processor (iLO): Fetch TPM Quote (OOB)</strong><a href="#section-7.5.6-8" class="pilcrow">¶</a></p>
+<p id="section-7.5.6-9">The management processor passes the verifier's nonce to the TPM via the TPM2_Quote command over its dedicated I2C/private bus. The TPM constructs a Quote structure containing: (a) all PCR values (including PCR 10), (b) the verifier's nonce, and (c) the TPM's internal clock value (TPMS_CLOCK_INFO). The TPM signs this entire structure with its hardware-protected Attestation Key (AK). The management processor also reads the TCG Boot Event Log from firmware memory.<a href="#section-7.5.6-9" class="pilcrow">¶</a></p>
 <ul class="compact">
-<li class="compact" id="section-7.5.7-10.1">
-              <em>Compromise detection:</em> This step is entirely independent of the host OS. A compromised kernel cannot intercept, delay, or modify the Quote because it has no access to the I2C/private bus or the management processor's execution environment. The nonce is embedded inside the TPM-signed Quote, so it cannot be stripped or replaced without invalidating the signature.<a href="#section-7.5.7-10.1" class="pilcrow">¶</a>
+<li class="compact" id="section-7.5.6-10.1">
+              <em>Compromise detection:</em> This step is entirely independent of the host OS. A compromised kernel cannot intercept, delay, or modify the Quote because it has no access to the I2C/private bus or the management processor's execution environment. The nonce is embedded inside the TPM-signed Quote, so it cannot be stripped or replaced without invalidating the signature.<a href="#section-7.5.6-10.1" class="pilcrow">¶</a>
 </li>
           </ul>
-<p id="section-7.5.7-11"><strong>Step 4 -- Host OS: Provide IMA Log (In-Band)</strong><a href="#section-7.5.7-11" class="pilcrow">¶</a></p>
-<p id="section-7.5.7-12">The external management plane verifier (e.g., HPE OneView/GreenLake) requests the current IMA event log from the host OS via the host network stack. A lightweight log exporter runs on the host as a privileged systemd service (requiring root or CAP_SYS_ADMIN to read /sys/kernel/security/ima/ascii_runtime_measurements) and exposes the IMA runtime measurements over the network. The exporter is installed as a systemd unit file, started automatically at boot, and runs as a long-lived daemon listening for log retrieval requests (e.g., via gRPC or a REST endpoint). Its binary is itself measured by IMA at launch time and recorded in PCR 10, so any tampering with the exporter binary is captured in the TPM measurements. The log may also be retrieved via direct SSH access to the host. Regardless of the collection method, the IMA log is transmitted as untrusted input — the trust anchor is the OOB TPM Quote, not the log itself. Notably, the integrity of the log exporter does not affect the security model: even if both the kernel and the exporter are compromised and conspire to produce a falsified log, the verifier will detect the tampering via the PCR mismatch in Step 6.<a href="#section-7.5.7-12" class="pilcrow">¶</a></p>
+<p id="section-7.5.6-11"><strong>Step 4 -- Host OS: Provide IMA Log (In-Band)</strong><a href="#section-7.5.6-11" class="pilcrow">¶</a></p>
+<p id="section-7.5.6-12">The external management plane verifier (e.g., HPE OneView/GreenLake) requests the current IMA event log from the host OS via the host network stack. A lightweight log exporter runs on the host as a privileged systemd service (requiring root or CAP_SYS_ADMIN to read /sys/kernel/security/ima/ascii_runtime_measurements) and exposes the IMA runtime measurements over the network. The exporter is installed as a systemd unit file, started automatically at boot, and runs as a long-lived daemon listening for log retrieval requests (e.g., via gRPC or a REST endpoint). Its binary is itself measured by IMA at launch time and recorded in PCR 10, so any tampering with the exporter binary is captured in the TPM measurements. The log may also be retrieved via direct SSH access to the host. Regardless of the collection method, the IMA log is transmitted as untrusted input — the trust anchor is the OOB TPM Quote, not the log itself. Notably, the integrity of the log exporter does not affect the security model: even if both the kernel and the exporter are compromised and conspire to produce a falsified log, the verifier will detect the tampering via the PCR mismatch in Step 6.<a href="#section-7.5.6-12" class="pilcrow">¶</a></p>
 <ul class="compact">
-<li class="compact" id="section-7.5.7-13.1">
-              <em>Compromise detection:</em> A compromised kernel can tamper with this log (remove entries, alter hashes, truncate). This is expected behavior and is why the log is treated as untrusted. The verifier will detect any tampering in Step 6.<a href="#section-7.5.7-13.1" class="pilcrow">¶</a>
+<li class="compact" id="section-7.5.6-13.1">
+              <em>Compromise detection:</em> A compromised kernel can tamper with this log (remove entries, alter hashes, truncate). This is expected behavior and is why the log is treated as untrusted. The verifier will detect any tampering in Step 6.<a href="#section-7.5.6-13.1" class="pilcrow">¶</a>
 </li>
-            <li class="compact" id="section-7.5.7-13.2">
-              <em>Compromise detection:</em> A compromised kernel may refuse to deliver the log entirely (e.g., kill the agent). In this case, the verifier has a TPM Quote (from Step 3) but no log to verify against it, which triggers a trust failure.<a href="#section-7.5.7-13.2" class="pilcrow">¶</a>
+            <li class="compact" id="section-7.5.6-13.2">
+              <em>Compromise detection:</em> A compromised kernel may refuse to deliver the log entirely (e.g., kill the agent). In this case, the verifier has a TPM Quote (from Step 3) but no log to verify against it, which triggers a trust failure.<a href="#section-7.5.6-13.2" class="pilcrow">¶</a>
 </li>
           </ul>
-<p id="section-7.5.7-14"><strong>Step 5 -- Management Processor (iLO): Forward Evidence to Management Plane</strong><a href="#section-7.5.7-14" class="pilcrow">¶</a></p>
-<p id="section-7.5.7-15">The management processor transmits the hardware-signed TPM Quote (which contains the verifier's nonce and the TPM clock value inside the signed payload) and the TCG Boot Event Log to the external management plane (e.g., HPE OneView/GreenLake) via the dedicated management NIC using the Redfish API. The management processor signs this transmission with its own OEM CA-chained identity key.<a href="#section-7.5.7-15" class="pilcrow">¶</a></p>
+<p id="section-7.5.6-14"><strong>Step 5 -- Management Processor (iLO): Forward Evidence to Management Plane</strong><a href="#section-7.5.6-14" class="pilcrow">¶</a></p>
+<p id="section-7.5.6-15">The management processor transmits the hardware-signed TPM Quote (which contains the verifier's nonce and the TPM clock value inside the signed payload) and the TCG Boot Event Log to the external management plane (e.g., HPE OneView/GreenLake) via the dedicated management NIC using the Redfish API. The management processor signs this transmission with its own OEM CA-chained identity key.<a href="#section-7.5.6-15" class="pilcrow">¶</a></p>
 <ul class="compact">
-<li class="compact" id="section-7.5.7-16.1">
-              <em>Compromise detection:</em> The management processor's identity is verified by the OEM CA chain. A spoofed or tampered management processor would fail certificate validation.<a href="#section-7.5.7-16.1" class="pilcrow">¶</a>
+<li class="compact" id="section-7.5.6-16.1">
+              <em>Compromise detection:</em> The management processor's identity is verified by the OEM CA chain. A spoofed or tampered management processor would fail certificate validation.<a href="#section-7.5.6-16.1" class="pilcrow">¶</a>
 </li>
           </ul>
-<p id="section-7.5.7-17"><strong>Step 6 -- External Verifier: Validate Evidence</strong><a href="#section-7.5.7-17" class="pilcrow">¶</a></p>
-<p id="section-7.5.7-18">The external verifier (management plane) performs the following validation:<a href="#section-7.5.7-18" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="compact type-1" id="section-7.5.7-19">
-<li id="section-7.5.7-19.1">
-              <strong>Verify TPM Quote signature</strong> using the TPM's AK public key. If invalid, the TPM or Quote has been tampered with.<a href="#section-7.5.7-19.1" class="pilcrow">¶</a>
+<p id="section-7.5.6-17"><strong>Step 6 -- External Verifier: Validate Evidence</strong><a href="#section-7.5.6-17" class="pilcrow">¶</a></p>
+<p id="section-7.5.6-18">The external verifier (management plane) performs the following validation:<a href="#section-7.5.6-18" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="compact type-1" id="section-7.5.6-19">
+<li id="section-7.5.6-19.1">
+              <strong>Verify TPM Quote signature</strong> using the TPM's AK public key. If invalid, the TPM or Quote has been tampered with.<a href="#section-7.5.6-19.1" class="pilcrow">¶</a>
 </li>
-            <li id="section-7.5.7-19.2">
-              <strong>Verify nonce</strong> embedded in the signed Quote matches the nonce sent in Step 1. If mismatched, the Quote is a replay of an older attestation or was generated in response to a different challenge.<a href="#section-7.5.7-19.2" class="pilcrow">¶</a>
+            <li id="section-7.5.6-19.2">
+              <strong>Verify nonce</strong> embedded in the signed Quote matches the nonce sent in Step 1. If mismatched, the Quote is a replay of an older attestation or was generated in response to a different challenge.<a href="#section-7.5.6-19.2" class="pilcrow">¶</a>
 </li>
-            <li id="section-7.5.7-19.3">
-              <strong>Verify TPM clock</strong> monotonicity: the clock value embedded in the signed Quote must be greater than the previous attestation cycle's clock value. A rollback indicates tampering.<a href="#section-7.5.7-19.3" class="pilcrow">¶</a>
+            <li id="section-7.5.6-19.3">
+              <strong>Verify TPM clock</strong> monotonicity: the clock value embedded in the signed Quote must be greater than the previous attestation cycle's clock value. A rollback indicates tampering.<a href="#section-7.5.6-19.3" class="pilcrow">¶</a>
 </li>
-            <li id="section-7.5.7-19.4">
-              <strong>Replay the IMA log</strong> entry by entry, recomputing PCR 10: for each log entry, compute Hash(entry) and extend it into a running PCR accumulator starting from the initial PCR value (all zeros after reset).<a href="#section-7.5.7-19.4" class="pilcrow">¶</a>
+            <li id="section-7.5.6-19.4">
+              <strong>Replay the IMA log</strong> entry by entry, recomputing PCR 10: for each log entry, compute Hash(entry) and extend it into a running PCR accumulator starting from the initial PCR value (all zeros after reset).<a href="#section-7.5.6-19.4" class="pilcrow">¶</a>
 </li>
-            <li id="section-7.5.7-19.5">
-              <p id="section-7.5.7-19.5.1"><strong>Compare the recomputed PCR 10</strong> against the hardware-signed PCR 10 from the TPM Quote:<a href="#section-7.5.7-19.5.1" class="pilcrow">¶</a></p>
+            <li id="section-7.5.6-19.5">
+              <p id="section-7.5.6-19.5.1"><strong>Compare the recomputed PCR 10</strong> against the hardware-signed PCR 10 from the TPM Quote:<a href="#section-7.5.6-19.5.1" class="pilcrow">¶</a></p>
 <ul class="compact">
-<li class="compact" id="section-7.5.7-19.5.2.1">
-                  <strong>Match:</strong> The IMA log is consistent with the TPM's measurements. The system is running approved software.<a href="#section-7.5.7-19.5.2.1" class="pilcrow">¶</a>
+<li class="compact" id="section-7.5.6-19.5.2.1">
+                  <strong>Match:</strong> The IMA log is consistent with the TPM's measurements. The system is running approved software.<a href="#section-7.5.6-19.5.2.1" class="pilcrow">¶</a>
 </li>
-                <li class="compact" id="section-7.5.7-19.5.2.2">
-                  <strong>Mismatch:</strong> The IMA log has been tampered with (entries removed, altered, or fabricated). The verifier raises a trust failure alert.<a href="#section-7.5.7-19.5.2.2" class="pilcrow">¶</a>
+                <li class="compact" id="section-7.5.6-19.5.2.2">
+                  <strong>Mismatch:</strong> The IMA log has been tampered with (entries removed, altered, or fabricated). The verifier raises a trust failure alert.<a href="#section-7.5.6-19.5.2.2" class="pilcrow">¶</a>
 </li>
               </ul>
 </li>
-            <li id="section-7.5.7-19.6">
-              <strong>Compare PCR 10 against golden reference values</strong> to detect unexpected binaries (even if the log is consistent, a new/unknown binary triggers a policy violation).<a href="#section-7.5.7-19.6" class="pilcrow">¶</a>
+            <li id="section-7.5.6-19.6">
+              <strong>Compare PCR 10 against golden reference values</strong> to detect unexpected binaries (even if the log is consistent, a new/unknown binary triggers a policy violation).<a href="#section-7.5.6-19.6" class="pilcrow">¶</a>
 </li>
-            <li id="section-7.5.7-19.7">
-              <strong>Check for log staleness:</strong> Compare the number of IMA log entries and the TPM clock against the previous cycle. If the system is active (network traffic, CPU load) but the log has not grown, IMA may have been disabled by a compromised kernel.<a href="#section-7.5.7-19.7" class="pilcrow">¶</a>
+            <li id="section-7.5.6-19.7">
+              <strong>Check for log staleness:</strong> Compare the number of IMA log entries and the TPM clock against the previous cycle. If the system is active (network traffic, CPU load) but the log has not grown, IMA may have been disabled by a compromised kernel.<a href="#section-7.5.6-19.7" class="pilcrow">¶</a>
 </li>
           </ol>
 <ul class="compact">
-<li class="compact" id="section-7.5.7-20.1">
-              <p id="section-7.5.7-20.1.1"><em>Compromise detection summary:</em><a href="#section-7.5.7-20.1.1" class="pilcrow">¶</a></p>
+<li class="compact" id="section-7.5.6-20.1">
+              <p id="section-7.5.6-20.1.1"><em>Compromise detection summary:</em><a href="#section-7.5.6-20.1.1" class="pilcrow">¶</a></p>
 <ul class="compact">
-<li class="compact" id="section-7.5.7-20.1.2.1">
-                  <strong>Tampered IMA log</strong> → detected at Step 6 sub-step 5 (log-vs-PCR mismatch).<a href="#section-7.5.7-20.1.2.1" class="pilcrow">¶</a>
+<li class="compact" id="section-7.5.6-20.1.2.1">
+                  <strong>Tampered IMA log</strong> → detected at Step 6 sub-step 5 (log-vs-PCR mismatch).<a href="#section-7.5.6-20.1.2.1" class="pilcrow">¶</a>
 </li>
-                <li class="compact" id="section-7.5.7-20.1.2.2">
-                  <strong>Disabled IMA</strong> → detected at Step 6 sub-step 7 (stale log with active system).<a href="#section-7.5.7-20.1.2.2" class="pilcrow">¶</a>
+                <li class="compact" id="section-7.5.6-20.1.2.2">
+                  <strong>Disabled IMA</strong> → detected at Step 6 sub-step 7 (stale log with active system).<a href="#section-7.5.6-20.1.2.2" class="pilcrow">¶</a>
 </li>
-                <li class="compact" id="section-7.5.7-20.1.2.3">
-                  <strong>Replayed old Quote</strong> → detected at Step 6 sub-steps 2-3 (nonce from Step 1 / clock mismatch).<a href="#section-7.5.7-20.1.2.3" class="pilcrow">¶</a>
+                <li class="compact" id="section-7.5.6-20.1.2.3">
+                  <strong>Replayed old Quote</strong> → detected at Step 6 sub-steps 2-3 (nonce from Step 1 / clock mismatch).<a href="#section-7.5.6-20.1.2.3" class="pilcrow">¶</a>
 </li>
-                <li class="compact" id="section-7.5.7-20.1.2.4">
-                  <strong>Unauthorized binary loaded</strong> → detected at Step 6 sub-step 6 (policy violation).<a href="#section-7.5.7-20.1.2.4" class="pilcrow">¶</a>
+                <li class="compact" id="section-7.5.6-20.1.2.4">
+                  <strong>Unauthorized binary loaded</strong> → detected at Step 6 sub-step 6 (policy violation).<a href="#section-7.5.6-20.1.2.4" class="pilcrow">¶</a>
 </li>
-                <li class="compact" id="section-7.5.7-20.1.2.5">
-                  <strong>Log delivery suppressed</strong> → detected by absence of log at Step 4 (trust failure due to missing evidence).<a href="#section-7.5.7-20.1.2.5" class="pilcrow">¶</a>
+                <li class="compact" id="section-7.5.6-20.1.2.5">
+                  <strong>Log delivery suppressed</strong> → detected by absence of log at Step 4 (trust failure due to missing evidence).<a href="#section-7.5.6-20.1.2.5" class="pilcrow">¶</a>
 </li>
               </ul>
 </li>
@@ -2377,35 +2346,35 @@ li > p:last-of-type:only-child {
 </section>
 </div>
 <div id="advantages-1">
-<section id="section-7.5.8">
+<section id="section-7.5.7">
           <h4 id="name-advantages-2">
-<a href="#section-7.5.8" class="section-number selfRef">7.5.8. </a><a href="#name-advantages-2" class="section-name selfRef">Advantages</a>
+<a href="#section-7.5.7" class="section-number selfRef">7.5.7. </a><a href="#name-advantages-2" class="section-name selfRef">Advantages</a>
           </h4>
 <ul class="compact">
-<li class="compact" id="section-7.5.8-1.1">Out-of-band attestation: works even when the host OS is compromised, rebooting, or offline.<a href="#section-7.5.8-1.1" class="pilcrow">¶</a>
+<li class="compact" id="section-7.5.7-1.1">Out-of-band attestation: works even when the host OS is compromised, rebooting, or offline.<a href="#section-7.5.7-1.1" class="pilcrow">¶</a>
 </li>
-            <li class="compact" id="section-7.5.8-1.2">Hardware-isolated attestation path: the management processor is physically separate from the host CPU.<a href="#section-7.5.8-1.2" class="pilcrow">¶</a>
+            <li class="compact" id="section-7.5.7-1.2">Hardware-isolated attestation path: the management processor is physically separate from the host CPU.<a href="#section-7.5.7-1.2" class="pilcrow">¶</a>
 </li>
-            <li class="compact" id="section-7.5.8-1.3">Detects compromised kernel / IMA subversion through hardware-signed TPM quotes.<a href="#section-7.5.8-1.3" class="pilcrow">¶</a>
+            <li class="compact" id="section-7.5.7-1.3">Detects compromised kernel / IMA subversion through hardware-signed TPM quotes.<a href="#section-7.5.7-1.3" class="pilcrow">¶</a>
 </li>
-            <li class="compact" id="section-7.5.8-1.4">TPM Swap attack protection at boot time.<a href="#section-7.5.8-1.4" class="pilcrow">¶</a>
+            <li class="compact" id="section-7.5.7-1.4">TPM Swap attack protection at boot time.<a href="#section-7.5.7-1.4" class="pilcrow">¶</a>
 </li>
-            <li class="compact" id="section-7.5.8-1.5">Enterprise fleet management integration (HPE OneView, Dell iDRAC, Lenovo XClarity, etc.).<a href="#section-7.5.8-1.5" class="pilcrow">¶</a>
+            <li class="compact" id="section-7.5.7-1.5">Enterprise fleet management integration (HPE OneView, Dell iDRAC, Lenovo XClarity, etc.).<a href="#section-7.5.7-1.5" class="pilcrow">¶</a>
 </li>
           </ul>
 </section>
 </div>
 <div id="limitations-1">
-<section id="section-7.5.9">
+<section id="section-7.5.8">
           <h4 id="name-limitations-2">
-<a href="#section-7.5.9" class="section-number selfRef">7.5.9. </a><a href="#name-limitations-2" class="section-name selfRef">Limitations</a>
+<a href="#section-7.5.8" class="section-number selfRef">7.5.8. </a><a href="#name-limitations-2" class="section-name selfRef">Limitations</a>
           </h4>
 <ul class="compact">
-<li class="compact" id="section-7.5.9-1.1">Vendor-specific management processor implementations.<a href="#section-7.5.9-1.1" class="pilcrow">¶</a>
+<li class="compact" id="section-7.5.8-1.1">Vendor-specific management processor implementations.<a href="#section-7.5.8-1.1" class="pilcrow">¶</a>
 </li>
-            <li class="compact" id="section-7.5.9-1.2">Requires enterprise management plane infrastructure.<a href="#section-7.5.9-1.2" class="pilcrow">¶</a>
+            <li class="compact" id="section-7.5.8-1.2">Requires enterprise management plane infrastructure.<a href="#section-7.5.8-1.2" class="pilcrow">¶</a>
 </li>
-            <li class="compact" id="section-7.5.9-1.3">Management processor firmware must itself be trusted and kept up to date.<a href="#section-7.5.9-1.3" class="pilcrow">¶</a>
+            <li class="compact" id="section-7.5.8-1.3">Management processor firmware must itself be trusted and kept up to date.<a href="#section-7.5.8-1.3" class="pilcrow">¶</a>
 </li>
           </ul>
 </section>

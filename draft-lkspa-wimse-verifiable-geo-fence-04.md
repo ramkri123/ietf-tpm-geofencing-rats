@@ -423,17 +423,22 @@ The end-to-end attestation paths are therefore:
 
 * **Out-of-band (Option B):** TPM --[I2C/private bus]--> Management Processor --[dedicated mgmt NIC, Redfish API]--> Management Plane. The host OS has no visibility into this path. The management processor fetches the TPM Quote independently, so a compromised kernel cannot intercept, delay, or suppress the attestation evidence.
 
+### Architecture
+
+1. **Management Processor (e.g., HPE iLO):** Has direct access to the host TPM via a dedicated bus (I2C/private bus), independent of the host CPU and OS. The management processor collects TPM measurements and can perform attestation even when the host OS is not running or is compromised.
+2. **External Management Plane (e.g., HPE OneView, HPE GreenLake):** Centralized management platform that receives attestation evidence from the management processor. Validates TPM quotes against golden measurements maintained in the management platform's database. Provides fleet-wide attestation visibility and policy enforcement.
+
 ### Silicon Root of Trust and IMA Integrity Protection
 
 To ensure that the attestation measurements themselves are trustworthy, the management processor architecture provides multiple layers of protection against the "who watches the watcher" problem:
 
 **Protection 1 -- Secure Boot / Silicon Root of Trust:** Before the OS starts, the management processor ASIC (e.g., HPE iLO) verifies the UEFI BIOS firmware. The BIOS then verifies the Bootloader (GRUB), and the Bootloader verifies the Linux Kernel signature. This ensures that the version of the Linux kernel -- and thus the IMA subsystem code -- being loaded is the authentic, signed version.
 
-**Protection 2 -- TPM PCR Extension (Hardware Enforcement):** Linux IMA does not just keep a list of hashes in RAM; it extends those hashes into TPM PCR 10. PCR extension is a one-way operation -- data can be added (extended) to a PCR, but it cannot be overwritten or deleted without a full system reboot. Even if a compromised kernel tries to stop IMA from recording a malicious binary, it cannot undo the previous clean measurements in the TPM. To verify integrity, the remote verifier obtains two pieces of evidence: (1) the IMA event log, which is software-provided from the host OS and could be tampered with, and (2) the TPM Quote, which is hardware-signed by the TPM's Attestation Key and cannot be forged. The verifier replays the IMA log to recompute the expected PCR 10 value and compares it against the hardware-signed TPM Quote. Any mismatch -- such as a missing or altered log entry -- means the IMA log has been tampered with, triggering a trust failure.
+**Protection 2 -- TPM PCR Extension (Hardware Enforcement):** Linux IMA extends measurement hashes into TPM PCR 10. PCR extension is a one-way operation -- data can be added (extended) to a PCR, but it cannot be overwritten or deleted without a full system reboot. Even if a compromised kernel stops IMA from recording a malicious binary, it cannot undo the previous clean measurements in the TPM. See Step 6 of the Periodic Attestation Cycle below for the full verification procedure.
 
 **Protection 3 -- IMA Appraisal Mode:** By default, IMA only measures (logs). In IMA Appraisal mode, the kernel refuses to execute any binary or load any library that does not have a valid cryptographic signature (stored as an extended attribute on the file). IMA policies can themselves be digitally signed, preventing tampering.
 
-**Protection 4 -- Out-of-Band (OOB) Attestation:** This is the critical layer. Since the kernel could potentially be tricked into lying about its internal state, the remote verifier asks the management processor for a TPM Quote. The management processor talks directly to the TPM (bypassing the Host CPU/Kernel), and the TPM signs the PCR values with its internal, hardware-protected key. The verifier compares this hardware-signed value against the software-reported IMA log. Any discrepancy means the Linux kernel/IMA subsystem has been tampered with.
+**Protection 4 -- Out-of-Band (OOB) Attestation:** The management processor fetches the TPM Quote via its dedicated I2C/private bus, bypassing the Host CPU and OS entirely. The TPM signs the PCR values with its hardware-protected key. This ensures a compromised kernel cannot intercept, delay, or suppress the attestation evidence. See Step 3 of the Periodic Attestation Cycle for the detailed flow.
 
 **Protection 5 -- Kernel Lockdown Mode:** Linux Kernel Lockdown (integrity or confidentiality mode) prevents even the root user from modifying kernel memory via /dev/mem, replacing the running kernel via kexec, or accessing sensitive debug interfaces that could be used to bypass IMA checks.
 
@@ -445,29 +450,13 @@ A key question is whether an adversary with root access to the host OS can tampe
 
 * **What a root adversary CANNOT do:** The adversary cannot roll back or modify TPM PCR 10, because PCR extension is a one-way cryptographic operation (PCR_new = Hash(PCR_old || measurement)). The adversary also cannot forge a TPM Quote, because the TPM signs PCR values with its hardware-protected Attestation Key, which is inaccessible to the host OS. Finally, the adversary cannot intercept or spoof the management processor's out-of-band attestation path (I2C/private bus).
 
-* **How tampering is detected:** The remote verifier recomputes the expected PCR value by replaying the IMA event log. If the adversary has tampered with the log (e.g., removed an entry for a malicious binary), the recomputed PCR value will not match the hardware-signed TPM Quote obtained via the OOB path. This log-vs-PCR mismatch triggers a trust failure. If the adversary stops IMA from extending new measurements entirely, the PCR freezes at a state that does not account for subsequently loaded binaries, which the verifier detects as a stale or incomplete log.
+* **How tampering is detected:** The verifier replays the IMA log against the hardware-signed TPM Quote obtained via the OOB path. Any mismatch triggers a trust failure. See Step 6 of the Periodic Attestation Cycle for the full detection procedure.
 
 * **Residual risk (TOCTOU):** A root adversary could theoretically load a malicious binary between attestation cycles (time-of-check-time-of-use). This is mitigated by IMA Appraisal Mode (Protection 3) blocking unsigned binaries at load time, Kernel Lockdown (Protection 5) preventing kernel memory modification, and frequent attestation polling intervals.
 
 ### TPM Swap Attack Protection
 
 In modern server implementations (e.g., HPE Gen11), the management processor acts as a gatekeeper during the boot process. It uses its independent path to verify that the TPM is authentic. If the management processor detects that the TPM has been physically replaced (a "TPM Swap" attack), it can prevent the Host CPU from starting, effectively blocking the server until an administrator intervenes.
-
-### Architecture
-
-1. **Management Processor (e.g., HPE iLO):** Has direct access to the host TPM via a dedicated bus (I2C/private bus), independent of the host CPU and OS. The management processor collects TPM measurements and can perform attestation even when the host OS is not running or is compromised.
-2. **External Management Plane (e.g., HPE OneView, HPE GreenLake):** Centralized management platform that receives attestation evidence from the management processor. Validates TPM quotes against golden measurements maintained in the management platform's database. Provides fleet-wide attestation visibility and policy enforcement.
-
-### Attestation Flow
-
-1. The management processor reads TPM PCR values and the TCGLog independently of the host OS via its dedicated hardware bus.
-2. The management processor signs the attestation evidence using its own identity key (e.g., iLO certificate signed by the OEM CA).
-3. The management plane receives the attestation evidence via the dedicated management NIC (Redfish API) and validates:
-    - TPM quote integrity and PCR values against golden reference measurements.
-    - Management processor identity (OEM CA chain).
-    - Freshness via nonce or timestamp.
-    - PCR 10 (IMA measurements) against the expected IMA log.
-4. Upon successful validation, the management plane provides attestation results to the Workload Identity Manager.
 
 ### Periodic Attestation Cycle: Step-by-Step
 

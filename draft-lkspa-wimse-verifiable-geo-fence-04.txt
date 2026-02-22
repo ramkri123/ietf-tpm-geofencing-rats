@@ -1133,14 +1133,19 @@ Internet-Draft                    GeoW                     February 2026
    network stack.  A lightweight log exporter runs on the host as a
    privileged systemd service (requiring root or CAP_SYS_ADMIN to read
    /sys/kernel/security/ima/ascii_runtime_measurements) and exposes the
-   IMA runtime measurements over the network.  The log may also be
-   retrieved via direct SSH access to the host.  Regardless of the
-   collection method, the IMA log is transmitted as untrusted input —
-   the trust anchor is the OOB TPM Quote, not the log itself.  Notably,
-   the integrity of the log exporter does not affect the security model:
-   even if both the kernel and the exporter are compromised and conspire
-   to produce a falsified log, the verifier will detect the tampering
-   via the PCR mismatch in Step 6.
+   IMA runtime measurements over the network.  The exporter is installed
+   as a systemd unit file, started automatically at boot, and runs as a
+   long-lived daemon listening for log retrieval requests (e.g., via
+   gRPC or a REST endpoint).  Its binary is itself measured by IMA at
+   launch time and recorded in PCR 10, so any tampering with the
+   exporter binary is captured in the TPM measurements.  The log may
+   also be retrieved via direct SSH access to the host.  Regardless of
+   the collection method, the IMA log is transmitted as untrusted input
+   — the trust anchor is the OOB TPM Quote, not the log itself.
+   Notably, the integrity of the log exporter does not affect the
+   security model: even if both the kernel and the exporter are
+   compromised and conspire to produce a falsified log, the verifier
+   will detect the tampering via the PCR mismatch in Step 6.
 
    *  _Compromise detection:_ A compromised kernel can tamper with this
       log (remove entries, alter hashes, truncate).  This is expected
@@ -1165,11 +1170,6 @@ Internet-Draft                    GeoW                     February 2026
       verified by the OEM CA chain.  A spoofed or tampered management
       processor would fail certificate validation.
 
-   *Step 6 -- External Verifier: Validate Evidence*
-
-   The external verifier (management plane) performs the following
-   validation:
-
 
 
 
@@ -1177,6 +1177,11 @@ Krishnan, et al.         Expires 26 August 2026                [Page 21]
 
 Internet-Draft                    GeoW                     February 2026
 
+
+   *Step 6 -- External Verifier: Validate Evidence*
+
+   The external verifier (management plane) performs the following
+   validation:
 
    1.  *Verify TPM Quote signature* using the TPM's AK public key.  If
        invalid, the TPM or Quote has been tampered with.
@@ -1220,12 +1225,7 @@ Internet-Draft                    GeoW                     February 2026
 
 7.5.8.  Advantages
 
-   *  Out-of-band attestation: works even when the host OS is
-      compromised, rebooting, or offline.
-   *  Hardware-isolated attestation path: the management processor is
-      physically separate from the host CPU.
-   *  Detects compromised kernel / IMA subversion through hardware-
-      signed TPM quotes.
+
 
 
 
@@ -1234,6 +1234,12 @@ Krishnan, et al.         Expires 26 August 2026                [Page 22]
 Internet-Draft                    GeoW                     February 2026
 
 
+   *  Out-of-band attestation: works even when the host OS is
+      compromised, rebooting, or offline.
+   *  Hardware-isolated attestation path: the management processor is
+      physically separate from the host CPU.
+   *  Detects compromised kernel / IMA subversion through hardware-
+      signed TPM quotes.
    *  TPM Swap attack protection at boot time.
    *  Enterprise fleet management integration (HPE OneView, Dell iDRAC,
       Lenovo XClarity, etc.).
@@ -1275,12 +1281,6 @@ Internet-Draft                    GeoW                     February 2026
    *  Both options remove direct TPM EK exposure.  Pseudonymity uses the
       standard TPM AK model, while TPM DAA offers unlinkable, anonymous
       proofs of TPM possession.
-
-
-
-
-
-
 
 
 

@@ -11,7 +11,7 @@
 <meta content="A Prasad" name="author">
 <meta content="Srinivasa Addepalli" name="author">
 <meta content='
-       Modern cloud and distributed environments face significant risks from stolen bearer tokens, protocol replay, and trust gaps in transit, particularly in the context of  Sovereign Workloads  and high-assurance requirements. This document defines a  RATS Profile  for high-assurance, hardware-rooted platform and location attestation. It specifies the technical mechanics for verifiable geofencing and host integrity required by the  WIMSE Architecture  [[I-D.ietf-wimse-architecture]] and the  Workload Identity Agent (WIA) . 
+       Modern cloud and distributed environments face significant risks from stolen bearer tokens, protocol replay, and trust gaps in transit, particularly in the context of  Sovereign Workloads  and high-assurance requirements. This document defines a  RATS Profile  for high-assurance, hardware-rooted platform and location attestation. It specifies the technical mechanics for verifiable geofencing and host integrity required by the  WIMSE Architecture  [[I-D.ietf-wimse-architecture]] and the  Workload Identity Agent (Workload Identity Agent) . 
        While the WIMSE architecture assumes a trustworthy agent, it does not specify the normative technical mechanics for its verification. This document fills that gap as a specialized RATS profile, covering TPM-based platform attestation (Layer 2) and high-assurance geolocation attestation (Layer 3). It integrates out-of-band (OOB) hardware monitoring, cloud-native virtual TPM (vTPM) support, and privacy-preserving Zero-Knowledge Proof (ZKP) verification to generate  High-Confidence Evidence . 
        By binding identity agent integrity to geographic and host attributes, the framework establishes a "Silicon-to-Audit" chain of trust. This addresses challenges in bearer token theft and data residency while providing a post-quantum cryptographic foundation through mathematical transparency. The solution builds upon the  RATS Architecture [[RFC9334]]  to ensure that only authorized workloads in approved locations can access sensitive services. 
     ' name="description">
@@ -1277,7 +1277,7 @@ li > p:last-of-type:only-child {
 <h1 id="title">Verifiable Geofencing and Residency Proofs for Sovereign Workloads: A RATS Profile</h1>
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
-<p id="section-abstract-1">Modern cloud and distributed environments face significant risks from stolen bearer tokens, protocol replay, and trust gaps in transit, particularly in the context of <strong>Sovereign Workloads</strong> and high-assurance requirements. This document defines a <strong>RATS Profile</strong> for high-assurance, hardware-rooted platform and location attestation. It specifies the technical mechanics for verifiable geofencing and host integrity required by the <strong>WIMSE Architecture</strong> [[I-D.ietf-wimse-architecture]] and the <strong>Workload Identity Agent (WIA)</strong>.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+<p id="section-abstract-1">Modern cloud and distributed environments face significant risks from stolen bearer tokens, protocol replay, and trust gaps in transit, particularly in the context of <strong>Sovereign Workloads</strong> and high-assurance requirements. This document defines a <strong>RATS Profile</strong> for high-assurance, hardware-rooted platform and location attestation. It specifies the technical mechanics for verifiable geofencing and host integrity required by the <strong>WIMSE Architecture</strong> [[I-D.ietf-wimse-architecture]] and the <strong>Workload Identity Agent (Workload Identity Agent)</strong>.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 <p id="section-abstract-2">While the WIMSE architecture assumes a trustworthy agent, it does not specify the normative technical mechanics for its verification. This document fills that gap as a specialized RATS profile, covering TPM-based platform attestation (Layer 2) and high-assurance geolocation attestation (Layer 3). It integrates out-of-band (OOB) hardware monitoring, cloud-native virtual TPM (vTPM) support, and privacy-preserving Zero-Knowledge Proof (ZKP) verification to generate <strong>High-Confidence Evidence</strong>.<a href="#section-abstract-2" class="pilcrow">¶</a></p>
 <p id="section-abstract-3">By binding identity agent integrity to geographic and host attributes, the framework establishes a "Silicon-to-Audit" chain of trust. This addresses challenges in bearer token theft and data residency while providing a post-quantum cryptographic foundation through mathematical transparency. The solution builds upon the <strong>RATS Architecture [[RFC9334]]</strong> to ensure that only authorized workloads in approved locations can access sensitive services.<a href="#section-abstract-3" class="pilcrow">¶</a></p>
 </section>
@@ -1417,7 +1417,7 @@ li > p:last-of-type:only-child {
                 <p id="section-toc.1-1.8.2.2.1"><a href="#section-8.2" class="auto internal xref">8.2</a>.  <a href="#name-measured-boot-and-os-integr" class="internal xref">Measured Boot and OS Integrity Attestation</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.3">
-                <p id="section-toc.1-1.8.2.3.1"><a href="#section-8.3" class="auto internal xref">8.3</a>.  <a href="#name-wia-attestation-and-identit" class="internal xref">WIA Attestation and Identity Issuance</a></p>
+                <p id="section-toc.1-1.8.2.3.1"><a href="#section-8.3" class="auto internal xref">8.3</a>.  <a href="#name-workload-identity-agent-att" class="internal xref">Workload Identity Agent Attestation and Identity Issuance</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.4">
                 <p id="section-toc.1-1.8.2.4.1"><a href="#section-8.4" class="auto internal xref">8.4</a>.  <a href="#name-deployment-option-a-host-os" class="internal xref">Deployment Option A: Host OS-Based (Keylime)</a></p>
@@ -1658,7 +1658,7 @@ li > p:last-of-type:only-child {
           <strong>BMC</strong>: Baseboard Management Controller<a href="#section-1-3.8" class="pilcrow">¶</a>
 </li>
         <li class="compact" id="section-1-3.9">
-          <strong>WIA</strong>: Workload Identity Agent<a href="#section-1-3.9" class="pilcrow">¶</a>
+          <strong>Workload Identity Agent</strong>: The entity (e.g., SPIRE Agent) on each host managing workload identities.<a href="#section-1-3.9" class="pilcrow">¶</a>
 </li>
         <li class="compact" id="section-1-3.10">
           <strong>OOB</strong>: Out-of-Band<a href="#section-1-3.10" class="pilcrow">¶</a>
@@ -1703,8 +1703,8 @@ li > p:last-of-type:only-child {
         <dd style="margin-left: 1.5em" id="section-1-5.8">A compound enforcement mechanism requiring that data and workloads are executed only on authorized hosts located within approved geographic regions.<a href="#section-1-5.8" class="pilcrow">¶</a>
 </dd>
         <dd class="break"></dd>
-<dt id="section-1-5.9">Workload Identity Agent (WIA):</dt>
-        <dd style="margin-left: 1.5em" id="section-1-5.10">A trusted entity (e.g., SPIFFE/SPIRE agent) on each host that manages workload identities. The WIA is verified through platform attestation (Layer 2) and issues cryptographically bound identities (e.g., SVIDs) to workloads. It serves as the primary trust anchor for workload-to-workload communication in the WIMSE architecture.<a href="#section-1-5.10" class="pilcrow">¶</a>
+<dt id="section-1-5.9">Workload Identity Agent:</dt>
+        <dd style="margin-left: 1.5em" id="section-1-5.10">A trusted entity (e.g., SPIFFE/SPIRE agent) on each host that manages workload identities. The Workload Identity Agent is verified through platform attestation (Layer 2) and issues cryptographically bound identities (e.g., SVIDs) to workloads. It serves as the primary trust anchor for workload-to-workload communication in the WIMSE architecture.<a href="#section-1-5.10" class="pilcrow">¶</a>
 </dd>
         <dd class="break"></dd>
 <dt id="section-1-5.11">Location Anchor Host (LAH):</dt>
@@ -1727,20 +1727,20 @@ li > p:last-of-type:only-child {
         <dd style="margin-left: 1.5em" id="section-1-5.20">A ZKP that does not require a "Trusted Setup" or a Trusted Third Party. Mathematical transparency is achieved through non-interactive, hash-based protocols (e.g., STARKs/FRI).<a href="#section-1-5.20" class="pilcrow">¶</a>
 </dd>
         <dd class="break"></dd>
-<dt id="section-1-5.21">Workload Identity Manager (WIM):</dt>
+<dt id="section-1-5.21">Workload Identity Manager:</dt>
         <dd style="margin-left: 1.5em" id="section-1-5.22">The control plane entity (e.g., SPIRE Server, Keylime Verifier, or a Cloud IAM service) responsible for managing workload identities (SVIDs), verifying workload-to-agent co-location (Layer 1), and issuing credentials based on fused identity and residency claims.<a href="#section-1-5.22" class="pilcrow">¶</a>
 </dd>
         <dd class="break"></dd>
-<dt id="section-1-5.23">Host Management Plane (HMP):</dt>
+<dt id="section-1-5.23">Host Management Plane:</dt>
         <dd style="margin-left: 1.5em" id="section-1-5.24">The infrastructure control plane (e.g., HPE OneView, GreenLake, or AWS Cloud Control) responsible for out-of-band platform management, hardware inventory, and verifying platform-level attestation evidence (Layer 2 and 3) from the management processor (BMC/iLO).<a href="#section-1-5.24" class="pilcrow">¶</a>
 </dd>
         <dd class="break"></dd>
 <dt id="section-1-5.25">N_platform (Platform Quote Nonce):</dt>
-        <dd style="margin-left: 1.5em" id="section-1-5.26">A fresh nonce generated by the Host Management Plane (HMP) and delivered directly to the management processor (OOB). The Host OS and WIA MUST NOT be required to observe N_platform.<a href="#section-1-5.26" class="pilcrow">¶</a>
+        <dd style="margin-left: 1.5em" id="section-1-5.26">A fresh nonce generated by the Host Management Plane and delivered directly to the management processor (OOB). The Host OS and Workload Identity Agent MUST NOT be required to observe N_platform.<a href="#section-1-5.26" class="pilcrow">¶</a>
 </dd>
         <dd class="break"></dd>
 <dt id="section-1-5.27">N_fusion (Workload Fusion Nonce):</dt>
-        <dd style="margin-left: 1.5em" id="section-1-5.28">A nonce provided by the Workload Identity Manager (WIM) specifically for the WIA-to-Workload proof-of-residency / identity fusion flows. This nonce MAY traverse the Host OS.<a href="#section-1-5.28" class="pilcrow">¶</a>
+        <dd style="margin-left: 1.5em" id="section-1-5.28">A nonce provided by the Workload Identity Manager specifically for the Workload Identity Agent-to-Workload proof-of-residency / identity fusion flows. This nonce MAY traverse the Host OS.<a href="#section-1-5.28" class="pilcrow">¶</a>
 </dd>
       <dd class="break"></dd>
 </dl>
@@ -1752,8 +1752,8 @@ li > p:last-of-type:only-child {
 <a href="#section-2" class="section-number selfRef">2. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
 <p id="section-2-1">As organizations increasingly adopt cloud and distributed computing, the need to enforce data residency, geolocation affinity, and host affinity has become critical for regulatory compliance and risk management. Traditional approaches rely on trust in infrastructure providers, which are often insufficient in adversarial or multi-tenant environments.<a href="#section-2-1" class="pilcrow">¶</a></p>
-<p id="section-2-2">Modern workload security faces challenges from stolen bearer tokens, protocol replay, and trust gaps in transit. This document defines a specialized <strong>RATS Profile</strong> that cryptographically binds the <strong>Workload Identity Agent (WIA)</strong>—the entity responsible for issuing software identities—to a hardware-verified platform and physical location.<a href="#section-2-2" class="pilcrow">¶</a></p>
-<p id="section-2-3">The architecture follows the <strong>RATS Architecture [[RFC9334]]</strong>, defining the interactions between <strong>Provers</strong>, <strong>Verifiers</strong>, and <strong>Relying Parties</strong> to generate and validate <strong>High-Confidence Evidence</strong> regarding the WIA's status. It provides the hardware-rooted "Evidence Layer" required by the high-level <strong>WIMSE Architecture [[I-D.ietf-wimse-architecture]]</strong>, establishing a "Silicon-to-Audit" chain of trust that ensures sensitive data is only processed by authorized workloads in approved, integral environments.<a href="#section-2-3" class="pilcrow">¶</a></p>
+<p id="section-2-2">Modern workload security faces challenges from stolen bearer tokens, protocol replay, and trust gaps in transit. This document defines a specialized <strong>RATS Profile</strong> that cryptographically binds the <strong>Workload Identity Agent</strong>—the entity responsible for issuing software identities—to a hardware-verified platform and physical location.<a href="#section-2-2" class="pilcrow">¶</a></p>
+<p id="section-2-3">The architecture follows the <strong>RATS Architecture [[RFC9334]]</strong>, defining the interactions between <strong>Provers</strong>, <strong>Verifiers</strong>, and <strong>Relying Parties</strong> to generate and validate <strong>High-Confidence Evidence</strong> regarding the Workload Identity Agent's status. It provides the hardware-rooted "Evidence Layer" required by the high-level <strong>WIMSE Architecture [[I-D.ietf-wimse-architecture]]</strong>, establishing a "Silicon-to-Audit" chain of trust that ensures sensitive data is only processed by authorized workloads in approved, integral environments.<a href="#section-2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="relationship-to-transitive-attestation">
@@ -1765,13 +1765,13 @@ li > p:last-of-type:only-child {
 <p id="section-3-2">The three layers are:<a href="#section-3-2" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-3-3.1">
-          <p id="section-3-3.1.1"><strong>Layer 1 -- Workload Identity Attestation (Hardware-Independent):</strong> Covered by [[I-D.mw-wimse-transitive-attestation]]. Proves that a workload is co-located with a verified Workload Identity Agent (WIA) via a local mechanism such as a Unix Domain Socket. Defines the mTLS-based Proof of Residency (PoR) and DPoR protocol flows. This layer does NOT concern itself with how the WIA itself was verified—it treats the WIA as an already-attested trust anchor.<a href="#section-3-3.1.1" class="pilcrow">¶</a></p>
+          <p id="section-3-3.1.1"><strong>Layer 1 -- Workload Identity Attestation (Hardware-Independent):</strong> Covered by [[I-D.mw-wimse-transitive-attestation]]. Proves that a workload is co-located with a verified Workload Identity Agent (Workload Identity Agent) via a local mechanism such as a Unix Domain Socket. Defines the mTLS-based Proof of Residency (PoR) and DPoR protocol flows. This layer does NOT concern itself with how the Workload Identity Agent itself was verified—it treats the Workload Identity Agent as an already-attested trust anchor.<a href="#section-3-3.1.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-3-3.2">
-          <p id="section-3-3.2.1"><strong>Layer 2 -- WIA Platform Attestation via TPM (Hardware-Dependent):</strong> Covered by this document. Proves the WIA is running on an approved host via TPM-based measured boot, hardware inventory verification, and credential activation. This establishes the hardware root of trust that Layer 1 relies upon.<a href="#section-3-3.2.1" class="pilcrow">¶</a></p>
+          <p id="section-3-3.2.1"><strong>Layer 2 -- Workload Identity Agent Platform Attestation via TPM (Hardware-Dependent):</strong> Covered by this document. Proves the Workload Identity Agent is running on an approved host via TPM-based measured boot, hardware inventory verification, and credential activation. This establishes the hardware root of trust that Layer 1 relies upon.<a href="#section-3-3.2.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-3-3.3">
-          <p id="section-3-3.3.1"><strong>Layer 3 -- WIA Geolocation Attestation (Hardware-Dependent):</strong> Covered by this document. Proves the attested host (from Layer 2) is within an approved geographic boundary using cryptographically bound sensors (GNSS, mobile modems).<a href="#section-3-3.3.1" class="pilcrow">¶</a></p>
+          <p id="section-3-3.3.1"><strong>Layer 3 -- Workload Identity Agent Geolocation Attestation (Hardware-Dependent):</strong> Covered by this document. Proves the attested host (from Layer 2) is within an approved geographic boundary using cryptographically bound sensors (GNSS, mobile modems).<a href="#section-3-3.3.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
 <p id="section-3-4">The following table maps these layers to the broader IETF ecosystem, forming a cohesive "Silicon-to-SVID" chain of accountability:<a href="#section-3-4" class="pilcrow">¶</a></p>
@@ -1810,7 +1810,7 @@ li > p:last-of-type:only-child {
               <strong>RATS</strong>
 </td>
             <td class="text-left" rowspan="1" colspan="1">
-              <strong>Platform Evidence</strong>: Verifies host integrity and WIA hardware residency (TPM).</td>
+              <strong>Platform Evidence</strong>: Verifies host integrity and Workload Identity Agent hardware residency (TPM).</td>
           </tr>
           <tr>
             <td class="text-left" rowspan="1" colspan="1">
@@ -1829,9 +1829,9 @@ li > p:last-of-type:only-child {
       </table>
 <p id="section-3-6">Together, the complete chain is:<a href="#section-3-6" class="pilcrow">¶</a></p>
 <ul class="compact">
-<li class="compact" id="section-3-7.1">TPM Hardware -&gt; WIA (this draft, Layer 2) -&gt; Workload (transitive attestation draft, Layer 1)<a href="#section-3-7.1" class="pilcrow">¶</a>
+<li class="compact" id="section-3-7.1">TPM Hardware -&gt; Workload Identity Agent (this draft, Layer 2) -&gt; Workload (transitive attestation draft, Layer 1)<a href="#section-3-7.1" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="section-3-7.2">TPM/Geolocation Hardware -&gt; WIA (this draft, Layers 2+3) -&gt; Workload (transitive attestation draft, Layer 1)<a href="#section-3-7.2" class="pilcrow">¶</a>
+        <li class="compact" id="section-3-7.2">TPM/Geolocation Hardware -&gt; Workload Identity Agent (this draft, Layers 2+3) -&gt; Workload (transitive attestation draft, Layer 1)<a href="#section-3-7.2" class="pilcrow">¶</a>
 </li>
       </ul>
 </section>
@@ -1841,9 +1841,9 @@ li > p:last-of-type:only-child {
       <h2 id="name-addressing-wimse-architectu">
 <a href="#section-4" class="section-number selfRef">4. </a><a href="#name-addressing-wimse-architectu" class="section-name selfRef">Addressing WIMSE Architecture Gaps</a>
       </h2>
-<p id="section-4-1">The high-level <strong>WIMSE Architecture</strong> [[I-D.ietf-wimse-architecture]] establishes the requirement for a trustworthy Workload Identity Agent (WIA) but delegates the technical mechanics of agent verification to specific profiles. This document fills that technical gap by providing a normative specification for hardware-rooted agent verification.<a href="#section-4-1" class="pilcrow">¶</a></p>
-<p id="section-4-2">Without the hardware-rooted "Silicon-to-Audit" proof established in this specification, the WIMSE identity model would rely on implicit trust in the host operating system or infrastructure provider. This draft hardens the WIMSE model against advanced threats by ensuring the WIA itself—and consequently the identities it issues—are anchored to verifiable hardware configuration and physical location.<a href="#section-4-2" class="pilcrow">¶</a></p>
-<p id="section-4-3">This document focuses exclusively on Layers 2 and 3: the hardware-dependent attestation of the WIA itself. For how workloads prove they are co-located with an attested WIA, and for the data-plane protocol flows (mTLS PoR, DPoR), see [[I-D.mw-wimse-transitive-attestation]].<a href="#section-4-3" class="pilcrow">¶</a></p>
+<p id="section-4-1">The high-level <strong>WIMSE Architecture</strong> [[I-D.ietf-wimse-architecture]] establishes the requirement for a trustworthy Workload Identity Agent (Workload Identity Agent) but delegates the technical mechanics of agent verification to specific profiles. This document fills that technical gap by providing a normative specification for hardware-rooted agent verification.<a href="#section-4-1" class="pilcrow">¶</a></p>
+<p id="section-4-2">Without the hardware-rooted "Silicon-to-Audit" proof established in this specification, the WIMSE identity model would rely on implicit trust in the host operating system or infrastructure provider. This draft hardens the WIMSE model against advanced threats by ensuring the Workload Identity Agent itself—and consequently the identities it issues—are anchored to verifiable hardware configuration and physical location.<a href="#section-4-2" class="pilcrow">¶</a></p>
+<p id="section-4-3">This document focuses exclusively on Layers 2 and 3: the hardware-dependent attestation of the Workload Identity Agent itself. For how workloads prove they are co-located with an attested Workload Identity Agent, and for the data-plane protocol flows (mTLS PoR, DPoR), see [[I-D.mw-wimse-transitive-attestation]].<a href="#section-4-3" class="pilcrow">¶</a></p>
 <p id="section-4-4">In the context of SPIFFE/SPIRE:<a href="#section-4-4" class="pilcrow">¶</a></p>
 <ul class="compact">
 <li class="compact" id="section-4-5.1">The <strong>Workload Identity Manager</strong> is represented by the SPIFFE/SPIRE server.<a href="#section-4-5.1" class="pilcrow">¶</a>
@@ -2031,10 +2031,10 @@ li > p:last-of-type:only-child {
       </h2>
 <ul class="normal">
 <li class="normal" id="section-7-1.1">
-          <p id="section-7-1.1.1"><strong>Layer 2 -- WIA Platform Attestation via TPM (Hardware-Dependent):</strong> Covered by this document. Proves the WIA is running on an approved host via TPM-based measured boot, hardware inventory verification, and credential activation.<a href="#section-7-1.1.1" class="pilcrow">¶</a></p>
+          <p id="section-7-1.1.1"><strong>Layer 2 -- Workload Identity Agent Platform Attestation via TPM (Hardware-Dependent):</strong> Covered by this document. Proves the Workload Identity Agent is running on an approved host via TPM-based measured boot, hardware inventory verification, and credential activation.<a href="#section-7-1.1.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-7-1.2">
-          <p id="section-7-1.2.1"><strong>Layer 3 -- WIA Geolocation Attestation (Hardware-Dependent):</strong> Covered by this document. Proves the host (verified in Layer 2) is within a defined geographic boundary using cryptographically bound sensors.<a href="#section-7-1.2.1" class="pilcrow">¶</a></p>
+          <p id="section-7-1.2.1"><strong>Layer 3 -- Workload Identity Agent Geolocation Attestation (Hardware-Dependent):</strong> Covered by this document. Proves the host (verified in Layer 2) is within a defined geographic boundary using cryptographically bound sensors.<a href="#section-7-1.2.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-7-1.3">
           <p id="section-7-1.3.1"><strong>Privacy-Preserving Verification (ZKP Extension):</strong> An optional layer that uses transparent, post-quantum Zero-Knowledge Proofs to verify geofence compliance without disclosing exact coordinates.<a href="#section-7-1.3.1" class="pilcrow">¶</a></p>
@@ -2052,7 +2052,7 @@ li > p:last-of-type:only-child {
           <strong>Option C -- Cloud-Based Virtual TPM (e.g., AWS Nitro):</strong> Hardware-backed virtual TPM attestation for cloud and containerized (EKS) environments.<a href="#section-7-3.3" class="pilcrow">¶</a>
 </li>
       </ul>
-<p id="section-7-4">For the workload-level attestation that builds on top of the WIA (Layer 1), see [[I-D.mw-wimse-transitive-attestation]].<a href="#section-7-4" class="pilcrow">¶</a></p>
+<p id="section-7-4">For the workload-level attestation that builds on top of the Workload Identity Agent (Layer 1), see [[I-D.mw-wimse-transitive-attestation]].<a href="#section-7-4" class="pilcrow">¶</a></p>
 <div id="server-hosts-solution-highlights">
 <section id="section-7.1">
         <h3 id="name-server-hosts-solution-highl">
@@ -2138,7 +2138,7 @@ li > p:last-of-type:only-child {
             <strong>OS Integrity:</strong> The host booted with approved firmware, bootloader, and operating system, as measured during the boot process and recorded in TPM Platform Configuration Registers (PCRs).<a href="#section-8.1-2.2" class="pilcrow">¶</a>
 </li>
           <li id="section-8.1-2.3">
-            <strong>WIA Integrity:</strong> The Workload Identity Agent binary was measured (e.g., via Linux IMA) and matches approved values before execution.<a href="#section-8.1-2.3" class="pilcrow">¶</a>
+            <strong>Workload Identity Agent Integrity:</strong> The Workload Identity Agent binary was measured (e.g., via Linux IMA) and matches approved values before execution.<a href="#section-8.1-2.3" class="pilcrow">¶</a>
 </li>
         </ol>
 <div id="comparison-of-deployment-options">
@@ -2227,10 +2227,10 @@ li > p:last-of-type:only-child {
 <p id="section-8.2-6"><strong>Remote Verification</strong>: The remote Workload Identity Manager checks the integrity of the attestation report and validates the measurements against known good values from the set of trusted hosts in the Host hardware identity datastore. The Workload Identity Manager also validates that the TPM EK certificate has not been revoked and is part of the approved list of TPM EK identifiers associated with the hardware platform. At this point, we can be sure that the hardware platform is approved for running workloads and is running an approved OS.<a href="#section-8.2-6" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="wia-attestation-and-identity-issuance">
+<div id="workload-identity-agent-attestation-and-identity-issuance">
 <section id="section-8.3">
-        <h3 id="name-wia-attestation-and-identit">
-<a href="#section-8.3" class="section-number selfRef">8.3. </a><a href="#name-wia-attestation-and-identit" class="section-name selfRef">WIA Attestation and Identity Issuance</a>
+        <h3 id="name-workload-identity-agent-att">
+<a href="#section-8.3" class="section-number selfRef">8.3. </a><a href="#name-workload-identity-agent-att" class="section-name selfRef">Workload Identity Agent Attestation and Identity Issuance</a>
         </h3>
 <p id="section-8.3-1">The Workload Identity Agent TPM plugin is a process with elevated privileges that has access to TPM and location sensor hardware. Linux IMA measurement and Workload Identity Agent public/private key attestation are the changes compared to the original SPIFFE/SPIRE architecture with the TPM plugin.<a href="#section-8.3-1" class="pilcrow">¶</a></p>
 <p id="section-8.3-2"><strong>Measurement Collection</strong>: For the Workload Identity Agent start case, the Agent executable is measured by Linux IMA, for example through cloud init and stored in TPM PCR through tools e.g., Linux ima-evm-utils before it is loaded. For the Workload Identity Agent restart case, it is not clear how the storage in TPM PCR will be accomplished - ideally this should be natively handled in the IMA measurement process with an ability to retrigger on restart or refresh cycles (OPEN ISSUES 1).<a href="#section-8.3-2" class="pilcrow">¶</a></p>
@@ -2505,12 +2505,12 @@ These monitoring functions are performed over dedicated, low-level hardware inte
               <strong>Slow path (hours/days or on-change)</strong>: Refresh full logs, hardware inventory, and location corroboration.<a href="#section-8.5.7-2.3" class="pilcrow">¶</a>
 </li>
           </ul>
-<p id="section-8.5.7-3">A Verifier (HMP or WIM, depending on the drift signal) SHALL trigger the slow path on drift indicators (firmware change, security log events, inventory changes).<a href="#section-8.5.7-3" class="pilcrow">¶</a></p>
-<p id="section-8.5.7-4"><strong>Step 1 -- Host Management Plane (HMP): Initiate Attestation Challenge</strong><a href="#section-8.5.7-4" class="pilcrow">¶</a></p>
+<p id="section-8.5.7-3">A Verifier (Host Management Plane or Workload Identity Manager, depending on the drift signal) SHALL trigger the slow path on drift indicators (firmware change, security log events, inventory changes).<a href="#section-8.5.7-3" class="pilcrow">¶</a></p>
+<p id="section-8.5.7-4"><strong>Step 1 -- Host Management Plane (Host Management Plane): Initiate Attestation Challenge</strong><a href="#section-8.5.7-4" class="pilcrow">¶</a></p>
 <p id="section-8.5.7-5">The external management plane verifier (e.g., HPE OneView/GreenLake) generates a cryptographically random nonce (<strong>N_platform</strong>) and sends it to the management processor (iLO) via the dedicated management NIC (Redfish API). This nonce will be embedded in the TPM Quote qualifying data to prove that the attestation evidence is fresh and was produced in response to this specific request.<a href="#section-8.5.7-5" class="pilcrow">¶</a></p>
 <ul class="compact">
 <li class="compact" id="section-8.5.7-6.1">
-              <em>Compromise detection:</em> The nonce originates outside the host entirely (at the management plane). The host OS and WIA MUST NOT be required to observe N_platform. Any nonce seen by the host is not sufficient to prove OOB freshness.<a href="#section-8.5.7-6.1" class="pilcrow">¶</a>
+              <em>Compromise detection:</em> The nonce originates outside the host entirely (at the management plane). The host OS and Workload Identity Agent MUST NOT be required to observe N_platform. Any nonce seen by the host is not sufficient to prove OOB freshness.<a href="#section-8.5.7-6.1" class="pilcrow">¶</a>
 </li>
           </ul>
 <p id="section-8.5.7-7"><strong>Step 2 -- Host OS: Normal Operation (Continuous)</strong><a href="#section-8.5.7-7" class="pilcrow">¶</a></p>
@@ -2523,7 +2523,7 @@ These monitoring functions are performed over dedicated, low-level hardware inte
 <p id="section-8.5.7-10"><strong>Step 3 -- Management Processor (iLO): Fetch TPM Quote (OOB)</strong><a href="#section-8.5.7-10" class="pilcrow">¶</a></p>
 <p id="section-8.5.7-11">The management processor passes <strong>N_platform</strong> to the TPM as the qualifying data (aka "qualification") in the TPM2_Quote command over its dedicated I2C/private bus. Platform Capability Guard: Any claim that the management processor can extend PCRs (e.g., PCR 15) or access TPM commands over a private bus MUST be conditioned on an explicit platform capability flag and documented hardware requirements. If unavailable, deployments SHALL fall back to nonce-qualified TPM quotes and signed OOB evidence without PCR extension.<a href="#section-8.5.7-11" class="pilcrow">¶</a></p>
 <p id="section-8.5.7-12"><strong>Step 4 -- Host OS: Provide IMA Log (In-Band)</strong><a href="#section-8.5.7-12" class="pilcrow">¶</a></p>
-<p id="section-8.5.7-13">The Host Management Plane (HMP) requests the current IMA event log from the host OS via the host network stack. A lightweight log exporter runs on the host as a privileged systemd service (requiring root or CAP_SYS_ADMIN to read /sys/kernel/security/ima/ascii_runtime_measurements) and exposes the IMA runtime measurements over the network. The exporter is installed as a systemd unit file, started automatically at boot, and runs as a long-lived daemon listening for log retrieval requests (e.g., via gRPC or a REST endpoint). Its binary is itself measured by IMA at launch time and recorded in PCR 10, so any tampering with the exporter binary is captured in the TPM measurements. The log may also be retrieved via direct SSH access to the host. Regardless of the collection method, the IMA log is transmitted as untrusted input — the trust anchor is the OOB TPM Quote, not the log itself. Notably, the integrity of the log exporter does not affect the security model: even if both the kernel and the exporter are compromised and conspire to produce a falsified log, the verifier will detect the tampering via the PCR mismatch in Step 6.<a href="#section-8.5.7-13" class="pilcrow">¶</a></p>
+<p id="section-8.5.7-13">The Host Management Plane (Host Management Plane) requests the current IMA event log from the host OS via the host network stack. A lightweight log exporter runs on the host as a privileged systemd service (requiring root or CAP_SYS_ADMIN to read /sys/kernel/security/ima/ascii_runtime_measurements) and exposes the IMA runtime measurements over the network. The exporter is installed as a systemd unit file, started automatically at boot, and runs as a long-lived daemon listening for log retrieval requests (e.g., via gRPC or a REST endpoint). Its binary is itself measured by IMA at launch time and recorded in PCR 10, so any tampering with the exporter binary is captured in the TPM measurements. The log may also be retrieved via direct SSH access to the host. Regardless of the collection method, the IMA log is transmitted as untrusted input — the trust anchor is the OOB TPM Quote, not the log itself. Notably, the integrity of the log exporter does not affect the security model: even if both the kernel and the exporter are compromised and conspire to produce a falsified log, the verifier will detect the tampering via the PCR mismatch in Step 6.<a href="#section-8.5.7-13" class="pilcrow">¶</a></p>
 <ul class="compact">
 <li class="compact" id="section-8.5.7-14.1">
               <em>Compromise detection:</em> A compromised kernel can tamper with this log (remove entries, alter hashes, truncate). This is expected behavior and is why the log is treated as untrusted. The verifier will detect any tampering in Step 6.<a href="#section-8.5.7-14.1" class="pilcrow">¶</a>
@@ -2533,14 +2533,14 @@ These monitoring functions are performed over dedicated, low-level hardware inte
 </li>
           </ul>
 <p id="section-8.5.7-15"><strong>Step 5 -- Management Processor (iLO): Forward Evidence to Host Management Plane</strong><a href="#section-8.5.7-15" class="pilcrow">¶</a></p>
-<p id="section-8.5.7-16">The management processor transmits the hardware-signed TPM Quote (which contains N_platform inside the signed payload as qualifying data), the TCG Boot Event Log, and the current <strong>Hardware Inventory</strong> (including CPU PPINs and peripheral serial numbers collected out-of-band via PECI/SMBus) to the Host Management Plane (HMP) (e.g., HPE OneView/GreenLake) via the dedicated management NIC using the Redfish API. The management processor signs this transmission with its own OEM CA-chained identity key.<a href="#section-8.5.7-16" class="pilcrow">¶</a></p>
+<p id="section-8.5.7-16">The management processor transmits the hardware-signed TPM Quote (which contains N_platform inside the signed payload as qualifying data), the TCG Boot Event Log, and the current <strong>Hardware Inventory</strong> (including CPU PPINs and peripheral serial numbers collected out-of-band via PECI/SMBus) to the Host Management Plane (Host Management Plane) (e.g., HPE OneView/GreenLake) via the dedicated management NIC using the Redfish API. The management processor signs this transmission with its own OEM CA-chained identity key.<a href="#section-8.5.7-16" class="pilcrow">¶</a></p>
 <ul class="compact">
 <li class="compact" id="section-8.5.7-17.1">
               <em>Compromise detection:</em> The management processor's identity is verified by the OEM CA chain. A spoofed or tampered management processor would fail certificate validation.<a href="#section-8.5.7-17.1" class="pilcrow">¶</a>
 </li>
           </ul>
-<p id="section-8.5.7-18"><strong>Step 6 -- Host Management Plane (HMP): Validate Evidence</strong><a href="#section-8.5.7-18" class="pilcrow">¶</a></p>
-<p id="section-8.5.7-19">The Host Management Plane (HMP) (management plane) performs the following validation:<a href="#section-8.5.7-19" class="pilcrow">¶</a></p>
+<p id="section-8.5.7-18"><strong>Step 6 -- Host Management Plane (Host Management Plane): Validate Evidence</strong><a href="#section-8.5.7-18" class="pilcrow">¶</a></p>
+<p id="section-8.5.7-19">The Host Management Plane (Host Management Plane) (management plane) performs the following validation:<a href="#section-8.5.7-19" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="compact type-1" id="section-8.5.7-20">
 <li id="section-8.5.7-20.1">
               <strong>Verify TPM Quote signature</strong> using the TPM's AK public key. If invalid, the TPM or Quote has been tampered with.<a href="#section-8.5.7-20.1" class="pilcrow">¶</a>
@@ -2643,7 +2643,7 @@ These monitoring functions are performed over dedicated, low-level hardware inte
         <h3 id="name-deployment-option-c-cloud-b">
 <a href="#section-8.6" class="section-number selfRef">8.6. </a><a href="#name-deployment-option-c-cloud-b" class="section-name selfRef">Deployment Option C: Cloud-based Virtual TPM (vTPM)</a>
         </h3>
-<p id="section-8.6-1">In cloud environments, physical TPM access is typically virtualized. Cloud providers (e.g., AWS, GCP, Azure) provide a Virtual TPM (vTPM) to each guest Virtual Machine (VM). In this model, the <strong>Cloud Service Provider (CSP)</strong> acts as the <strong>Host Management Plane (HMP)</strong>, managing the underlying physical hardware and the hypervisor that provides the vTPM. This vTPM is a software-emulated TPM 2.0 device that is cryptographically bound to the physical hardware's Silicon Root of Trust (e.g., AWS Nitro Security Chip). This architecture is a primary enabler for securing containerized workloads at scale, such as <strong>Amazon EKS node worker attestation</strong>.<a href="#section-8.6-1" class="pilcrow">¶</a></p>
+<p id="section-8.6-1">In cloud environments, physical TPM access is typically virtualized. Cloud providers (e.g., AWS, GCP, Azure) provide a Virtual TPM (vTPM) to each guest Virtual Machine (VM). In this model, the <strong>Cloud Service Provider (CSP)</strong> acts as the <strong>Host Management Plane (Host Management Plane)</strong>, managing the underlying physical hardware and the hypervisor that provides the vTPM. This vTPM is a software-emulated TPM 2.0 device that is cryptographically bound to the physical hardware's Silicon Root of Trust (e.g., AWS Nitro Security Chip). This architecture is a primary enabler for securing containerized workloads at scale, such as <strong>Amazon EKS node worker attestation</strong>.<a href="#section-8.6-1" class="pilcrow">¶</a></p>
 <div id="architecture-2">
 <section id="section-8.6.1">
           <h4 id="name-architecture-3">
@@ -2657,7 +2657,7 @@ These monitoring functions are performed over dedicated, low-level hardware inte
               <strong>Guest OS Agent (SPIRE Agent):</strong> Runs as a system daemon within the VM (or EKS node). It interacts with the vTPM to record boot measurements and workload identities. On AWS, the <strong><code>nitro-tpm-attest</code></strong> utility can be used at runtime to retrieve a signed Attestation Document for the instance.<a href="#section-8.6.1-1.2" class="pilcrow">¶</a>
 </li>
             <li id="section-8.6.1-1.3">
-              <strong>Cloud Attestation Service / HMP:</strong> Most cloud providers offer an API or hypervisor-level service (<strong>HMP</strong>) that provides a signed document containing the vTPM measurements, VM identity, and potentially the host hardware's status. The AWS Nitro Hypervisor generates these documents in <strong>CBOR/COSE</strong> format, signed by the AWS Nitro Attestation PKI.<a href="#section-8.6.1-1.3" class="pilcrow">¶</a>
+              <strong>Cloud Attestation Service / Host Management Plane:</strong> Most cloud providers offer an API or hypervisor-level service (<strong>Host Management Plane</strong>) that provides a signed document containing the vTPM measurements, VM identity, and potentially the host hardware's status. The AWS Nitro Hypervisor generates these documents in <strong>CBOR/COSE</strong> format, signed by the AWS Nitro Attestation PKI.<a href="#section-8.6.1-1.3" class="pilcrow">¶</a>
 </li>
           </ol>
 </section>
@@ -2702,12 +2702,12 @@ These monitoring functions are performed over dedicated, low-level hardware inte
         <h3 id="name-workload-identity-fusion-pe">
 <a href="#section-8.7" class="section-number selfRef">8.7. </a><a href="#name-workload-identity-fusion-pe" class="section-name selfRef">Workload Identity Fusion: Periodic SPIRE Re-Attestation</a>
         </h3>
-<p id="section-8.7-1">The three deployment options (A, B, and C) can integrate periodic SPIRE Agent re-attestation with platform attestation to fuse workload identity with hardware-verified host integrity and composition. The core pattern is: the <strong>Workload Identity Manager (WIM)</strong>'s challenge nonce is forwarded to the appropriate attestation verifier, which uses it to fetch a fresh TPM Quote (from either a physical or virtual TPM) along with the current <strong>Hardware Inventory</strong> (CPU serials, firmware versions), creating a cryptographic binding between the workload SVID and the platform's hardware-attested state.<a href="#section-8.7-1" class="pilcrow">¶</a></p>
+<p id="section-8.7-1">The three deployment options (A, B, and C) can integrate periodic SPIRE Agent re-attestation with platform attestation to fuse workload identity with hardware-verified host integrity and composition. The core pattern is: the <strong>Workload Identity Manager (Workload Identity Manager)</strong>'s challenge nonce is forwarded to the appropriate attestation verifier, which uses it to fetch a fresh TPM Quote (from either a physical or virtual TPM) along with the current <strong>Hardware Inventory</strong> (CPU serials, firmware versions), creating a cryptographic binding between the workload SVID and the platform's hardware-attested state.<a href="#section-8.7-1" class="pilcrow">¶</a></p>
 <p id="section-8.7-2"><strong>In-band implementation (Option A):</strong> In the reference implementation [[AegisSovereignWorkloads]], the SPIRE Server sends a <strong>Workload Fusion Nonce (N_fusion)</strong> to the SPIRE Agent, which assembles a SovereignAttestation message. The SPIRE Server delegates verification to the Keylime Verifier, which contacts the in-band Keylime agent to fetch a fresh TPM Quote using the same nonce. The verifier validates the Quote, IMA log, and geolocation, then returns attested claims to the SPIRE Server for SVID issuance. This flow is entirely in-band: the TPM Quote travels through the host OS network stack.<a href="#section-8.7-2" class="pilcrow">¶</a></p>
-<p id="section-8.7-3"><strong>OOB upgrade (Option B):</strong> When a management processor is available, the verification step is upgraded to use the OOB path. The <strong>Workload Identity Manager (WIM)</strong> (e.g., SPIRE Server) still sends <strong>N_fusion</strong> to the SPIRE Agent, and the SPIRE Agent still assembles a SovereignAttestation message. However, the <strong>Host Management Plane (HMP)</strong> (e.g., HPE OneView/GreenLake) utilizes <strong>N_platform</strong> for the hardware-rooted TPM Quote via the OOB path, ensuring it is never seen by the host. The HMP performs the full validation, and the attested claims -- including platform integrity, <strong>hardware composition</strong>, and geolocation -- are returned to the <strong>Workload Identity Manager (WIM)</strong> for SVID issuance.<a href="#section-8.7-3" class="pilcrow">¶</a></p>
+<p id="section-8.7-3"><strong>OOB upgrade (Option B):</strong> When a management processor is available, the verification step is upgraded to use the OOB path. The <strong>Workload Identity Manager (Workload Identity Manager)</strong> (e.g., SPIRE Server) still sends <strong>N_fusion</strong> to the SPIRE Agent, and the SPIRE Agent still assembles a SovereignAttestation message. However, the <strong>Host Management Plane (Host Management Plane)</strong> (e.g., HPE OneView/GreenLake) utilizes <strong>N_platform</strong> for the hardware-rooted TPM Quote via the OOB path, ensuring it is never seen by the host. The Host Management Plane performs the full validation, and the attested claims -- including platform integrity, <strong>hardware composition</strong>, and geolocation -- are returned to the <strong>Workload Identity Manager (Workload Identity Manager)</strong> for SVID issuance.<a href="#section-8.7-3" class="pilcrow">¶</a></p>
 <p id="section-8.7-4"><strong>Cloud vTPM (Option C):</strong> In a cloud deployment, the SPIRE Server sends <strong>N_fusion</strong> to the SPIRE Agent running as a system daemon on the guest VM. The agent utilizes the vTPM to certify its identity and potentially fetches a cloud attestation document (e.g., <strong>AWS Nitro Attestation Document</strong>) that includes the challenge nonce.
- The <strong>Workload Identity Manager (WIM)</strong> (or a delegated verifier) validates the cloud provider's signature and the vTPM Quote (potentially mapped to the COSE signature over the CBOR document), ensuring the VM is running in a trusted environment before issuing the SVID.<a href="#section-8.7-4" class="pilcrow">¶</a></p>
-<p id="section-8.7-5"><strong>Periodic re-attestation:</strong> The SPIRE Agent's SVID has a short programmable TTL (e.g., 30 seconds) and is periodically re-issued. Each re-attestation cycle triggers the full OOB verification flow, meaning the workload identity is continuously re-bound to the host's current hardware-attested state and physical composition. If the host platform fails attestation (e.g., IMA log tampering detected, unauthorized binary loaded, or <strong>CPU serial number mismatch</strong>), the <strong>Workload Identity Manager (WIM)</strong> refuses to re-issue the SVID, effectively revoking the workload's identity and blocking it from communicating with other services.<a href="#section-8.7-5" class="pilcrow">¶</a></p>
+ The <strong>Workload Identity Manager (Workload Identity Manager)</strong> (or a delegated verifier) validates the cloud provider's signature and the vTPM Quote (potentially mapped to the COSE signature over the CBOR document), ensuring the VM is running in a trusted environment before issuing the SVID.<a href="#section-8.7-4" class="pilcrow">¶</a></p>
+<p id="section-8.7-5"><strong>Periodic re-attestation:</strong> The SPIRE Agent's SVID has a short programmable TTL (e.g., 30 seconds) and is periodically re-issued. Each re-attestation cycle triggers the full OOB verification flow, meaning the workload identity is continuously re-bound to the host's current hardware-attested state and physical composition. If the host platform fails attestation (e.g., IMA log tampering detected, unauthorized binary loaded, or <strong>CPU serial number mismatch</strong>), the <strong>Workload Identity Manager (Workload Identity Manager)</strong> refuses to re-issue the SVID, effectively revoking the workload's identity and blocking it from communicating with other services.<a href="#section-8.7-5" class="pilcrow">¶</a></p>
 <p id="section-8.7-6">This fusion achieves several properties:<a href="#section-8.7-6" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="compact type-1" id="section-8.7-7">
 <li id="section-8.7-7.1">
@@ -2737,7 +2737,7 @@ These monitoring functions are performed over dedicated, low-level hardware inte
 <ul class="compact">
 <li class="compact" id="section-8.8-2.1.2.1">Only the Workload Identity Agent's TPM APP public key and Host identity agent's (e.g. Keylime agent) TPM AK public key are shared outside the host-owner organization.<a href="#section-8.8-2.1.2.1" class="pilcrow">¶</a>
 </li>
-              <li class="compact" id="section-8.8-2.1.2.2">The consuming organization's <strong>Workload Identity Manager (WIM)</strong> verifies that AK against its own list of trusted AK public keys.<a href="#section-8.8-2.1.2.2" class="pilcrow">¶</a>
+              <li class="compact" id="section-8.8-2.1.2.2">The consuming organization's <strong>Workload Identity Manager (Workload Identity Manager)</strong> verifies that AK against its own list of trusted AK public keys.<a href="#section-8.8-2.1.2.2" class="pilcrow">¶</a>
 </li>
               <li class="compact" id="section-8.8-2.1.2.3">A unique TPM AK is generated and attested per tenant, so no single AK maps across tenants.<a href="#section-8.8-2.1.2.3" class="pilcrow">¶</a>
 </li>
@@ -2754,7 +2754,7 @@ These monitoring functions are performed over dedicated, low-level hardware inte
 </li>
               <li class="compact" id="section-8.8-2.2.2.3">The Workload Identity Agent signs its public key with that DAA credential (using a session-specific basename).<a href="#section-8.8-2.2.2.3" class="pilcrow">¶</a>
 </li>
-              <li class="compact" id="section-8.8-2.2.2.4">The <strong>Workload Identity Manager (WIM)</strong> verifies the signature against the DAA group public key--proving membership without exposing or linking any device identity.<a href="#section-8.8-2.2.2.4" class="pilcrow">¶</a>
+              <li class="compact" id="section-8.8-2.2.2.4">The <strong>Workload Identity Manager (Workload Identity Manager)</strong> verifies the signature against the DAA group public key--proving membership without exposing or linking any device identity.<a href="#section-8.8-2.2.2.4" class="pilcrow">¶</a>
 </li>
             </ul>
 </li>
@@ -2792,12 +2792,12 @@ These monitoring functions are performed over dedicated, low-level hardware inte
         <h3 id="name-sensor-composition-and-bind">
 <a href="#section-9.2" class="section-number selfRef">9.2. </a><a href="#name-sensor-composition-and-bind" class="section-name selfRef">Sensor Composition and Binding to TPM EK</a>
         </h3>
-<p id="section-9.2-1">The <strong>Host Management Plane (HMP)</strong> geolocation sensor composition manager runs outside of the host. In addition to obtaining location from device location sources (e.g., GNSS), it connects to mobile location service providers (e.g., Telefonica) using the GSMA Location API.
+<p id="section-9.2-1">The <strong>Host Management Plane (Host Management Plane)</strong> geolocation sensor composition manager runs outside of the host. In addition to obtaining location from device location sources (e.g., GNSS), it connects to mobile location service providers (e.g., Telefonica) using the GSMA Location API.
 The process described below is run at a programmable interval (e.g., every 5 minutes) to check if the host hardware composition has changed. Host hardware composition comprises TPM EK, GNSS sensor hardware ID, mobile sensor hardware ID (IMEI), and mobile-SIM IMSI. Note that this workflow is feasible only in enterprise environments where the host hardware is owned and managed by the enterprise.<a href="#section-9.2-1" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="compact type-1" id="section-9.2-2">
-<li id="section-9.2-2.1">The Workload Identity Agent periodically gathers host composition details (e.g., mobile sensor hardware ID (IMEI), mobile-SIM IMSI) and sends them to the <strong>Host Management Plane (HMP)</strong>.<a href="#section-9.2-2.1" class="pilcrow">¶</a>
+<li id="section-9.2-2.1">The Workload Identity Agent periodically gathers host composition details (e.g., mobile sensor hardware ID (IMEI), mobile-SIM IMSI) and sends them to the <strong>Host Management Plane (Host Management Plane)</strong>.<a href="#section-9.2-2.1" class="pilcrow">¶</a>
 </li>
-          <li id="section-9.2-2.2">The <strong>Host Management Plane (HMP)</strong> cross-verifies that the components of the host are still intact or detects if anything has been removed.
+          <li id="section-9.2-2.2">The <strong>Host Management Plane (Host Management Plane)</strong> cross-verifies that the components of the host are still intact or detects if anything has been removed.
 Plugging out components can decrease the quality of location. Note that e-SIM does not have the plugging out problem like standard SIM but could be subject to e-SIM swap attack.<a href="#section-9.2-2.2" class="pilcrow">¶</a>
 </li>
         </ol>
@@ -2871,13 +2871,13 @@ Plugging out components can decrease the quality of location. Note that e-SIM do
               <strong>PCR Usage (OPTIONAL)</strong>: If a deployment uses PCRs to reflect geolocation state, it MUST specify (a) which PCR index(es), (b) reset semantics, and (c) how the verifier computes the expected PCR value across multiple extends. Per-request freshness MUST use TPM Quote qualifying data (nonce). PCR extension is not a substitute for nonce freshness, because PCR values accumulate across extends.<a href="#section-9.4.1-1.2" class="pilcrow">¶</a>
 </li>
             <li id="section-9.4.1-1.3">
-              <strong>Geolocation Freshness Binding (REQUIRED)</strong>: The <strong>Host Management Plane (HMP)</strong> SHALL provide a fresh nonce. The Prover SHALL pass that nonce as the TPM2_Quote qualifying data (aka "qualification"). The <strong>Host Management Plane (HMP)</strong> SHALL verify that the qualifying data embedded in the Quote equals the nonce it issued.<a href="#section-9.4.1-1.3" class="pilcrow">¶</a>
+              <strong>Geolocation Freshness Binding (REQUIRED)</strong>: The <strong>Host Management Plane (Host Management Plane)</strong> SHALL provide a fresh nonce. The Prover SHALL pass that nonce as the TPM2_Quote qualifying data (aka "qualification"). The <strong>Host Management Plane (Host Management Plane)</strong> SHALL verify that the qualifying data embedded in the Quote equals the nonce it issued.<a href="#section-9.4.1-1.3" class="pilcrow">¶</a>
 </li>
             <li id="section-9.4.1-1.4">
-              <strong>Geolocation Integrity Binding (RECOMMENDED)</strong>: The Prover SHALL transmit geolocation evidence as a signed object from the location source (preferred) or from the OOB management processor (acceptable). The Prover SHALL include <code>geo_hash = Hash(canonical(geo_evidence))</code> as a claim in the signed evidence envelope presented to the <strong>Host Management Plane (HMP)</strong>.<a href="#section-9.4.1-1.4" class="pilcrow">¶</a>
+              <strong>Geolocation Integrity Binding (RECOMMENDED)</strong>: The Prover SHALL transmit geolocation evidence as a signed object from the location source (preferred) or from the OOB management processor (acceptable). The Prover SHALL include <code>geo_hash = Hash(canonical(geo_evidence))</code> as a claim in the signed evidence envelope presented to the <strong>Host Management Plane (Host Management Plane)</strong>.<a href="#section-9.4.1-1.4" class="pilcrow">¶</a>
 </li>
             <li id="section-9.4.1-1.5">
-              <p id="section-9.4.1-1.5.1"><strong>Host Management Plane (HMP) (external)</strong>: On attestation request, the <strong>Host Management Plane (HMP)</strong>:<a href="#section-9.4.1-1.5.1" class="pilcrow">¶</a></p>
+              <p id="section-9.4.1-1.5.1"><strong>Host Management Plane (Host Management Plane) (external)</strong>: On attestation request, the <strong>Host Management Plane (Host Management Plane)</strong>:<a href="#section-9.4.1-1.5.1" class="pilcrow">¶</a></p>
 <ul class="compact">
 <li class="compact" id="section-9.4.1-1.5.2.1">Contacts the Keylime agent to fetch geolocation with the challenge nonce.<a href="#section-9.4.1-1.5.2.1" class="pilcrow">¶</a>
 </li>
@@ -2897,7 +2897,7 @@ Plugging out components can decrease the quality of location. Note that e-SIM do
           <h4 id="name-mobile-location-verificatio">
 <a href="#section-9.4.2" class="section-number selfRef">9.4.2. </a><a href="#name-mobile-location-verificatio" class="section-name selfRef">Mobile Location Verification (OPTIONAL)</a>
           </h4>
-<p id="section-9.4.2-1">A mobile location verification microservice acts as a thin CAMARA API wrapper. If used, operator cross-verification SHALL be optional and SHALL support "fail-soft" modes (do not hard-fail solely due to operator API unavailability). The system MUST minimize exposure of IMEI/IMSI/MSISDN by keeping them within the <strong>Host Management Plane (HMP)</strong> trust domain and using hashed or tokenized identifiers wherever possible.<a href="#section-9.4.2-1" class="pilcrow">¶</a></p>
+<p id="section-9.4.2-1">A mobile location verification microservice acts as a thin CAMARA API wrapper. If used, operator cross-verification SHALL be optional and SHALL support "fail-soft" modes (do not hard-fail solely due to operator API unavailability). The system MUST minimize exposure of IMEI/IMSI/MSISDN by keeping them within the <strong>Host Management Plane (Host Management Plane)</strong> trust domain and using hashed or tokenized identifiers wherever possible.<a href="#section-9.4.2-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="advantages-3">
@@ -2969,7 +2969,7 @@ Plugging out components can decrease the quality of location. Note that e-SIM do
               </ul>
 </li>
             <li id="section-9.5.1-1.4">
-              <strong>OOB Attestation Pipeline:</strong> The management processor signs these details with its identity key (OEM CA-chained) and includes them as attested claims in the evidence forwarded to the <strong>Host Management Plane (HMP)</strong>. The hash of this composite geolocation bundle is extended into the TPM via the management processor's dedicated TPM bus (PCR 15).<a href="#section-9.5.1-1.4" class="pilcrow">¶</a>
+              <strong>OOB Attestation Pipeline:</strong> The management processor signs these details with its identity key (OEM CA-chained) and includes them as attested claims in the evidence forwarded to the <strong>Host Management Plane (Host Management Plane)</strong>. The hash of this composite geolocation bundle is extended into the TPM via the management processor's dedicated TPM bus (PCR 15).<a href="#section-9.5.1-1.4" class="pilcrow">¶</a>
 </li>
           </ol>
 </section>
@@ -3232,7 +3232,7 @@ Plugging out components can decrease the quality of location. Note that e-SIM do
         </ul>
 <p id="section-10.2-5">Host proximity manager periodically verifies that the PTP daemon in the location anchor hosts provide proof that the PTP daemon in the application hosts are within the maximum DC round-trip delay from them. The PTP daemon is another workload managed by the workload identity manager.<a href="#section-10.2-5" class="pilcrow">¶</a></p>
 <p id="section-10.2-6">Note that attested PTP is a proposed enhancement to the existing PTP hardware and software. For a detailed specification of hardware-rooted attestation for PTP, including verifiable residency and proximity proofs, see [[I-D.ramki-ptp-hardware-rooted-attestation]].<a href="#section-10.2-6" class="pilcrow">¶</a></p>
-<p id="section-10.2-7">All geolocation information captured at this layer (Layer 3) is intended for consumption by the Workload Identity Agent (WIA). The conveyance of this information in the data plane (e.g., via HTTP headers or within SVIDs) and the associated Proof of Residency (PoR) bindings for various protocols are handled in [[I-D.mw-wimse-transitive-attestation]].<a href="#section-10.2-7" class="pilcrow">¶</a></p>
+<p id="section-10.2-7">All geolocation information captured at this layer (Layer 3) is intended for consumption by the Workload Identity Agent (Workload Identity Agent). The conveyance of this information in the data plane (e.g., via HTTP headers or within SVIDs) and the associated Proof of Residency (PoR) bindings for various protocols are handled in [[I-D.mw-wimse-transitive-attestation]].<a href="#section-10.2-7" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -3289,7 +3289,7 @@ Plugging out components can decrease the quality of location. Note that e-SIM do
 <p id="section-12-1">This section maps the layered attestation framework to the industry gaps identified in the Industry Gaps section.<a href="#section-12-1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-12-2.1">
-          <p id="section-12-2.1.1"><strong>Host TPMs for Signature</strong> challenges are addressed by Layer 2 (TPM Platform Attestation): The WIA private key is used for signing, and the WIA public key is signed by the Host TPM APP private key providing a cryptographically verifiable proof of residency of the WIA on the host. Workloads use the WIA to sign requests, avoiding the TPM performance bottleneck (approximately 5 signatures/second).<a href="#section-12-2.1.1" class="pilcrow">¶</a></p>
+          <p id="section-12-2.1.1"><strong>Host TPMs for Signature</strong> challenges are addressed by Layer 2 (TPM Platform Attestation): The Workload Identity Agent private key is used for signing, and the Workload Identity Agent public key is signed by the Host TPM APP private key providing a cryptographically verifiable proof of residency of the Workload Identity Agent on the host. Workloads use the Workload Identity Agent to sign requests, avoiding the TPM performance bottleneck (approximately 5 signatures/second).<a href="#section-12-2.1.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-12-2.2">
           <p id="section-12-2.2.1"><strong>Bearer Tokens</strong>, <strong>PoP Token</strong>, <strong>PoP via Mutual TLS</strong> challenges are addressed by the Workload Identity Agent's ability to provide a cryptographically verifiable proof of residency (Layer 2) which can be consumed by the protocol flows defined in [[I-D.mw-wimse-transitive-attestation]].<a href="#section-12-2.2.1" class="pilcrow">¶</a></p>
@@ -3298,10 +3298,10 @@ Plugging out components can decrease the quality of location. Note that e-SIM do
           <p id="section-12-2.3.1"><strong>IP Address-Based Location</strong> and <strong>Wi-Fi-Based Location</strong> challenges are addressed by Layer 3 (Geolocation HW-Based Attestation): Combination of host-local location sensors (e.g., GNSS) with direct hardware-based attestation and mobile network location services provides a more reliable and cryptographically verifiable location than IP address, Wi-Fi-based methods or existing Host OS location services.<a href="#section-12-2.3.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-12-2.4">
-          <p id="section-12-2.4.1"><strong>Trust in Transit</strong> challenges are addressed by the immutable, hardware-rooted attestation established by the WIA, which provides tamper-evident proof of origin across organizational boundaries.<a href="#section-12-2.4.1" class="pilcrow">¶</a></p>
+          <p id="section-12-2.4.1"><strong>Trust in Transit</strong> challenges are addressed by the immutable, hardware-rooted attestation established by the Workload Identity Agent, which provides tamper-evident proof of origin across organizational boundaries.<a href="#section-12-2.4.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-12-2.5">
-          <p id="section-12-2.5.1"><strong>IPSEC</strong> challenges are addressed via the PoR mechanism described in [[I-D.mw-wimse-transitive-attestation]], which binds the IKEv2 exchange to the host-level attestation provided by the WIA.<a href="#section-12-2.5.1" class="pilcrow">¶</a></p>
+          <p id="section-12-2.5.1"><strong>IPSEC</strong> challenges are addressed via the PoR mechanism described in [[I-D.mw-wimse-transitive-attestation]], which binds the IKEv2 exchange to the host-level attestation provided by the Workload Identity Agent.<a href="#section-12-2.5.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
 </section>
@@ -3339,7 +3339,7 @@ Plugging out components can decrease the quality of location. Note that e-SIM do
 <p id="section-14.1-1">This specification provides technical mitigations for several threats identified in the <strong>WIMSE Architecture</strong> [[I-D.ietf-wimse-architecture]]:<a href="#section-14.1-1" class="pilcrow">¶</a></p>
 <ul class="compact">
 <li class="compact" id="section-14.1-2.1">
-            <strong>Workload Identity Misappropriation</strong>: By binding the WIA identity to Layer 2 TPM platform attestation, this framework ensures that a WIA identity (and the SVIDs it issues) cannot be misappropriated or exported to an unverified or untrusted host.<a href="#section-14.1-2.1" class="pilcrow">¶</a>
+            <strong>Workload Identity Misappropriation</strong>: By binding the Workload Identity Agent identity to Layer 2 TPM platform attestation, this framework ensures that a Workload Identity Agent identity (and the SVIDs it issues) cannot be misappropriated or exported to an unverified or untrusted host.<a href="#section-14.1-2.1" class="pilcrow">¶</a>
 </li>
           <li class="compact" id="section-14.1-2.2">
             <strong>Compromised Agent/Host</strong>: Deployment Option B (Out-of-Band Management) and Layer 2 attestation (measured boot, IMA) provide detection and mitigation against compromised host operating systems, ensuring that a compromised kernel cannot forge attestation results.<a href="#section-14.1-2.2" class="pilcrow">¶</a>

@@ -121,6 +121,9 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 - **EK**: Endorsement Key
 - **AK**: Attestation Key
 - **IMA**: Integrity Measurement Architecture
+- **SPDM**: Security Protocol and Data Model
+- **STARK**: Scalable Transparent ARguments of Knowledge
+- **ZKP**: Zero-Knowledge Proof
 
 **Key Terms:**
 
@@ -200,7 +203,7 @@ The following table maps these layers to the broader IETF ecosystem, forming a c
 Together, the complete chain is:
 
   * TPM Hardware -> Workload Identity Agent (this draft, Layer 2) -> Workload (transitive attestation draft, Layer 1)
-  * TPM/Geolocation Hardware -> Workload Identity Agent (this draft, Layers 2+3) -> Workload (transitive attestation draft, Layer 1)
+  * TPM/Geolocation Hardware -> Workload Identity Agent (this draft, Layers 2 and 3) -> Workload (transitive attestation draft, Layer 1)
 
 # Addressing WIMSE Architecture Gaps
 
@@ -498,15 +501,15 @@ These inventory details are bundled with the attestation evidence and forwarded 
 
 To ensure that the attestation measurements themselves are trustworthy, the management processor architecture provides multiple layers of protection against the "who watches the watcher" problem:
 
-**Protection 1 -- Secure Boot / Silicon Root of Trust:** Before the OS starts, the management processor ASIC (e.g., HPE iLO) verifies the UEFI BIOS firmware. The BIOS then verifies the Bootloader (GRUB), and the Bootloader verifies the Linux Kernel signature. This ensures that the version of the Linux kernel -- and thus the IMA subsystem code -- being loaded is the authentic, signed version.
+**Protection Layer 1 -- Secure Boot / Silicon Root of Trust:** Before the OS starts, the management processor ASIC (e.g., HPE iLO) verifies the UEFI BIOS firmware. The BIOS then verifies the Bootloader (GRUB), and the Bootloader verifies the Linux Kernel signature. This ensures that the version of the Linux kernel -- and thus the IMA subsystem code -- being loaded is the authentic, signed version.
 
-**Protection 2 -- TPM PCR Extension (Hardware Enforcement):** Linux IMA extends measurement hashes into TPM PCR 10. PCR extension is a one-way operation -- data can be added (extended) to a PCR, but it cannot be overwritten or deleted without a full system reboot. Even if a compromised kernel stops IMA from recording a malicious binary, it cannot undo the previous clean measurements in the TPM. See Step 6 of the Periodic Attestation Cycle below for the full verification procedure.
+**Protection Layer 2 -- TPM PCR Extension (Hardware Enforcement):** Linux IMA extends measurement hashes into TPM PCR 10. PCR extension is a one-way operation -- data can be added (extended) to a PCR, but it cannot be overwritten or deleted without a full system reboot. Even if a compromised kernel stops IMA from recording a malicious binary, it cannot undo the previous clean measurements in the TPM. See Step 6 of the Periodic Attestation Cycle below for the full verification procedure.
 
-**Protection 3 -- IMA Appraisal Mode:** By default, IMA only measures (logs). In IMA Appraisal mode, the kernel refuses to execute any binary or load any library that does not have a valid cryptographic signature (stored as an extended attribute on the file). IMA policies can themselves be digitally signed, preventing tampering.
+**Protection Layer 3 -- IMA Appraisal Mode:** By default, IMA only measures (logs). In IMA Appraisal mode, the kernel refuses to execute any binary or load any library that does not have a valid cryptographic signature (stored as an extended attribute on the file). IMA policies can themselves be digitally signed, preventing tampering.
 
-**Protection 4 -- Out-of-Band (OOB) Attestation:** The management processor fetches the TPM Quote via its dedicated I2C/private bus, bypassing the Host CPU and OS entirely. The TPM signs the PCR values with its hardware-protected key. This ensures a compromised kernel cannot intercept, delay, or suppress the attestation evidence. See Step 3 of the Periodic Attestation Cycle for the detailed flow.
+**Protection Layer 4 -- Out-of-Band (OOB) Attestation:** The management processor fetches the TPM Quote via its dedicated I2C/private bus, bypassing the Host CPU and OS entirely. The TPM signs the PCR values with its hardware-protected key. This ensures a compromised kernel cannot intercept, delay, or suppress the attestation evidence. See Step 3 of the Periodic Attestation Cycle for the detailed flow.
 
-**Protection 5 -- Kernel Lockdown Mode:** Linux Kernel Lockdown (integrity or confidentiality mode) prevents even the root user from modifying kernel memory via /dev/mem, replacing the running kernel via kexec, or accessing sensitive debug interfaces that could be used to bypass IMA checks.
+**Protection Layer 5 -- Kernel Lockdown Mode:** Linux Kernel Lockdown (integrity or confidentiality mode) prevents even the root user from modifying kernel memory via /dev/mem, replacing the running kernel via kexec, or accessing sensitive debug interfaces that could be used to bypass IMA checks.
 
 ### Root Adversary and IMA Tampering
 
@@ -679,7 +682,10 @@ Plugging out components can decrease the quality of location. Note that e-SIM do
 
 The process described below is run at a programmable interval (e.g., every 30 seconds for frequently mobile hosts such as smartphones; every 5 minutes for less frequently mobile hosts such as laptops; every 50 minutes for stationary hosts) to check if the host's location has changed and to obtain an attested location.
 
-1. The Workload Identity Agent gathers the location using the geolocation plugin (a) directly from host-local location sensors (e.g., GNSS), which provide a hardware-attested location, and/or (b) using existing Operating System (OS) APIs, which gather a composite location from location providers (e.g., Google, Apple). Location has a quality associated with it. For example, IP address-based or Wi-Fi-based location is of lower quality compared to other sources.
+1. The Workload Identity Agent gathers the location using the geolocation plugin. This collection occurs:
+    - (a) Directly from host-local location sensors (e.g., GNSS), which provide a hardware-rooted location reading.
+    - (b) Via existing Operating System (OS) APIs, which gather a composite location from location providers (e.g., Google, Apple). 
+Location has a quality associated with it. For example, IP address-based or Wi-Fi-based location is of lower quality compared to other sources.
 2. For each of the registered workload IDs (or website URL), based on the configured location policy (precise, approximated within a fixed radius, geographic region-based indicating city/state/country - see OPEN ISSUES 2), the location is converted appropriately to a workload ID-specific location. For thin clients (browser clients), the workload ID is the website URL. This ensures that the privacy of the workload is preserved while still allowing for geolocation enforcement.
 3. All the above details are captured in the Geolocation Information Cache which contains the following fields:
     1. Time of collection (timestamp)
@@ -771,6 +777,10 @@ Regardless of the deployment option, the composite geolocation process follows a
 2. **Tier 2: Authenticated GNSS Report (Sensor-Signed)**: Readings signed by the sensor hardware itself (e.g., u-blox Sec-Sign). Resists data-in-transit manipulation between sensor and verifier.
 3. **Tier 3: Network-Verified Location (Network-Attested)**: Location corroborated by a mobile network operator via GSMA/CAMARA API (cell-tower triangulation). Resists RF-level GNSS spoofing by providing an independent, non-GPS truth source.
 4. **Tier 4: Physical Endorsement (Auditor-Mediated)**: A cryptographically verifiable physical position claim from a human auditor (see Fallback below). Provides rack-level precision where GNSS is unavailable.
+
+**Auditor-Mediated Fallback**: When no geolocation sensor is available, the sensor is offline, or the GNSS signal is weak (e.g., data center hosts deep inside a building), an auditor-mediated endorsement can provide a cryptographically verifiable physical position claim. As described in [[I-D.richardson-rats-pop-endorsement]], a human auditor physically visits the device, connects via a USB or serial console cable, and collects a signed Entity Attestation Token (EAT) from the device's TPM Attestation Key. 
+
+The auditor then creates a signed Endorsement binding the device identity to its physical position (e.g., "Building 4, Aisle 37, Cabinet 9, Rack Unit 2-3"). This endorsement is periodically renewed through re-audit and provides a level of position precision (rack-level) that GPS cannot achieve indoors. The endorsement can be loaded directly into the device and passed along with Evidence to a Verifier.
 
 **Composite Location**: The system fuses these tiers, producing a composite location with a quality score. Discrepancies between sources (e.g., Tier 1 and Tier 3 disagreement) MUST trigger an immediate trust failure or fallback to a more restrictive policy.
 

@@ -816,51 +816,7 @@ Host proximity manager periodically verifies that the PTP daemon in the location
 
 Note that attested PTP is a proposed enhancement to the existing PTP hardware and software. For a detailed specification of hardware-rooted attestation for PTP, including verifiable residency and proximity proofs, see [[I-D.ramki-ptp-hardware-rooted-attestation]].
 
-# Data Plane Geolocation Extensions
-
-This section describes how geolocation information from Layer 3 attestation is conveyed in data plane protocols. For the underlying Proof of Residency (PoR) and DPoR mechanisms that bind workload identity to the WIA, see [[I-D.mw-wimse-transitive-attestation]].
-
-## HTTP: Workload-Geo-ID Header
-
-A new HTTP header field 'Workload-Geo-ID' is proposed for conveying the workload geolocation information from the Geolocation Information Cache. The header contains the following fields:
-
-- The latest Geolocation Information Cache relevant to the client workload ID (thick clients) or user in OAuth bearer token/server website URL (thin clients) which has the following details: client workload location, client workload location type (e.g. precise, approximated, geographic region based), client workload location quality (e.g. GNSS, mobile network, Wi-Fi, IP address).
-- Thick or Thin client flag: Indicates whether the client workload is a thick client (e.g., Microsoft Teams thick client app) or a thin client (e.g., Microsoft Teams thin client browser app).
-- Type flag: Request signing with geolocation information or SVID with geolocation information.
-
-The HTTP request is signed as described in [[I-D.mw-wimse-transitive-attestation]] using the workload or WIA private key. Intermediate proxies (e.g., API gateways, SASE firewalls) or server workloads can verify the Workload-Geo-ID and enforce geolocation policies.
-
-Intermediate proxies or server workloads connect to the Composite Geolocation Manager to supply GNSS geolocation/workload identity agent ID and get attested composite location. The Composite Geolocation Manager can use the host TPM EK certificate in the Workload Identity Agent ID to retrieve the mobile geolocation sensor IMEI/IMSI from the Host hardware identity datastore. Using the IMEI/IMSI, they can retrieve the location of the host from the mobile network operator's location service.
-
-Policy enforcement can be based on:
-
-- Workload Identity Agent ID (running on the same host as the client workload),
-- user in OAuth bearer token,
-- server website URL,
-- client workload ID (relevant only for thick clients),
-- client workload location,
-- client workload location type (e.g. precise, approximated, geographic region based),
-- client workload location quality (e.g. GNSS, mobile network, Wi-Fi, IP address).
-
-Besides native HTTP protocols, this solution also addresses browser-based Secure Shell (ssh) terminals and Remote Desktop Protocol (RDP) terminals which tunnel traffic over HTTP/TLS.
-
-## HTTP: Geolocation in SVID
-
-The workload SVID can be used to convey the geolocation information to the workload. The SVID is signed by the Workload Identity Manager and contains the workload's public key, the Workload Identity Agent ID, and the workload geolocation information.
-
-The workload SVID can be conveyed in the 'Workload-Geo-ID' header field.
-
-## IPSEC: Geolocation in IKEv2
-
-In the IPSEC key exchange protocol (IKE), the following geolocation extensions are proposed:
-
-* The IPSEC client includes the Geolocation Information from the Workload Identity Agent Geolocation Information Cache in the IPSEC IKEv2 notification payload.
-* The IPSEC server extracts the Geolocation Information from the IKEv2 notification payload and connects to the Composite Geolocation Manager to get attested composite location.
-* The IPSEC server can use the composite Geolocation Information to verify that the host is within the allowed geographic boundary.
-
-For the Proof of Residency binding within the IPSEC IKEv2 key exchange (using the WIA public key as the ephemeral ECDHE key), see [[I-D.mw-wimse-transitive-attestation]].
-
-Since IPSEC tunnel can encapsulate any IP traffic, geolocation attestation at the IPSEC level provides geographic verification for all traffic tunneled through it (e.g., RDP, SCTP, NFS, SSH). However, location information granularity is at the IPSEC client host level and not at the individual workload level.
+All geolocation information captured at this layer (Layer 3) is intended for consumption by the Workload Identity Agent (WIA). The conveyance of this information in the data plane (e.g., via HTTP headers or within SVIDs) and the associated Proof of Residency (PoR) bindings for various protocols are handled in [[I-D.mw-wimse-transitive-attestation]].
 
 # Confidential Computing Considerations
 
@@ -893,13 +849,13 @@ This section maps the layered attestation framework to the industry gaps identif
 
 * **Host TPMs for Signature** challenges are addressed by Layer 2 (TPM Platform Attestation): The WIA private key is used for signing, and the WIA public key is signed by the Host TPM APP private key providing a cryptographically verifiable proof of residency of the WIA on the host. Workloads use the WIA to sign requests, avoiding the TPM performance bottleneck (approximately 5 signatures/second).
 
-* **Bearer Tokens**, **PoP Token**, **PoP via Mutual TLS** challenges are addressed by combining Layer 2 (this draft) with [[I-D.mw-wimse-transitive-attestation]]: HTTP request signature with the WIA private key provides a scalable and cryptographically verifiable proof of residency on host and workload identity. The transitive attestation draft defines the mTLS PoR and DPoR protocol flows that consume the WIA attestation established here.
+* **Bearer Tokens**, **PoP Token**, **PoP via Mutual TLS** challenges are addressed by the Workload Identity Agent's ability to provide a cryptographically verifiable proof of residency (Layer 2) which can be consumed by the protocol flows defined in [[I-D.mw-wimse-transitive-attestation]].
 
 * **IP Address-Based Location** and **Wi-Fi-Based Location** challenges are addressed by Layer 3 (Geolocation HW-Based Attestation): Combination of host-local location sensors (e.g., GNSS) with direct hardware-based attestation and mobile network location services provides a more reliable and cryptographically verifiable location than IP address, Wi-Fi-based methods or existing Host OS location services.
 
-* **Trust in Transit** challenges are addressed by combining Layer 2 (this draft) with [[I-D.mw-wimse-transitive-attestation]]: the WIA-signed HTTP requests provide tamper-evident proof of origin, verified by intermediate proxies.
+* **Trust in Transit** challenges are addressed by the immutable, hardware-rooted attestation established by the WIA, which provides tamper-evident proof of origin across organizational boundaries.
 
-* **IPSEC** challenges are addressed via the geolocation extensions described in the Data Plane Geolocation Extensions section combined with the PoR mechanism in [[I-D.mw-wimse-transitive-attestation]].
+* **IPSEC** challenges are addressed via the PoR mechanism described in [[I-D.mw-wimse-transitive-attestation]], which binds the IKEv2 exchange to the host-level attestation provided by the WIA.
 
 # Authorization Policy Implementers
 

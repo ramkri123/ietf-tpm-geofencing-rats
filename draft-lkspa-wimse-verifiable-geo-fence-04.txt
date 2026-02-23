@@ -86,12 +86,12 @@ Table of Contents
        4.1.3.  Server workload to Server workload - Federated AI . .   8
        4.1.4.  User workload to Server workload  . . . . . . . . . .   8
      4.2.  Category 2: User-centric Location . . . . . . . . . . . .   8
-     4.3.  Category 3: Regulatory Compliance . . . . . . . . . . . .   9
+     4.3.  Category 3: Regulatory Compliance . . . . . . . . . . . .   8
    5.  Industry Gaps and Problem Statements  . . . . . . . . . . . .   9
      5.1.  Data Generation/at-Rest Challenges  . . . . . . . . . . .   9
      5.2.  Data-in-Use Challenges  . . . . . . . . . . . . . . . . .   9
        5.2.1.  Authentication and Authorization Challenges . . . . .   9
-       5.2.2.  Location and Geofencing Challenges  . . . . . . . . .  10
+       5.2.2.  Location and Geofencing Challenges  . . . . . . . . .   9
        5.2.3.  Implicit Trust Challenges . . . . . . . . . . . . . .  10
    6.  Approach Overview . . . . . . . . . . . . . . . . . . . . . .  10
      6.1.  Server Hosts - Solution highlights  . . . . . . . . . . .  11
@@ -158,10 +158,10 @@ Internet-Draft                    GeoW                     February 2026
    9.  Scaling the Solution  . . . . . . . . . . . . . . . . . . . .  36
      9.1.  End user location anchor host . . . . . . . . . . . . . .  37
      9.2.  Data center location anchor host  . . . . . . . . . . . .  37
-   10. Data Plane Geolocation Extensions . . . . . . . . . . . . . .  38
-     10.1.  HTTP: Workload-Geo-ID Header . . . . . . . . . . . . . .  38
-     10.2.  HTTP: Geolocation in SVID  . . . . . . . . . . . . . . .  39
-     10.3.  IPSEC: Geolocation in IKEv2  . . . . . . . . . . . . . .  39
+   10. Confidential Computing Considerations . . . . . . . . . . . .  38
+   11. Solution Mapping to Industry Gaps . . . . . . . . . . . . . .  39
+   12. Authorization Policy Implementers . . . . . . . . . . . . . .  40
+   13. Security Considerations . . . . . . . . . . . . . . . . . . .  40
 
 
 
@@ -170,22 +170,18 @@ Krishnan, et al.         Expires 27 August 2026                 [Page 3]
 Internet-Draft                    GeoW                     February 2026
 
 
-   11. Confidential Computing Considerations . . . . . . . . . . . .  40
-   12. Solution Mapping to Industry Gaps . . . . . . . . . . . . . .  41
-   13. Authorization Policy Implementers . . . . . . . . . . . . . .  42
-   14. Security Considerations . . . . . . . . . . . . . . . . . . .  42
-   15. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  43
-   16. Appendix - Items to follow up . . . . . . . . . . . . . . . .  43
-     16.1.  OPEN ISSUES 1: Restart time attestation/remote
+   14. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  41
+   15. Appendix - Items to follow up . . . . . . . . . . . . . . . .  41
+     15.1.  OPEN ISSUES 1: Restart time attestation/remote
             verification of workload identity agent for integrity and
-            proof of residency on Host . . . . . . . . . . . . . . .  44
-     16.2.  OPEN ISSUES 2: Location privacy options  . . . . . . . .  44
-     16.3.  OPEN ISSUES 3: Attested PTP (Partially Addressed)  . . .  44
-     16.4.  OPEN ISSUES 4: Geotagging textual data . . . . . . . . .  44
-     16.5.  OPEN ISSUES 5: Attesting Geotags . . . . . . . . . . . .  44
-   17. Appendix - Public References for Strict Data Residency
-           Rules . . . . . . . . . . . . . . . . . . . . . . . . . .  44
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  45
+            proof of residency on Host . . . . . . . . . . . . . . .  42
+     15.2.  OPEN ISSUES 2: Location privacy options  . . . . . . . .  42
+     15.3.  OPEN ISSUES 3: Attested PTP (Partially Addressed)  . . .  42
+     15.4.  OPEN ISSUES 4: Geotagging textual data . . . . . . . . .  42
+     15.5.  OPEN ISSUES 5: Attesting Geotags . . . . . . . . . . . .  42
+   16. Appendix - Public References for Strict Data Residency
+           Rules . . . . . . . . . . . . . . . . . . . . . . . . . .  42
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  43
 
 1.  Conventions and Definitions
 
@@ -218,6 +214,10 @@ Internet-Draft                    GeoW                     February 2026
    *Key Terms:*
 
    Data Residency:  Technical and Legal Challenges Ensuring compliance
+      with global and local data protection regulations and mandates
+      (e.g., EU GDPR, US HIPAA, PCI DSS, and jurisdiction-specific laws;
+      see Appendix for public references on strict data residency
+      rules).  Strict data residency rules require that specific
 
 
 
@@ -226,10 +226,6 @@ Krishnan, et al.         Expires 27 August 2026                 [Page 4]
 Internet-Draft                    GeoW                     February 2026
 
 
-      with global and local data protection regulations and mandates
-      (e.g., EU GDPR, US HIPAA, PCI DSS, and jurisdiction-specific laws;
-      see Appendix for public references on strict data residency
-      rules).  Strict data residency rules require that specific
       categories of data must be stored and processed exclusively within
       designated geographic boundaries.  Enforcing these mandates relies
       on a combination of trusted computing, host-affinity, geolocation-
@@ -268,9 +264,13 @@ Internet-Draft                    GeoW                     February 2026
    can exploit bearer tokens from unauthorized hosts or locations,
    bypassing traditional controls.
 
-
-
-
+   This document introduces a framework for hardware-dependent Workload
+   Identity Agent (WIA) attestation, covering two distinct layers: TPM-
+   based platform attestation and geolocation hardware-based
+   attestation.  The solution cryptographically binds workload identity
+   to both platform and geographic attributes, supplementing bearer
+   tokens with signed, verifiable claims about workload residency and
+   location.
 
 
 
@@ -281,14 +281,6 @@ Krishnan, et al.         Expires 27 August 2026                 [Page 5]
 
 Internet-Draft                    GeoW                     February 2026
 
-
-   This document introduces a framework for hardware-dependent Workload
-   Identity Agent (WIA) attestation, covering two distinct layers: TPM-
-   based platform attestation and geolocation hardware-based
-   attestation.  The solution cryptographically binds workload identity
-   to both platform and geographic attributes, supplementing bearer
-   tokens with signed, verifiable claims about workload residency and
-   location.
 
    This enables enforcement of data residency, geolocation affinity, and
    host affinity policies, even in adversarial or multi-tenant
@@ -331,13 +323,6 @@ Internet-Draft                    GeoW                     February 2026
    *  TPM/Geolocation Hardware -> WIA (this draft, Layers 2+3) ->
       Workload (transitive attestation draft, Layer 1)
 
-
-
-Krishnan, et al.         Expires 27 August 2026                 [Page 6]
-
-Internet-Draft                    GeoW                     February 2026
-
-
    This document focuses exclusively on Layers 2 and 3: the hardware-
    dependent attestation of the WIA itself.  For how workloads prove
    they are co-located with an attested WIA, and for the data-plane
@@ -345,6 +330,13 @@ Internet-Draft                    GeoW                     February 2026
    attestation]].
 
    In the context of SPIFFE/SPIRE:
+
+
+
+Krishnan, et al.         Expires 27 August 2026                 [Page 6]
+
+Internet-Draft                    GeoW                     February 2026
+
 
    *  The *Workload Identity Manager* is represented by the SPIFFE/SPIRE
       server.
@@ -386,6 +378,14 @@ Internet-Draft                    GeoW                     February 2026
    service.  The resulting attested geofence proof is used to bind
    workload identity to both the host and its geographic location,
    enabling secure, policy-driven execution of AI workloads and
+   compliance with data residency requirements.
+
+
+
+
+
+
+
 
 
 
@@ -393,8 +393,6 @@ Krishnan, et al.         Expires 27 August 2026                 [Page 7]
 
 Internet-Draft                    GeoW                     February 2026
 
-
-   compliance with data residency requirements.
 
 4.1.3.  Server workload to Server workload - Federated AI
 
@@ -439,8 +437,10 @@ Internet-Draft                    GeoW                     February 2026
       those personnel should not be allowed to support U.S. customers.
       Geolocation enforcement can ensure policy compliance.
 
+4.3.  Category 3: Regulatory Compliance
 
-
+   Geographic boundary attestation helps satisfy data residency and data
+   sovereignty requirements for regulatory compliance.
 
 
 
@@ -449,11 +449,6 @@ Krishnan, et al.         Expires 27 August 2026                 [Page 8]
 
 Internet-Draft                    GeoW                     February 2026
 
-
-4.3.  Category 3: Regulatory Compliance
-
-   Geographic boundary attestation helps satisfy data residency and data
-   sovereignty requirements for regulatory compliance.
 
 5.  Industry Gaps and Problem Statements
 
@@ -495,7 +490,12 @@ Internet-Draft                    GeoW                     February 2026
       support only about 5 signatures per second.
    *  Non-HTTP protocols: No solution for IPSEC etc.
 
+5.2.2.  Location and Geofencing Challenges
 
+   *  *IP Address-Based Location:* This is the typical approach, but it
+      has limitations: network providers can use geographic-region-based
+      IANA-assigned IP addresses anywhere in the world, and enterprise
+      VPNs can hide the user's real IP address.
 
 
 
@@ -505,13 +505,6 @@ Krishnan, et al.         Expires 27 August 2026                 [Page 9]
 
 Internet-Draft                    GeoW                     February 2026
 
-
-5.2.2.  Location and Geofencing Challenges
-
-   *  *IP Address-Based Location:* This is the typical approach, but it
-      has limitations: network providers can use geographic-region-based
-      IANA-assigned IP addresses anywhere in the world, and enterprise
-      VPNs can hide the user's real IP address.
 
    *  *Wi-Fi-Based Location:* For user laptop endpoints with agents
       (e.g., ZTNA), traditional geographic enforcement relies on
@@ -555,18 +548,19 @@ Internet-Draft                    GeoW                     February 2026
       external verifier (e.g., Keylime Verifier) queries the agent on-
       demand for TPM quotes and geolocation evidence.
 
+   *  *Option B -- External Management Processor (e.g., HPE iLO
+      family):* The management processor (BMC/iLO) has independent TPM
+      access and sensor interfaces.  An external management plane
+      validates attestation evidence out-of-band, providing assurance
+      even when the host OS is compromised.
+
+
 
 
 Krishnan, et al.         Expires 27 August 2026                [Page 10]
 
 Internet-Draft                    GeoW                     February 2026
 
-
-   *  *Option B -- External Management Processor (e.g., HPE iLO
-      family):* The management processor (BMC/iLO) has independent TPM
-      access and sensor interfaces.  An external management plane
-      validates attestation evidence out-of-band, providing assurance
-      even when the host OS is compromised.
 
    For the workload-level attestation that builds on top of the WIA
    attestation described here (proving a workload is co-located with an
@@ -610,6 +604,12 @@ Internet-Draft                    GeoW                     February 2026
    *  Workload identity agent provides proof that workloads run only on
       workload/location anchor hosts.
 
+      -  This is done using enhancements to existing SPIFFE/SPIRE agent
+         and TPM plugin and addresses bearer token issue.
+
+
+
+
 
 
 
@@ -617,9 +617,6 @@ Krishnan, et al.         Expires 27 August 2026                [Page 11]
 
 Internet-Draft                    GeoW                     February 2026
 
-
-      -  This is done using enhancements to existing SPIFFE/SPIRE agent
-         and TPM plugin and addresses bearer token issue.
 
 6.2.  End user/IoT hosts - Solution highlights
 
@@ -662,6 +659,9 @@ Internet-Draft                    GeoW                     February 2026
    The following table summarizes the architectural and security
    differences between the three deployment options for TPM platform
    attestation.
+
+
+
 
 
 
@@ -2094,118 +2094,14 @@ Internet-Draft                    GeoW                     February 2026
    rooted attestation for PTP, including verifiable residency and
    proximity proofs, see [[I-D.ramki-ptp-hardware-rooted-attestation]].
 
-10.  Data Plane Geolocation Extensions
+   All geolocation information captured at this layer (Layer 3) is
+   intended for consumption by the Workload Identity Agent (WIA).  The
+   conveyance of this information in the data plane (e.g., via HTTP
+   headers or within SVIDs) and the associated Proof of Residency (PoR)
+   bindings for various protocols are handled in [[I-D.mw-wimse-
+   transitive-attestation]].
 
-   This section describes how geolocation information from Layer 3
-   attestation is conveyed in data plane protocols.  For the underlying
-   Proof of Residency (PoR) and DPoR mechanisms that bind workload
-   identity to the WIA, see [[I-D.mw-wimse-transitive-attestation]].
-
-10.1.  HTTP: Workload-Geo-ID Header
-
-   A new HTTP header field 'Workload-Geo-ID' is proposed for conveying
-   the workload geolocation information from the Geolocation Information
-   Cache.  The header contains the following fields:
-
-   *  The latest Geolocation Information Cache relevant to the client
-      workload ID (thick clients) or user in OAuth bearer token/server
-      website URL (thin clients) which has the following details: client
-      workload location, client workload location type (e.g. precise,
-      approximated, geographic region based), client workload location
-      quality (e.g. GNSS, mobile network, Wi-Fi, IP address).
-   *  Thick or Thin client flag: Indicates whether the client workload
-      is a thick client (e.g., Microsoft Teams thick client app) or a
-      thin client (e.g., Microsoft Teams thin client browser app).
-   *  Type flag: Request signing with geolocation information or SVID
-      with geolocation information.
-
-
-
-
-
-
-
-Krishnan, et al.         Expires 27 August 2026                [Page 38]
-
-Internet-Draft                    GeoW                     February 2026
-
-
-   The HTTP request is signed as described in [[I-D.mw-wimse-transitive-
-   attestation]] using the workload or WIA private key.  Intermediate
-   proxies (e.g., API gateways, SASE firewalls) or server workloads can
-   verify the Workload-Geo-ID and enforce geolocation policies.
-
-   Intermediate proxies or server workloads connect to the Composite
-   Geolocation Manager to supply GNSS geolocation/workload identity
-   agent ID and get attested composite location.  The Composite
-   Geolocation Manager can use the host TPM EK certificate in the
-   Workload Identity Agent ID to retrieve the mobile geolocation sensor
-   IMEI/IMSI from the Host hardware identity datastore.  Using the IMEI/
-   IMSI, they can retrieve the location of the host from the mobile
-   network operator's location service.
-
-   Policy enforcement can be based on:
-
-   *  Workload Identity Agent ID (running on the same host as the client
-      workload),
-   *  user in OAuth bearer token,
-   *  server website URL,
-   *  client workload ID (relevant only for thick clients),
-   *  client workload location,
-   *  client workload location type (e.g. precise, approximated,
-      geographic region based),
-   *  client workload location quality (e.g. GNSS, mobile network, Wi-
-      Fi, IP address).
-
-   Besides native HTTP protocols, this solution also addresses browser-
-   based Secure Shell (ssh) terminals and Remote Desktop Protocol (RDP)
-   terminals which tunnel traffic over HTTP/TLS.
-
-10.2.  HTTP: Geolocation in SVID
-
-   The workload SVID can be used to convey the geolocation information
-   to the workload.  The SVID is signed by the Workload Identity Manager
-   and contains the workload's public key, the Workload Identity Agent
-   ID, and the workload geolocation information.
-
-   The workload SVID can be conveyed in the 'Workload-Geo-ID' header
-   field.
-
-10.3.  IPSEC: Geolocation in IKEv2
-
-   In the IPSEC key exchange protocol (IKE), the following geolocation
-   extensions are proposed:
-
-
-
-
-
-
-Krishnan, et al.         Expires 27 August 2026                [Page 39]
-
-Internet-Draft                    GeoW                     February 2026
-
-
-   *  The IPSEC client includes the Geolocation Information from the
-      Workload Identity Agent Geolocation Information Cache in the IPSEC
-      IKEv2 notification payload.
-   *  The IPSEC server extracts the Geolocation Information from the
-      IKEv2 notification payload and connects to the Composite
-      Geolocation Manager to get attested composite location.
-   *  The IPSEC server can use the composite Geolocation Information to
-      verify that the host is within the allowed geographic boundary.
-
-   For the Proof of Residency binding within the IPSEC IKEv2 key
-   exchange (using the WIA public key as the ephemeral ECDHE key), see
-   [[I-D.mw-wimse-transitive-attestation]].
-
-   Since IPSEC tunnel can encapsulate any IP traffic, geolocation
-   attestation at the IPSEC level provides geographic verification for
-   all traffic tunneled through it (e.g., RDP, SCTP, NFS, SSH).
-   However, location information granularity is at the IPSEC client host
-   level and not at the individual workload level.
-
-11.  Confidential Computing Considerations
+10.  Confidential Computing Considerations
 
    In confidential computing, the host operating system cannot be
    trusted.  Instead, the platform owner must maintain and verify the
@@ -2227,20 +2123,19 @@ Internet-Draft                    GeoW                     February 2026
 
    Proof of Residency:
 
+
+
+Krishnan, et al.         Expires 27 August 2026                [Page 38]
+
+Internet-Draft                    GeoW                     February 2026
+
+
    *  The confidential workload generates a hardware attestation that
       includes its hardware-rooted certification key.
    *  The platform owner receives this attestation and binds the
       reported hardware-rooted certification key to the TPM EK.
    *  This binding produces a cryptographic proof that the workload is
       running on the expected physical CPU.
-
-
-
-
-Krishnan, et al.         Expires 27 August 2026                [Page 40]
-
-Internet-Draft                    GeoW                     February 2026
-
 
    Proof of Geolocation:
 
@@ -2265,7 +2160,7 @@ Internet-Draft                    GeoW                     February 2026
    related in structure and trust model -- both are part of Intel's Data
    Center Attestation Primitives (DCAP).
 
-12.  Solution Mapping to Industry Gaps
+11.  Solution Mapping to Industry Gaps
 
    This section maps the layered attestation framework to the industry
    gaps identified in the Industry Gaps section.
@@ -2279,40 +2174,35 @@ Internet-Draft                    GeoW                     February 2026
       second).
 
    *  *Bearer Tokens*, *PoP Token*, *PoP via Mutual TLS* challenges are
-      addressed by combining Layer 2 (this draft) with [[I-D.mw-wimse-
-      transitive-attestation]]: HTTP request signature with the WIA
-      private key provides a scalable and cryptographically verifiable
-      proof of residency on host and workload identity.  The transitive
-      attestation draft defines the mTLS PoR and DPoR protocol flows
-      that consume the WIA attestation established here.
+      addressed by the Workload Identity Agent's ability to provide a
+      cryptographically verifiable proof of residency (Layer 2) which
+      can be consumed by the protocol flows defined in [[I-D.mw-wimse-
+      transitive-attestation]].
+
+
+
+Krishnan, et al.         Expires 27 August 2026                [Page 39]
+
+Internet-Draft                    GeoW                     February 2026
+
 
    *  *IP Address-Based Location* and *Wi-Fi-Based Location* challenges
       are addressed by Layer 3 (Geolocation HW-Based Attestation):
       Combination of host-local location sensors (e.g., GNSS) with
       direct hardware-based attestation and mobile network location
-
-
-
-Krishnan, et al.         Expires 27 August 2026                [Page 41]
-
-Internet-Draft                    GeoW                     February 2026
-
-
       services provides a more reliable and cryptographically verifiable
       location than IP address, Wi-Fi-based methods or existing Host OS
       location services.
 
-   *  *Trust in Transit* challenges are addressed by combining Layer 2
-      (this draft) with [[I-D.mw-wimse-transitive-attestation]]: the
-      WIA-signed HTTP requests provide tamper-evident proof of origin,
-      verified by intermediate proxies.
+   *  *Trust in Transit* challenges are addressed by the immutable,
+      hardware-rooted attestation established by the WIA, which provides
+      tamper-evident proof of origin across organizational boundaries.
 
-   *  *IPSEC* challenges are addressed via the geolocation extensions
-      described in the Data Plane Geolocation Extensions section
-      combined with the PoR mechanism in [[I-D.mw-wimse-transitive-
-      attestation]].
+   *  *IPSEC* challenges are addressed via the PoR mechanism described
+      in [[I-D.mw-wimse-transitive-attestation]], which binds the IKEv2
+      exchange to the host-level attestation provided by the WIA.
 
-13.  Authorization Policy Implementers
+12.  Authorization Policy Implementers
 
    Policy implementers use attested geographic boundary from Workload to
    make decisions.  Example implementers:
@@ -2327,7 +2217,7 @@ Internet-Draft                    GeoW                     February 2026
    process scheduler or JVM class loader/deserializer, then malware can
    be prevented (similar to a code-signed application).
 
-14.  Security Considerations
+13.  Security Considerations
 
    The proposed framework introduces several security considerations
    that must be addressed to ensure the integrity and trustworthiness of
@@ -2347,9 +2237,7 @@ Internet-Draft                    GeoW                     February 2026
 
 
 
-
-
-Krishnan, et al.         Expires 27 August 2026                [Page 42]
+Krishnan, et al.         Expires 27 August 2026                [Page 40]
 
 Internet-Draft                    GeoW                     February 2026
 
@@ -2391,11 +2279,11 @@ Internet-Draft                    GeoW                     February 2026
    secure and reliable foundation for verifiable geofencing in diverse
    deployment environments.
 
-15.  IANA Considerations
+14.  IANA Considerations
 
    This document has no IANA actions.
 
-16.  Appendix - Items to follow up
+15.  Appendix - Items to follow up
 
 
 
@@ -2405,12 +2293,12 @@ Internet-Draft                    GeoW                     February 2026
 
 
 
-Krishnan, et al.         Expires 27 August 2026                [Page 43]
+Krishnan, et al.         Expires 27 August 2026                [Page 41]
 
 Internet-Draft                    GeoW                     February 2026
 
 
-16.1.  OPEN ISSUES 1: Restart time attestation/remote verification of
+15.1.  OPEN ISSUES 1: Restart time attestation/remote verification of
        workload identity agent for integrity and proof of residency on
        Host
 
@@ -2419,13 +2307,13 @@ Internet-Draft                    GeoW                     February 2026
    natively handled in the IMA measurement process with an ability to
    retrigger on restart or refresh cycles.
 
-16.2.  OPEN ISSUES 2: Location privacy options
+15.2.  OPEN ISSUES 2: Location privacy options
 
    The current approach includes some location privacy options for the
    geolocation in the Geolocation Information Cache.  This may need to
    be expanded further in the future.
 
-16.3.  OPEN ISSUES 3: Attested PTP (Partially Addressed)
+15.3.  OPEN ISSUES 3: Attested PTP (Partially Addressed)
 
    Attested PTP is a software/hardware-based solution using Precision
    Time Protocol (PTP) for measuring proximity between hosts in a data
@@ -2433,19 +2321,19 @@ Internet-Draft                    GeoW                     February 2026
    rooted-attestation]].  Standardization of the attested PTP mechanism
    is ongoing.
 
-16.4.  OPEN ISSUES 4: Geotagging textual data
+15.4.  OPEN ISSUES 4: Geotagging textual data
 
    Popular standard for geotagging photos/videos is EXIF.  There is no
    standard for geotagging textual data.  If there is no geolocation
    tag, data can be stored/processed in non-compliant locations.
 
-16.5.  OPEN ISSUES 5: Attesting Geotags
+15.5.  OPEN ISSUES 5: Attesting Geotags
 
    There is no standard for attesting (signing) geolocation tag.  If
    geolocation tag is not signed, it can be manipulated through
    techniques such as VPNs.
 
-17.  Appendix - Public References for Strict Data Residency Rules
+16.  Appendix - Public References for Strict Data Residency Rules
 
    India -- Reserve Bank of India (RBI): Payment System Data
    Localization (2018): From RBI Circular RBI/2017-18/153 (April 6,
@@ -2461,7 +2349,7 @@ Internet-Draft                    GeoW                     February 2026
 
 
 
-Krishnan, et al.         Expires 27 August 2026                [Page 44]
+Krishnan, et al.         Expires 27 August 2026                [Page 42]
 
 Internet-Draft                    GeoW                     February 2026
 
@@ -2517,4 +2405,4 @@ Authors' Addresses
 
 
 
-Krishnan, et al.         Expires 27 August 2026                [Page 45]
+Krishnan, et al.         Expires 27 August 2026                [Page 43]

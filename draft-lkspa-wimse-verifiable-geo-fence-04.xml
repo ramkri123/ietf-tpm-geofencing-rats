@@ -25,7 +25,7 @@
 <keyword>GNSS</keyword>
 
 <abstract>
-<t>Modern cloud and distributed environments face significant risks from stolen bearer tokens, protocol replay, and trust gaps in transit, particularly in the context of <strong>Sovereign Workloads</strong> and high-assurance requirements. This document defines a <strong>RATS Profile</strong> for high-assurance, hardware-rooted platform and location attestation. It specifies the technical mechanics for verifiable geofencing and host integrity required by the <strong>WIMSE Architecture</strong> [[I-D.ietf-wimse-architecture]] and the <strong>Workload Identity Agent (Workload Identity Agent)</strong>.</t>
+<t>Modern cloud and distributed environments face significant risks from stolen bearer tokens, protocol replay, and trust gaps in transit, particularly in the context of <strong>Sovereign Workloads</strong> and high-assurance requirements. This document defines a <strong>RATS Profile</strong> for high-assurance, hardware-rooted platform and location attestation. It specifies the technical mechanics for verifiable geofencing and host integrity required by the <strong>WIMSE Architecture</strong> [[I-D.ietf-wimse-architecture]] and the <strong>Workload Identity Agent</strong>.</t>
 <t>While the WIMSE architecture assumes a trustworthy agent, it does not specify the normative technical mechanics for its verification. This document fills that gap as a specialized RATS profile, covering TPM-based platform attestation (Layer 2) and high-assurance geolocation attestation (Layer 3). It integrates out-of-band (OOB) hardware monitoring, cloud-native virtual TPM (vTPM) support, and privacy-preserving Zero-Knowledge Proof (ZKP) verification to generate <strong>High-Confidence Evidence</strong>.</t>
 <t>By binding identity agent integrity to geographic and host attributes, the framework establishes a &quot;Silicon-to-Audit&quot; chain of trust. This addresses challenges in bearer token theft and data residency while providing a post-quantum cryptographic foundation through mathematical transparency. The solution builds upon the <strong>RATS Architecture [[RFC9334]]</strong> to ensure that only authorized workloads in approved locations can access sensitive services.</t>
 </abstract>
@@ -102,7 +102,7 @@
 <t>The three layers are:</t>
 
 <ul>
-<li><t><strong>Layer 1 -- Workload Identity Attestation (Hardware-Independent):</strong> Covered by [[I-D.mw-wimse-transitive-attestation]]. Proves that a workload is co-located with a verified Workload Identity Agent (Workload Identity Agent) via a local mechanism such as a Unix Domain Socket. Defines the mTLS-based Proof of Residency (PoR) and DPoR protocol flows. This layer does NOT concern itself with how the Workload Identity Agent itself was verified—it treats the Workload Identity Agent as an already-attested trust anchor.</t>
+<li><t><strong>Layer 1 -- Workload Identity Attestation (Hardware-Independent):</strong> Covered by [[I-D.mw-wimse-transitive-attestation]]. Proves that a workload is co-located with a verified Workload Identity Agent via a local mechanism such as a Unix Domain Socket. Defines the mTLS-based Proof of Residency (PoR) and DPoR protocol flows. This layer does NOT concern itself with how the Workload Identity Agent itself was verified—it treats the Workload Identity Agent as an already-attested trust anchor.</t>
 </li>
 <li><t><strong>Layer 2 -- Workload Identity Agent Platform Attestation via TPM (Hardware-Dependent):</strong> Covered by this document. Proves the Workload Identity Agent is running on an approved host via TPM-based measured boot, hardware inventory verification, and credential activation. This establishes the hardware root of trust that Layer 1 relies upon.</t>
 </li>
@@ -151,7 +151,7 @@
 </section>
 
 <section anchor="addressing-wimse-architecture-gaps"><name>Addressing WIMSE Architecture Gaps</name>
-<t>The high-level <strong>WIMSE Architecture</strong> [[I-D.ietf-wimse-architecture]] establishes the requirement for a trustworthy Workload Identity Agent (Workload Identity Agent) but delegates the technical mechanics of agent verification to specific profiles. This document fills that technical gap by providing a normative specification for hardware-rooted agent verification.</t>
+<t>The high-level <strong>WIMSE Architecture</strong> [[I-D.ietf-wimse-architecture]] establishes the requirement for a trustworthy Workload Identity Agent but delegates the technical mechanics of agent verification to specific profiles. This document fills that technical gap by providing a normative specification for hardware-rooted agent verification.</t>
 <t>Without the hardware-rooted &quot;Silicon-to-Audit&quot; proof established in this specification, the WIMSE identity model would rely on implicit trust in the host operating system or infrastructure provider. This draft hardens the WIMSE model against advanced threats by ensuring the Workload Identity Agent itself—and consequently the identities it issues—are anchored to verifiable hardware configuration and physical location.</t>
 <t>This document focuses exclusively on Layers 2 and 3: the hardware-dependent attestation of the Workload Identity Agent itself. For how workloads prove they are co-located with an attested Workload Identity Agent, and for the data-plane protocol flows (mTLS PoR, DPoR), see [[I-D.mw-wimse-transitive-attestation]].</t>
 <t>In the context of SPIFFE/SPIRE:</t>
@@ -569,7 +569,7 @@ These monitoring functions are performed over dedicated, low-level hardware inte
 <li><strong>Slow path (hours/days or on-change)</strong>: Refresh full logs, hardware inventory, and location corroboration.</li>
 </ul>
 <t>A Verifier (Host Management Plane or Workload Identity Manager, depending on the drift signal) SHALL trigger the slow path on drift indicators (firmware change, security log events, inventory changes).</t>
-<t><strong>Step 1 -- Host Management Plane (Host Management Plane): Initiate Attestation Challenge</strong></t>
+<t><strong>Step 1 -- Host Management Plane: Initiate Attestation Challenge</strong></t>
 <t>The external management plane verifier (e.g., HPE OneView/GreenLake) generates a cryptographically random nonce (<strong>N_platform</strong>) and sends it to the management processor (iLO) via the dedicated management NIC (Redfish API). This nonce will be embedded in the TPM Quote qualifying data to prove that the attestation evidence is fresh and was produced in response to this specific request.</t>
 
 <ul spacing="compact">
@@ -584,20 +584,20 @@ These monitoring functions are performed over dedicated, low-level hardware inte
 <t><strong>Step 3 -- Management Processor (iLO): Fetch TPM Quote (OOB)</strong></t>
 <t>The management processor passes <strong>N_platform</strong> to the TPM as the qualifying data (aka &quot;qualification&quot;) in the TPM2_Quote command over its dedicated I2C/private bus. Platform Capability Guard: Any claim that the management processor can extend PCRs (e.g., PCR 15) or access TPM commands over a private bus MUST be conditioned on an explicit platform capability flag and documented hardware requirements. If unavailable, deployments SHALL fall back to nonce-qualified TPM quotes and signed OOB evidence without PCR extension.</t>
 <t><strong>Step 4 -- Host OS: Provide IMA Log (In-Band)</strong></t>
-<t>The Host Management Plane (Host Management Plane) requests the current IMA event log from the host OS via the host network stack. A lightweight log exporter runs on the host as a privileged systemd service (requiring root or CAP_SYS_ADMIN to read /sys/kernel/security/ima/ascii_runtime_measurements) and exposes the IMA runtime measurements over the network. The exporter is installed as a systemd unit file, started automatically at boot, and runs as a long-lived daemon listening for log retrieval requests (e.g., via gRPC or a REST endpoint). Its binary is itself measured by IMA at launch time and recorded in PCR 10, so any tampering with the exporter binary is captured in the TPM measurements. The log may also be retrieved via direct SSH access to the host. Regardless of the collection method, the IMA log is transmitted as untrusted input — the trust anchor is the OOB TPM Quote, not the log itself. Notably, the integrity of the log exporter does not affect the security model: even if both the kernel and the exporter are compromised and conspire to produce a falsified log, the verifier will detect the tampering via the PCR mismatch in Step 6.</t>
+<t>The Host Management Plane requests the current IMA event log from the host OS via the host network stack. A lightweight log exporter runs on the host as a privileged systemd service (requiring root or CAP_SYS_ADMIN to read /sys/kernel/security/ima/ascii_runtime_measurements) and exposes the IMA runtime measurements over the network. The exporter is installed as a systemd unit file, started automatically at boot, and runs as a long-lived daemon listening for log retrieval requests (e.g., via gRPC or a REST endpoint). Its binary is itself measured by IMA at launch time and recorded in PCR 10, so any tampering with the exporter binary is captured in the TPM measurements. The log may also be retrieved via direct SSH access to the host. Regardless of the collection method, the IMA log is transmitted as untrusted input — the trust anchor is the OOB TPM Quote, not the log itself. Notably, the integrity of the log exporter does not affect the security model: even if both the kernel and the exporter are compromised and conspire to produce a falsified log, the verifier will detect the tampering via the PCR mismatch in Step 6.</t>
 
 <ul spacing="compact">
 <li><em>Compromise detection:</em> A compromised kernel can tamper with this log (remove entries, alter hashes, truncate). This is expected behavior and is why the log is treated as untrusted. The verifier will detect any tampering in Step 6.</li>
 <li><em>Compromise detection:</em> A compromised kernel may refuse to deliver the log entirely (e.g., kill the agent). In this case, the verifier has a TPM Quote (from Step 3) but no log to verify against it, which triggers a trust failure.</li>
 </ul>
 <t><strong>Step 5 -- Management Processor (iLO): Forward Evidence to Host Management Plane</strong></t>
-<t>The management processor transmits the hardware-signed TPM Quote (which contains N_platform inside the signed payload as qualifying data), the TCG Boot Event Log, and the current <strong>Hardware Inventory</strong> (including CPU PPINs and peripheral serial numbers collected out-of-band via PECI/SMBus) to the Host Management Plane (Host Management Plane) (e.g., HPE OneView/GreenLake) via the dedicated management NIC using the Redfish API. The management processor signs this transmission with its own OEM CA-chained identity key.</t>
+<t>The management processor transmits the hardware-signed TPM Quote (which contains N_platform inside the signed payload as qualifying data), the TCG Boot Event Log, and the current <strong>Hardware Inventory</strong> (including CPU PPINs and peripheral serial numbers collected out-of-band via PECI/SMBus) to the Host Management Plane (e.g., HPE OneView/GreenLake) via the dedicated management NIC using the Redfish API. The management processor signs this transmission with its own OEM CA-chained identity key.</t>
 
 <ul spacing="compact">
 <li><em>Compromise detection:</em> The management processor's identity is verified by the OEM CA chain. A spoofed or tampered management processor would fail certificate validation.</li>
 </ul>
-<t><strong>Step 6 -- Host Management Plane (Host Management Plane): Validate Evidence</strong></t>
-<t>The Host Management Plane (Host Management Plane) (management plane) performs the following validation:</t>
+<t><strong>Step 6 -- Host Management Plane: Validate Evidence</strong></t>
+<t>The Host Management Plane (management plane) performs the following validation:</t>
 
 <ol spacing="compact">
 <li><strong>Verify TPM Quote signature</strong> using the TPM's AK public key. If invalid, the TPM or Quote has been tampered with.</li>
@@ -651,7 +651,7 @@ These monitoring functions are performed over dedicated, low-level hardware inte
 </section>
 
 <section anchor="deployment-option-c-cloud-based-virtual-tpm-vtpm"><name>Deployment Option C: Cloud-based Virtual TPM (vTPM)</name>
-<t>In cloud environments, physical TPM access is typically virtualized. Cloud providers (e.g., AWS, GCP, Azure) provide a Virtual TPM (vTPM) to each guest Virtual Machine (VM). In this model, the <strong>Cloud Service Provider (CSP)</strong> acts as the <strong>Host Management Plane (Host Management Plane)</strong>, managing the underlying physical hardware and the hypervisor that provides the vTPM. This vTPM is a software-emulated TPM 2.0 device that is cryptographically bound to the physical hardware's Silicon Root of Trust (e.g., AWS Nitro Security Chip). This architecture is a primary enabler for securing containerized workloads at scale, such as <strong>Amazon EKS node worker attestation</strong>.</t>
+<t>In cloud environments, physical TPM access is typically virtualized. Cloud providers (e.g., AWS, GCP, Azure, Oracle OCI, IBM Cloud, etc.) provide a Virtual TPM (vTPM) to each guest Virtual Machine (VM). In this model, the <strong>Cloud Service Provider (CSP)</strong> acts as the <strong>Host Management Plane</strong>, managing the underlying physical hardware and the hypervisor that provides the vTPM. This vTPM is a software-emulated TPM 2.0 device that is cryptographically bound to the physical hardware's Silicon Root of Trust (e.g., AWS Nitro Security Chip). This architecture is a primary enabler for securing containerized workloads at scale, such as <strong>Amazon EKS node worker attestation</strong>.</t>
 
 <section anchor="architecture-2"><name>Architecture</name>
 
@@ -681,12 +681,12 @@ These monitoring functions are performed over dedicated, low-level hardware inte
 </section>
 
 <section anchor="workload-identity-fusion-periodic-spire-re-attestation"><name>Workload Identity Fusion: Periodic SPIRE Re-Attestation</name>
-<t>The three deployment options (A, B, and C) can integrate periodic SPIRE Agent re-attestation with platform attestation to fuse workload identity with hardware-verified host integrity and composition. The core pattern is: the <strong>Workload Identity Manager (Workload Identity Manager)</strong>'s challenge nonce is forwarded to the appropriate attestation verifier, which uses it to fetch a fresh TPM Quote (from either a physical or virtual TPM) along with the current <strong>Hardware Inventory</strong> (CPU serials, firmware versions), creating a cryptographic binding between the workload SVID and the platform's hardware-attested state.</t>
+<t>The three deployment options (A, B, and C) can integrate periodic SPIRE Agent re-attestation with platform attestation to fuse workload identity with hardware-verified host integrity and composition. The core pattern is: the <strong>Workload Identity Manager</strong>'s challenge nonce is forwarded to the appropriate attestation verifier, which uses it to fetch a fresh TPM Quote (from either a physical or virtual TPM) along with the current <strong>Hardware Inventory</strong> (CPU serials, firmware versions), creating a cryptographic binding between the workload SVID and the platform's hardware-attested state.</t>
 <t><strong>In-band implementation (Option A):</strong> In the reference implementation [[AegisSovereignWorkloads]], the SPIRE Server sends a <strong>Workload Fusion Nonce (N_fusion)</strong> to the SPIRE Agent, which assembles a SovereignAttestation message. The SPIRE Server delegates verification to the Keylime Verifier, which contacts the in-band Keylime agent to fetch a fresh TPM Quote using the same nonce. The verifier validates the Quote, IMA log, and geolocation, then returns attested claims to the SPIRE Server for SVID issuance. This flow is entirely in-band: the TPM Quote travels through the host OS network stack.</t>
-<t><strong>OOB upgrade (Option B):</strong> When a management processor is available, the verification step is upgraded to use the OOB path. The <strong>Workload Identity Manager (Workload Identity Manager)</strong> (e.g., SPIRE Server) still sends <strong>N_fusion</strong> to the SPIRE Agent, and the SPIRE Agent still assembles a SovereignAttestation message. However, the <strong>Host Management Plane (Host Management Plane)</strong> (e.g., HPE OneView/GreenLake) utilizes <strong>N_platform</strong> for the hardware-rooted TPM Quote via the OOB path, ensuring it is never seen by the host. The Host Management Plane performs the full validation, and the attested claims -- including platform integrity, <strong>hardware composition</strong>, and geolocation -- are returned to the <strong>Workload Identity Manager (Workload Identity Manager)</strong> for SVID issuance.</t>
+<t><strong>OOB upgrade (Option B):</strong> When a management processor is available, the verification step is upgraded to use the OOB path. The <strong>Workload Identity Manager</strong> (e.g., SPIRE Server) still sends <strong>N_fusion</strong> to the SPIRE Agent, and the SPIRE Agent still assembles a SovereignAttestation message. However, the <strong>Host Management Plane</strong> (e.g., HPE OneView/GreenLake) utilizes <strong>N_platform</strong> for the hardware-rooted TPM Quote via the OOB path, ensuring it is never seen by the host. The Host Management Plane performs the full validation, and the attested claims -- including platform integrity, <strong>hardware composition</strong>, and geolocation -- are returned to the <strong>Workload Identity Manager</strong> for SVID issuance.</t>
 <t><strong>Cloud vTPM (Option C):</strong> In a cloud deployment, the SPIRE Server sends <strong>N_fusion</strong> to the SPIRE Agent running as a system daemon on the guest VM. The agent utilizes the vTPM to certify its identity and potentially fetches a cloud attestation document (e.g., <strong>AWS Nitro Attestation Document</strong>) that includes the challenge nonce.
- The <strong>Workload Identity Manager (Workload Identity Manager)</strong> (or a delegated verifier) validates the cloud provider's signature and the vTPM Quote (potentially mapped to the COSE signature over the CBOR document), ensuring the VM is running in a trusted environment before issuing the SVID.</t>
-<t><strong>Periodic re-attestation:</strong> The SPIRE Agent's SVID has a short programmable TTL (e.g., 30 seconds) and is periodically re-issued. Each re-attestation cycle triggers the full OOB verification flow, meaning the workload identity is continuously re-bound to the host's current hardware-attested state and physical composition. If the host platform fails attestation (e.g., IMA log tampering detected, unauthorized binary loaded, or <strong>CPU serial number mismatch</strong>), the <strong>Workload Identity Manager (Workload Identity Manager)</strong> refuses to re-issue the SVID, effectively revoking the workload's identity and blocking it from communicating with other services.</t>
+ The <strong>Workload Identity Manager</strong> (or a delegated verifier) validates the cloud provider's signature and the vTPM Quote (potentially mapped to the COSE signature over the CBOR document), ensuring the VM is running in a trusted environment before issuing the SVID.</t>
+<t><strong>Periodic re-attestation:</strong> The SPIRE Agent's SVID has a short programmable TTL (e.g., 30 seconds) and is periodically re-issued. Each re-attestation cycle triggers the full OOB verification flow, meaning the workload identity is continuously re-bound to the host's current hardware-attested state and physical composition. If the host platform fails attestation (e.g., IMA log tampering detected, unauthorized binary loaded, or <strong>CPU serial number mismatch</strong>), the <strong>Workload Identity Manager</strong> refuses to re-issue the SVID, effectively revoking the workload's identity and blocking it from communicating with other services.</t>
 <t>This fusion achieves several properties:</t>
 
 <ol spacing="compact">
@@ -705,7 +705,7 @@ These monitoring functions are performed over dedicated, low-level hardware inte
 
 <ul spacing="compact">
 <li>Only the Workload Identity Agent's TPM APP public key and Host identity agent's (e.g. Keylime agent) TPM AK public key are shared outside the host-owner organization.</li>
-<li>The consuming organization's <strong>Workload Identity Manager (Workload Identity Manager)</strong> verifies that AK against its own list of trusted AK public keys.</li>
+<li>The consuming organization's <strong>Workload Identity Manager</strong> verifies that AK against its own list of trusted AK public keys.</li>
 <li>A unique TPM AK is generated and attested per tenant, so no single AK maps across tenants.</li>
 <li>Supported by all TPM 2.0+ devices, this gives you per-tenant pseudonymity without ever revealing the EK.</li>
 </ul></li>
@@ -715,7 +715,7 @@ These monitoring functions are performed over dedicated, low-level hardware inte
 <li>Leverage TPM 2.0+ Direct Anonymous Attestation (DAA) or EPID. Note that this requires TPM 2.0+ devices with DAA support.</li>
 <li>Each host's TPM runs the DAA Join protocol with a Privacy CA to obtain a group credential.</li>
 <li>The Workload Identity Agent signs its public key with that DAA credential (using a session-specific basename).</li>
-<li>The <strong>Workload Identity Manager (Workload Identity Manager)</strong> verifies the signature against the DAA group public key--proving membership without exposing or linking any device identity.</li>
+<li>The <strong>Workload Identity Manager</strong> verifies the signature against the DAA group public key--proving membership without exposing or linking any device identity.</li>
 </ul></li>
 <li>Both options remove direct TPM EK exposure. Pseudonymity uses the standard TPM AK model, while TPM DAA offers unlinkable, anonymous proofs of TPM possession.</li>
 </ul>
@@ -735,12 +735,12 @@ These monitoring functions are performed over dedicated, low-level hardware inte
 </section>
 
 <section anchor="sensor-composition-and-binding-to-tpm-ek"><name>Sensor Composition and Binding to TPM EK</name>
-<t>The <strong>Host Management Plane (Host Management Plane)</strong> geolocation sensor composition manager runs outside of the host. In addition to obtaining location from device location sources (e.g., GNSS), it connects to mobile location service providers (e.g., Telefonica) using the GSMA Location API.
+<t>The <strong>Host Management Plane</strong> geolocation sensor composition manager runs outside of the host. In addition to obtaining location from device location sources (e.g., GNSS), it connects to mobile location service providers (e.g., Telefonica) using the GSMA Location API.
 The process described below is run at a programmable interval (e.g., every 5 minutes) to check if the host hardware composition has changed. Host hardware composition comprises TPM EK, GNSS sensor hardware ID, mobile sensor hardware ID (IMEI), and mobile-SIM IMSI. Note that this workflow is feasible only in enterprise environments where the host hardware is owned and managed by the enterprise.</t>
 
 <ol spacing="compact">
-<li>The Workload Identity Agent periodically gathers host composition details (e.g., mobile sensor hardware ID (IMEI), mobile-SIM IMSI) and sends them to the <strong>Host Management Plane (Host Management Plane)</strong>.</li>
-<li>The <strong>Host Management Plane (Host Management Plane)</strong> cross-verifies that the components of the host are still intact or detects if anything has been removed.
+<li>The Workload Identity Agent periodically gathers host composition details (e.g., mobile sensor hardware ID (IMEI), mobile-SIM IMSI) and sends them to the <strong>Host Management Plane</strong>.</li>
+<li>The <strong>Host Management Plane</strong> cross-verifies that the components of the host are still intact or detects if anything has been removed.
 Plugging out components can decrease the quality of location. Note that e-SIM does not have the plugging out problem like standard SIM but could be subject to e-SIM swap attack.</li>
 </ol>
 </section>
@@ -784,9 +784,9 @@ Plugging out components can decrease the quality of location. Note that e-SIM do
 <li><strong>NOT TPM-Attested:</strong> sim_msisdn (looked up from sidecar database using IMEI+IMSI composite key).</li>
 </ul></li>
 <li><strong>PCR Usage (OPTIONAL)</strong>: If a deployment uses PCRs to reflect geolocation state, it MUST specify (a) which PCR index(es), (b) reset semantics, and (c) how the verifier computes the expected PCR value across multiple extends. Per-request freshness MUST use TPM Quote qualifying data (nonce). PCR extension is not a substitute for nonce freshness, because PCR values accumulate across extends.</li>
-<li><strong>Geolocation Freshness Binding (REQUIRED)</strong>: The <strong>Host Management Plane (Host Management Plane)</strong> SHALL provide a fresh nonce. The Prover SHALL pass that nonce as the TPM2_Quote qualifying data (aka &quot;qualification&quot;). The <strong>Host Management Plane (Host Management Plane)</strong> SHALL verify that the qualifying data embedded in the Quote equals the nonce it issued.</li>
-<li><strong>Geolocation Integrity Binding (RECOMMENDED)</strong>: The Prover SHALL transmit geolocation evidence as a signed object from the location source (preferred) or from the OOB management processor (acceptable). The Prover SHALL include <tt>geo_hash = Hash(canonical(geo_evidence))</tt> as a claim in the signed evidence envelope presented to the <strong>Host Management Plane (Host Management Plane)</strong>.</li>
-<li><t><strong>Host Management Plane (Host Management Plane) (external)</strong>: On attestation request, the <strong>Host Management Plane (Host Management Plane)</strong>:</t>
+<li><strong>Geolocation Freshness Binding (REQUIRED)</strong>: The <strong>Host Management Plane</strong> SHALL provide a fresh nonce. The Prover SHALL pass that nonce as the TPM2_Quote qualifying data (aka &quot;qualification&quot;). The <strong>Host Management Plane</strong> SHALL verify that the qualifying data embedded in the Quote equals the nonce it issued.</li>
+<li><strong>Geolocation Integrity Binding (RECOMMENDED)</strong>: The Prover SHALL transmit geolocation evidence as a signed object from the location source (preferred) or from the OOB management processor (acceptable). The Prover SHALL include <tt>geo_hash = Hash(canonical(geo_evidence))</tt> as a claim in the signed evidence envelope presented to the <strong>Host Management Plane</strong>.</li>
+<li><t><strong>Host Management Plane (external)</strong>: On attestation request, the <strong>Host Management Plane</strong>:</t>
 
 <ul spacing="compact">
 <li>Contacts the Keylime agent to fetch geolocation with the challenge nonce.</li>
@@ -798,7 +798,7 @@ Plugging out components can decrease the quality of location. Note that e-SIM do
 </section>
 
 <section anchor="mobile-location-verification-optional"><name>Mobile Location Verification (OPTIONAL)</name>
-<t>A mobile location verification microservice acts as a thin CAMARA API wrapper. If used, operator cross-verification SHALL be optional and SHALL support &quot;fail-soft&quot; modes (do not hard-fail solely due to operator API unavailability). The system MUST minimize exposure of IMEI/IMSI/MSISDN by keeping them within the <strong>Host Management Plane (Host Management Plane)</strong> trust domain and using hashed or tokenized identifiers wherever possible.</t>
+<t>A mobile location verification microservice acts as a thin CAMARA API wrapper. If used, operator cross-verification SHALL be optional and SHALL support &quot;fail-soft&quot; modes (do not hard-fail solely due to operator API unavailability). The system MUST minimize exposure of IMEI/IMSI/MSISDN by keeping them within the <strong>Host Management Plane</strong> trust domain and using hashed or tokenized identifiers wherever possible.</t>
 </section>
 
 <section anchor="advantages-3"><name>Advantages</name>
@@ -839,7 +839,7 @@ Plugging out components can decrease the quality of location. Note that e-SIM do
 <li><strong>Geolocation Data:</strong> Latitude, Longitude, and Accuracy.</li>
 <li><strong>Mobile Identifiers:</strong> IMEI (Hardware ID), IMSI (SIM ID), and MSISDN (Subscriber identity lookup).</li>
 </ul></li>
-<li><strong>OOB Attestation Pipeline:</strong> The management processor signs these details with its identity key (OEM CA-chained) and includes them as attested claims in the evidence forwarded to the <strong>Host Management Plane (Host Management Plane)</strong>. The hash of this composite geolocation bundle is extended into the TPM via the management processor's dedicated TPM bus (PCR 15).</li>
+<li><strong>OOB Attestation Pipeline:</strong> The management processor signs these details with its identity key (OEM CA-chained) and includes them as attested claims in the evidence forwarded to the <strong>Host Management Plane</strong>. The hash of this composite geolocation bundle is extended into the TPM via the management processor's dedicated TPM bus (PCR 15).</li>
 </ol>
 </section>
 
@@ -1007,7 +1007,7 @@ Plugging out components can decrease the quality of location. Note that e-SIM do
 </ul>
 <t>Host proximity manager periodically verifies that the PTP daemon in the location anchor hosts provide proof that the PTP daemon in the application hosts are within the maximum DC round-trip delay from them. The PTP daemon is another workload managed by the workload identity manager.</t>
 <t>Note that attested PTP is a proposed enhancement to the existing PTP hardware and software. For a detailed specification of hardware-rooted attestation for PTP, including verifiable residency and proximity proofs, see [[I-D.ramki-ptp-hardware-rooted-attestation]].</t>
-<t>All geolocation information captured at this layer (Layer 3) is intended for consumption by the Workload Identity Agent (Workload Identity Agent). The conveyance of this information in the data plane (e.g., via HTTP headers or within SVIDs) and the associated Proof of Residency (PoR) bindings for various protocols are handled in [[I-D.mw-wimse-transitive-attestation]].</t>
+<t>All geolocation information captured at this layer (Layer 3) is intended for consumption by the Workload Identity Agent. The conveyance of this information in the data plane (e.g., via HTTP headers or within SVIDs) and the associated Proof of Residency (PoR) bindings for various protocols are handled in [[I-D.mw-wimse-transitive-attestation]].</t>
 </section>
 </section>
 

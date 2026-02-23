@@ -125,7 +125,7 @@ Internet-Draft                    GeoW                     February 2026
        7.5.7.  Periodic Attestation Cycle: Step-by-Step  . . . . . .  21
        7.5.8.  Advantages  . . . . . . . . . . . . . . . . . . . . .  24
        7.5.9.  Limitations . . . . . . . . . . . . . . . . . . . . .  24
-     7.6.  Deployment Option C: Cloud-based Virtual TPM (vTPM) . . .  24
+     7.6.  Deployment Option C: Cloud-based Virtual TPM (vTPM) . . .  25
        7.6.1.  Architecture  . . . . . . . . . . . . . . . . . . . .  25
        7.6.2.  Advantages  . . . . . . . . . . . . . . . . . . . . .  25
        7.6.3.  Limitations . . . . . . . . . . . . . . . . . . . . .  25
@@ -148,7 +148,7 @@ Internet-Draft                    GeoW                     February 2026
        8.5.3.  Limitations . . . . . . . . . . . . . . . . . . . . .  32
      8.6.  Composite Geolocation and Policy Enforcement  . . . . . .  32
    9.  Scaling the Solution  . . . . . . . . . . . . . . . . . . . .  33
-     9.1.  End user location anchor host . . . . . . . . . . . . . .  33
+     9.1.  End user location anchor host . . . . . . . . . . . . . .  34
      9.2.  Data center location anchor host  . . . . . . . . . . . .  34
    10. Data Plane Geolocation Extensions . . . . . . . . . . . . . .  35
      10.1.  HTTP: Workload-Geo-ID Header . . . . . . . . . . . . . .  35
@@ -172,14 +172,14 @@ Internet-Draft                    GeoW                     February 2026
 
      16.1.  OPEN ISSUES 1: Restart time attestation/remote
             verification of workload identity agent for integrity and
-            proof of residency on Host . . . . . . . . . . . . . . .  40
+            proof of residency on Host . . . . . . . . . . . . . . .  41
      16.2.  OPEN ISSUES 2: Location privacy options  . . . . . . . .  41
      16.3.  OPEN ISSUES 3: Attested PTP (Partially Addressed)  . . .  41
      16.4.  OPEN ISSUES 4: Geotagging textual data . . . . . . . . .  41
      16.5.  OPEN ISSUES 5: Attesting Geotags . . . . . . . . . . . .  41
    17. Appendix - Public References for Strict Data Residency
            Rules . . . . . . . . . . . . . . . . . . . . . . . . . .  41
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  41
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  42
 
 1.  Conventions and Definitions
 
@@ -1027,10 +1027,11 @@ Internet-Draft                    GeoW                     February 2026
    debug-locked mode or if the hardware fuse settings have been tampered
    with.
 
-   These inventory details are included in the evidence forwarded to the
-   management plane (Step 5 of the Periodic Attestation Cycle), allowing
-   the verifier to cross-reference the host's runtime state against its
-   "golden" manufacturing record.
+   These inventory details are bundled with the attestation evidence and
+   forwarded to the management plane during each attestation cycle (see
+   Step 5 and Step 6 of the Periodic Attestation Cycle below), allowing
+   the verifier to cross-reference the host's runtime hardware state
+   against its "golden" manufacturing record.
 
 7.5.4.  Silicon Root of Trust and IMA Integrity Protection
 
@@ -1053,7 +1054,6 @@ Internet-Draft                    GeoW                     February 2026
    cannot undo the previous clean measurements in the TPM.  See Step 6
    of the Periodic Attestation Cycle below for the full verification
    procedure.
-
 
 
 
@@ -1244,7 +1244,9 @@ Internet-Draft                    GeoW                     February 2026
 
    The management processor transmits the hardware-signed TPM Quote
    (which contains the verifier's nonce and the TPM clock value inside
-   the signed payload) and the TCG Boot Event Log to the external
+   the signed payload), the TCG Boot Event Log, and the current
+   *Hardware Inventory* (including CPU PPINs and peripheral serial
+   numbers collected out-of-band via PECI/SMBus) to the external
    management plane (e.g., HPE OneView/GreenLake) via the dedicated
    management NIC using the Redfish API.  The management processor signs
    this transmission with its own OEM CA-chained identity key.
@@ -1278,9 +1280,7 @@ Internet-Draft                    GeoW                     February 2026
        *  *Mismatch:* The IMA log has been tampered with (entries
           removed, altered, or fabricated).  The verifier raises a trust
           failure alert.
-   6.  *Compare PCR 10 against golden reference values* to detect
-       unexpected binaries (even if the log is consistent, a new/unknown
-       binary triggers a policy violation).
+
 
 
 
@@ -1290,10 +1290,18 @@ Krishnan, et al.         Expires 27 August 2026                [Page 23]
 Internet-Draft                    GeoW                     February 2026
 
 
+   6.  *Compare PCR 10 against golden reference values* to detect
+       unexpected binaries (even if the log is consistent, a new/unknown
+       binary triggers a policy violation).
    7.  *Check for log staleness:* Compare the number of IMA log entries
        and the TPM clock against the previous cycle.  If the system is
        active (network traffic, CPU load) but the log has not grown, IMA
        may have been disabled by a compromised kernel.
+   8.  *Verify Hardware Inventory:* Compare the CPU serial numbers
+       (PPIN), microcode versions, and peripheral serial numbers against
+       the "golden" manufacturing record.  Any unauthorized hardware
+       swap or unapproved firmware version triggers a trust failure
+       alert.
 
    *  _Compromise detection summary:_
       -  *Tampered IMA log* → detected at Step 6 sub-step 5 (log-vs-PCR
@@ -1329,6 +1337,15 @@ Internet-Draft                    GeoW                     February 2026
    *  Management processor firmware must itself be trusted and kept up
       to date.
 
+
+
+
+
+Krishnan, et al.         Expires 27 August 2026                [Page 24]
+
+Internet-Draft                    GeoW                     February 2026
+
+
 7.6.  Deployment Option C: Cloud-based Virtual TPM (vTPM)
 
    In cloud environments, physical TPM access is typically virtualized.
@@ -1338,13 +1355,6 @@ Internet-Draft                    GeoW                     February 2026
    hardware's Silicon Root of Trust (e.g., AWS Nitro Security Chip).
    This architecture is a primary enabler for securing containerized
    workloads at scale, such as *Amazon EKS node worker attestation*.
-
-
-
-Krishnan, et al.         Expires 27 August 2026                [Page 24]
-
-Internet-Draft                    GeoW                     February 2026
-
 
 7.6.1.  Architecture
 
@@ -1384,6 +1394,14 @@ Internet-Draft                    GeoW                     February 2026
    *  *Trust in Hypervisor:* The cloud consumer must trust the
       provider's hypervisor to correctly emulate the TPM and not tamper
       with the guest's PCR values.  Note that advanced implementations
+
+
+
+Krishnan, et al.         Expires 27 August 2026                [Page 25]
+
+Internet-Draft                    GeoW                     February 2026
+
+
       like *AWS NitroTPM* utilize a dedicated hardware security chip
       (the Nitro Security Chip) to provide hardware-backed and
       physically isolated TPM functionality, which significantly reduces
@@ -1392,15 +1410,6 @@ Internet-Draft                    GeoW                     February 2026
    *  *Provider-Specific APIs:* While the TPM interface is standard, the
       mechanism for verifying the "outer" cloud attestation document
       varies by provider.
-
-
-
-
-
-Krishnan, et al.         Expires 27 August 2026                [Page 25]
-
-Internet-Draft                    GeoW                     February 2026
-
 
 7.7.  Workload Identity Fusion: Periodic SPIRE Re-Attestation
 
@@ -1441,6 +1450,14 @@ Internet-Draft                    GeoW                     February 2026
    and potentially fetches a cloud attestation document (e.g., *AWS
    Nitro Attestation Document*) that includes the challenge nonce.  The
    SPIRE Server (or a delegated verifier) validates the cloud provider's
+
+
+
+Krishnan, et al.         Expires 27 August 2026                [Page 26]
+
+Internet-Draft                    GeoW                     February 2026
+
+
    signature and the vTPM Quote (potentially mapped to the COSE
    signature over the CBOR document), ensuring the VM is running in a
    trusted environment before issuing the SVID.
@@ -1450,14 +1467,6 @@ Internet-Draft                    GeoW                     February 2026
    Each re-attestation cycle triggers the full OOB verification flow,
    meaning the workload identity is continuously re-bound to the host's
    current hardware-attested state.  If the host platform fails
-
-
-
-Krishnan, et al.         Expires 27 August 2026                [Page 26]
-
-Internet-Draft                    GeoW                     February 2026
-
-
    attestation (e.g., IMA log tampering detected, unauthorized binary
    loaded), the SPIRE Server refuses to re-issue the SVID, effectively
    revoking the workload's identity and blocking it from communicating
@@ -1497,6 +1506,14 @@ Internet-Draft                    GeoW                     February 2026
          that AK against its own list of trusted AK public keys.
       -  A unique TPM AK is generated and attested per tenant, so no
          single AK maps across tenants.
+
+
+
+Krishnan, et al.         Expires 27 August 2026                [Page 27]
+
+Internet-Draft                    GeoW                     February 2026
+
+
       -  Supported by all TPM 2.0+ devices, this gives you per-tenant
          pseudonymity without ever revealing the EK.
    *  Option 2 -- Full Anonymity:
@@ -1506,14 +1523,6 @@ Internet-Draft                    GeoW                     February 2026
          obtain a group credential.
       -  The Workload Identity Agent signs its public key with that DAA
          credential (using a session-specific basename).
-
-
-
-Krishnan, et al.         Expires 27 August 2026                [Page 27]
-
-Internet-Draft                    GeoW                     February 2026
-
-
       -  The Workload Identity Manager verifies the signature against
          the DAA group public key--proving membership without exposing
          or linking any device identity.
@@ -1553,15 +1562,6 @@ Internet-Draft                    GeoW                     February 2026
    is run at a programmable interval (e.g., every 5 minutes) to check if
    the host hardware composition has changed.  Host hardware composition
    comprises TPM EK, GNSS sensor hardware ID, mobile sensor hardware ID
-   (IMEI), and mobile-SIM IMSI.  Note that this workflow is feasible
-   only in enterprise environments where the host hardware is owned and
-   managed by the enterprise.
-
-   1.  The Workload Identity Agent periodically gathers host composition
-       details (e.g., mobile sensor hardware ID (IMEI), mobile-SIM IMSI)
-       and sends them to the Host geolocation sensor composition
-       manager.
-
 
 
 
@@ -1570,6 +1570,14 @@ Krishnan, et al.         Expires 27 August 2026                [Page 28]
 Internet-Draft                    GeoW                     February 2026
 
 
+   (IMEI), and mobile-SIM IMSI.  Note that this workflow is feasible
+   only in enterprise environments where the host hardware is owned and
+   managed by the enterprise.
+
+   1.  The Workload Identity Agent periodically gathers host composition
+       details (e.g., mobile sensor hardware ID (IMEI), mobile-SIM IMSI)
+       and sends them to the Host geolocation sensor composition
+       manager.
    2.  The Host geolocation sensor composition manager cross-verifies
        that the components of the host are still intact or detects if
        anything has been removed.  Plugging out components can decrease
@@ -1610,14 +1618,6 @@ Internet-Draft                    GeoW                     February 2026
                Microsoft Teams client)
            2.  server workload ID (or website URL) - relevant for thin
                clients (e.g. Microsoft Teams browser version)
-           3.  client location type (e.g. precise, approximated,
-               geographic region based)
-           4.  client location (e.g. latitude/longitude, city/state/
-               country)
-           5.  client location quality (e.g. GNSS, mobile network, Wi-
-               Fi, IP address)
-
-
 
 
 
@@ -1625,6 +1625,13 @@ Krishnan, et al.         Expires 27 August 2026                [Page 29]
 
 Internet-Draft                    GeoW                     February 2026
 
+
+           3.  client location type (e.g. precise, approximated,
+               geographic region based)
+           4.  client location (e.g. latitude/longitude, city/state/
+               country)
+           5.  client location quality (e.g. GNSS, mobile network, Wi-
+               Fi, IP address)
 
    It is important to note that the Geolocation Information Cache is
    kept in the Workload Identity Agent memory and is not stored on disk.
@@ -1667,13 +1674,6 @@ Internet-Draft                    GeoW                     February 2026
        *  Validates that the nonce matches (freshness/TOCTOU
           protection).
        *  Validates the PCR 15 value against the expected hash.
-       *  Cross-verifies the claimed location against the mobile network
-          operator's location service (GSMA/CAMARA API) using the IMEI/
-          IMSI from the TPM-attested data.
-
-
-
-
 
 
 
@@ -1681,6 +1681,10 @@ Krishnan, et al.         Expires 27 August 2026                [Page 30]
 
 Internet-Draft                    GeoW                     February 2026
 
+
+       *  Cross-verifies the claimed location against the mobile network
+          operator's location service (GSMA/CAMARA API) using the IMEI/
+          IMSI from the TPM-attested data.
 
 8.4.2.  Mobile Location Verification
 
@@ -1726,10 +1730,6 @@ Internet-Draft                    GeoW                     February 2026
    1.  *Management Processor Sensor Interface:* The management processor
        (BMC/iLO) interfaces with geolocation sensors (GNSS receivers,
        mobile modems) through dedicated I/O channels separate from the
-       host CPU bus.  Sensor readings are collected by the management
-       processor independently of the host OS.  The management processor
-       can verify sensor firmware integrity as part of its Silicon Root
-       of Trust chain.
 
 
 
@@ -1738,6 +1738,10 @@ Krishnan, et al.         Expires 27 August 2026                [Page 31]
 Internet-Draft                    GeoW                     February 2026
 
 
+       host CPU bus.  Sensor readings are collected by the management
+       processor independently of the host OS.  The management processor
+       can verify sensor firmware integrity as part of its Silicon Root
+       of Trust chain.
    2.  *Management Processor Attestation:* The management processor
        reads sensor data, signs it with its own identity key (OEM CA
        chain), and associates the geolocation evidence with the host TPM
@@ -1782,10 +1786,6 @@ Internet-Draft                    GeoW                     February 2026
    process combines multiple location sources to produce a quality-
    scored, verifiable location claim:
 
-   1.  *GNSS Location:* Direct hardware-attested location from GNSS
-       sensors (e.g., GPS, Galileo).  Subject to spoofing risk but
-       provides precise coordinates.
-
 
 
 
@@ -1794,6 +1794,9 @@ Krishnan, et al.         Expires 27 August 2026                [Page 32]
 Internet-Draft                    GeoW                     February 2026
 
 
+   1.  *GNSS Location:* Direct hardware-attested location from GNSS
+       sensors (e.g., GPS, Galileo).  Subject to spoofing risk but
+       provides precise coordinates.
    2.  *Mobile Network Location:* Location from mobile network operator
        via GSMA/CAMARA API using device IMEI/IMSI.  More resistant to
        spoofing than GNSS alone, as the mobile network independently
@@ -1836,11 +1839,8 @@ Internet-Draft                    GeoW                     February 2026
    and/or GNSS capabilities which can be leveraged by other data center
    hosts.  This host serves as the location anchor host.
 
-9.1.  End user location anchor host
 
-   The goal is to provide an easy-to-use wireless solution that can be
-   used by end users without requiring them to install a geolocation
-   sensor on their laptop/desktop host.
+
 
 
 
@@ -1849,6 +1849,12 @@ Krishnan, et al.         Expires 27 August 2026                [Page 33]
 
 Internet-Draft                    GeoW                     February 2026
 
+
+9.1.  End user location anchor host
+
+   The goal is to provide an easy-to-use wireless solution that can be
+   used by end users without requiring them to install a geolocation
+   sensor on their laptop/desktop host.
 
    The smartphone can be used as a location anchor host for the laptop/
    desktop host.  The smartphone connects to the laptop/desktop host
@@ -1886,14 +1892,8 @@ Internet-Draft                    GeoW                     February 2026
       due to inherent software jitter, but it can still provide a
       reasonable approximation of the proximity of the other data center
       hosts to the location anchor host.
-   *  Hardware-based: PTP hardware (e.g., SmartNIC), after adding
-      timestamp to PTP message, signs the PTP message with its private
-      key (e.g., SmartNIC DPU).  The corresponding public key, used to
-      verify the signatures, can be attested by the Host TPM Attestation
-      Key (AK).  This approach provides sub-microsecond accuracy and the
-      perfect proximity measure of the other data center hosts to the
-      location anchor host, and is suitable for data center environments
-      where precise timing is critical.
+
+
 
 
 
@@ -1905,6 +1905,15 @@ Krishnan, et al.         Expires 27 August 2026                [Page 34]
 
 Internet-Draft                    GeoW                     February 2026
 
+
+   *  Hardware-based: PTP hardware (e.g., SmartNIC), after adding
+      timestamp to PTP message, signs the PTP message with its private
+      key (e.g., SmartNIC DPU).  The corresponding public key, used to
+      verify the signatures, can be attested by the Host TPM Attestation
+      Key (AK).  This approach provides sub-microsecond accuracy and the
+      perfect proximity measure of the other data center hosts to the
+      location anchor host, and is suitable for data center environments
+      where precise timing is critical.
 
    Host proximity manager periodically verifies that the PTP daemon in
    the location anchor hosts provide proof that the PTP daemon in the
@@ -1942,15 +1951,6 @@ Internet-Draft                    GeoW                     February 2026
    *  Type flag: Request signing with geolocation information or SVID
       with geolocation information.
 
-   The HTTP request is signed as described in [[I-D.mw-wimse-transitive-
-   attestation]] using the workload or WIA private key.  Intermediate
-   proxies (e.g., API gateways, SASE firewalls) or server workloads can
-   verify the Workload-Geo-ID and enforce geolocation policies.
-
-
-
-
-
 
 
 
@@ -1961,6 +1961,11 @@ Krishnan, et al.         Expires 27 August 2026                [Page 35]
 
 Internet-Draft                    GeoW                     February 2026
 
+
+   The HTTP request is signed as described in [[I-D.mw-wimse-transitive-
+   attestation]] using the workload or WIA private key.  Intermediate
+   proxies (e.g., API gateways, SASE firewalls) or server workloads can
+   verify the Workload-Geo-ID and enforce geolocation policies.
 
    Intermediate proxies or server workloads connect to the Composite
    Geolocation Manager to supply GNSS geolocation/workload identity
@@ -2003,12 +2008,7 @@ Internet-Draft                    GeoW                     February 2026
    In the IPSEC key exchange protocol (IKE), the following geolocation
    extensions are proposed:
 
-   *  The IPSEC client includes the Geolocation Information from the
-      Workload Identity Agent Geolocation Information Cache in the IPSEC
-      IKEv2 notification payload.
-   *  The IPSEC server extracts the Geolocation Information from the
-      IKEv2 notification payload and connects to the Composite
-      Geolocation Manager to get attested composite location.
+
 
 
 
@@ -2018,6 +2018,12 @@ Krishnan, et al.         Expires 27 August 2026                [Page 36]
 Internet-Draft                    GeoW                     February 2026
 
 
+   *  The IPSEC client includes the Geolocation Information from the
+      Workload Identity Agent Geolocation Information Cache in the IPSEC
+      IKEv2 notification payload.
+   *  The IPSEC server extracts the Geolocation Information from the
+      IKEv2 notification payload and connects to the Composite
+      Geolocation Manager to get attested composite location.
    *  The IPSEC server can use the composite Geolocation Information to
       verify that the host is within the allowed geographic boundary.
 
@@ -2060,12 +2066,6 @@ Internet-Draft                    GeoW                     February 2026
    *  This binding produces a cryptographic proof that the workload is
       running on the expected physical CPU.
 
-   Proof of Geolocation:
-
-   *  The geolocation sensor creates a signed location report using its
-      private key.  This is supported in popular GNSS sensors such as
-      u-blox.
-
 
 
 
@@ -2074,6 +2074,11 @@ Krishnan, et al.         Expires 27 August 2026                [Page 37]
 Internet-Draft                    GeoW                     February 2026
 
 
+   Proof of Geolocation:
+
+   *  The geolocation sensor creates a signed location report using its
+      private key.  This is supported in popular GNSS sensors such as
+      u-blox.
    *  An agent on the bare-metal host periodically polls the sensor and
       collects these signed reports.
    *  The platform owner maps each sensor's ID and its signed
@@ -2117,11 +2122,6 @@ Internet-Draft                    GeoW                     February 2026
       are addressed by Layer 3 (Geolocation HW-Based Attestation):
       Combination of host-local location sensors (e.g., GNSS) with
       direct hardware-based attestation and mobile network location
-      services provides a more reliable and cryptographically verifiable
-      location than IP address, Wi-Fi-based methods or existing Host OS
-      location services.
-
-
 
 
 
@@ -2129,6 +2129,10 @@ Krishnan, et al.         Expires 27 August 2026                [Page 38]
 
 Internet-Draft                    GeoW                     February 2026
 
+
+      services provides a more reliable and cryptographically verifiable
+      location than IP address, Wi-Fi-based methods or existing Host OS
+      location services.
 
    *  *Trust in Transit* challenges are addressed by combining Layer 2
       (this draft) with [[I-D.mw-wimse-transitive-attestation]]: the
@@ -2173,10 +2177,6 @@ Internet-Draft                    GeoW                     February 2026
       mobile network) and cross-verification with multiple sources can
       mitigate this risk.
 
-   *  *SIM and e-SIM Attacks*: Physical SIM removal or e-SIM swap
-      attacks can break the binding between device and location.
-      Continuous monitoring of device composition and periodic re-
-      attestation are recommended.
 
 
 
@@ -2185,6 +2185,11 @@ Krishnan, et al.         Expires 27 August 2026                [Page 39]
 
 Internet-Draft                    GeoW                     February 2026
 
+
+   *  *SIM and e-SIM Attacks*: Physical SIM removal or e-SIM swap
+      attacks can break the binding between device and location.
+      Continuous monitoring of device composition and periodic re-
+      attestation are recommended.
 
    *  *Software Integrity*: The geolocation agent and supporting
       software must be protected against tampering.  Use of Linux IMA,
@@ -2224,14 +2229,9 @@ Internet-Draft                    GeoW                     February 2026
 
 16.  Appendix - Items to follow up
 
-16.1.  OPEN ISSUES 1: Restart time attestation/remote verification of
-       workload identity agent for integrity and proof of residency on
-       Host
 
-   For the workload identity agent restart case, it is not clear how the
-   storage in TPM PCR will be accomplished - ideally this should be
-   natively handled in the IMA measurement process with an ability to
-   retrigger on restart or refresh cycles.
+
+
 
 
 
@@ -2241,6 +2241,15 @@ Krishnan, et al.         Expires 27 August 2026                [Page 40]
 
 Internet-Draft                    GeoW                     February 2026
 
+
+16.1.  OPEN ISSUES 1: Restart time attestation/remote verification of
+       workload identity agent for integrity and proof of residency on
+       Host
+
+   For the workload identity agent restart case, it is not clear how the
+   storage in TPM PCR will be accomplished - ideally this should be
+   natively handled in the IMA measurement process with an ability to
+   retrigger on restart or refresh cycles.
 
 16.2.  OPEN ISSUES 2: Location privacy options
 
@@ -2282,20 +2291,18 @@ Internet-Draft                    GeoW                     February 2026
    Management Act (Spatial Data Act): Article 16, Paragraph 1: Prohibits
    the export of state-led survey data.
 
-Authors' Addresses
-
-   Ram Krishnan
-   JPMorgan Chase & Co.
-   Email: ramkri123@gmail.com
-
-
-
-
 
 
 Krishnan, et al.         Expires 27 August 2026                [Page 41]
 
 Internet-Draft                    GeoW                     February 2026
+
+
+Authors' Addresses
+
+   Ram Krishnan
+   JPMorgan Chase & Co.
+   Email: ramkri123@gmail.com
 
 
    Ned Smith
@@ -2316,13 +2323,6 @@ Internet-Draft                    GeoW                     February 2026
    Srinivasa Addepalli
    Aryaka
    Email: srinivasa.addepalli@aryaka.com
-
-
-
-
-
-
-
 
 
 

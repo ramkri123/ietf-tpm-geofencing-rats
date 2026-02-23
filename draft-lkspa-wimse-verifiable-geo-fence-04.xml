@@ -479,7 +479,7 @@ These monitoring functions are performed over dedicated, low-level hardware inte
 * <strong>PECI (Platform Environment Control Interface):</strong> Provides a specialized single-wire bus for the management processor (acting as master) to query CPU registers, thermal data, and identity information.
 * <strong>SMBus/I2C:</strong> Used for inventorying peripherals and reading Field Replaceable Unit (FRU) data from memory and other components.
 * <strong>Side-band Signals:</strong> Dedicated physical lines allow the management processor to monitor the &quot;Security State&quot; of the silicon, such as whether the CPU is in a debug-locked mode or if the hardware fuse settings have been tampered with.</t>
-<t>These inventory details are included in the evidence forwarded to the management plane (Step 5 of the Periodic Attestation Cycle), allowing the verifier to cross-reference the host's runtime state against its &quot;golden&quot; manufacturing record.</t>
+<t>These inventory details are bundled with the attestation evidence and forwarded to the management plane during each attestation cycle (see Step 5 and Step 6 of the Periodic Attestation Cycle below), allowing the verifier to cross-reference the host's runtime hardware state against its &quot;golden&quot; manufacturing record.</t>
 </section>
 
 <section anchor="silicon-root-of-trust-and-ima-integrity-protection"><name>Silicon Root of Trust and IMA Integrity Protection</name>
@@ -538,7 +538,7 @@ These monitoring functions are performed over dedicated, low-level hardware inte
 <li><em>Compromise detection:</em> A compromised kernel may refuse to deliver the log entirely (e.g., kill the agent). In this case, the verifier has a TPM Quote (from Step 3) but no log to verify against it, which triggers a trust failure.</li>
 </ul>
 <t><strong>Step 5 -- Management Processor (iLO): Forward Evidence to Management Plane</strong></t>
-<t>The management processor transmits the hardware-signed TPM Quote (which contains the verifier's nonce and the TPM clock value inside the signed payload) and the TCG Boot Event Log to the external management plane (e.g., HPE OneView/GreenLake) via the dedicated management NIC using the Redfish API. The management processor signs this transmission with its own OEM CA-chained identity key.</t>
+<t>The management processor transmits the hardware-signed TPM Quote (which contains the verifier's nonce and the TPM clock value inside the signed payload), the TCG Boot Event Log, and the current <strong>Hardware Inventory</strong> (including CPU PPINs and peripheral serial numbers collected out-of-band via PECI/SMBus) to the external management plane (e.g., HPE OneView/GreenLake) via the dedicated management NIC using the Redfish API. The management processor signs this transmission with its own OEM CA-chained identity key.</t>
 
 <ul spacing="compact">
 <li><em>Compromise detection:</em> The management processor's identity is verified by the OEM CA chain. A spoofed or tampered management processor would fail certificate validation.</li>
@@ -559,6 +559,7 @@ These monitoring functions are performed over dedicated, low-level hardware inte
 </ul></li>
 <li><strong>Compare PCR 10 against golden reference values</strong> to detect unexpected binaries (even if the log is consistent, a new/unknown binary triggers a policy violation).</li>
 <li><strong>Check for log staleness:</strong> Compare the number of IMA log entries and the TPM clock against the previous cycle. If the system is active (network traffic, CPU load) but the log has not grown, IMA may have been disabled by a compromised kernel.</li>
+<li><strong>Verify Hardware Inventory:</strong> Compare the CPU serial numbers (PPIN), microcode versions, and peripheral serial numbers against the &quot;golden&quot; manufacturing record. Any unauthorized hardware swap or unapproved firmware version triggers a trust failure alert.</li>
 </ol>
 
 <ul spacing="compact">

@@ -457,7 +457,7 @@ These monitoring functions are performed over dedicated, low-level hardware inte
 * **SMBus/I2C:** Used for inventorying peripherals and reading Field Replaceable Unit (FRU) data from memory and other components.
 * **Side-band Signals:** Dedicated physical lines allow the management processor to monitor the "Security State" of the silicon, such as whether the CPU is in a debug-locked mode or if the hardware fuse settings have been tampered with.
 
-These inventory details are included in the evidence forwarded to the management plane (Step 5 of the Periodic Attestation Cycle), allowing the verifier to cross-reference the host's runtime state against its "golden" manufacturing record.
+These inventory details are bundled with the attestation evidence and forwarded to the management plane during each attestation cycle (see Step 5 and Step 6 of the Periodic Attestation Cycle below), allowing the verifier to cross-reference the host's runtime hardware state against its "golden" manufacturing record.
 
 ### Silicon Root of Trust and IMA Integrity Protection
 
@@ -520,7 +520,7 @@ The external management plane verifier (e.g., HPE OneView/GreenLake) requests th
 
 **Step 5 -- Management Processor (iLO): Forward Evidence to Management Plane**
 
-The management processor transmits the hardware-signed TPM Quote (which contains the verifier's nonce and the TPM clock value inside the signed payload) and the TCG Boot Event Log to the external management plane (e.g., HPE OneView/GreenLake) via the dedicated management NIC using the Redfish API. The management processor signs this transmission with its own OEM CA-chained identity key.
+The management processor transmits the hardware-signed TPM Quote (which contains the verifier's nonce and the TPM clock value inside the signed payload), the TCG Boot Event Log, and the current **Hardware Inventory** (including CPU PPINs and peripheral serial numbers collected out-of-band via PECI/SMBus) to the external management plane (e.g., HPE OneView/GreenLake) via the dedicated management NIC using the Redfish API. The management processor signs this transmission with its own OEM CA-chained identity key.
 
 * _Compromise detection:_ The management processor's identity is verified by the OEM CA chain. A spoofed or tampered management processor would fail certificate validation.
 
@@ -537,6 +537,7 @@ The external verifier (management plane) performs the following validation:
     * **Mismatch:** The IMA log has been tampered with (entries removed, altered, or fabricated). The verifier raises a trust failure alert.
 6. **Compare PCR 10 against golden reference values** to detect unexpected binaries (even if the log is consistent, a new/unknown binary triggers a policy violation).
 7. **Check for log staleness:** Compare the number of IMA log entries and the TPM clock against the previous cycle. If the system is active (network traffic, CPU load) but the log has not grown, IMA may have been disabled by a compromised kernel.
+8. **Verify Hardware Inventory:** Compare the CPU serial numbers (PPIN), microcode versions, and peripheral serial numbers against the "golden" manufacturing record. Any unauthorized hardware swap or unapproved firmware version triggers a trust failure alert.
 
 * _Compromise detection summary:_
     * **Tampered IMA log** → detected at Step 6 sub-step 5 (log-vs-PCR mismatch).

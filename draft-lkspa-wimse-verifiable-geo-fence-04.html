@@ -1743,25 +1743,78 @@ li > p:last-of-type:only-child {
           <p id="section-3-3.1.1"><strong>Layer 1 -- Workload Identity Attestation (Hardware-Independent):</strong> Covered by [[I-D.mw-wimse-transitive-attestation]]. Proves that a workload is co-located with a verified Workload Identity Agent (WIA) via a local mechanism such as a Unix Domain Socket. Defines the mTLS-based Proof of Residency (PoR) and DPoR protocol flows. This layer does NOT concern itself with how the WIA itself was verified—it treats the WIA as an already-attested trust anchor.<a href="#section-3-3.1.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-3-3.2">
-          <p id="section-3-3.2.1"><strong>Layer 2 -- WIA Platform Attestation via TPM (Hardware-Dependent):</strong> Covered by this document. Proves the WIA is running on an approved host via TPM-based measured boot, PCR verification, credential activation, and WIA identity issuance. This establishes the hardware root of trust that Layer 1 relies upon.<a href="#section-3-3.2.1" class="pilcrow">¶</a></p>
+          <p id="section-3-3.2.1"><strong>Layer 2 -- WIA Platform Attestation via TPM (Hardware-Dependent):</strong> Covered by this document. Proves the WIA is running on an approved host via TPM-based measured boot, hardware inventory verification, and credential activation. This establishes the hardware root of trust that Layer 1 relies upon.<a href="#section-3-3.2.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="section-3-3.3">
-          <p id="section-3-3.3.1"><strong>Layer 3 -- WIA Geolocation Attestation (Hardware-Dependent):</strong> Covered by this document. Proves the attested host (from Layer 2) is within an approved geographic boundary, using GNSS sensors, mobile network modules, and composite geolocation services whose identities are cryptographically bound to the host TPM identity.<a href="#section-3-3.3.1" class="pilcrow">¶</a></p>
+          <p id="section-3-3.3.1"><strong>Layer 3 -- WIA Geolocation Attestation (Hardware-Dependent):</strong> Covered by this document. Proves the attested host (from Layer 2) is within an approved geographic boundary using cryptographically bound sensors (GNSS, mobile modems).<a href="#section-3-3.3.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
-<p id="section-3-4">Together, the complete chain is:<a href="#section-3-4" class="pilcrow">¶</a></p>
+<p id="section-3-4">The following table maps these layers to the broader IETF ecosystem, forming a cohesive "Silicon-to-SVID" chain of accountability:<a href="#section-3-4" class="pilcrow">¶</a></p>
+<table class="center" id="table-1">
+        <caption><a href="#table-1" class="selfRef">Table 1</a></caption>
+<thead>
+          <tr>
+            <th class="text-left" rowspan="1" colspan="1">Layer</th>
+            <th class="text-left" rowspan="1" colspan="1">Component</th>
+            <th class="text-left" rowspan="1" colspan="1">WG</th>
+            <th class="text-left" rowspan="1" colspan="1">Core Responsibility</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="text-left" rowspan="1" colspan="1">
+              <strong>Layer 1</strong>
+</td>
+            <td class="text-left" rowspan="1" colspan="1">
+              <strong>Transitive Attestation</strong>
+</td>
+            <td class="text-left" rowspan="1" colspan="1">
+              <strong>WIMSE</strong>
+</td>
+            <td class="text-left" rowspan="1" colspan="1">
+              <strong>Conveyance</strong>: Binds workload identity (SVID) to the attested agent (PoR).</td>
+          </tr>
+          <tr>
+            <td class="text-left" rowspan="1" colspan="1">
+              <strong>Layer 2</strong>
+</td>
+            <td class="text-left" rowspan="1" colspan="1">
+              <strong>Verifiable Geofencing</strong>
+</td>
+            <td class="text-left" rowspan="1" colspan="1">
+              <strong>WIMSE/RATS</strong>
+</td>
+            <td class="text-left" rowspan="1" colspan="1">
+              <strong>Platform</strong>: Verifies host integrity, firmware, and WIA residency (TPM).</td>
+          </tr>
+          <tr>
+            <td class="text-left" rowspan="1" colspan="1">
+              <strong>Layer 3</strong>
+</td>
+            <td class="text-left" rowspan="1" colspan="1">
+              <strong>Verifiable Geofencing</strong>
+</td>
+            <td class="text-left" rowspan="1" colspan="1">
+              <strong>WIMSE/RATS</strong>
+</td>
+            <td class="text-left" rowspan="1" colspan="1">
+              <strong>Location</strong>: Verifies physical geography and geofence compliance (GNSS/ZKP).</td>
+          </tr>
+        </tbody>
+      </table>
+<p id="section-3-6">Together, the complete chain is:<a href="#section-3-6" class="pilcrow">¶</a></p>
 <ul class="compact">
-<li class="compact" id="section-3-5.1">TPM Hardware -&gt; WIA (this draft, Layer 2) -&gt; Workload (transitive attestation draft, Layer 1)<a href="#section-3-5.1" class="pilcrow">¶</a>
+<li class="compact" id="section-3-7.1">TPM Hardware -&gt; WIA (this draft, Layer 2) -&gt; Workload (transitive attestation draft, Layer 1)<a href="#section-3-7.1" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="section-3-5.2">TPM/Geolocation Hardware -&gt; WIA (this draft, Layers 2+3) -&gt; Workload (transitive attestation draft, Layer 1)<a href="#section-3-5.2" class="pilcrow">¶</a>
+        <li class="compact" id="section-3-7.2">TPM/Geolocation Hardware -&gt; WIA (this draft, Layers 2+3) -&gt; Workload (transitive attestation draft, Layer 1)<a href="#section-3-7.2" class="pilcrow">¶</a>
 </li>
       </ul>
-<p id="section-3-6">This document focuses exclusively on Layers 2 and 3: the hardware-dependent attestation of the WIA itself. For how workloads prove they are co-located with an attested WIA, and for the data-plane protocol flows (mTLS PoR, DPoR), see [[I-D.mw-wimse-transitive-attestation]].<a href="#section-3-6" class="pilcrow">¶</a></p>
-<p id="section-3-7">In the context of SPIFFE/SPIRE:<a href="#section-3-7" class="pilcrow">¶</a></p>
+<p id="section-3-8">This document focuses exclusively on Layers 2 and 3: the hardware-dependent attestation of the WIA itself. For how workloads prove they are co-located with an attested WIA, and for the data-plane protocol flows (mTLS PoR, DPoR), see [[I-D.mw-wimse-transitive-attestation]].<a href="#section-3-8" class="pilcrow">¶</a></p>
+<p id="section-3-9">In the context of SPIFFE/SPIRE:<a href="#section-3-9" class="pilcrow">¶</a></p>
 <ul class="compact">
-<li class="compact" id="section-3-8.1">The <strong>Workload Identity Manager</strong> is represented by the SPIFFE/SPIRE server.<a href="#section-3-8.1" class="pilcrow">¶</a>
+<li class="compact" id="section-3-10.1">The <strong>Workload Identity Manager</strong> is represented by the SPIFFE/SPIRE server.<a href="#section-3-10.1" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="section-3-8.2">The <strong>Workload Identity Agent</strong> is represented by the SPIFFE/SPIRE agent.<a href="#section-3-8.2" class="pilcrow">¶</a>
+        <li class="compact" id="section-3-10.2">The <strong>Workload Identity Agent</strong> is represented by the SPIFFE/SPIRE agent.<a href="#section-3-10.2" class="pilcrow">¶</a>
 </li>
       </ul>
 </section>
@@ -2060,8 +2113,8 @@ li > p:last-of-type:only-child {
 <a href="#section-7.1.1" class="section-number selfRef">7.1.1. </a><a href="#name-comparison-of-deployment-op" class="section-name selfRef">Comparison of Deployment Options</a>
           </h4>
 <p id="section-7.1.1-1">The following table summarizes the architectural and security differences between the three deployment options for TPM platform attestation.<a href="#section-7.1.1-1" class="pilcrow">¶</a></p>
-<table class="center" id="table-1">
-            <caption><a href="#table-1" class="selfRef">Table 1</a></caption>
+<table class="center" id="table-2">
+            <caption><a href="#table-2" class="selfRef">Table 2</a></caption>
 <thead>
               <tr>
                 <th class="text-left" rowspan="1" colspan="1">Feature</th>
@@ -3007,8 +3060,8 @@ These monitoring functions are performed over dedicated, low-level hardware inte
           <h4 id="name-comparison-precise-location">
 <a href="#section-8.7.4" class="section-number selfRef">8.7.4. </a><a href="#name-comparison-precise-location" class="section-name selfRef">Comparison: Precise Location vs. ZKP</a>
           </h4>
-<table class="center" id="table-2">
-            <caption><a href="#table-2" class="selfRef">Table 2</a></caption>
+<table class="center" id="table-3">
+            <caption><a href="#table-3" class="selfRef">Table 3</a></caption>
 <thead>
               <tr>
                 <th class="text-left" rowspan="1" colspan="1">Property</th>

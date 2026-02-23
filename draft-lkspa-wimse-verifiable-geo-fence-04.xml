@@ -97,12 +97,45 @@
 <ul>
 <li><t><strong>Layer 1 -- Workload Identity Attestation (Hardware-Independent):</strong> Covered by [[I-D.mw-wimse-transitive-attestation]]. Proves that a workload is co-located with a verified Workload Identity Agent (WIA) via a local mechanism such as a Unix Domain Socket. Defines the mTLS-based Proof of Residency (PoR) and DPoR protocol flows. This layer does NOT concern itself with how the WIA itself was verified—it treats the WIA as an already-attested trust anchor.</t>
 </li>
-<li><t><strong>Layer 2 -- WIA Platform Attestation via TPM (Hardware-Dependent):</strong> Covered by this document. Proves the WIA is running on an approved host via TPM-based measured boot, PCR verification, credential activation, and WIA identity issuance. This establishes the hardware root of trust that Layer 1 relies upon.</t>
+<li><t><strong>Layer 2 -- WIA Platform Attestation via TPM (Hardware-Dependent):</strong> Covered by this document. Proves the WIA is running on an approved host via TPM-based measured boot, hardware inventory verification, and credential activation. This establishes the hardware root of trust that Layer 1 relies upon.</t>
 </li>
-<li><t><strong>Layer 3 -- WIA Geolocation Attestation (Hardware-Dependent):</strong> Covered by this document. Proves the attested host (from Layer 2) is within an approved geographic boundary, using GNSS sensors, mobile network modules, and composite geolocation services whose identities are cryptographically bound to the host TPM identity.</t>
+<li><t><strong>Layer 3 -- WIA Geolocation Attestation (Hardware-Dependent):</strong> Covered by this document. Proves the attested host (from Layer 2) is within an approved geographic boundary using cryptographically bound sensors (GNSS, mobile modems).</t>
 </li>
 </ul>
-<t>Together, the complete chain is:</t>
+<t>The following table maps these layers to the broader IETF ecosystem, forming a cohesive &quot;Silicon-to-SVID&quot; chain of accountability:</t>
+<table>
+<thead>
+<tr>
+<th align="left">Layer</th>
+<th align="left">Component</th>
+<th align="left">WG</th>
+<th align="left">Core Responsibility</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left"><strong>Layer 1</strong></td>
+<td align="left"><strong>Transitive Attestation</strong></td>
+<td align="left"><strong>WIMSE</strong></td>
+<td align="left"><strong>Conveyance</strong>: Binds workload identity (SVID) to the attested agent (PoR).</td>
+</tr>
+
+<tr>
+<td align="left"><strong>Layer 2</strong></td>
+<td align="left"><strong>Verifiable Geofencing</strong></td>
+<td align="left"><strong>WIMSE/RATS</strong></td>
+<td align="left"><strong>Platform</strong>: Verifies host integrity, firmware, and WIA residency (TPM).</td>
+</tr>
+
+<tr>
+<td align="left"><strong>Layer 3</strong></td>
+<td align="left"><strong>Verifiable Geofencing</strong></td>
+<td align="left"><strong>WIMSE/RATS</strong></td>
+<td align="left"><strong>Location</strong>: Verifies physical geography and geofence compliance (GNSS/ZKP).</td>
+</tr>
+</tbody>
+</table><t>Together, the complete chain is:</t>
 
 <ul spacing="compact">
 <li>TPM Hardware -&gt; WIA (this draft, Layer 2) -&gt; Workload (transitive attestation draft, Layer 1)</li>

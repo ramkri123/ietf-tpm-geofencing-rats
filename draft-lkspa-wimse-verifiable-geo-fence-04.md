@@ -171,9 +171,17 @@ The three layers are:
 
 - **Layer 1 -- Workload Identity Attestation (Hardware-Independent):** Covered by [[I-D.mw-wimse-transitive-attestation]]. Proves that a workload is co-located with a verified Workload Identity Agent (WIA) via a local mechanism such as a Unix Domain Socket. Defines the mTLS-based Proof of Residency (PoR) and DPoR protocol flows. This layer does NOT concern itself with how the WIA itself was verified—it treats the WIA as an already-attested trust anchor.
 
-- **Layer 2 -- WIA Platform Attestation via TPM (Hardware-Dependent):** Covered by this document. Proves the WIA is running on an approved host via TPM-based measured boot, PCR verification, credential activation, and WIA identity issuance. This establishes the hardware root of trust that Layer 1 relies upon.
+- **Layer 2 -- WIA Platform Attestation via TPM (Hardware-Dependent):** Covered by this document. Proves the WIA is running on an approved host via TPM-based measured boot, hardware inventory verification, and credential activation. This establishes the hardware root of trust that Layer 1 relies upon.
 
-- **Layer 3 -- WIA Geolocation Attestation (Hardware-Dependent):** Covered by this document. Proves the attested host (from Layer 2) is within an approved geographic boundary, using GNSS sensors, mobile network modules, and composite geolocation services whose identities are cryptographically bound to the host TPM identity.
+- **Layer 3 -- WIA Geolocation Attestation (Hardware-Dependent):** Covered by this document. Proves the attested host (from Layer 2) is within an approved geographic boundary using cryptographically bound sensors (GNSS, mobile modems).
+
+The following table maps these layers to the broader IETF ecosystem, forming a cohesive "Silicon-to-SVID" chain of accountability:
+
+| Layer | Component | WG | Core Responsibility |
+| :--- | :--- | :--- | :--- |
+| **Layer 1** | **Transitive Attestation** | **WIMSE** | **Conveyance**: Binds workload identity (SVID) to the attested agent (PoR). |
+| **Layer 2** | **Verifiable Geofencing** | **WIMSE/RATS** | **Platform**: Verifies host integrity, firmware, and WIA residency (TPM). |
+| **Layer 3** | **Verifiable Geofencing** | **WIMSE/RATS** | **Location**: Verifies physical geography and geofence compliance (GNSS/ZKP). |
 
 Together, the complete chain is:
 

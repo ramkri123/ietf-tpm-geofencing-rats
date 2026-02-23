@@ -460,6 +460,23 @@
 </ol>
 </section>
 
+<section anchor="hardware-inventory-and-continuous-monitoring"><name>Hardware Inventory and Continuous Monitoring</name>
+<t>Beyond attestation, the management processor performs continuous, out-of-band monitoring of the host's physical and firmware composition. This &quot;Silicon-to-Audit&quot; capability ensures that the hardware identity remains constant and trusted throughout its lifecycle:</t>
+
+<ul spacing="compact">
+<li><t><strong>CPU Integrity Monitoring:</strong> The management processor inventories the host CPUs at every boot and continuously monitors their state. It records and reports:</t>
+
+<ul spacing="compact">
+<li><strong>Serial Numbers:</strong> Ensuring that the physical CPU silicon has not been swapped.</li>
+<li><strong>Microcode/Firmware Versions:</strong> Verifying that the CPUs are running approved, patched microcode.</li>
+<li><strong>Hardware Stepping/Revision:</strong> Confirming the exact hardware version to detect unauthorized hardware substitutions.</li>
+</ul></li>
+<li><strong>Peripheral Inventory:</strong> Similar monitoring is applied to memory modules (DIMM serials), storage controllers, and network adapters.</li>
+<li><strong>Health and Security State:</strong> The management processor monitors for hardware-level security events, such as chassis intrusion, thermal anomalies (potential side-channel attacks), or unauthorized component additions.</li>
+</ul>
+<t>These inventory details are included in the evidence forwarded to the management plane (Step 5 of the Periodic Attestation Cycle), allowing the verifier to cross-reference the host's runtime state against its &quot;golden&quot; manufacturing record.</t>
+</section>
+
 <section anchor="silicon-root-of-trust-and-ima-integrity-protection"><name>Silicon Root of Trust and IMA Integrity Protection</name>
 <t>To ensure that the attestation measurements themselves are trustworthy, the management processor architecture provides multiple layers of protection against the &quot;who watches the watcher&quot; problem:</t>
 <t><strong>Protection 1 -- Secure Boot / Silicon Root of Trust:</strong> Before the OS starts, the management processor ASIC (e.g., HPE iLO) verifies the UEFI BIOS firmware. The BIOS then verifies the Bootloader (GRUB), and the Bootloader verifies the Linux Kernel signature. This ensures that the version of the Linux kernel -- and thus the IMA subsystem code -- being loaded is the authentic, signed version.</t>
@@ -557,6 +574,7 @@
 <ul spacing="compact">
 <li>Out-of-band attestation: works even when the host OS is compromised, rebooting, or offline.</li>
 <li>Hardware-isolated attestation path: the management processor is physically separate from the host CPU.</li>
+<li><strong>Continuous Hardware Inventory:</strong> Detects unauthorized swaps of CPUs, memory, or peripherals through serial number and firmware version tracking.</li>
 <li>Detects compromised kernel / IMA subversion through hardware-signed TPM quotes.</li>
 <li>TPM Swap attack protection at boot time.</li>
 <li>Enterprise fleet management integration (HPE OneView, Dell iDRAC, Lenovo XClarity, etc.).</li>

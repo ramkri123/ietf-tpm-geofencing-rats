@@ -440,6 +440,19 @@ The end-to-end attestation paths are therefore:
 1. **Management Processor (e.g., HPE iLO):** Has direct access to the host TPM via a dedicated bus (I2C/private bus), independent of the host CPU and OS. The management processor collects TPM measurements and can perform attestation even when the host OS is not running or is compromised.
 2. **External Management Plane (e.g., HPE OneView, HPE GreenLake):** Centralized management platform that receives attestation evidence from the management processor. Validates TPM quotes against golden measurements maintained in the management platform's database. Provides fleet-wide attestation visibility and policy enforcement.
 
+### Hardware Inventory and Continuous Monitoring
+
+Beyond attestation, the management processor performs continuous, out-of-band monitoring of the host's physical and firmware composition. This "Silicon-to-Audit" capability ensures that the hardware identity remains constant and trusted throughout its lifecycle:
+
+* **CPU Integrity Monitoring:** The management processor inventories the host CPUs at every boot and continuously monitors their state. It records and reports:
+    - **Serial Numbers:** Ensuring that the physical CPU silicon has not been swapped.
+    - **Microcode/Firmware Versions:** Verifying that the CPUs are running approved, patched microcode.
+    - **Hardware Stepping/Revision:** Confirming the exact hardware version to detect unauthorized hardware substitutions.
+* **Peripheral Inventory:** Similar monitoring is applied to memory modules (DIMM serials), storage controllers, and network adapters.
+* **Health and Security State:** The management processor monitors for hardware-level security events, such as chassis intrusion, thermal anomalies (potential side-channel attacks), or unauthorized component additions.
+
+These inventory details are included in the evidence forwarded to the management plane (Step 5 of the Periodic Attestation Cycle), allowing the verifier to cross-reference the host's runtime state against its "golden" manufacturing record.
+
 ### Silicon Root of Trust and IMA Integrity Protection
 
 To ensure that the attestation measurements themselves are trustworthy, the management processor architecture provides multiple layers of protection against the "who watches the watcher" problem:
@@ -530,6 +543,7 @@ The external verifier (management plane) performs the following validation:
 
 - Out-of-band attestation: works even when the host OS is compromised, rebooting, or offline.
 - Hardware-isolated attestation path: the management processor is physically separate from the host CPU.
+- **Continuous Hardware Inventory:** Detects unauthorized swaps of CPUs, memory, or peripherals through serial number and firmware version tracking.
 - Detects compromised kernel / IMA subversion through hardware-signed TPM quotes.
 - TPM Swap attack protection at boot time.
 - Enterprise fleet management integration (HPE OneView, Dell iDRAC, Lenovo XClarity, etc.).

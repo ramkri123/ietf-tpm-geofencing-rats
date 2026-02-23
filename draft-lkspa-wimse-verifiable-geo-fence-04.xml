@@ -3,7 +3,7 @@
 <rfc version="3" ipr="trust200902" docName="draft-lkspa-wimse-verifiable-geo-fence-04" submissionType="IETF" category="info" xml:lang="en" xmlns:xi="http://www.w3.org/2001/XInclude" indexInclude="true">
 
 <front>
-<title abbrev="ZTSA-GEO-POR">Zero-Trust Sovereign AI: Verifiable Geofencing and Residency Proofs for Cybersecure Workloads</title><seriesInfo value="draft-lkspa-wimse-verifiable-geo-fence-04" stream="IETF" status="informational" name="Internet-Draft"></seriesInfo>
+<title abbrev="RATS-GEO-POR">Verifiable Geofencing and Residency Proofs for Sovereign AI: A RATS Profile</title><seriesInfo value="draft-lkspa-wimse-verifiable-geo-fence-04" stream="IETF" status="informational" name="Internet-Draft"></seriesInfo>
 <author initials="R." surname="Krishnan" fullname="Ram Krishnan"><organization>JPMorgan Chase &amp; Co.</organization><address><postal><street></street>
 </postal><email>ramkri123@gmail.com</email>
 </address></author><author initials="N." surname="Smith" fullname="Ned Smith"><organization>Intel</organization><address><postal><street></street>
@@ -25,7 +25,7 @@
 <keyword>GNSS</keyword>
 
 <abstract>
-<t>Modern cloud and distributed environments face significant risks from stolen bearer tokens, protocol replay, and trust gaps in transit. This document defines a <strong>RATS Profile</strong> for high-assurance, hardware-rooted platform and location attestation. It specifies the technical mechanics for verifiable geofencing and host integrity required by the <strong>WIMSE Architecture</strong> [[I-D.ietf-wimse-architecture]] and the <strong>Workload Identity Agent (WIA)</strong>.</t>
+<t>Modern cloud and distributed environments face significant risks from stolen bearer tokens, protocol replay, and trust gaps in transit, particularly in the context of <strong>Sovereign AI</strong> and cybersecure workloads. This document defines a <strong>RATS Profile</strong> for high-assurance, hardware-rooted platform and location attestation. It specifies the technical mechanics for verifiable geofencing and host integrity required by the <strong>WIMSE Architecture</strong> [[I-D.ietf-wimse-architecture]] and the <strong>Workload Identity Agent (WIA)</strong>.</t>
 <t>While the WIMSE architecture assumes a trustworthy agent, it does not specify the normative technical mechanics for its verification. This document fills that gap as a specialized RATS profile, covering TPM-based platform attestation (Layer 2) and high-assurance geolocation attestation (Layer 3). It integrates out-of-band (OOB) hardware monitoring, cloud-native virtual TPM (vTPM) support, and privacy-preserving Zero-Knowledge Proof (ZKP) verification to generate <strong>High-Confidence Evidence</strong>.</t>
 <t>By binding identity agent integrity to geographic and host attributes, the framework establishes a &quot;Silicon-to-Audit&quot; chain of trust. This addresses challenges in bearer token theft and data residency while providing a post-quantum cryptographic foundation through mathematical transparency. The solution builds upon the <strong>RATS Architecture [[RFC9334]]</strong> to ensure that only authorized workloads in approved locations can access sensitive services.</t>
 </abstract>

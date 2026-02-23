@@ -1,6 +1,6 @@
 %%%
-title = "Zero-Trust Sovereign AI: Verifiable Geofencing and Residency Proofs for Cybersecure Workloads"
-abbrev = "ZTSA-GEO-POR"
+title = "Verifiable Geofencing and Residency Proofs for Sovereign AI: A RATS Profile"
+abbrev = "RATS-GEO-POR"
 category = "info"
 docName = "draft-lkspa-wimse-verifiable-geo-fence-04"
 ipr = "trust200902"
@@ -90,7 +90,7 @@ organization = "Independent"
 
 .# Abstract
 
-Modern cloud and distributed environments face significant risks from stolen bearer tokens, protocol replay, and trust gaps in transit. This document defines a **RATS Profile** for high-assurance, hardware-rooted platform and location attestation. It specifies the technical mechanics for verifiable geofencing and host integrity required by the **WIMSE Architecture** [[I-D.ietf-wimse-architecture]] and the **Workload Identity Agent (WIA)**.
+Modern cloud and distributed environments face significant risks from stolen bearer tokens, protocol replay, and trust gaps in transit, particularly in the context of **Sovereign AI** and cybersecure workloads. This document defines a **RATS Profile** for high-assurance, hardware-rooted platform and location attestation. It specifies the technical mechanics for verifiable geofencing and host integrity required by the **WIMSE Architecture** [[I-D.ietf-wimse-architecture]] and the **Workload Identity Agent (WIA)**.
 
 While the WIMSE architecture assumes a trustworthy agent, it does not specify the normative technical mechanics for its verification. This document fills that gap as a specialized RATS profile, covering TPM-based platform attestation (Layer 2) and high-assurance geolocation attestation (Layer 3). It integrates out-of-band (OOB) hardware monitoring, cloud-native virtual TPM (vTPM) support, and privacy-preserving Zero-Knowledge Proof (ZKP) verification to generate **High-Confidence Evidence**.
 

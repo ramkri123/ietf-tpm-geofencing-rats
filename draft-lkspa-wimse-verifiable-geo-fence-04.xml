@@ -761,43 +761,53 @@ These monitoring functions are performed over dedicated, low-level hardware inte
 </section>
 </section>
 
-<section anchor="deployment-option-b-external-management-processor-e-g-hpe-ilo-1"><name>Deployment Option B: External Management Processor (e.g., HPE iLO)</name>
-<t>In this option, geolocation sensors are connected to or accessible from the management processor, providing out-of-band geolocation attestation independent of the host OS. This leverages the same dual-path architecture described in the Layer 2 Option B: the management processor uses its dedicated hardware bus (I2C/private bus) to access both the TPM and the geolocation sensors, completely bypassing the Host CPU and OS.</t>
-<t>This architecture is critical for geolocation integrity because a compromised Host OS could feed spoofed GNSS coordinates to an in-band Keylime agent. By routing sensor readings through the management processor's isolated hardware path, the geolocation data is collected and attested without any Host OS involvement.</t>
+<section anchor="deployment-option-b-out-of-band-geolocation-overlay-on-layer-2-option-b"><name>Deployment Option B: Out-of-Band Geolocation (Overlay on Layer 2 Option B)</name>
+<t>In this option, geolocation attestation is <strong>layered directly on top of TPM Platform Attestation Option B</strong>. The geolocation sensors (GNSS, mobile modems) are connected to or accessible from the same management processor (BMC/iLO) used for OOB TPM attestation. This provides a completely out-of-band geolocation attestation path that is independent of the host OS and CPU.</t>
+<t>This architecture is critical for geolocation integrity because a compromised Host OS could feed spoofed GNSS coordinates to an in-band agent. By routing sensor readings through the management processor's isolated hardware path, the geolocation data is collected and attested without any Host OS involvement.</t>
 
 <section anchor="architecture-4"><name>Architecture</name>
 
 <ol spacing="compact">
-<li><strong>Management Processor Sensor Interface:</strong> The management processor (BMC/iLO) interfaces with geolocation sensors (GNSS receivers, mobile modems) through dedicated I/O channels separate from the host CPU bus. Sensor readings are collected by the management processor independently of the host OS. The management processor can verify sensor firmware integrity as part of its Silicon Root of Trust chain.</li>
-<li><strong>Management Processor Attestation:</strong> The management processor reads sensor data, signs it with its own identity key (OEM CA chain), and associates the geolocation evidence with the host TPM EK identity. The geolocation hash can be extended into the TPM via the management processor's dedicated TPM bus, providing the same PCR binding as the Keylime option but through the out-of-band path.</li>
-<li><t><strong>External Management Plane:</strong> The management plane receives geolocation evidence from the management processor via the dedicated management NIC (Redfish API) and validates:</t>
+<li><strong>Integrated Management Interface:</strong> The management processor (BMC/iLO) interfaces with geolocation sensors through dedicated I/O channels (e.g., I2C, SPI, or side-band USB).</li>
+<li><t><strong>Sensor Metadata Attestation:</strong> The management processor inventories the geolocation hardware at every boot and records:</t>
 
 <ul spacing="compact">
-<li>Sensor identity against registered sensor inventory.</li>
-<li>Location reading against geofence policies.</li>
-<li>Cross-verification with mobile network operator location services.</li>
-<li>Association with the TPM EK identity from the Layer 2 attestation.</li>
-<li>Consistency between the hardware-signed TPM Quote (obtained OOB) and the geolocation PCR value.</li>
+<li><strong>Sensor Serial Number:</strong> Ensuring the physical sensor has not been substituted.</li>
+<li><strong>Hardware and Firmware Versions:</strong> Verifying that the sensor is running approved and patched firmware.</li>
 </ul></li>
+<li><t><strong>Periodic Location Data Gathering:</strong> The management processor periodically (e.g., every 30 seconds) queries the sensors for:</t>
+
+<ul spacing="compact">
+<li><strong>Geolocation Data:</strong> Latitude, Longitude, and Accuracy.</li>
+<li><strong>Mobile Identifiers:</strong> IMEI (Hardware ID), IMSI (SIM ID), and MSISDN (Subscriber identity lookup).</li>
+</ul></li>
+<li><strong>OOB Attestation Pipeline:</strong> The management processor signs these details with its identity key (OEM CA-chained) and includes them as attested claims in the evidence forwarded to the management plane. The hash of this composite geolocation bundle is extended into the TPM via the management processor's dedicated TPM bus (PCR 15).</li>
 </ol>
+</section>
+
+<section anchor="technical-implementation"><name>Technical Implementation</name>
+<t>Monitoring and gathering geolocation data in Option B is performed over dedicated hardware interfaces:
+* <strong>Dedicated I2C/SPI Sensor Bus:</strong> iLO acts as a master to query GNSS sensor registers for coordinates and hardware IDs independently of the host CPU.
+* <strong>Mobile Modem Side-band Interface:</strong> The management processor interacts with the mobile modem's AT command interface or QMI/MBIM bus over a private management channel to retrieve IMEI, IMSI, and cell-tower triangulation metadata.
+* <strong>Silicon Root of Trust for Sensors:</strong> Sensor firmware is verified by the management processor during initialization to prevent firmware-level geolocation spoofing (e.g. &quot;Virtual GPS&quot; injection).</t>
 </section>
 
 <section anchor="advantages-4"><name>Advantages</name>
 
 <ul spacing="compact">
-<li>Geolocation readings are hardware-isolated from the host OS -- immune to host-level malware and GNSS spoofing at the OS layer.</li>
-<li>Integrated with enterprise fleet management (same management plane as Layer 2 Option B).</li>
-<li>Suitable for high-security environments (defense, critical infrastructure).</li>
-<li>The same out-of-band TPM Quote that detects IMA/kernel subversion also verifies the geolocation PCR, providing a single hardware-attested evidence bundle.</li>
+<li><strong>Deep Isolation:</strong> Geolocation readings are hardware-isolated from the host OS -- immune to host-level malware and GNSS spoofing at the OS layer.</li>
+<li><strong>Unified Evidence:</strong> The same out-of-band TPM Quote that detects IMA/kernel subversion (Layer 2) also verifies the geolocation PCR (Layer 3), providing a single hardware-attested evidence bundle.</li>
+<li><strong>Hardware Inventory Binding:</strong> Detects unauthorized swaps of sensors or SIM cards through serial number and identity tracking.</li>
+<li><strong>Suitable for High-Security Environments:</strong> Ideal for defense, critical infrastructure, and high-assurance mobile deployments.</li>
 </ul>
 </section>
 
 <section anchor="limitations-4"><name>Limitations</name>
 
 <ul spacing="compact">
-<li>Requires management processor with geolocation sensor I/O capability.</li>
-<li>Vendor-specific sensor integration.</li>
-<li>Management processor firmware must be trusted.</li>
+<li>Requires management processor with specific geolocation sensor I/O capabilities.</li>
+<li>Vendor-specific sensor and modem integration.</li>
+<li>Management processor firmware must remain in a trusted state.</li>
 </ul>
 </section>
 </section>

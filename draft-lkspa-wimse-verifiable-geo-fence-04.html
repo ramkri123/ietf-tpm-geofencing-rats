@@ -1515,16 +1515,19 @@ li > p:last-of-type:only-child {
                 </ul>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.5">
-                <p id="section-toc.1-1.8.2.5.1"><a href="#section-8.5" class="auto internal xref">8.5</a>.  <a href="#name-deployment-option-b-external" class="internal xref">Deployment Option B: External Management Processor (e.g., HPE iLO)</a></p>
+                <p id="section-toc.1-1.8.2.5.1"><a href="#section-8.5" class="auto internal xref">8.5</a>.  <a href="#name-deployment-option-b-out-of-" class="internal xref">Deployment Option B: Out-of-Band Geolocation (Overlay on Layer 2 Option B)</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.5.2.1">
                     <p id="section-toc.1-1.8.2.5.2.1.1"><a href="#section-8.5.1" class="auto internal xref">8.5.1</a>.  <a href="#name-architecture-5" class="internal xref">Architecture</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.5.2.2">
-                    <p id="section-toc.1-1.8.2.5.2.2.1"><a href="#section-8.5.2" class="auto internal xref">8.5.2</a>.  <a href="#name-advantages-5" class="internal xref">Advantages</a></p>
+                    <p id="section-toc.1-1.8.2.5.2.2.1"><a href="#section-8.5.2" class="auto internal xref">8.5.2</a>.  <a href="#name-technical-implementation" class="internal xref">Technical Implementation</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.5.2.3">
-                    <p id="section-toc.1-1.8.2.5.2.3.1"><a href="#section-8.5.3" class="auto internal xref">8.5.3</a>.  <a href="#name-limitations-5" class="internal xref">Limitations</a></p>
+                    <p id="section-toc.1-1.8.2.5.2.3.1"><a href="#section-8.5.3" class="auto internal xref">8.5.3</a>.  <a href="#name-advantages-5" class="internal xref">Advantages</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.5.2.4">
+                    <p id="section-toc.1-1.8.2.5.2.4.1"><a href="#section-8.5.4" class="auto internal xref">8.5.4</a>.  <a href="#name-limitations-5" class="internal xref">Limitations</a></p>
 </li>
                 </ul>
 </li>
@@ -2802,13 +2805,13 @@ These monitoring functions are performed over dedicated, low-level hardware inte
 </div>
 </section>
 </div>
-<div id="deployment-option-b-external-management-processor-e-g-hpe-ilo-1">
+<div id="deployment-option-b-out-of-band-geolocation-overlay-on-layer-2-option-b">
 <section id="section-8.5">
-        <h3 id="name-deployment-option-b-external">
-<a href="#section-8.5" class="section-number selfRef">8.5. </a><a href="#name-deployment-option-b-external" class="section-name selfRef">Deployment Option B: External Management Processor (e.g., HPE iLO)</a>
+        <h3 id="name-deployment-option-b-out-of-">
+<a href="#section-8.5" class="section-number selfRef">8.5. </a><a href="#name-deployment-option-b-out-of-" class="section-name selfRef">Deployment Option B: Out-of-Band Geolocation (Overlay on Layer 2 Option B)</a>
         </h3>
-<p id="section-8.5-1">In this option, geolocation sensors are connected to or accessible from the management processor, providing out-of-band geolocation attestation independent of the host OS. This leverages the same dual-path architecture described in the Layer 2 Option B: the management processor uses its dedicated hardware bus (I2C/private bus) to access both the TPM and the geolocation sensors, completely bypassing the Host CPU and OS.<a href="#section-8.5-1" class="pilcrow">¶</a></p>
-<p id="section-8.5-2">This architecture is critical for geolocation integrity because a compromised Host OS could feed spoofed GNSS coordinates to an in-band Keylime agent. By routing sensor readings through the management processor's isolated hardware path, the geolocation data is collected and attested without any Host OS involvement.<a href="#section-8.5-2" class="pilcrow">¶</a></p>
+<p id="section-8.5-1">In this option, geolocation attestation is <strong>layered directly on top of TPM Platform Attestation Option B</strong>. The geolocation sensors (GNSS, mobile modems) are connected to or accessible from the same management processor (BMC/iLO) used for OOB TPM attestation. This provides a completely out-of-band geolocation attestation path that is independent of the host OS and CPU.<a href="#section-8.5-1" class="pilcrow">¶</a></p>
+<p id="section-8.5-2">This architecture is critical for geolocation integrity because a compromised Host OS could feed spoofed GNSS coordinates to an in-band agent. By routing sensor readings through the management processor's isolated hardware path, the geolocation data is collected and attested without any Host OS involvement.<a href="#section-8.5-2" class="pilcrow">¶</a></p>
 <div id="architecture-4">
 <section id="section-8.5.1">
           <h4 id="name-architecture-5">
@@ -2816,57 +2819,79 @@ These monitoring functions are performed over dedicated, low-level hardware inte
           </h4>
 <ol start="1" type="1" class="compact type-1" id="section-8.5.1-1">
 <li id="section-8.5.1-1.1">
-              <strong>Management Processor Sensor Interface:</strong> The management processor (BMC/iLO) interfaces with geolocation sensors (GNSS receivers, mobile modems) through dedicated I/O channels separate from the host CPU bus. Sensor readings are collected by the management processor independently of the host OS. The management processor can verify sensor firmware integrity as part of its Silicon Root of Trust chain.<a href="#section-8.5.1-1.1" class="pilcrow">¶</a>
+              <strong>Integrated Management Interface:</strong> The management processor (BMC/iLO) interfaces with geolocation sensors through dedicated I/O channels (e.g., I2C, SPI, or side-band USB).<a href="#section-8.5.1-1.1" class="pilcrow">¶</a>
 </li>
             <li id="section-8.5.1-1.2">
-              <strong>Management Processor Attestation:</strong> The management processor reads sensor data, signs it with its own identity key (OEM CA chain), and associates the geolocation evidence with the host TPM EK identity. The geolocation hash can be extended into the TPM via the management processor's dedicated TPM bus, providing the same PCR binding as the Keylime option but through the out-of-band path.<a href="#section-8.5.1-1.2" class="pilcrow">¶</a>
-</li>
-            <li id="section-8.5.1-1.3">
-              <p id="section-8.5.1-1.3.1"><strong>External Management Plane:</strong> The management plane receives geolocation evidence from the management processor via the dedicated management NIC (Redfish API) and validates:<a href="#section-8.5.1-1.3.1" class="pilcrow">¶</a></p>
+              <p id="section-8.5.1-1.2.1"><strong>Sensor Metadata Attestation:</strong> The management processor inventories the geolocation hardware at every boot and records:<a href="#section-8.5.1-1.2.1" class="pilcrow">¶</a></p>
 <ul class="compact">
-<li class="compact" id="section-8.5.1-1.3.2.1">Sensor identity against registered sensor inventory.<a href="#section-8.5.1-1.3.2.1" class="pilcrow">¶</a>
+<li class="compact" id="section-8.5.1-1.2.2.1">
+                  <strong>Sensor Serial Number:</strong> Ensuring the physical sensor has not been substituted.<a href="#section-8.5.1-1.2.2.1" class="pilcrow">¶</a>
 </li>
-                <li class="compact" id="section-8.5.1-1.3.2.2">Location reading against geofence policies.<a href="#section-8.5.1-1.3.2.2" class="pilcrow">¶</a>
-</li>
-                <li class="compact" id="section-8.5.1-1.3.2.3">Cross-verification with mobile network operator location services.<a href="#section-8.5.1-1.3.2.3" class="pilcrow">¶</a>
-</li>
-                <li class="compact" id="section-8.5.1-1.3.2.4">Association with the TPM EK identity from the Layer 2 attestation.<a href="#section-8.5.1-1.3.2.4" class="pilcrow">¶</a>
-</li>
-                <li class="compact" id="section-8.5.1-1.3.2.5">Consistency between the hardware-signed TPM Quote (obtained OOB) and the geolocation PCR value.<a href="#section-8.5.1-1.3.2.5" class="pilcrow">¶</a>
+                <li class="compact" id="section-8.5.1-1.2.2.2">
+                  <strong>Hardware and Firmware Versions:</strong> Verifying that the sensor is running approved and patched firmware.<a href="#section-8.5.1-1.2.2.2" class="pilcrow">¶</a>
 </li>
               </ul>
+</li>
+            <li id="section-8.5.1-1.3">
+              <p id="section-8.5.1-1.3.1"><strong>Periodic Location Data Gathering:</strong> The management processor periodically (e.g., every 30 seconds) queries the sensors for:<a href="#section-8.5.1-1.3.1" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="section-8.5.1-1.3.2.1">
+                  <strong>Geolocation Data:</strong> Latitude, Longitude, and Accuracy.<a href="#section-8.5.1-1.3.2.1" class="pilcrow">¶</a>
+</li>
+                <li class="compact" id="section-8.5.1-1.3.2.2">
+                  <strong>Mobile Identifiers:</strong> IMEI (Hardware ID), IMSI (SIM ID), and MSISDN (Subscriber identity lookup).<a href="#section-8.5.1-1.3.2.2" class="pilcrow">¶</a>
+</li>
+              </ul>
+</li>
+            <li id="section-8.5.1-1.4">
+              <strong>OOB Attestation Pipeline:</strong> The management processor signs these details with its identity key (OEM CA-chained) and includes them as attested claims in the evidence forwarded to the management plane. The hash of this composite geolocation bundle is extended into the TPM via the management processor's dedicated TPM bus (PCR 15).<a href="#section-8.5.1-1.4" class="pilcrow">¶</a>
 </li>
           </ol>
 </section>
 </div>
-<div id="advantages-4">
+<div id="technical-implementation">
 <section id="section-8.5.2">
+          <h4 id="name-technical-implementation">
+<a href="#section-8.5.2" class="section-number selfRef">8.5.2. </a><a href="#name-technical-implementation" class="section-name selfRef">Technical Implementation</a>
+          </h4>
+<p id="section-8.5.2-1">Monitoring and gathering geolocation data in Option B is performed over dedicated hardware interfaces:
+* <strong>Dedicated I2C/SPI Sensor Bus:</strong> iLO acts as a master to query GNSS sensor registers for coordinates and hardware IDs independently of the host CPU.
+* <strong>Mobile Modem Side-band Interface:</strong> The management processor interacts with the mobile modem's AT command interface or QMI/MBIM bus over a private management channel to retrieve IMEI, IMSI, and cell-tower triangulation metadata.
+* <strong>Silicon Root of Trust for Sensors:</strong> Sensor firmware is verified by the management processor during initialization to prevent firmware-level geolocation spoofing (e.g. "Virtual GPS" injection).<a href="#section-8.5.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="advantages-4">
+<section id="section-8.5.3">
           <h4 id="name-advantages-5">
-<a href="#section-8.5.2" class="section-number selfRef">8.5.2. </a><a href="#name-advantages-5" class="section-name selfRef">Advantages</a>
+<a href="#section-8.5.3" class="section-number selfRef">8.5.3. </a><a href="#name-advantages-5" class="section-name selfRef">Advantages</a>
           </h4>
 <ul class="compact">
-<li class="compact" id="section-8.5.2-1.1">Geolocation readings are hardware-isolated from the host OS -- immune to host-level malware and GNSS spoofing at the OS layer.<a href="#section-8.5.2-1.1" class="pilcrow">¶</a>
+<li class="compact" id="section-8.5.3-1.1">
+              <strong>Deep Isolation:</strong> Geolocation readings are hardware-isolated from the host OS -- immune to host-level malware and GNSS spoofing at the OS layer.<a href="#section-8.5.3-1.1" class="pilcrow">¶</a>
 </li>
-            <li class="compact" id="section-8.5.2-1.2">Integrated with enterprise fleet management (same management plane as Layer 2 Option B).<a href="#section-8.5.2-1.2" class="pilcrow">¶</a>
+            <li class="compact" id="section-8.5.3-1.2">
+              <strong>Unified Evidence:</strong> The same out-of-band TPM Quote that detects IMA/kernel subversion (Layer 2) also verifies the geolocation PCR (Layer 3), providing a single hardware-attested evidence bundle.<a href="#section-8.5.3-1.2" class="pilcrow">¶</a>
 </li>
-            <li class="compact" id="section-8.5.2-1.3">Suitable for high-security environments (defense, critical infrastructure).<a href="#section-8.5.2-1.3" class="pilcrow">¶</a>
+            <li class="compact" id="section-8.5.3-1.3">
+              <strong>Hardware Inventory Binding:</strong> Detects unauthorized swaps of sensors or SIM cards through serial number and identity tracking.<a href="#section-8.5.3-1.3" class="pilcrow">¶</a>
 </li>
-            <li class="compact" id="section-8.5.2-1.4">The same out-of-band TPM Quote that detects IMA/kernel subversion also verifies the geolocation PCR, providing a single hardware-attested evidence bundle.<a href="#section-8.5.2-1.4" class="pilcrow">¶</a>
+            <li class="compact" id="section-8.5.3-1.4">
+              <strong>Suitable for High-Security Environments:</strong> Ideal for defense, critical infrastructure, and high-assurance mobile deployments.<a href="#section-8.5.3-1.4" class="pilcrow">¶</a>
 </li>
           </ul>
 </section>
 </div>
 <div id="limitations-4">
-<section id="section-8.5.3">
+<section id="section-8.5.4">
           <h4 id="name-limitations-5">
-<a href="#section-8.5.3" class="section-number selfRef">8.5.3. </a><a href="#name-limitations-5" class="section-name selfRef">Limitations</a>
+<a href="#section-8.5.4" class="section-number selfRef">8.5.4. </a><a href="#name-limitations-5" class="section-name selfRef">Limitations</a>
           </h4>
 <ul class="compact">
-<li class="compact" id="section-8.5.3-1.1">Requires management processor with geolocation sensor I/O capability.<a href="#section-8.5.3-1.1" class="pilcrow">¶</a>
+<li class="compact" id="section-8.5.4-1.1">Requires management processor with specific geolocation sensor I/O capabilities.<a href="#section-8.5.4-1.1" class="pilcrow">¶</a>
 </li>
-            <li class="compact" id="section-8.5.3-1.2">Vendor-specific sensor integration.<a href="#section-8.5.3-1.2" class="pilcrow">¶</a>
+            <li class="compact" id="section-8.5.4-1.2">Vendor-specific sensor and modem integration.<a href="#section-8.5.4-1.2" class="pilcrow">¶</a>
 </li>
-            <li class="compact" id="section-8.5.3-1.3">Management processor firmware must be trusted.<a href="#section-8.5.3-1.3" class="pilcrow">¶</a>
+            <li class="compact" id="section-8.5.4-1.3">Management processor firmware must remain in a trusted state.<a href="#section-8.5.4-1.3" class="pilcrow">¶</a>
 </li>
           </ul>
 </section>

@@ -141,26 +141,26 @@ Internet-Draft                    GeoW                     February 2026
        8.4.2.  Mobile Location Verification  . . . . . . . . . . . .  31
        8.4.3.  Advantages  . . . . . . . . . . . . . . . . . . . . .  31
        8.4.4.  Limitations . . . . . . . . . . . . . . . . . . . . .  31
-     8.5.  Deployment Option B: External Management Processor (e.g.,
-           HPE iLO)  . . . . . . . . . . . . . . . . . . . . . . . .  31
+     8.5.  Deployment Option B: Out-of-Band Geolocation (Overlay on
+           Layer 2 Option B) . . . . . . . . . . . . . . . . . . . .  31
        8.5.1.  Architecture  . . . . . . . . . . . . . . . . . . . .  32
-       8.5.2.  Advantages  . . . . . . . . . . . . . . . . . . . . .  32
-       8.5.3.  Limitations . . . . . . . . . . . . . . . . . . . . .  32
+       8.5.2.  Technical Implementation  . . . . . . . . . . . . . .  32
+       8.5.3.  Advantages  . . . . . . . . . . . . . . . . . . . . .  32
+       8.5.4.  Limitations . . . . . . . . . . . . . . . . . . . . .  33
      8.6.  Composite Geolocation and Policy Enforcement  . . . . . .  33
    9.  Scaling the Solution  . . . . . . . . . . . . . . . . . . . .  34
      9.1.  End user location anchor host . . . . . . . . . . . . . .  34
      9.2.  Data center location anchor host  . . . . . . . . . . . .  34
    10. Data Plane Geolocation Extensions . . . . . . . . . . . . . .  35
-     10.1.  HTTP: Workload-Geo-ID Header . . . . . . . . . . . . . .  35
-     10.2.  HTTP: Geolocation in SVID  . . . . . . . . . . . . . . .  36
+     10.1.  HTTP: Workload-Geo-ID Header . . . . . . . . . . . . . .  36
+     10.2.  HTTP: Geolocation in SVID  . . . . . . . . . . . . . . .  37
      10.3.  IPSEC: Geolocation in IKEv2  . . . . . . . . . . . . . .  37
    11. Confidential Computing Considerations . . . . . . . . . . . .  37
    12. Solution Mapping to Industry Gaps . . . . . . . . . . . . . .  38
    13. Authorization Policy Implementers . . . . . . . . . . . . . .  39
-   14. Security Considerations . . . . . . . . . . . . . . . . . . .  39
-   15. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  40
+   14. Security Considerations . . . . . . . . . . . . . . . . . . .  40
+   15. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  41
    16. Appendix - Items to follow up . . . . . . . . . . . . . . . .  41
-
 
 
 
@@ -176,9 +176,9 @@ Internet-Draft                    GeoW                     February 2026
      16.2.  OPEN ISSUES 2: Location privacy options  . . . . . . . .  41
      16.3.  OPEN ISSUES 3: Attested PTP (Partially Addressed)  . . .  41
      16.4.  OPEN ISSUES 4: Geotagging textual data . . . . . . . . .  41
-     16.5.  OPEN ISSUES 5: Attesting Geotags . . . . . . . . . . . .  41
+     16.5.  OPEN ISSUES 5: Attesting Geotags . . . . . . . . . . . .  42
    17. Appendix - Public References for Strict Data Residency
-           Rules . . . . . . . . . . . . . . . . . . . . . . . . . .  41
+           Rules . . . . . . . . . . . . . . . . . . . . . . . . . .  42
    Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  42
 
 1.  Conventions and Definitions
@@ -1720,15 +1720,15 @@ Internet-Draft                    GeoW                     February 2026
       they are extended into the PCR (mitigated by TPM binding and
       cross-verification).
 
-8.5.  Deployment Option B: External Management Processor (e.g., HPE iLO)
+8.5.  Deployment Option B: Out-of-Band Geolocation (Overlay on Layer 2
+      Option B)
 
-   In this option, geolocation sensors are connected to or accessible
-   from the management processor, providing out-of-band geolocation
-   attestation independent of the host OS.  This leverages the same
-   dual-path architecture described in the Layer 2 Option B: the
-   management processor uses its dedicated hardware bus (I2C/private
-   bus) to access both the TPM and the geolocation sensors, completely
-   bypassing the Host CPU and OS.
+   In this option, geolocation attestation is *layered directly on top
+   of TPM Platform Attestation Option B*. The geolocation sensors (GNSS,
+   mobile modems) are connected to or accessible from the same
+   management processor (BMC/iLO) used for OOB TPM attestation.  This
+   provides a completely out-of-band geolocation attestation path that
+   is independent of the host OS and CPU.
 
 
 
@@ -1740,52 +1740,52 @@ Internet-Draft                    GeoW                     February 2026
 
    This architecture is critical for geolocation integrity because a
    compromised Host OS could feed spoofed GNSS coordinates to an in-band
-   Keylime agent.  By routing sensor readings through the management
-   processor's isolated hardware path, the geolocation data is collected
-   and attested without any Host OS involvement.
+   agent.  By routing sensor readings through the management processor's
+   isolated hardware path, the geolocation data is collected and
+   attested without any Host OS involvement.
 
 8.5.1.  Architecture
 
-   1.  *Management Processor Sensor Interface:* The management processor
-       (BMC/iLO) interfaces with geolocation sensors (GNSS receivers,
-       mobile modems) through dedicated I/O channels separate from the
-       host CPU bus.  Sensor readings are collected by the management
-       processor independently of the host OS.  The management processor
-       can verify sensor firmware integrity as part of its Silicon Root
-       of Trust chain.
-   2.  *Management Processor Attestation:* The management processor
-       reads sensor data, signs it with its own identity key (OEM CA
-       chain), and associates the geolocation evidence with the host TPM
-       EK identity.  The geolocation hash can be extended into the TPM
-       via the management processor's dedicated TPM bus, providing the
-       same PCR binding as the Keylime option but through the out-of-
-       band path.
-   3.  *External Management Plane:* The management plane receives
-       geolocation evidence from the management processor via the
-       dedicated management NIC (Redfish API) and validates:
-       *  Sensor identity against registered sensor inventory.
-       *  Location reading against geofence policies.
-       *  Cross-verification with mobile network operator location
-          services.
-       *  Association with the TPM EK identity from the Layer 2
-          attestation.
-       *  Consistency between the hardware-signed TPM Quote (obtained
-          OOB) and the geolocation PCR value.
+   1.  *Integrated Management Interface:* The management processor (BMC/
+       iLO) interfaces with geolocation sensors through dedicated I/O
+       channels (e.g., I2C, SPI, or side-band USB).
+   2.  *Sensor Metadata Attestation:* The management processor
+       inventories the geolocation hardware at every boot and records:
+       *  *Sensor Serial Number:* Ensuring the physical sensor has not
+          been substituted.
+       *  *Hardware and Firmware Versions:* Verifying that the sensor is
+          running approved and patched firmware.
+   3.  *Periodic Location Data Gathering:* The management processor
+       periodically (e.g., every 30 seconds) queries the sensors for:
+       *  *Geolocation Data:* Latitude, Longitude, and Accuracy.
+       *  *Mobile Identifiers:* IMEI (Hardware ID), IMSI (SIM ID), and
+          MSISDN (Subscriber identity lookup).
+   4.  *OOB Attestation Pipeline:* The management processor signs these
+       details with its identity key (OEM CA-chained) and includes them
+       as attested claims in the evidence forwarded to the management
+       plane.  The hash of this composite geolocation bundle is extended
+       into the TPM via the management processor's dedicated TPM bus
+       (PCR 15).
 
-8.5.2.  Advantages
+8.5.2.  Technical Implementation
 
-   *  Geolocation readings are hardware-isolated from the host OS --
-      immune to host-level malware and GNSS spoofing at the OS layer.
-   *  Integrated with enterprise fleet management (same management plane
-      as Layer 2 Option B).
-   *  Suitable for high-security environments (defense, critical
-      infrastructure).
-   *  The same out-of-band TPM Quote that detects IMA/kernel subversion
-      also verifies the geolocation PCR, providing a single hardware-
-      attested evidence bundle.
+   Monitoring and gathering geolocation data in Option B is performed
+   over dedicated hardware interfaces: * *Dedicated I2C/SPI Sensor Bus:*
+   iLO acts as a master to query GNSS sensor registers for coordinates
+   and hardware IDs independently of the host CPU. * *Mobile Modem Side-
+   band Interface:* The management processor interacts with the mobile
+   modem's AT command interface or QMI/MBIM bus over a private
+   management channel to retrieve IMEI, IMSI, and cell-tower
+   triangulation metadata. * *Silicon Root of Trust for Sensors:* Sensor
+   firmware is verified by the management processor during
+   initialization to prevent firmware-level geolocation spoofing (e.g.
+   "Virtual GPS" injection).
 
-8.5.3.  Limitations
+8.5.3.  Advantages
 
+   *  *Deep Isolation:* Geolocation readings are hardware-isolated from
+      the host OS -- immune to host-level malware and GNSS spoofing at
+      the OS layer.
 
 
 
@@ -1794,10 +1794,20 @@ Krishnan, et al.         Expires 27 August 2026                [Page 32]
 Internet-Draft                    GeoW                     February 2026
 
 
-   *  Requires management processor with geolocation sensor I/O
-      capability.
-   *  Vendor-specific sensor integration.
-   *  Management processor firmware must be trusted.
+   *  *Unified Evidence:* The same out-of-band TPM Quote that detects
+      IMA/kernel subversion (Layer 2) also verifies the geolocation PCR
+      (Layer 3), providing a single hardware-attested evidence bundle.
+   *  *Hardware Inventory Binding:* Detects unauthorized swaps of
+      sensors or SIM cards through serial number and identity tracking.
+   *  *Suitable for High-Security Environments:* Ideal for defense,
+      critical infrastructure, and high-assurance mobile deployments.
+
+8.5.4.  Limitations
+
+   *  Requires management processor with specific geolocation sensor I/O
+      capabilities.
+   *  Vendor-specific sensor and modem integration.
+   *  Management processor firmware must remain in a trusted state.
 
 8.6.  Composite Geolocation and Policy Enforcement
 
@@ -1833,22 +1843,16 @@ Internet-Draft                    GeoW                     February 2026
        composite location with a quality score.  Discrepancies between
        sources trigger alerts.
 
-   Policy enforcement can then use the composite location to verify that
-   the host is within the approved geographic boundary defined by the
-   geofence policy.
-
-
-
-
-
-
-
 
 
 Krishnan, et al.         Expires 27 August 2026                [Page 33]
 
 Internet-Draft                    GeoW                     February 2026
 
+
+   Policy enforcement can then use the composite location to verify that
+   the host is within the approved geographic boundary defined by the
+   geofence policy.
 
 9.  Scaling the Solution
 
@@ -1888,6 +1892,20 @@ Internet-Draft                    GeoW                     February 2026
    data center operators without requiring them to install a geolocation
    sensor on every data center host.
 
+
+
+
+
+
+
+
+
+
+Krishnan, et al.         Expires 27 August 2026                [Page 34]
+
+Internet-Draft                    GeoW                     February 2026
+
+
    PTP is a network protocol that enables precise synchronization of
    clocks across a computer network and can be used to measure the
    round-trip time (RTT) between the location anchor host and other data
@@ -1897,14 +1915,6 @@ Internet-Draft                    GeoW                     February 2026
    enhanced so that all PTP messages are signed with a private key.
 
    This signing can be done in two ways:
-
-
-
-
-Krishnan, et al.         Expires 27 August 2026                [Page 34]
-
-Internet-Draft                    GeoW                     February 2026
-
 
    *  Software-based: PTP software (e.g. Linux PTP daemon), after adding
       timestamp to PTP message, signs the PTP message with its private
@@ -1940,6 +1950,18 @@ Internet-Draft                    GeoW                     February 2026
    Proof of Residency (PoR) and DPoR mechanisms that bind workload
    identity to the WIA, see [[I-D.mw-wimse-transitive-attestation]].
 
+
+
+
+
+
+
+
+Krishnan, et al.         Expires 27 August 2026                [Page 35]
+
+Internet-Draft                    GeoW                     February 2026
+
+
 10.1.  HTTP: Workload-Geo-ID Header
 
    A new HTTP header field 'Workload-Geo-ID' is proposed for conveying
@@ -1952,16 +1974,6 @@ Internet-Draft                    GeoW                     February 2026
       workload location, client workload location type (e.g. precise,
       approximated, geographic region based), client workload location
       quality (e.g. GNSS, mobile network, Wi-Fi, IP address).
-
-
-
-
-
-Krishnan, et al.         Expires 27 August 2026                [Page 35]
-
-Internet-Draft                    GeoW                     February 2026
-
-
    *  Thick or Thin client flag: Indicates whether the client workload
       is a thick client (e.g., Microsoft Teams thick client app) or a
       thin client (e.g., Microsoft Teams thin client browser app).
@@ -1999,6 +2011,13 @@ Internet-Draft                    GeoW                     February 2026
    based Secure Shell (ssh) terminals and Remote Desktop Protocol (RDP)
    terminals which tunnel traffic over HTTP/TLS.
 
+
+
+Krishnan, et al.         Expires 27 August 2026                [Page 36]
+
+Internet-Draft                    GeoW                     February 2026
+
+
 10.2.  HTTP: Geolocation in SVID
 
    The workload SVID can be used to convey the geolocation information
@@ -2008,15 +2027,6 @@ Internet-Draft                    GeoW                     February 2026
 
    The workload SVID can be conveyed in the 'Workload-Geo-ID' header
    field.
-
-
-
-
-
-Krishnan, et al.         Expires 27 August 2026                [Page 36]
-
-Internet-Draft                    GeoW                     February 2026
-
 
 10.3.  IPSEC: Geolocation in IKEv2
 
@@ -2055,6 +2065,15 @@ Internet-Draft                    GeoW                     February 2026
       -  AMD SEV-SNP "Versioned Chip Endorsement Key -- VCEK" is defined
          in the AMD SEV-SNP ABI specification (Chapter 1, Glossary,
          Table 2).
+
+
+
+
+Krishnan, et al.         Expires 27 August 2026                [Page 37]
+
+Internet-Draft                    GeoW                     February 2026
+
+
       -  Intel TDX, "Provisioning Certification Key -- PCK" is defined
          in the Intel TDX DCAP Quoting Library API documentation (Page
          6, Table 1-1: Terminology).  Role: Certifies the Attestation
@@ -2066,14 +2085,6 @@ Internet-Draft                    GeoW                     February 2026
 
    *  The confidential workload generates a hardware attestation that
       includes its hardware-rooted certification key.
-
-
-
-Krishnan, et al.         Expires 27 August 2026                [Page 37]
-
-Internet-Draft                    GeoW                     February 2026
-
-
    *  The platform owner receives this attestation and binds the
       reported hardware-rooted certification key to the TPM EK.
    *  This binding produces a cryptographic proof that the workload is
@@ -2111,6 +2122,14 @@ Internet-Draft                    GeoW                     February 2026
       Platform Attestation): The WIA private key is used for signing,
       and the WIA public key is signed by the Host TPM APP private key
       providing a cryptographically verifiable proof of residency of the
+
+
+
+Krishnan, et al.         Expires 27 August 2026                [Page 38]
+
+Internet-Draft                    GeoW                     February 2026
+
+
       WIA on the host.  Workloads use the WIA to sign requests, avoiding
       the TPM performance bottleneck (approximately 5 signatures/
       second).
@@ -2122,13 +2141,6 @@ Internet-Draft                    GeoW                     February 2026
       proof of residency on host and workload identity.  The transitive
       attestation draft defines the mTLS PoR and DPoR protocol flows
       that consume the WIA attestation established here.
-
-
-
-Krishnan, et al.         Expires 27 August 2026                [Page 38]
-
-Internet-Draft                    GeoW                     February 2026
-
 
    *  *IP Address-Based Location* and *Wi-Fi-Based Location* challenges
       are addressed by Layer 3 (Geolocation HW-Based Attestation):
@@ -2163,6 +2175,17 @@ Internet-Draft                    GeoW                     February 2026
    process scheduler or JVM class loader/deserializer, then malware can
    be prevented (similar to a code-signed application).
 
+
+
+
+
+
+
+Krishnan, et al.         Expires 27 August 2026                [Page 39]
+
+Internet-Draft                    GeoW                     February 2026
+
+
 14.  Security Considerations
 
    The proposed framework introduces several security considerations
@@ -2174,17 +2197,6 @@ Internet-Draft                    GeoW                     February 2026
       Physical attacks, firmware vulnerabilities, or supply chain
       compromises could undermine attestation.  Regular updates, secure
       provisioning, and monitoring are required.
-
-
-
-
-
-
-
-Krishnan, et al.         Expires 27 August 2026                [Page 39]
-
-Internet-Draft                    GeoW                     February 2026
-
 
    *  *Geolocation Spoofing*: Location sensors (e.g., GPS) are
       susceptible to spoofing or replay attacks.  Use of
@@ -2220,6 +2232,16 @@ Internet-Draft                    GeoW                     February 2026
       must be protected against unauthorized access and tampering, using
       encryption and access controls.
 
+
+
+
+
+
+Krishnan, et al.         Expires 27 August 2026                [Page 40]
+
+Internet-Draft                    GeoW                     February 2026
+
+
    *  *Management Processor Security* (Option B): The management
       processor firmware and its communication channels to the
       management plane must be secured against tampering.  OEM firmware
@@ -2232,15 +2254,6 @@ Internet-Draft                    GeoW                     February 2026
 15.  IANA Considerations
 
    This document has no IANA actions.
-
-
-
-
-
-Krishnan, et al.         Expires 27 August 2026                [Page 40]
-
-Internet-Draft                    GeoW                     February 2026
-
 
 16.  Appendix - Items to follow up
 
@@ -2273,6 +2286,18 @@ Internet-Draft                    GeoW                     February 2026
    standard for geotagging textual data.  If there is no geolocation
    tag, data can be stored/processed in non-compliant locations.
 
+
+
+
+
+
+
+
+Krishnan, et al.         Expires 27 August 2026                [Page 41]
+
+Internet-Draft                    GeoW                     February 2026
+
+
 16.5.  OPEN ISSUES 5: Attesting Geotags
 
    There is no standard for attesting (signing) geolocation tag.  If
@@ -2288,15 +2313,6 @@ Internet-Draft                    GeoW                     February 2026
    only in India.  This data should include the full end-to-end
    transaction details / information collected / carried / processed as
    part of the message / payment instruction."
-
-
-
-
-
-Krishnan, et al.         Expires 27 August 2026                [Page 41]
-
-Internet-Draft                    GeoW                     February 2026
-
 
    South Korea's Data Localization Regulations -- Geospatial Information
    Management Act (Spatial Data Act): Article 16, Paragraph 1: Prohibits
@@ -2327,22 +2343,6 @@ Authors' Addresses
    Srinivasa Addepalli
    Aryaka
    Email: srinivasa.addepalli@aryaka.com
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

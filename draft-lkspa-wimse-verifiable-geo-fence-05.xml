@@ -1,0 +1,1173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- name="GENERATOR" content="github.com/mmarkdown/mmark Mmark Markdown Processor - mmark.miek.nl" -->
+<rfc version="3" ipr="trust200902" docName="draft-lkspa-wimse-verifiable-geo-fence-05" submissionType="IETF" category="info" xml:lang="en" xmlns:xi="http://www.w3.org/2001/XInclude" indexInclude="true">
+
+<front>
+<title abbrev="RATS-GEO-POR">Verifiable Geofencing and Residency Proofs for Sovereign Workloads: A RATS Profile</title><seriesInfo value="draft-lkspa-wimse-verifiable-geo-fence-05" stream="IETF" status="informational" name="Internet-Draft"></seriesInfo>
+<author initials="R." surname="Krishnan" fullname="Ram Krishnan"><organization>JPMorgan Chase &amp; Co.</organization><address><postal><street></street>
+</postal><email>ramkri123@gmail.com</email>
+</address></author><author initials="N." surname="Smith" fullname="Ned Smith"><organization>Intel</organization><address><postal><street></street>
+</postal><email>ned.smith@intel.com</email>
+</address></author><author initials="D." surname="Lopez" fullname="Diego R. Lopez"><organization>Telefonica</organization><address><postal><street></street>
+</postal><email>diego.r.lopez@telefonica.com</email>
+</address></author><author initials="A." surname="Prasad" fullname="A Prasad"><organization>Oracle</organization><address><postal><street></street>
+</postal><email>a.prasad@oracle.com</email>
+</address></author><author initials="S." surname="Addepalli" fullname="Srinivasa Addepalli"><organization>Aryaka</organization><address><postal><street></street>
+</postal><email>srinivasa.addepalli@aryaka.com</email>
+</address></author><date/>
+<area>Security</area>
+<workgroup>RATS</workgroup>
+<keyword>geofencing</keyword>
+<keyword>attestation</keyword>
+<keyword>workload identity</keyword>
+<keyword>residency</keyword>
+<keyword>TPM</keyword>
+<keyword>GNSS</keyword>
+
+<abstract>
+<t>Modern cloud and distributed environments face significant risks from stolen bearer tokens, protocol replay, and trust gaps in transit, particularly in the context of <strong>Sovereign Workloads</strong> and high-assurance requirements. This document defines a <strong>RATS Profile</strong> for high-assurance, hardware-rooted platform and location attestation. It specifies the technical mechanics for verifiable geofencing and host integrity required by the <strong>WIMSE Architecture</strong> [[I-D.ietf-wimse-architecture]] and the <strong>Workload Identity Agent</strong>.</t>
+<t>While the WIMSE architecture assumes a trustworthy agent, it does not specify the normative technical mechanics for its verification. This document fills that gap as a specialized RATS profile, covering TPM-based platform attestation (Layer 2) and high-assurance geolocation attestation (Layer 3). It integrates out-of-band (OOB) hardware monitoring, cloud-native virtual TPM (vTPM) support, and privacy-preserving Zero-Knowledge Proof (ZKP) verification to generate <strong>High-Confidence Evidence</strong>.</t>
+<t>By binding identity agent integrity to geographic and host attributes, the framework establishes a &quot;Silicon-to-Audit&quot; chain of trust. This addresses challenges in bearer token theft and data residency while providing a post-quantum cryptographic foundation through mathematical transparency. The solution builds upon the <strong>RATS Architecture [[RFC9334]]</strong> to ensure that only authorized workloads in approved locations can access sensitive services.</t>
+</abstract>
+
+</front>
+
+<middle>
+
+<section anchor="conventions-and-definitions"><name>Conventions and Definitions</name>
+<t>The key words &quot;MUST&quot;, &quot;MUST NOT&quot;, &quot;REQUIRED&quot;, &quot;SHALL&quot;, &quot;SHALL NOT&quot;, &quot;SHOULD&quot;, &quot;SHOULD NOT&quot;, &quot;RECOMMENDED&quot;, &quot;NOT RECOMMENDED&quot;, &quot;MAY&quot;, and &quot;OPTIONAL&quot; in this document are to be interpreted as described in BCP 14 [[RFC2119]] [[RFC8174]] when, and only when, they appear in all capitals, as shown here.</t>
+<t><strong>Acronyms used in this document:</strong></t>
+
+<ul spacing="compact">
+<li><strong>TPM</strong>: Trusted Platform Module</li>
+<li><strong>GNSS</strong>: Global Navigation Satellite System</li>
+<li><strong>IMEI</strong>: International Mobile Equipment Identity</li>
+<li><strong>IMSI</strong>: International Mobile Subscriber Identity</li>
+<li><strong>PCR</strong>: Platform Configuration Register</li>
+<li><strong>MDM</strong>: Mobile Device Management</li>
+<li><strong>IPSEC</strong>: Internet Protocol Security</li>
+<li><strong>BMC</strong>: Baseboard Management Controller</li>
+<li><strong>Workload Identity Agent</strong>: The entity (e.g., SPIRE Agent) on each host managing workload identities.</li>
+<li><strong>OOB</strong>: Out-of-Band</li>
+<li><strong>EAT</strong>: Entity Attestation Token</li>
+<li><strong>DAA</strong>: Direct Anonymous Attestation</li>
+<li><strong>EPID</strong>: Enhanced Privacy ID</li>
+<li><strong>DCAP</strong>: Data Center Attestation Primitives</li>
+<li><strong>EK</strong>: Endorsement Key</li>
+<li><strong>AK</strong>: Attestation Key</li>
+<li><strong>IMA</strong>: Integrity Measurement Architecture</li>
+<li><strong>SPDM</strong>: Security Protocol and Data Model</li>
+<li><strong>STARK</strong>: Scalable Transparent ARguments of Knowledge</li>
+<li><strong>ZKP</strong>: Zero-Knowledge Proof</li>
+</ul>
+<t><strong>Key Terms:</strong></t>
+
+<dl spacing="compact">
+<dt>Data Residency:</dt>
+<dd>Technical and Legal Challenges Ensuring compliance with global and local data protection regulations and mandates (e.g., EU GDPR, US HIPAA, PCI DSS). Strict residency rules require that data must be stored and processed exclusively within designated geographic boundaries, enforced via trusted computing and geofencing.</dd>
+<dt>Data Residency Host-Affinity Requirement:</dt>
+<dd>Data must remain bound to explicitly trusted computing environments or hosts.</dd>
+<dt>Data Residency Geolocation-Affinity Requirement:</dt>
+<dd>Data must not be transferred beyond defined geographic regions.</dd>
+<dt>Data Residency Host Geolocation Affinity (aka Geofencing):</dt>
+<dd>A compound enforcement mechanism requiring that data and workloads are executed only on authorized hosts located within approved geographic regions.</dd>
+<dt>Workload Identity Agent:</dt>
+<dd>A trusted entity (e.g., SPIFFE/SPIRE agent) on each host that manages workload identities. The Workload Identity Agent is verified through platform attestation (Layer 2) and issues cryptographically bound identities (e.g., SVIDs) to workloads. It serves as the primary trust anchor for workload-to-workload communication in the WIMSE architecture.</dd>
+<dt>Location Anchor Host (LAH):</dt>
+<dd>A host with a trusted location source (GNSS/5G) cryptographically bound to its hardware root of trust.</dd>
+<dt>Composite Geolocation:</dt>
+<dd>A location estimate fused from multiple sources (e.g., local GNSS and mobile network APIs) to produce a quality-scored, verifiable location claim.</dd>
+<dt>Proof-Of-Residency (PoR) / Co-location:</dt>
+<dd>A cryptographic proof that binds a workload's current execution session to a specific, verified local environment or host.</dd>
+<dt>Silicon Root of Trust:</dt>
+<dd>A hardware-based trust anchor (e.g., HPE Silicon Root of Trust or AWS Nitro Security Chip) that verifies low-level firmware and protects the system from the first moment of power-on.</dd>
+<dt>Transparent Zero-Knowledge Proof (ZKP):</dt>
+<dd>A ZKP that does not require a &quot;Trusted Setup&quot; or a Trusted Third Party. Mathematical transparency is achieved through non-interactive, hash-based protocols (e.g., STARKs/FRI).</dd>
+<dt>Workload Identity Manager:</dt>
+<dd>The control plane entity (e.g., SPIRE Server, Keylime Verifier, or a Cloud IAM service) responsible for managing workload identities (SVIDs), verifying workload-to-agent co-location (Layer 1), and issuing credentials based on fused identity and residency claims.</dd>
+<dt>Host Management Plane:</dt>
+<dd>The infrastructure control plane (e.g., HPE OneView, GreenLake, or AWS Cloud Control) responsible for out-of-band platform management, hardware inventory, and verifying platform-level attestation evidence (Layer 2 and 3) from the management processor (BMC/iLO).</dd>
+<dt>N_platform (Platform Quote Nonce):</dt>
+<dd>A fresh nonce generated by the Host Management Plane and delivered directly to the management processor (OOB). The Host OS and Workload Identity Agent MUST NOT be required to observe N_platform.</dd>
+<dt>N_fusion (Workload Fusion Nonce):</dt>
+<dd>A nonce provided by the Workload Identity Manager specifically for the Workload Identity Agent-to-Workload proof-of-residency / identity fusion flows. This nonce MAY traverse the Host OS.</dd>
+<dt>N_platform vs. N_fusion Binding:</dt>
+<dd>To prevent &quot;mix-and-match&quot; attacks where an attacker combines a fresh workload identity with a stale platform quote, the Host Management Plane SHALL cryptographically bind the two nonces. This is typically achieved by the Host Management Plane signing an Attestation Result that includes both <tt>N_fusion</tt> (or its hash) and the hardware-attested platform claims verified via <tt>N_platform</tt>.</dd>
+</dl>
+</section>
+
+<section anchor="introduction"><name>Introduction</name>
+<t>As organizations increasingly adopt cloud and distributed computing, the need to enforce data residency, geolocation affinity, and host affinity has become critical for regulatory compliance and risk management. Traditional approaches rely on trust in infrastructure providers, which are often insufficient in adversarial or multi-tenant environments.</t>
+<t>Modern workload security faces challenges from stolen bearer tokens, protocol replay, and trust gaps in transit. This document defines a specialized <strong>RATS Profile</strong> that cryptographically binds the <strong>Workload Identity Agent</strong>—the entity responsible for issuing software identities—to a hardware-verified platform and physical location.</t>
+<t>The architecture follows the <strong>RATS Architecture [[RFC9334]]</strong>, defining the interactions between <strong>Provers</strong>, <strong>Verifiers</strong>, and <strong>Relying Parties</strong> to generate and validate <strong>High-Confidence Evidence</strong> regarding the Workload Identity Agent's status. It provides the hardware-rooted &quot;Evidence Layer&quot; required by the high-level <strong>WIMSE Architecture [[I-D.ietf-wimse-architecture]]</strong>, establishing a &quot;Silicon-to-Audit&quot; chain of trust that ensures sensitive data is only processed by authorized workloads in approved, integral environments.</t>
+</section>
+
+<section anchor="relationship-to-transitive-attestation"><name>Relationship to Transitive Attestation</name>
+<t>This document is part of a layered attestation architecture that, together with the companion document [[I-D.mw-wimse-transitive-attestation]], provides an end-to-end chain of trust from hardware through to workload identity.</t>
+<t>The three layers are:</t>
+
+<ul>
+<li><t><strong>Layer 1 -- Workload Identity Attestation (Hardware-Independent):</strong> Covered by [[I-D.mw-wimse-transitive-attestation]]. Proves that a workload is co-located with a verified Workload Identity Agent via a local mechanism such as a Unix Domain Socket. Defines the mTLS-based Proof of Residency (PoR) and DPoR protocol flows. This layer does NOT concern itself with how the Workload Identity Agent itself was verified—it treats the Workload Identity Agent as an already-attested trust anchor.</t>
+</li>
+<li><t><strong>Layer 2 -- Workload Identity Agent Platform Attestation via TPM (Hardware-Dependent):</strong> Covered by this document. Proves the Workload Identity Agent is running on an approved host via TPM-based measured boot, hardware inventory verification, and credential activation. This establishes the hardware root of trust that Layer 1 relies upon.</t>
+</li>
+<li><t><strong>Layer 3 -- Workload Identity Agent Geolocation Attestation (Hardware-Dependent):</strong> Covered by this document. Proves the attested host (from Layer 2) is within an approved geographic boundary using cryptographically bound sensors (GNSS, mobile modems).</t>
+</li>
+</ul>
+<t>The following table maps these layers to the broader IETF ecosystem, forming a cohesive &quot;Silicon-to-SVID&quot; chain of accountability:</t>
+<table>
+<thead>
+<tr>
+<th align="left">Layer</th>
+<th align="left">Component</th>
+<th align="left">WG</th>
+<th align="left">Core Responsibility</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left"><strong>Layer 1</strong></td>
+<td align="left"><strong>Transitive Attestation</strong></td>
+<td align="left"><strong>WIMSE</strong></td>
+<td align="left"><strong>Conveyance</strong>: Binds identity to the local agent (Co-location/Residency).</td>
+</tr>
+
+<tr>
+<td align="left"><strong>Layer 2</strong></td>
+<td align="left"><strong>Verifiable Geofencing</strong></td>
+<td align="left"><strong>RATS</strong></td>
+<td align="left"><strong>Platform Evidence</strong>: Verifies host integrity and Workload Identity Agent hardware residency (TPM).</td>
+</tr>
+
+<tr>
+<td align="left"><strong>Layer 3</strong></td>
+<td align="left"><strong>Verifiable Geofencing</strong></td>
+<td align="left"><strong>RATS</strong></td>
+<td align="left"><strong>Location Evidence</strong>: Verifies physical geography (GNSS/ZKP).</td>
+</tr>
+</tbody>
+</table><t>Together, the complete chain is:</t>
+
+<ul spacing="compact">
+<li>TPM Hardware -&gt; Workload Identity Agent (this draft, Layer 2) -&gt; Workload (transitive attestation draft, Layer 1)</li>
+<li>TPM/Geolocation Hardware -&gt; Workload Identity Agent (this draft, Layers 2 and 3) -&gt; Workload (transitive attestation draft, Layer 1)</li>
+</ul>
+</section>
+
+<section anchor="addressing-wimse-architecture-gaps"><name>Addressing WIMSE Architecture Gaps</name>
+<t>The high-level <strong>WIMSE Architecture</strong> [[I-D.ietf-wimse-architecture]] establishes the requirement for a trustworthy Workload Identity Agent but delegates the technical mechanics of agent verification to specific profiles. This document fills that technical gap by providing a normative specification for hardware-rooted agent verification.</t>
+<t>Without the hardware-rooted &quot;Silicon-to-Audit&quot; proof established in this specification, the WIMSE identity model would rely on implicit trust in the host operating system or infrastructure provider. This draft hardens the WIMSE model against advanced threats by ensuring the Workload Identity Agent itself—and consequently the identities it issues—are anchored to verifiable hardware configuration and physical location.</t>
+<t>This document focuses exclusively on Layers 2 and 3: the hardware-dependent attestation of the Workload Identity Agent itself. For how workloads prove they are co-located with an attested Workload Identity Agent, and for the data-plane protocol flows (mTLS PoR, DPoR), see [[I-D.mw-wimse-transitive-attestation]].</t>
+<t>In the context of SPIFFE/SPIRE:</t>
+
+<ul spacing="compact">
+<li>The <strong>Workload Identity Manager</strong> is represented by the SPIFFE/SPIRE server.</li>
+<li>The <strong>Workload Identity Agent</strong> is represented by the SPIFFE/SPIRE agent.</li>
+</ul>
+</section>
+
+<section anchor="use-cases"><name>Use Cases</name>
+<t>Data residency use cases can be divided into three categories: (1) server-centric location, (2) user-centric location, and (3) regulatory compliance.</t>
+
+<section anchor="category-1-server-centric-location"><name>Category 1: Server-centric Location</name>
+<t>Enterprises (e.g., healthcare, banking) need cryptographic proof of a trustworthy geographic boundary (i.e., region, zone, country, state, etc.) for cloud-facing workloads.</t>
+
+<section anchor="server-workload-to-server-workload-general"><name>Server workload to Server workload - General</name>
+<t>Enterprises handling sensitive data rely on dedicated cloud hosts (e.g., EU sovereign cloud providers) that ensure compliance with data residency laws, while also ensuring appropriate levels of service (e.g., high availability). To meet data residency legal requirements, enterprises need to verify that workload data is processed by hosts within a geographic boundary and that workload data is only transmitted between specified geographic boundaries.</t>
+</section>
+
+<section anchor="server-workload-to-server-workload-agentic-ai"><name>Server workload to Server workload - Agentic AI</name>
+<t>Enterprises need to ensure that the AI agent is located within a specific geographic boundary when downloading sensitive data or performing other sensitive operations. A secure AI agent, running on a trusted host with TPM-backed attestation, interacts with geolocation and geofencing services to obtain verifiable proof of its geographic boundary. The agent periodically collects location data from trusted sensors, obtains attested composite location from a geolocation service, and enforces geofence policies via a geofencing service. The resulting attested geofence proof is used to bind workload identity to both the host and its geographic location, enabling secure, policy-driven execution of AI workloads and compliance with data residency requirements.</t>
+</section>
+
+<section anchor="server-workload-to-server-workload-federated-ai"><name>Server workload to Server workload - Federated AI</name>
+<t>In federated learning scenarios, multiple organizations collaborate to train machine learning models without sharing raw data. Each organization needs to ensure that its training data remains within a specific geographic boundary. This requires cryptographic proof that the training process is occurring on trusted hosts within the defined boundaries.</t>
+</section>
+
+<section anchor="user-workload-to-server-workload"><name>User workload to Server workload</name>
+<t>Enterprises ensure that they are communicating with a server (e.g., cloud services) located within a specific geographic boundary.</t>
+</section>
+</section>
+
+<section anchor="category-2-user-centric-location"><name>Category 2: User-centric Location</name>
+<t>Enterprises need cryptographic proof of trustworthy geographic boundary for user-facing workloads.</t>
+
+<ul>
+<li><t>A server (or proxy) authenticates to clients using different TLS certificates, each signed by a different Certificate Authority (CA), based on the geographic boundaries of user workloads.</t>
+</li>
+<li><t>Enterprise Customer Premise Equipment (CPE) provides on-premises computing that is a basis for defining geolocation boundaries. A telco network provides a means for communication between premises.</t>
+</li>
+<li><t>Construction and Engineering of SaaS workloads can benefit from attested geographic boundary data from end-user devices to restrict access within specific geopolitical regions (e.g., California). Enabling per-user or group-level geofencing helps prevent fraudulent access originating outside the authorized area.</t>
+</li>
+<li><t>Healthcare providers need to ensure that the host is located in a specific geographic boundary when downloading patient data or performing other sensitive operations.</t>
+</li>
+<li><t>U.S. Presidential Executive Order compliance directs Cloud Service Provider (CSP) support personnel be located in restricted geographies (e.g., Venezuela, Iran, China, North Korea). However, those personnel should not be allowed to support U.S. customers. Geolocation enforcement can ensure policy compliance.</t>
+</li>
+</ul>
+</section>
+
+<section anchor="category-3-regulatory-compliance"><name>Category 3: Regulatory Compliance</name>
+<t>Geographic boundary attestation helps satisfy data residency and data sovereignty requirements for regulatory compliance.</t>
+</section>
+</section>
+
+<section anchor="industry-gaps-and-problem-statements"><name>Industry Gaps and Problem Statements</name>
+<t>Modern cloud and distributed environments face significant risks from stolen bearer tokens, protocol replay, and trust gaps in transit. Current geofencing and location verification solutions face significant challenges across different data states, location sources, and authentication mechanisms. This section outlines the key gaps and problems that this specification aims to address.</t>
+
+<section anchor="data-generation-at-rest-challenges"><name>Data Generation/at-Rest Challenges</name>
+
+<dl spacing="compact">
+<dt>Textual Geotags:</dt>
+<dd>No standard for textual geotags (EXIF covers media only).</dd>
+<dt>Attesting Geotags:</dt>
+<dd>Existing geotag formats are unsigned and forgeable via VPN/MITM attacks.</dd>
+</dl>
+</section>
+
+<section anchor="data-in-use-challenges"><name>Data-in-Use Challenges</name>
+
+<section anchor="authentication-and-authorization-challenges"><name>Authentication and Authorization Challenges</name>
+
+<section anchor="bearer-token-vulnerabilities"><name>Bearer Token Vulnerabilities</name>
+<t>Bearer tokens are typically generated via user MFA and used to establish HTTP sessions. A malicious actor can steal a bearer token (e.g., from a still-valid HAR file uploaded to a support portal, as seen in the Okta attack) and present it to a server workload. The attacker may be in a forbidden location and on an unauthorized host (e.g., their own laptop). Current solution options for addressing bearer token issue and their challenges:</t>
+
+<ul spacing="compact">
+<li>PoP Token: Not easy to establish trust between the presenter (client) and the token issuer.</li>
+<li>PoP via Mutual TLS: Client certificates are generally not supported in browsers. MITM entities such as API gateways often terminate TLS connections.</li>
+<li>Host TPMs for API call signature: Not scalable to sign every API call with a TPM key, as typical enterprise laptops/servers TPMs support only about 5 signatures per second.</li>
+<li>Non-HTTP protocols: No solution for IPSEC etc.</li>
+</ul>
+</section>
+</section>
+
+<section anchor="location-and-geofencing-challenges"><name>Location and Geofencing Challenges</name>
+
+<ul>
+<li><t><strong>IP Address-Based Location:</strong> This is the typical approach, but it has limitations: network providers can use geographic-region-based IANA-assigned IP addresses anywhere in the world, and enterprise VPNs can hide the user's real IP address.</t>
+</li>
+<li><t><strong>Wi-Fi-Based Location:</strong> For user laptop endpoints with agents (e.g., ZTNA), traditional geographic enforcement relies on trusting the Wi-Fi access point's location. However, Wi-Fi access points are mobile and can be moved, undermining this trust.</t>
+</li>
+<li><t><strong>GNSS:</strong> Certain GNSS, e.g., civilian GPS in smartphones and navigation systems, can be spoofed. A practical example is the Israel GPS spoofing attacks.</t>
+</li>
+</ul>
+</section>
+
+<section anchor="implicit-trust-challenges"><name>Implicit Trust Challenges</name>
+
+<ul>
+<li><t><strong>Cloud Region Trust</strong>: Implicit trust in cloud region assignment with no cryptographic proof of physical locality. There is no auditable link between stored blobs and actual geography.</t>
+</li>
+<li><t><strong>Trust in Transit:</strong> HTTP requests can be intercepted and modified by compromised intermediate proxies (e.g., API gateways, SASE firewalls).</t>
+</li>
+</ul>
+</section>
+</section>
+</section>
+
+<section anchor="approach-overview"><name>Approach Overview</name>
+
+<ul>
+<li><t><strong>Layer 2 -- Workload Identity Agent Platform Attestation via TPM (Hardware-Dependent):</strong> Covered by this document. Proves the Workload Identity Agent is running on an approved host via TPM-based measured boot, hardware inventory verification, and credential activation.</t>
+</li>
+<li><t><strong>Layer 3 -- Workload Identity Agent Geolocation Attestation (Hardware-Dependent):</strong> Covered by this document. Proves the host (verified in Layer 2) is within a defined geographic boundary using cryptographically bound sensors.</t>
+</li>
+<li><t><strong>Privacy-Preserving Verification (ZKP Extension):</strong> An optional layer that uses transparent, post-quantum Zero-Knowledge Proofs to verify geofence compliance without disclosing exact coordinates.</t>
+</li>
+</ul>
+<t>These layers support three primary deployment options:</t>
+
+<ul spacing="compact">
+<li><strong>Option A -- Host OS-Based (e.g., Keylime):</strong> Interaction via the host OS with direct TPM access.</li>
+<li><strong>Option B -- Out-of-Band Management (e.g., HPE iLO):</strong> Validation via an isolated management processor, providing protection even against compromised host kernels.</li>
+<li><strong>Option C -- Cloud-Based Virtual TPM (e.g., AWS Nitro):</strong> Hardware-backed virtual TPM attestation for cloud and containerized (EKS) environments.</li>
+</ul>
+<t>For the workload-level attestation that builds on top of the Workload Identity Agent (Layer 1), see [[I-D.mw-wimse-transitive-attestation]].</t>
+
+<section anchor="server-hosts-solution-highlights"><name>Server Hosts - Solution highlights</name>
+<t>This section assumes that the maximum round-trip delay within a data center typically ranges from 500-1000 microseconds.</t>
+<t>Scalable hierarchical approach -- enhancements to Workload Identity (SPIFFE/SPIRE) solution:</t>
+
+<ul>
+<li><t>Each of the hosts runs a workload identity agent (SPIFFE/SPIRE agent) with TPM plugin which connects to a workload identity manager (SPIFFE/SPIRE server).</t>
+</li>
+<li><t>Location anchor hosts are directly attached to trusted location source - Mobile modem, GNSS Galileo receiver etc.</t>
+
+<ul spacing="compact">
+<li>Use of multiple location anchor hosts can enhance security and trust.</li>
+<li>For mobile sensors, the location can be tracked outside of host using a GSMA standards based mobile service provider API.</li>
+</ul></li>
+<li><t>Host geolocation sensor composition manager periodically verifies location anchor hosts device composition (primarily location sensors).</t>
+
+<ul spacing="compact">
+<li>Use SPIFFE/SPIRE agent host geolocation plugin (new).</li>
+</ul></li>
+<li><t>Host proximity manager periodically verifies that location anchor hosts provide proof that application hosts are within the maximum data center round-trip delay from them.</t>
+
+<ul spacing="compact">
+<li>SW-based Attested PTP - Modified Linux PTP daemon (SPIFFE/SPIRE workload) will sign PTP messages.</li>
+<li>HW-based Attested PTP - Relevant for sub microsecond precision timing solutions.</li>
+</ul></li>
+<li><t>Workload identity agent provides proof that workloads run only on workload/location anchor hosts.</t>
+
+<ul spacing="compact">
+<li>This is done using enhancements to existing SPIFFE/SPIRE agent and TPM plugin and addresses bearer token issue.</li>
+</ul></li>
+</ul>
+</section>
+
+<section anchor="end-user-iot-hosts-solution-highlights"><name>End user/IoT hosts - Solution highlights</name>
+<t>Browser solution -- new browser extension for proof residency and geofencing:</t>
+
+<ul spacing="compact">
+<li>Application proxy which intercepts every HTTP request; connects to workload identity agent to add geolocation; signs request using workload identity agent key which is attested by TPM attestation key.</li>
+</ul>
+<t>Similar to the server hosts solution:</t>
+
+<ul spacing="compact">
+<li>Each of the hosts runs a workload identity agent (SPIFFE/SPIRE agent) which connects to a workload identity manager (SPIFFE/SPIRE server).</li>
+</ul>
+</section>
+</section>
+
+<section anchor="tpm-platform-attestation-layer-2"><name>TPM Platform Attestation (Layer 2)</name>
+<t>This section describes how the Workload Identity Agent is attested to be running on an approved hardware platform. This forms the hardware root of trust on which all subsequent layers depend.</t>
+
+<section anchor="overview"><name>Overview</name>
+<t>TPM Platform Attestation establishes three properties:</t>
+
+<ol spacing="compact">
+<li><strong>Hardware Identity:</strong> The host contains an approved TPM with a valid, non-revoked Endorsement Key (EK) certificate.</li>
+<li><strong>OS Integrity:</strong> The host booted with approved firmware, bootloader, and operating system, as measured during the boot process and recorded in TPM Platform Configuration Registers (PCRs).</li>
+<li><strong>Workload Identity Agent Integrity:</strong> The Workload Identity Agent binary was measured (e.g., via Linux IMA) and matches approved values before execution.</li>
+</ol>
+
+<section anchor="comparison-of-deployment-options"><name>Comparison of Deployment Options</name>
+<t>The following table summarizes the architectural and security differences between the three deployment options for TPM platform attestation.</t>
+<table>
+<thead>
+<tr>
+<th align="left">Feature</th>
+<th align="left">Option A (In-Band)</th>
+<th align="left"><strong>Option B (Out-of-Band)</strong></th>
+<th align="left">Option C (Cloud vTPM)</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left"><strong>Trust Anchor</strong></td>
+<td align="left">Host OS + TPM</td>
+<td align="left"><strong>Isolated Mgmt Silicon + TPM</strong></td>
+<td align="left">Hypervisor + vTPM</td>
+</tr>
+
+<tr>
+<td align="left"><strong>Integrity</strong></td>
+<td align="left">High (TPM-signed)</td>
+<td align="left"><strong>Highest (TPM-signed + Physical Isolation)</strong></td>
+<td align="left">High (Silicon-rooted)</td>
+</tr>
+
+<tr>
+<td align="left"><strong>Kernel Bypass?</strong></td>
+<td align="left">No (Agent relies on kernel)</td>
+<td align="left"><strong>Yes (Independent Hardware Path)</strong></td>
+<td align="left">No (Hypervisor handles vTPM)</td>
+</tr>
+
+<tr>
+<td align="left"><strong>Network Path</strong></td>
+<td align="left">Shared Host NIC</td>
+<td align="left"><strong>Dedicated Management NIC</strong></td>
+<td align="left">Virtualized NIC</td>
+</tr>
+
+<tr>
+<td align="left"><strong>Main Use Case</strong></td>
+<td align="left">General Purpose / On-Prem</td>
+<td align="left">High-Assurance / Enterprise</td>
+<td align="left">Cloud / EKS / Virtualized</td>
+</tr>
+</tbody>
+</table></section>
+</section>
+
+<section anchor="measured-boot-and-os-integrity-attestation"><name>Measured Boot and OS Integrity Attestation</name>
+<t>As part of the system boot/reboot process, a boot-loader-based measured system boot with remote Workload Identity Manager verification is used to ensure that only an approved OS is running on an approved hardware platform.</t>
+<t><strong>Measurement Collection</strong>: During the boot process, the boot loader (or more commonly, the management processor in Option B) collects measurements (hashes) of the boot components and configurations. These components include Firmware/BIOS/UEFI, bootloader, OS, drivers, and initially attached geolocation sensors. While advanced bootloaders MAY measure location device firmware, it is RECOMMENDED that high-assurance deployments rely on the management processor (OOB) to inventory sensors and retrieve firmware hashes (e.g., via SPDM or vendor-specific interfaces) prior to Host CPU release. Any new location device which is hot-swapped will be evaluated for inclusion only during the next measurement cycle (reboot or periodic OOB inventory).</t>
+<t><strong>Log Creation</strong>: These measurements are recorded in a log, often referred to as the TCGLog, and stored in the TPM's Platform Configuration Registers (PCRs).</t>
+<t><strong>Attestation Report</strong>: The TPM generates an attestation report, which includes the signed measurements and the boot configuration log. The signature of the attestation report (aka quote) is by a TPM Attestation Key (AK). This attestation includes data about the TPM's state and can be used to verify that the AK is indeed cryptographically backed by the TPM Endorsement Key (EK) certificate.</t>
+<t><strong>Transmission</strong>: The attestation report is then sent to an external verifier (Workload Identity Manager), through a secure TLS connection.</t>
+<t><strong>Remote Verification</strong>: The remote Workload Identity Manager checks the integrity of the attestation report and validates the measurements against known good values from the set of trusted hosts in the Host hardware identity datastore. The Workload Identity Manager also validates that the TPM EK certificate has not been revoked and is part of the approved list of TPM EK identifiers associated with the hardware platform. At this point, we can be sure that the hardware platform is approved for running workloads and is running an approved OS.</t>
+</section>
+
+<section anchor="workload-identity-agent-attestation-and-identity-issuance"><name>Workload Identity Agent Attestation and Identity Issuance</name>
+<t>The Workload Identity Agent TPM plugin is a process with elevated privileges that has access to TPM and location sensor hardware. Linux IMA measurement and Workload Identity Agent public/private key attestation are the changes compared to the original SPIFFE/SPIRE architecture with the TPM plugin.</t>
+<t><strong>Measurement Collection</strong>: For the Workload Identity Agent start case, the Agent executable is measured by Linux IMA (e.g., through cloud-init) and stored in TPM PCR 10 before it is loaded. To address the <strong>Workload Identity Agent restart case</strong> (OPEN ISSUE 1), the Workload Identity Manager SHALL detect restarts via the IMA event log (indicated by a new measurement entry or a systemd unit restart event) and re-verify the binary/configuration hash against the baseline PCR 10 value. This ensures continuous integrity even if the agent is refreshed without a full system reboot.</t>
+<t><strong>Local Verification</strong>: Enforce local validation of a measurement against an approved value stored in an extended attribute of the file.</t>
+<t><strong>TPM attestation and remote Workload Identity Manager verification</strong>:</t>
+<t>Step 1 (Workload Identity Agent TPM APP ID issuance):</t>
+
+<ol spacing="compact">
+<li>The Workload Identity Agent TPM plugin generates a TPM APP private key for proof of residency on the host for each start/restart.</li>
+<li>The Workload Identity Agent TPM plugin sends the TPM APP public key, TPM AK public key and TPM EK certificate attestation parameters to the Workload Identity Manager.</li>
+<li>The Workload Identity Manager verifies the attestation parameters. It then validates that the TPM EK certificate is in the trusted TPM EK certificate list with the Host Identity Manager (e.g. Keylime Verifier).</li>
+<li>If validation passes, the Workload Identity Manager generates a credential activation challenge. The challenge's secret is encrypted using the Workload Identity Agent TPM APP public key.</li>
+<li>The Workload Identity Manager sends the challenge to the Workload Identity Agent.</li>
+<li>The Workload Identity Agent decrypts the challenge's secret using its TPM APP private key.</li>
+<li>The Workload Identity Agent sends back the decrypted secret.</li>
+<li>The Workload Identity Manager verifies that the decrypted secret matches the original secret used to build the challenge.</li>
+<li>The Workload Identity Manager issues a Workload Identity Agent TPM APP ID using the TPM APP public key, TPM AK public key and TPM EK certificate.</li>
+</ol>
+<t>Step 2 (Workload Identity Agent ID issuance):</t>
+
+<ol spacing="compact">
+<li>The Workload Identity Agent generates a private/public key pair.</li>
+<li>The Workload Identity Agent uses the TPM APP private key, stored in the TPM, to sign the public key.</li>
+<li>The Workload Identity Agent sends the public key, signed by the TPM APP private key, to the Workload Identity Manager.</li>
+<li>The Workload Identity Manager ensures the public key is associated with a Workload Identity Agent TPM APP ID.</li>
+<li>If validation passes, the Workload Identity Manager generates a credential activation challenge. The challenge's secret is encrypted using the Workload Identity Agent public key.</li>
+<li>The Workload Identity Manager sends the challenge to the Workload Identity Agent.</li>
+<li>The Workload Identity Agent decrypts the challenge's secret using its private key.</li>
+<li>The Workload Identity Agent sends back the decrypted secret.</li>
+<li>The Workload Identity Manager verifies that the decrypted secret matches the original secret used to build the challenge.</li>
+<li>The Workload Identity Manager issues the Workload Identity Agent ID using the Workload Identity Agent public key, the TPM APP signature of the Workload Identity Agent public key, and the Workload Identity Agent TPM APP ID.</li>
+</ol>
+</section>
+
+<section anchor="deployment-option-a-host-os-based-keylime"><name>Deployment Option A: Host OS-Based (Keylime)</name>
+<t>In this option, the TPM attestation agent runs on the host operating system with direct TPM access. An external Keylime Verifier performs remote verification.</t>
+
+<section anchor="architecture"><name>Architecture</name>
+
+<ol spacing="compact">
+<li><strong>Keylime Agent (on host):</strong> The rust-keylime agent starts on the host OS, registers with the Keylime Registrar, and stores the host's EK, AK, UUID, and mTLS certificate. The agent has direct access to the TPM 2.0 device.</li>
+<li><strong>Keylime Registrar:</strong> Stores agent registration data (UUID, IP, port, TPM keys, mTLS certificate) and serves as a lookup service for the Verifier.</li>
+<li><t><strong>Keylime Verifier (external):</strong> On attestation request, the Verifier queries the Registrar for the agent's AK public key, then contacts the agent directly to fetch a fresh TPM quote with a challenge nonce. The Verifier validates:</t>
+
+<ul spacing="compact">
+<li>The TPM quote signature against the AK public key.</li>
+<li>The PCR values against known-good reference values.</li>
+<li>The nonce for freshness (anti-replay).</li>
+<li>The App Key certificate (TPM2_Certify output) proving the App Key exists in the TPM and was certified by the AK.</li>
+</ul></li>
+</ol>
+</section>
+
+<section anchor="integration-with-spire"><name>Integration with SPIRE</name>
+<t>The SPIRE Agent TPM Plugin Server runs as an out-of-process sidecar (gRPC/HTTP via Unix socket). The plugin generates an App Key in the TPM, obtains an App Key certificate via the Keylime agent's delegated certification endpoint (TPM2_Certify), and assembles a SovereignAttestation message for the SPIRE Server. The SPIRE Server delegates verification to the external Keylime Verifier, which performs on-demand TPM quote fetching and validation.</t>
+</section>
+
+<section anchor="advantages"><name>Advantages</name>
+
+<ul spacing="compact">
+<li>Mature open-source ecosystem (rust-keylime, SPIRE TPM plugin).</li>
+<li>Fine-grained PCR policy (per-PCR allowlists).</li>
+<li>Suitable for cloud and on-premises environments.</li>
+</ul>
+</section>
+
+<section anchor="limitations"><name>Limitations</name>
+
+<ul spacing="compact">
+<li>Requires the host OS to be operational and the Keylime agent process to be running.</li>
+<li>Agent compromise could potentially affect attestation integrity (mitigated by TPM-bound keys).</li>
+</ul>
+</section>
+</section>
+
+<section anchor="deployment-option-b-external-management-processor-e-g-hpe-ilo"><name>Deployment Option B: External Management Processor (e.g., HPE iLO)</name>
+<t>In this option, the management processor (BMC) has independent access to the host TPM and performs attestation independently of the host operating system. This provides a higher-trust attestation path that solves the &quot;compromised kernel&quot; problem: if a hacker gains root access to the host OS, they can potentially blind in-band agents (e.g., Keylime agent, SPIRE agent) by feeding them fake data, but they cannot spoof the management processor's independent hardware path to the TPM.</t>
+
+<section anchor="dual-tpm-access-paths"><name>Dual TPM Access Paths</name>
+<t>Both the Host CPU and the management processor can communicate with the TPM, but through different interfaces and with different levels of authority:</t>
+
+<ul>
+<li><t><strong>Host CPU Path (LPC/SPI Bus):</strong> This is the standard &quot;in-band&quot; path. When the OS (Linux/ESXi/Windows) or the UEFI BIOS needs to extend a PCR (e.g., recording a hash of a workload binary), it talks to the TPM over the LPC or SPI bus.</t>
+</li>
+<li><t><strong>Management Processor Path (I2C/Private Bus):</strong> The management processor (e.g., HPE iLO) has a dedicated, private connection to the TPM chip that does not go through the Host CPU. This allows the management processor to query the TPM even if the Host CPU is powered off, crashed, or compromised by a rootkit. This is the &quot;out-of-band&quot; (OOB) path.</t>
+</li>
+</ul>
+<t>While both paths share the same physical TPM silicon, their roles are logically separated:</t>
+
+<ul>
+<li><t>The <strong>Host CPU</strong> sees the TPM as a local device (e.g., /dev/tpm0). It can extend PCRs (add new measurements) but cannot easily reset the TPM. It requires the OS network stack (SSH/gRPC) to report attestation status remotely.</t>
+</li>
+<li><t>The <strong>Management Processor</strong> sees the TPM as a managed component via the Silicon Root of Trust. It can verify the TPM's Endorsement Key (EK) and Platform Certificate to ensure the TPM itself has not been tampered with. It uses the dedicated management NIC (via Redfish API) to report status independently of the OS network stack.</t>
+</li>
+</ul>
+<t>The end-to-end attestation paths are therefore:</t>
+
+<ul>
+<li><t><strong>In-band (Option A):</strong> TPM --[LPC/SPI bus]--&gt; Host CPU/OS --[host NIC, SSH/gRPC]--&gt; Remote Verifier. The IMA event log and TPM Quote both travel through the host OS network stack. A compromised kernel sits on this path and can interfere with log delivery, though it cannot forge the hardware-signed TPM Quote.</t>
+</li>
+<li><t><strong>Out-of-band (Option B):</strong> TPM --[I2C/private bus]--&gt; Management Processor --[dedicated mgmt NIC, Redfish API]--&gt; Management Plane. The host OS has no visibility into this path. The management processor fetches the TPM Quote independently, so a compromised kernel cannot intercept, delay, or suppress the attestation evidence.</t>
+</li>
+</ul>
+</section>
+
+<section anchor="architecture-1"><name>Architecture</name>
+
+<ol spacing="compact">
+<li><strong>Management Processor (e.g., HPE iLO):</strong> Has direct access to the host TPM via a dedicated bus (I2C/private bus), independent of the host CPU and OS. The management processor collects TPM measurements and can perform attestation even when the host OS is not running or is compromised.</li>
+<li><strong>External Management Plane (e.g., HPE OneView, HPE GreenLake):</strong> Centralized management platform that receives attestation evidence from the management processor. Validates TPM quotes against golden measurements maintained in the management platform's database. Provides fleet-wide attestation visibility and policy enforcement.</li>
+</ol>
+</section>
+
+<section anchor="hardware-inventory-and-continuous-monitoring"><name>Hardware Inventory and Continuous Monitoring</name>
+<t>Beyond attestation, the management processor performs continuous, out-of-band monitoring of the host's physical and firmware composition. This &quot;Silicon-to-Audit&quot; capability ensures that the hardware identity remains constant and trusted throughout its lifecycle:</t>
+
+<ul spacing="compact">
+<li><t><strong>CPU Integrity Monitoring:</strong> The management processor inventories the host CPUs at every boot and continuously monitors their state. It records and reports:</t>
+
+<ul spacing="compact">
+<li><strong>Serial Numbers:</strong> Retrieving the unique electronic serial number (e.g., Intel <strong>PPIN - Protected Processor Inventory Number</strong>) directly from the silicon.</li>
+<li><strong>Microcode/Firmware Versions:</strong> Verifying the current patch level of the CPU's microcode.</li>
+<li><strong>Hardware Stepping/Revision:</strong> Confirming the exact hardware version to detect unauthorized hardware substitutions.</li>
+</ul></li>
+<li><strong>Peripheral Inventory:</strong> Similar monitoring is applied to memory modules (DIMM serial numbers), storage controllers, and network adapters via the System Management Bus (<strong>SMBus</strong>).</li>
+<li><strong>Health and Security State:</strong> The management processor monitors for hardware-level security events, such as chassis intrusion or unauthorized component additions.</li>
+</ul>
+<t><strong>Technical Implementation:</strong>
+These monitoring functions are performed over dedicated, low-level hardware interfaces that operate independently of the host OS and CPU execution:
+* <strong>PECI (Platform Environment Control Interface):</strong> Provides a specialized single-wire bus for the management processor (acting as master) to query CPU registers, thermal data, and identity information.
+* <strong>SMBus/I2C:</strong> Used for inventorying peripherals and reading Field Replaceable Unit (FRU) data from memory and other components.
+* <strong>Side-band Signals:</strong> Dedicated physical lines allow the management processor to monitor the &quot;Security State&quot; of the silicon, such as whether the CPU is in a debug-locked mode or if the hardware fuse settings have been tampered with.</t>
+<t>These inventory details are bundled with the attestation evidence and forwarded to the management plane during each attestation cycle (see Step 5 and Step 6 of the Periodic Attestation Cycle below). Hardware inventory claims are OPTIONAL evidence inputs. Verifiers SHALL evaluate inventory deltas against an approved change policy (maintenance window, authorized RMA, firmware updates). Inventory mismatch MUST NOT be treated as compromise without corroborating evidence.</t>
+</section>
+
+<section anchor="silicon-root-of-trust-and-ima-integrity-protection"><name>Silicon Root of Trust and IMA Integrity Protection</name>
+<t>To ensure that the attestation measurements themselves are trustworthy, the management processor architecture provides multiple layers of protection against the &quot;who watches the watcher&quot; problem:</t>
+<t><strong>Protection Layer 1 -- Secure Boot / Silicon Root of Trust:</strong> Before the OS starts, the management processor ASIC (e.g., HPE iLO) verifies the UEFI BIOS firmware. The BIOS then verifies the Bootloader (GRUB), and the Bootloader verifies the Linux Kernel signature. This ensures that the version of the Linux kernel -- and thus the IMA subsystem code -- being loaded is the authentic, signed version.</t>
+<t><strong>Protection Layer 2 -- TPM PCR Extension (Hardware Enforcement):</strong> Linux IMA extends measurement hashes into TPM PCR 10. PCR extension is a one-way operation -- data can be added (extended) to a PCR, but it cannot be overwritten or deleted without a full system reboot. Even if a compromised kernel stops IMA from recording a malicious binary, it cannot undo the previous clean measurements in the TPM. See Step 6 of the Periodic Attestation Cycle below for the full verification procedure.</t>
+<t><strong>Protection Layer 3 -- IMA Appraisal Mode:</strong> By default, IMA only measures (logs). In IMA Appraisal mode, the kernel refuses to execute any binary or load any library that does not have a valid cryptographic signature (stored as an extended attribute on the file). IMA policies can themselves be digitally signed, preventing tampering.</t>
+<t><strong>Protection Layer 4 -- Out-of-Band (OOB) Attestation:</strong> The management processor fetches the TPM Quote via its dedicated I2C/private bus, bypassing the Host CPU and OS entirely. The TPM signs the PCR values with its hardware-protected key. This ensures a compromised kernel cannot intercept, delay, or suppress the attestation evidence. See Step 3 of the Periodic Attestation Cycle for the detailed flow.</t>
+<t><strong>Protection Layer 5 -- Kernel Lockdown Mode:</strong> Linux Kernel Lockdown (integrity or confidentiality mode) prevents even the root user from modifying kernel memory via /dev/mem, replacing the running kernel via kexec, or accessing sensitive debug interfaces that could be used to bypass IMA checks.</t>
+</section>
+
+<section anchor="root-adversary-and-ima-tampering"><name>Root Adversary and IMA Tampering</name>
+<t>A key question is whether an adversary with root access to the host OS can tamper with IMA measurements themselves. The answer is that a root adversary has limited ability to interfere with IMA, but the protections above are specifically designed to detect such tampering:</t>
+
+<ul>
+<li><t><strong>What a root adversary CAN do:</strong> A compromised kernel can disable or bypass the IMA subsystem, preventing future measurements from being recorded. The adversary can also tamper with the IMA event log in kernel memory to hide evidence of malicious binaries being loaded.</t>
+</li>
+<li><t><strong>What a root adversary CANNOT do:</strong> The adversary cannot roll back or modify TPM PCR 10, because PCR extension is a one-way cryptographic operation (PCR_new = Hash(PCR_old || measurement)). The adversary also cannot forge a TPM Quote, because the TPM signs PCR values with its hardware-protected Attestation Key, which is inaccessible to the host OS. Finally, the adversary cannot intercept or spoof the management processor's out-of-band attestation path (I2C/private bus).</t>
+</li>
+<li><t><strong>How tampering is detected:</strong> The verifier replays the IMA log against the hardware-signed TPM Quote obtained via the OOB path. Any mismatch triggers a trust failure. See Step 6 of the Periodic Attestation Cycle for the full detection procedure.</t>
+</li>
+<li><t><strong>Residual risk (TOCTOU):</strong> A root adversary could theoretically load a malicious binary between attestation cycles (time-of-check-time-of-use). This is mitigated by IMA Appraisal Mode (Protection 3) blocking unsigned binaries at load time, Kernel Lockdown (Protection 5) preventing kernel memory modification, and frequent attestation polling intervals.</t>
+</li>
+</ul>
+</section>
+
+<section anchor="tpm-swap-attack-protection"><name>TPM Swap Attack Protection</name>
+<t>In modern server implementations (e.g., HPE Gen11), the management processor acts as a gatekeeper during the boot process. It uses its independent path to verify that the TPM is authentic. If the management processor detects that the TPM has been physically replaced (a &quot;TPM Swap&quot; attack), it can prevent the Host CPU from starting, effectively blocking the server until an administrator intervenes.</t>
+</section>
+
+<section anchor="re-attestation-cadence-tiered-schedule"><name>Re-attestation Cadence: Tiered Schedule</name>
+<t>Implementations SHOULD separate identity TTL from heavyweight evidence collection to ensure operational realism:</t>
+
+<ul spacing="compact">
+<li><strong>Fast path (seconds)</strong>: Renew short-lived identity using cached &quot;last-known-good&quot; attestation results if no drift signals exist.</li>
+<li><strong>Medium path (minutes)</strong>: Refresh TPM Quote with N_platform and minimal PCR set.</li>
+<li><strong>Slow path (hours/days or on-change)</strong>: Refresh full logs, hardware inventory, and location corroboration.</li>
+</ul>
+<t>A Verifier (Host Management Plane or Workload Identity Manager, depending on the drift signal) SHALL trigger the slow path on drift indicators (firmware change, security log events, inventory changes).</t>
+<t><strong>Step 1 -- Host Management Plane: Initiate Attestation Challenge</strong></t>
+<t>The external management plane verifier (e.g., HPE OneView/GreenLake) generates a cryptographically random nonce (<strong>N_platform</strong>) and sends it to the management processor (iLO) via the dedicated management NIC (Redfish API). This nonce will be embedded in the TPM Quote qualifying data to prove that the attestation evidence is fresh and was produced in response to this specific request.</t>
+
+<ul spacing="compact">
+<li><em>Compromise detection:</em> The nonce originates outside the host entirely (at the management plane). The host OS and Workload Identity Agent MUST NOT be required to observe N_platform. Any nonce seen by the host is not sufficient to prove OOB freshness.</li>
+</ul>
+<t><strong>Step 2 -- Host OS: Normal Operation (Continuous)</strong></t>
+<t>During normal operation, the Linux kernel's IMA subsystem continuously measures every binary, library, and kernel module loaded on the host. Each measurement is extended into TPM PCR 10 via the in-band LPC/SPI bus. The IMA event log accumulates in kernel memory at /sys/kernel/security/ima/ascii_runtime_measurements.</t>
+
+<ul spacing="compact">
+<li><em>Compromise detection:</em> If the kernel is compromised and IMA is disabled, measurements stop being extended into PCR 10. The PCR freezes at its last legitimate value. No new entries appear in the IMA log.</li>
+</ul>
+<t><strong>Step 3 -- Management Processor (iLO): Fetch TPM Quote (OOB)</strong></t>
+<t>The management processor passes <strong>N_platform</strong> to the TPM as the qualifying data (aka &quot;qualification&quot;) in the TPM2_Quote command over its dedicated I2C/private bus. Platform Capability Guard: Any claim that the management processor can extend PCRs (e.g., PCR 15) or access TPM commands over a private bus MUST be conditioned on an explicit platform capability flag and documented hardware requirements. If unavailable, deployments SHALL fall back to nonce-qualified TPM quotes and signed OOB evidence without PCR extension.</t>
+<t><strong>Step 4 -- Host OS: Provide IMA Log (In-Band)</strong></t>
+<t>The Host Management Plane requests the current IMA event log from the host OS via the host network stack. A lightweight log exporter runs on the host as a privileged systemd service (requiring root or CAP_SYS_ADMIN to read /sys/kernel/security/ima/ascii_runtime_measurements) and exposes the IMA runtime measurements over the network. The exporter is installed as a systemd unit file, started automatically at boot, and runs as a long-lived daemon listening for log retrieval requests (e.g., via gRPC or a REST endpoint). Its binary is itself measured by IMA at launch time and recorded in PCR 10, so any tampering with the exporter binary is captured in the TPM measurements. The log may also be retrieved via direct SSH access to the host. Regardless of the collection method, the IMA log is transmitted as untrusted input — the trust anchor is the OOB TPM Quote, not the log itself. Notably, the integrity of the log exporter does not affect the security model: even if both the kernel and the exporter are compromised and conspire to produce a falsified log, the verifier will detect the tampering via the PCR mismatch in Step 6.</t>
+
+<ul spacing="compact">
+<li><em>Compromise detection:</em> A compromised kernel can tamper with this log (remove entries, alter hashes, truncate). This is expected behavior and is why the log is treated as untrusted. The verifier will detect any tampering in Step 6.</li>
+<li><em>Compromise detection:</em> A compromised kernel may refuse to deliver the log entirely (e.g., kill the agent). In this case, the verifier has a TPM Quote (from Step 3) but no log to verify against it, which triggers a trust failure.</li>
+</ul>
+<t><strong>Step 5 -- Management Processor (iLO): Forward Evidence to Host Management Plane</strong></t>
+<t>The management processor transmits the hardware-signed TPM Quote (which contains N_platform inside the signed payload as qualifying data), the TCG Boot Event Log, and the current <strong>Hardware Inventory</strong> (including CPU PPINs and peripheral serial numbers collected out-of-band via PECI/SMBus) to the Host Management Plane (e.g., HPE OneView/GreenLake) via the dedicated management NIC using the Redfish API. The management processor signs this transmission with its own OEM CA-chained identity key.</t>
+
+<ul spacing="compact">
+<li><em>Compromise detection:</em> The management processor's identity is verified by the OEM CA chain. A spoofed or tampered management processor would fail certificate validation.</li>
+</ul>
+<t><strong>Step 6 -- Host Management Plane: Validate Evidence</strong></t>
+<t>The Host Management Plane (management plane) performs the following validation:</t>
+
+<ol spacing="compact">
+<li><strong>Verify TPM Quote signature</strong> using the TPM's AK public key. If invalid, the TPM or Quote has been tampered with.</li>
+<li><strong>Verify nonce</strong> embedded in the signed Quote qualifying data matches N_platform sent in Step 1. If mismatched, the Quote is a replay of an older attestation or was generated in response to a different challenge.</li>
+<li><strong>TPM Clock Checks (OPTIONAL)</strong>: The Verifier MAY record TPMS_CLOCK_INFO as an anti-replay signal. The Verifier MUST NOT rely on clock monotonicity as the primary freshness guarantee. Primary freshness SHALL be the Quote qualifying data (nonce).</li>
+<li><strong>IMA Verification</strong>: The Verifier SHALL validate that the IMA measurement log is consistent with the quoted PCR(s) by replaying from the correct initial PCR value for the boot session (typically all zeros after reset), using the measured template and hash algorithm in use. The specification MUST define the IMA template and PCR bank expectations per platform profile.</li>
+<li><t><strong>Compare the recomputed PCR 10</strong> against the hardware-signed PCR 10 from the TPM Quote:</t>
+
+<ul spacing="compact">
+<li><strong>Match:</strong> The IMA log is consistent with the TPM's measurements. The system is running approved software.</li>
+<li><strong>Mismatch:</strong> The IMA log has been tampered with (entries removed, altered, or fabricated). The verifier raises a trust failure alert.</li>
+</ul></li>
+<li><strong>Compare PCR 10 against golden reference values</strong> to detect unexpected binaries.</li>
+<li><strong>Check for log staleness.</strong></li>
+<li><strong>Verify Hardware Inventory (OPTIONAL)</strong>: Compare the inventory deltas against approved change policies. Inventory mismatch MUST NOT be treated as compromise without corroborating evidence (e.g. PCR mismatch).</li>
+</ol>
+
+<ul spacing="compact">
+<li><t><em>Compromise detection summary:</em></t>
+
+<ul spacing="compact">
+<li><strong>Tampered IMA log</strong> → detected at Step 6 sub-step 5 (log-vs-PCR mismatch).</li>
+<li><strong>Disabled IMA</strong> → detected at Step 6 sub-step 7 (stale log with active system).</li>
+<li><strong>Replayed old Quote</strong> → detected at Step 6 sub-step 2 (N_platform from Step 1 mismatch).</li>
+<li><strong>Unauthorized binary loaded</strong> → detected at Step 6 sub-step 6 (policy violation).</li>
+<li><strong>Log delivery suppressed</strong> → detected by absence of log at Step 4 (trust failure due to missing evidence).</li>
+</ul></li>
+</ul>
+</section>
+
+<section anchor="advantages-1"><name>Advantages</name>
+
+<ul spacing="compact">
+<li>Out-of-band attestation: works even when the host OS is compromised, rebooting, or offline.</li>
+<li>Hardware-isolated attestation path: the management processor is physically separate from the host CPU.</li>
+<li><strong>Continuous Hardware Inventory:</strong> Detects unauthorized swaps of CPUs, memory, or peripherals through serial number and firmware version tracking.</li>
+<li>Detects compromised kernel / IMA subversion through hardware-signed TPM quotes.</li>
+<li>TPM Swap attack protection at boot time.</li>
+<li>Enterprise fleet management integration (HPE OneView, Dell iDRAC, Lenovo XClarity, etc.).</li>
+</ul>
+</section>
+
+<section anchor="limitations-1"><name>Limitations</name>
+
+<ul spacing="compact">
+<li>Vendor-specific management processor implementations.</li>
+<li>Requires enterprise management plane infrastructure.</li>
+<li>Management processor firmware must itself be trusted and kept up to date.</li>
+</ul>
+<t>In cloud environments, physical TPM access is typically virtualized. Cloud providers (e.g., AWS, GCP, Azure, Oracle OCI, IBM Cloud, etc.) provide a Virtual TPM (vTPM) to each guest Virtual Machine (VM). In this model, the <strong>Cloud Service Provider (CSP)</strong> acts as the <strong>Host Management Plane</strong>, managing the underlying physical hardware and the hypervisor that provides the vTPM. This vTPM is a software-emulated TPM 2.0 device that is cryptographically bound to the physical hardware's Silicon Root of Trust (e.g., AWS Nitro Security Chip). This architecture is a primary enabler for securing containerized workloads at scale, such as <strong>Amazon EKS node worker attestation</strong> (noting that specific provider mechanisms and names are accurate as of February 2026).</t>
+</section>
+
+<section anchor="architecture-2"><name>Architecture</name>
+
+<ol spacing="compact">
+<li><strong>Virtual TPM (vTPM):</strong> Provided by the hypervisor to the guest VM. It supports standard TPM 2.0 commands, including PCR extension and Quote generation. For example, <strong>AWS NitroTPM</strong> conforms to the TPM 2.0 specification and provides a series of Nitro-specific PCR values that reflect the instance state. When used with <strong>Amazon EKS</strong>, each worker node in a Managed Node Group can be equipped with a NitroTPM manually (via AMI settings) to enable hardware-rooted host attestation.</li>
+<li><strong>Guest OS Agent (SPIRE Agent):</strong> Runs as a system daemon within the VM (or EKS node). It interacts with the vTPM to record boot measurements and workload identities. On AWS, the <strong><tt>nitro-tpm-attest</tt></strong> utility can be used at runtime to retrieve a signed Attestation Document for the instance.</li>
+<li><strong>Cloud Attestation Service / Host Management Plane:</strong> Most cloud providers offer an API or hypervisor-level service (<strong>Host Management Plane</strong>) that provides a signed document containing the vTPM measurements, VM identity, and potentially the host hardware's status. The AWS Nitro Hypervisor generates these documents in <strong>CBOR/COSE</strong> format, signed by the AWS Nitro Attestation PKI.</li>
+</ol>
+</section>
+
+<section anchor="advantages-2"><name>Advantages</name>
+
+<ul spacing="compact">
+<li><strong>Scalability:</strong> Deployment is fully automated through cloud APIs, requiring no manual hardware configuration.</li>
+<li><strong>Transitive Trust:</strong> The vTPM is rooted in the physical host's TPM, providing hardware-backed assurance even in a virtualized environment.</li>
+<li><strong>Standardized Interface:</strong> Inside the VM, the vTPM appears as a standard <tt>/dev/tpm0</tt> device, allowing the reuse of existing tools like Keylime and SPIRE.</li>
+</ul>
+</section>
+
+<section anchor="limitations-2"><name>Limitations</name>
+
+<ul spacing="compact">
+<li><strong>Trust in Hypervisor:</strong> The cloud consumer must trust the provider's hypervisor to correctly emulate the TPM and not tamper with the guest's PCR values. Note that advanced implementations like <strong>AWS NitroTPM</strong> utilize a dedicated hardware security chip (the Nitro Security Chip) to provide hardware-backed and physically isolated TPM functionality, which significantly reduces the software attack surface and the degree of trust required in the hypervisor itself.</li>
+<li><strong>Provider-Specific APIs:</strong> While the TPM interface is standard, the mechanism for verifying the &quot;outer&quot; cloud attestation document varies by provider.</li>
+</ul>
+</section>
+</section>
+
+<section anchor="workload-identity-fusion-periodic-spire-re-attestation"><name>Workload Identity Fusion: Periodic SPIRE Re-Attestation</name>
+<t>The three deployment options (A, B, and C) can integrate periodic SPIRE Agent re-attestation with platform attestation to fuse workload identity with hardware-verified host integrity and composition. The core pattern is: the <strong>Workload Identity Manager</strong>'s challenge nonce is forwarded to the appropriate attestation verifier, which uses it to fetch a fresh TPM Quote (from either a physical or virtual TPM) along with the current <strong>Hardware Inventory</strong> (CPU serials, firmware versions), creating a cryptographic binding between the workload SVID and the platform's hardware-attested state.</t>
+<t><strong>In-band implementation (Option A):</strong> In the reference implementation [[AegisSovereignWorkloads]], the SPIRE Server sends a <strong>Workload Fusion Nonce (N_fusion)</strong> to the SPIRE Agent, which assembles a SovereignAttestation message. The SPIRE Server delegates verification to the Keylime Verifier, which contacts the in-band Keylime agent to fetch a fresh TPM Quote using the same nonce. The verifier validates the Quote, IMA log, and geolocation, then returns attested claims to the SPIRE Server for SVID issuance. This flow is entirely in-band: the TPM Quote travels through the host OS network stack.</t>
+<t><strong>OOB upgrade (Option B):</strong> When a management processor is available, the verification step is upgraded to use the OOB path. The <strong>Workload Identity Manager</strong> (e.g., SPIRE Server) still sends <strong>N_fusion</strong> to the SPIRE Agent, and the SPIRE Agent still assembles a SovereignAttestation message. However, the <strong>Host Management Plane</strong> (e.g., HPE OneView/GreenLake) utilizes <strong>N_platform</strong> for the hardware-rooted TPM Quote via the OOB path, ensuring it is never seen by the host. The Host Management Plane performs the full validation, and the attested claims -- including platform integrity, <strong>hardware composition</strong>, and geolocation -- are returned to the <strong>Workload Identity Manager</strong> for SVID issuance.</t>
+<t><strong>Cloud vTPM (Option C):</strong> In a cloud deployment, the SPIRE Server sends <strong>N_fusion</strong> to the SPIRE Agent running as a system daemon on the guest VM. The agent utilizes the vTPM to certify its identity and potentially fetches a cloud attestation document (e.g., <strong>AWS Nitro Attestation Document</strong>) that includes the challenge nonce.
+ The <strong>Workload Identity Manager</strong> (or a delegated verifier) validates the cloud provider's signature and the vTPM Quote (potentially mapped to the COSE signature over the CBOR document), ensuring the VM is running in a trusted environment before issuing the SVID.</t>
+<t><strong>Periodic re-attestation:</strong> The Workload Identity Agent's SVID has a short programmable TTL (e.g., 30 seconds) and is periodically re-issued. This high-frequency renewal typically uses the <strong>Fast Path</strong> (see Section 10.4), utilizing cached &quot;last-known-good&quot; attestation results provided by the Host Management Plane. This ensures that the workload identity is functionally &quot;sticky&quot; to the verified residence without requiring a heavyweight OOB hardware quote every 30 seconds. A full OOB refresh (Medium/Slow paths) is triggered on a slower cadence or upon detection of &quot;drift signals&quot; (firmware changes, unauthorized binary loads, or hardware inventory mismatches).</t>
+<t>This fusion achieves several properties:</t>
+
+<ol spacing="compact">
+<li><strong>Cryptographic Binding:</strong> The Host Management Plane produces an Attestation Result that binds the workload identity proof (N_fusion) to the host platform integrity proof (N_platform), preventing an attacker from combining a valid workload credential with a compromised host.</li>
+<li><strong>Continuous assurance:</strong> The short SVID TTL ensures that identity renewal is contingent on the continuous health of the platform as monitored by the Host Management Plane.</li>
+<li><strong>Automatic revocation:</strong> If the platform fails attestation or a drift signal is detected, the Host Management Plane invalidates the cached result, causing the Workload Identity Manager to refuse SVID renewal, which effectively revokes the workload's identity.</li>
+<li><strong>Defense in depth:</strong> The OOB path ensures that even if the in-band Workload Identity Agent or Keylime Agent is compromised, the management processor's independent TPM Quote reveals the true platform state.</li>
+</ol>
+</section>
+
+<section anchor="privacy-options-for-tpm-based-attestation"><name>Privacy Options for TPM-Based Attestation</name>
+<t>From a privacy standpoint, sharing TPM details--especially the EK certificate--across organizational boundaries can be problematic. Below are two approaches that let you attest workload identities without exposing raw EK data.</t>
+
+<ul spacing="compact">
+<li><t>Option 1 -- Pseudonymity:</t>
+
+<ul spacing="compact">
+<li>Only the Workload Identity Agent's TPM APP public key and Host identity agent's (e.g. Keylime agent) TPM AK public key are shared outside the host-owner organization.</li>
+<li>The consuming organization's <strong>Workload Identity Manager</strong> verifies that AK against its own list of trusted AK public keys.</li>
+<li>A unique TPM AK is generated and attested per tenant, so no single AK maps across tenants.</li>
+<li>Supported by all TPM 2.0+ devices, this gives you per-tenant pseudonymity without ever revealing the EK.</li>
+</ul></li>
+<li><t>Option 2 -- Full Anonymity:</t>
+
+<ul spacing="compact">
+<li>Leverage TPM 2.0+ Direct Anonymous Attestation (DAA) or EPID. Note that this requires TPM 2.0+ devices with DAA support.</li>
+<li>Each host's TPM runs the DAA Join protocol with a Privacy CA to obtain a group credential.</li>
+<li>The Workload Identity Agent signs its public key with that DAA credential (using a session-specific basename).</li>
+<li>The <strong>Workload Identity Manager</strong> verifies the signature against the DAA group public key--proving membership without exposing or linking any device identity.</li>
+</ul></li>
+<li>Both options remove direct TPM EK exposure. Pseudonymity uses the standard TPM AK model, while TPM DAA offers unlinkable, anonymous proofs of TPM possession.</li>
+</ul>
+</section>
+</section>
+
+<section anchor="geolocation-hw-based-attestation-layer-3"><name>Geolocation HW-Based Attestation (Layer 3)</name>
+<t>This section describes how the geolocation of an attested host is verified using hardware sensors. Geolocation attestation is layered on top of TPM Platform Attestation (Layer 2)--a successful TPM platform attestation is a prerequisite for geolocation attestation, because the geolocation sensor identities are cryptographically bound to the host TPM identity.</t>
+
+<section anchor="overview-1"><name>Overview</name>
+<t>Geolocation HW-Based Attestation establishes two additional properties beyond TPM Platform Attestation:</t>
+
+<ol spacing="compact">
+<li><strong>Sensor Integrity:</strong> The geolocation sensors (GNSS, mobile modem) attached to the host are genuine, their firmware is measured (e.g., via <strong>SPDM</strong> or secure OOB retrieval), and their identities (sensor hardware ID, IMEI, IMSI) are bound to the host TPM EK.</li>
+<li><strong>Geographic Location:</strong> The host is located within an approved geographic boundary, as determined by a tiered evidence model (see Section 11.2) cross-verified with independent sources.</li>
+</ol>
+</section>
+
+<section anchor="sensor-composition-and-binding-to-tpm-ek"><name>Sensor Composition and Binding to TPM EK</name>
+<t>The <strong>Host Management Plane</strong> geolocation sensor composition manager runs outside of the host. In addition to obtaining location from device location sources (e.g., GNSS), it connects to mobile location service providers (e.g., Telefonica) using the GSMA Location API.
+The process described below is run at a programmable interval (e.g., every 5 minutes) to check if the host hardware composition has changed. Host hardware composition comprises TPM EK, GNSS sensor hardware ID, mobile sensor hardware ID (IMEI), and mobile-SIM IMSI. <strong>Sensor Firmware Measurement</strong> SHOULD be performed via the <strong>Security Protocol and Data Model (SPDM) [[DMTF-SPDM]]</strong> or by retrieving firmware hashes directly from the sensor's secure enclave via the management processor (OOB). Note that this workflow is feasible only in enterprise environments where the host hardware is owned and managed by the enterprise.</t>
+
+<ol spacing="compact">
+<li>The Workload Identity Agent periodically gathers host composition details (e.g., mobile sensor hardware ID (IMEI), mobile-SIM IMSI) and sends them to the <strong>Host Management Plane</strong>.</li>
+<li>The <strong>Host Management Plane</strong> cross-verifies that the components of the host are still intact or detects if anything has been removed.
+Plugging out components can decrease the quality of location. Note that e-SIM does not have the plugging out problem like standard SIM but could be subject to e-SIM swap attack.</li>
+</ol>
+</section>
+
+<section anchor="geolocation-gathering-workflow"><name>Geolocation Gathering Workflow</name>
+<t>The process described below is run at a programmable interval (e.g., every 30 seconds for frequently mobile hosts such as smartphones; every 5 minutes for less frequently mobile hosts such as laptops; every 50 minutes for stationary hosts) to check if the host's location has changed and to obtain an attested location.</t>
+
+<ol spacing="compact">
+<li><t>The Workload Identity Agent gathers the location using the geolocation plugin. This collection occurs:</t>
+
+<ul spacing="compact">
+<li>(a) Directly from host-local location sensors (e.g., GNSS), which provide a hardware-rooted location reading.</li>
+<li>(b) Via existing Operating System (OS) APIs, which gather a composite location from location providers (e.g., Google, Apple).
+Location has a quality associated with it. For example, IP address-based or Wi-Fi-based location is of lower quality compared to other sources.</li>
+</ul></li>
+<li>For each of the registered workload IDs (or website URL), based on the configured location policy (precise, approximated within a fixed radius, geographic region-based indicating city/state/country - see OPEN ISSUES 2), the location is converted appropriately to a workload ID-specific location. For thin clients (browser clients), the workload ID is the website URL. This ensures that the privacy of the workload is preserved while still allowing for geolocation enforcement.</li>
+<li><t>All the above details are captured in the Geolocation Information Cache which contains the following fields:</t>
+
+<ol spacing="compact">
+<li>Time of collection (timestamp)</li>
+<li><t>Workload ID specific location details for each client workload where each entry contains:</t>
+
+<ol spacing="compact">
+<li>client workload ID - relevant for thick clients (e.g. Microsoft Teams client)</li>
+<li>server workload ID (or website URL) - relevant for thin clients (e.g. Microsoft Teams browser version)</li>
+<li>client location type (e.g. precise, approximated, geographic region based)</li>
+<li>client location (e.g. latitude/longitude, city/state/country)</li>
+<li>client location quality (e.g. GNSS, mobile network, Wi-Fi, IP address)</li>
+</ol></li>
+</ol></li>
+</ol>
+<t>It is important to note that the Geolocation Information Cache is kept in the Workload Identity Agent memory and is not stored on disk. The information is refreshed periodically to ensure that the location is up-to-date. This information is used only by workloads in the host and never leaves the host.</t>
+<t>If the location is gathered only using existing OS APIs, it may be done in the workload (thick client) or browser extension (thin client). The Geolocation Information Cache is stored in thick client memory (relevant only to specific client) or browser extension memory (relevant to all thin clients and indexed using user in OAuth bearer token/server website URL).</t>
+</section>
+
+<section anchor="deployment-option-a-host-os-based-keylime-1"><name>Deployment Option A: Host OS-Based (Keylime)</name>
+<t>In this option, the Keylime agent collects geolocation sensor data on the host OS and MAY extend TPM PCR 15 with a hash of the <strong>Geolocation State</strong> (e.g., approved Zone ID or Policy Revision), binding the coarse location state to the TPM attestation. Per-request location freshness MUST NOT rely on PCR accumulation.</t>
+
+<section anchor="architecture-3"><name>Architecture</name>
+
+<ol spacing="compact">
+<li><t><strong>Keylime Agent (on host):</strong> In addition to its TPM attestation role (Layer 2), the agent interfaces with GNSS sensors and mobile modems attached to the host. It collects:</t>
+
+<ul spacing="compact">
+<li><strong>TPM-Attested Data (Mobile):</strong> sensor_id, sensor_imei, sim_imsi.</li>
+<li><strong>TPM-Attested Data (Location):</strong> sensor_id, sensor_serial_number, latitude, longitude, accuracy.</li>
+<li><strong>NOT TPM-Attested:</strong> sim_msisdn (looked up from sidecar database using IMEI+IMSI composite key).</li>
+</ul></li>
+<li><strong>PCR Usage (OPTIONAL)</strong>: If a deployment uses PCRs to reflect geolocation state, it MUST specify (a) which PCR index(es), (b) reset semantics, and (c) how the verifier computes the expected PCR value across multiple extends. Per-request freshness MUST use TPM Quote qualifying data (nonce). PCR extension is not a substitute for nonce freshness, because PCR values accumulate across extends.</li>
+<li><strong>Geolocation Freshness Binding (REQUIRED)</strong>: The <strong>Host Management Plane</strong> SHALL provide a fresh nonce. The Prover SHALL pass that nonce as the TPM2_Quote qualifying data (aka &quot;qualification&quot;). The <strong>Host Management Plane</strong> SHALL verify that the qualifying data embedded in the Quote equals the nonce it issued.</li>
+<li><strong>Geolocation Integrity Binding (RECOMMENDED)</strong>: The Prover SHALL transmit geolocation evidence as a signed object from the location source (preferred) or from the OOB management processor (acceptable). The Prover SHALL include <tt>geo_hash = Hash(canonical(geo_evidence))</tt> as a claim in the signed evidence envelope presented to the <strong>Host Management Plane</strong>.</li>
+<li><t><strong>Host Management Plane (external)</strong>: On attestation request, the <strong>Host Management Plane</strong>:</t>
+
+<ul spacing="compact">
+<li>Contacts the Keylime agent to fetch geolocation with the challenge nonce.</li>
+<li>Validates that the nonce matches (freshness/TOCTOU protection).</li>
+<li>Validates the geolocation integrity binding (signed evidence) or PCR 15 value against the expected state hash.</li>
+<li>Cross-verifies the claimed location against the mobile network operator's location service (GSMA/CAMARA API) using the IMEI/IMSI from the TPM-attested data.</li>
+</ul></li>
+</ol>
+</section>
+
+<section anchor="mobile-location-verification-optional"><name>Mobile Location Verification (OPTIONAL)</name>
+<t>A mobile location verification microservice acts as a thin CAMARA API wrapper. If used, operator cross-verification SHALL be optional and SHALL support &quot;fail-soft&quot; modes (do not hard-fail solely due to operator API unavailability). The system MUST minimize exposure of IMEI/IMSI/MSISDN by keeping them within the <strong>Host Management Plane</strong> trust domain and using hashed or tokenized identifiers wherever possible.</t>
+</section>
+
+<section anchor="advantages-3"><name>Advantages</name>
+
+<ul spacing="compact">
+<li>Reuses the same Keylime infrastructure as Layer 2.</li>
+<li>PCR 15 binding provides cryptographic linkage between geolocation and TPM identity.</li>
+<li>Mobile network cross-verification mitigates GNSS spoofing.</li>
+</ul>
+</section>
+
+<section anchor="limitations-3"><name>Limitations</name>
+
+<ul spacing="compact">
+<li>Requires GNSS sensor and/or mobile modem to be physically attached to the host.</li>
+<li>Host OS compromise could potentially affect sensor readings before they are extended into the PCR (mitigated by TPM binding and cross-verification).</li>
+</ul>
+</section>
+</section>
+
+<section anchor="deployment-option-b-out-of-band-geolocation-overlay-on-layer-2-option-b"><name>Deployment Option B: Out-of-Band Geolocation (Overlay on Layer 2 Option B)</name>
+<t>In this option, geolocation attestation is <strong>layered directly on top of TPM Platform Attestation Option B</strong>. The geolocation sensors (GNSS, mobile modems) are connected to or accessible from the same management processor (BMC/iLO) used for OOB TPM attestation. This provides a completely out-of-band geolocation attestation path that is independent of the host OS and CPU.</t>
+<t>This architecture is critical for geolocation integrity because a compromised Host OS could feed spoofed GNSS coordinates to an in-band agent. By routing sensor readings through the management processor's isolated hardware path, the geolocation data is collected and attested without any Host OS involvement.</t>
+
+<section anchor="architecture-4"><name>Architecture</name>
+
+<ol spacing="compact">
+<li><strong>Integrated Management Interface:</strong> The management processor (BMC/iLO) interfaces with geolocation sensors through dedicated I/O channels (e.g., I2C, SPI, or side-band USB).</li>
+<li><t><strong>Sensor Metadata Attestation:</strong> The management processor inventories the geolocation hardware at every boot and records:</t>
+
+<ul spacing="compact">
+<li><strong>Sensor Serial Number:</strong> Ensuring the physical sensor has not been substituted.</li>
+<li><strong>Hardware and Firmware Versions:</strong> Verifying that the sensor is running approved and patched firmware.</li>
+</ul></li>
+<li><t><strong>Periodic Location Data Gathering:</strong> The management processor periodically (e.g., every 30 seconds) queries the sensors for:</t>
+
+<ul spacing="compact">
+<li><strong>Geolocation Data:</strong> Latitude, Longitude, and Accuracy.</li>
+<li><strong>Mobile Identifiers:</strong> IMEI (Hardware ID), IMSI (SIM ID), and MSISDN (Subscriber identity lookup).</li>
+</ul></li>
+<li><strong>OOB Attestation Pipeline:</strong> The management processor signs these details with its identity key (OEM CA-chained) and includes them as attested claims in the evidence forwarded to the <strong>Host Management Plane</strong>. The hash of the <strong>Geolocation State</strong> (e.g., Zone ID) MAY be extended into the TPM via the management processor's dedicated TPM bus (PCR 15) to reflect the baseline configuration.</li>
+</ol>
+</section>
+
+<section anchor="technical-implementation"><name>Technical Implementation</name>
+<t>Monitoring and gathering geolocation data in Option B is performed over dedicated hardware interfaces:
+* <strong>Dedicated I2C/SPI Sensor Bus:</strong> iLO acts as a master to query GNSS sensor registers for coordinates and hardware IDs independently of the host CPU.
+* <strong>Mobile Modem Side-band Interface:</strong> The management processor interacts with the mobile modem's AT command interface or QMI/MBIM bus over a private management channel to retrieve IMEI, IMSI, and cell-tower triangulation metadata.
+* <strong>Silicon Root of Trust for Sensors:</strong> Sensor firmware is verified by the management processor during initialization to prevent firmware-level geolocation spoofing (e.g. &quot;Virtual GPS&quot; injection).</t>
+</section>
+
+<section anchor="advantages-4"><name>Advantages</name>
+
+<ul spacing="compact">
+<li><strong>Deep Isolation:</strong> Geolocation readings are hardware-isolated from the host OS -- immune to host-level malware and GNSS spoofing at the OS layer.</li>
+<li><strong>Unified Evidence:</strong> The same out-of-band TPM Quote that detects IMA/kernel subversion (Layer 2) also verifies the geolocation PCR (Layer 3), providing a single hardware-attested evidence bundle.</li>
+<li><strong>Hardware Inventory Binding:</strong> Detects unauthorized swaps of sensors or SIM cards through serial number and identity tracking.</li>
+<li><strong>Suitable for High-Security Environments:</strong> Ideal for defense, critical infrastructure, and high-assurance mobile deployments.</li>
+</ul>
+</section>
+
+<section anchor="limitations-4"><name>Limitations</name>
+
+<ul spacing="compact">
+<li>Requires management processor with specific geolocation sensor I/O capabilities.</li>
+<li>Vendor-specific sensor and modem integration.</li>
+<li>Management processor firmware must remain in a trusted state.</li>
+</ul>
+<t>Regardless of the deployment option, the composite geolocation process follows a tiered evidence model to produce a quality-scored location claim. Higher tiers provide stronger resistance to spoofing and relocation attacks:</t>
+
+<ol spacing="compact">
+<li><strong>Tier 1: Logical GNSS Reading (Unauthenticated)</strong>: Direct location from GNSS sensors (e.g., NMEA strings over serial). Resists simple OS-level software spoofing if collected OOB, but is highly susceptible to RF-level spoofing.</li>
+<li><strong>Tier 2: Authenticated GNSS Report (Sensor-Signed)</strong>: Readings signed by the sensor hardware itself (e.g., u-blox Sec-Sign). Resists data-in-transit manipulation between sensor and verifier.</li>
+<li><strong>Tier 3: Network-Verified Location (Network-Attested)</strong>: Location corroborated by a mobile network operator via GSMA/CAMARA API (cell-tower triangulation). Resists RF-level GNSS spoofing by providing an independent, non-GPS truth source.</li>
+<li><strong>Tier 4: Physical Endorsement (Auditor-Mediated)</strong>: A cryptographically verifiable physical position claim from a human auditor (see Fallback below). Provides rack-level precision where GNSS is unavailable.</li>
+</ol>
+<t><strong>Auditor-Mediated Fallback</strong>: When no geolocation sensor is available, the sensor is offline, or the GNSS signal is weak (e.g., data center hosts deep inside a building), an auditor-mediated endorsement can provide a cryptographically verifiable physical position claim. As described in [[I-D.richardson-rats-pop-endorsement]], a human auditor physically visits the device, connects via a USB or serial console cable, and collects a signed Entity Attestation Token (EAT) from the device's TPM Attestation Key.</t>
+<t>The auditor then creates a signed Endorsement binding the device identity to its physical position (e.g., &quot;Building 4, Aisle 37, Cabinet 9, Rack Unit 2-3&quot;). This endorsement is periodically renewed through re-audit and provides a level of position precision (rack-level) that GPS cannot achieve indoors. The endorsement can be loaded directly into the device and passed along with Evidence to a Verifier.</t>
+<t><strong>Composite Location</strong>: The system fuses these tiers, producing a composite location with a quality score. Discrepancies between sources (e.g., Tier 1 and Tier 3 disagreement) MUST trigger an immediate trust failure or fallback to a more restrictive policy.</t>
+<t>Policy enforcement can then use the composite location to verify that the host is within the approved geographic boundary defined by the geofence policy.</t>
+</section>
+</section>
+
+<section anchor="privacy-preserving-geolocation-verification-zkp"><name>Privacy-Preserving Geolocation Verification (ZKP)</name>
+<t>As an alternative to sharing precise geolocation coordinates, a Zero-Knowledge Proof (ZKP) can be used to prove that a host is within an approved geographic boundary <strong>without revealing its exact location</strong>. This &quot;Audit without Disclosure&quot; pattern, as described in [[AegisSovereignAI]], is particularly important for sovereignty-sensitive deployments where even the Verifier should not learn the Prover's precise coordinates.</t>
+
+<section anchor="architecture-5"><name>Architecture</name>
+<t>The ZKP geolocation verification separates the problem into three components:</t>
+
+<ol spacing="compact">
+<li><strong>The Circuit (Shared Code):</strong> A fixed, publicly auditable piece of cryptographic logic that implements the distance formula (e.g., Haversine). Both the Prover and Verifier compile this circuit, producing a Proving Key and a Verifying Key respectively. The circuit encodes the rule: <em>&quot;Given a center point, a radius, and a private location, output True only if the private location is within the radius of the center point.&quot;</em></li>
+<li><strong>The Public Input (Geofence Policy):</strong> The geofence definition—center latitude/longitude and radius—is passed as a <strong>Public Input</strong> to both the Prover and the Verifier. Because the policy is public, it can be dynamically updated (e.g., &quot;workload must now be within the Frankfurt region instead of Dublin&quot;) without re-compiling the circuit.</li>
+<li><strong>The Private Witness (Actual Location):</strong> The Prover's actual GPS coordinates (latitude, longitude) are the <strong>Private Witness</strong>. These never leave the Prover. The Prover uses the private witness and the public policy to generate a succinct proof string.</li>
+</ol>
+</section>
+
+<section anchor="verification-flow"><name>Verification Flow</name>
+
+<ol spacing="compact">
+<li>The Prover (e.g., edge node or cloud workload) collects its attested geolocation from Layer 3 (via Option A or Option B).</li>
+<li>The Prover runs the ZKP Proving algorithm with: (a) the geofence policy as public input, (b) its actual coordinates as the private witness, and (c) the shared circuit logic.</li>
+<li>The Prover produces a succinct <strong>proof string</strong> (e.g., tens of kilobytes for FRI-based proofs) and sends it to the Verifier along with the public inputs.</li>
+<li>The Verifier runs the ZKP Verification algorithm using only the proof string, the public inputs (the geofence policy), and the Verifying Key. The Verifier learns only &quot;True&quot; (the Prover is within the geofence) or &quot;False&quot; (the Prover is not), and mathematically cannot extract the Prover's actual coordinates from the proof.</li>
+</ol>
+</section>
+
+<section anchor="integration-with-the-attestation-layers"><name>Integration with the Attestation Layers</name>
+<t>The ZKP geolocation proof can be included as an additional claim in the SPIRE SVID during workload identity fusion.</t>
+<t><strong>ZKP Binding (REQUIRED)</strong>: The Prover SHALL bind the ZKP proof to the attestation session by including <tt>H(proof || public_inputs || nonce || timestamp || geo_hash)</tt> inside the signed evidence envelope that the Verifier validates for the same nonce. The Verifier SHALL reject proofs not bound to the current nonce.</t>
+<t><strong>Proof Size (REALISTIC)</strong>: Proof sizes depend on the proof system and parameters and MAY be tens of kilobytes (e.g., Plonky2/FRI proofs). Implementations MUST NOT assume a &quot;few hundred bytes.&quot;</t>
+<t><strong>SVID Reference</strong>: The SVID SHOULD contain only a compact reference (hash/URI) to the proof, not the proof itself.</t>
+
+<ul spacing="compact">
+<li>The <strong>TPM Quote</strong> (Layer 2) proves the host's software and hardware integrity.</li>
+<li>The <strong>ZKP Proof</strong> (Layer 3) proves the host's geographic compliance.</li>
+<li>Neither the exact location nor the raw IMA measurements need to cross organizational boundaries—only the cryptographic proofs.</li>
+</ul>
+<t>This is especially valuable for cross-organizational and cross-sovereign attestation, where a Verifier in one jurisdiction must confirm that a workload in another jurisdiction is compliant without gaining access to sensitive operational telemetry.</t>
+</section>
+
+<section anchor="comparison-precise-location-vs-zkp"><name>Comparison: Precise Location vs. ZKP</name>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Precise Location Sharing</th>
+<th>ZKP Geolocation Proof</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><strong>Verifier Learns</strong></td>
+<td>Exact lat/long coordinates</td>
+<td>Only &quot;inside&quot; or &quot;outside&quot; the geofence</td>
+</tr>
+
+<tr>
+<td><strong>Privacy</strong></td>
+<td>Low (full location disclosed)</td>
+<td>High (location remains private)</td>
+</tr>
+
+<tr>
+<td><strong>Policy Updates</strong></td>
+<td>Re-query with new policy</td>
+<td>Change public input; circuit unchanged</td>
+</tr>
+
+<tr>
+<td><strong>Proof Size</strong></td>
+<td>Variable (full coordinates + signature)</td>
+<td>Succinct (e.g., tens of kilobytes)</td>
+</tr>
+
+<tr>
+<td><strong>GDPR/Sovereignty</strong></td>
+<td>May conflict with data minimization</td>
+<td>Compliant by design</td>
+</tr>
+
+<tr>
+<td><strong>Cross-Org Sharing</strong></td>
+<td>Requires trust in recipient</td>
+<td>&quot;Audit without Disclosure&quot;</td>
+</tr>
+</tbody>
+</table></section>
+
+<section anchor="mathematical-transparency-and-post-quantum-foundation"><name>Mathematical Transparency and Post-Quantum Foundation</name>
+<t>A critical requirement for sovereign infrastructure is the elimination of Trusted Third Parties (TTPs). Legacy ZKP systems (Gen 3, e.g., Groth16) often required a &quot;Trusted Setup&quot; phase to generate cryptographic parameters. If the secret data (the &quot;Toxic Waste&quot;) from this setup was not properly destroyed, the system's integrity could be compromised.</t>
+<t>As described in [[AegisSovereignAI]], this attestation framework leverages <strong>Gen 4 ZKP (e.g., Plonky2/FRI-based)</strong> to achieve mathematical transparency and future-proof security:</t>
+
+<ol spacing="compact">
+<li><strong>No Trusted Setup:</strong> Verification is based on hash-based STARKs and PLONKish arithmetization. There are no secret parameters to manage or destroy, eliminating the TTP risk entirely.</li>
+<li><strong>Verification without Trust:</strong> An auditor only needs to inspect the open-source circuit code. The mathematical validity of the proof is self-contained and requires no external &quot;Root of Trust&quot; beyond the public circuit definition and the underlying hash function.</li>
+<li><strong>Post-Quantum Cryptography (PQC) Foundation:</strong> By utilizing hash-based verification (specifically the Fast Reed-Solomon Interactive Proof of Proximity, or FRI, protocol), this <strong>specific zkp layer</strong> establishes a foundation for resistance against future quantum computing threats. It is important to note that while the ZKP proofs are post-quantum friendly, the overall end-to-end chain of trust still utilizes classical primitives (e.g., RSA/ECC for TPM Attestation Keys and TLS transports) which will require future upgrades to a fully PQ-secure posture.</li>
+</ol>
+<t>This ensures that the geofencing framework is not only privacy-preserving but also sovereign and resilient against advanced cryptographic threats.</t>
+</section>
+</section>
+</section>
+
+<section anchor="scaling-the-solution"><name>Scaling the Solution</name>
+<t>Having a geolocation sensor on every host is not scalable from a deployment and management perspective and can be cost prohibitive. In the case of end user hosts, the geolocation sensor can be on a mobile host (e.g., smartphone with Mobile network capabilities and optionally GNSS capabilities) which can be leveraged by a laptop/desktop host which is proximal to the mobile host. The mobile host serves as the location anchor host. In the case of data center hosts, the geolocation sensor can be on a host with Mobile network and/or GNSS capabilities which can be leveraged by other data center hosts. This host serves as the location anchor host.</t>
+
+<section anchor="end-user-location-anchor-host"><name>End user location anchor host</name>
+<t>The goal is to provide an easy-to-use wireless solution that can be used by end users without requiring them to install a geolocation sensor on their laptop/desktop host.</t>
+<t>The smartphone can be used as a location anchor host for the laptop/desktop host. The smartphone connects to the laptop/desktop host using Bluetooth Low Energy (BLE) or Ultra-Wideband (UWB) technology and continuously measures the following:</t>
+
+<ul spacing="compact">
+<li>signal strength of the laptop/desktop host</li>
+<li>round-trip time (RTT) between the smartphone and laptop/desktop host</li>
+</ul>
+<t>Host proximity manager periodically verifies that the smartphone provides proof that the laptop/desktop host is in proximity using the measured signal strength and RTT.</t>
+</section>
+
+<section anchor="data-center-location-anchor-host"><name>Data center location anchor host</name>
+<t>The goal is to provide an easy-to-use solution that can be used by data center operators without requiring them to install a geolocation sensor on every data center host.</t>
+<t>PTP is a network protocol that enables precise synchronization of clocks across a computer network and can be used to measure the round-trip time (RTT) between the location anchor host and other data center hosts with sub-microsecond accuracy. To provide cryptographically verifiable proof of residency on the host -- referred to as &quot;attested PTP&quot; -- the PTP software/hardware can be enhanced so that all PTP messages are signed with a private key.</t>
+<t>This signing can be done in two ways:</t>
+
+<ul spacing="compact">
+<li>Software-based: PTP software (e.g. Linux PTP daemon), after adding timestamp to PTP message, signs the PTP message with its private key -- Linux PTP daemon is a workload managed by workload identity manager. This approach may not provide sub-microsecond accuracy due to inherent software jitter, but it can still provide a reasonable approximation of the proximity of the other data center hosts to the location anchor host.</li>
+<li>Hardware-based: PTP hardware (e.g., SmartNIC), after adding timestamp to PTP message, signs the PTP message with its private key (e.g., SmartNIC DPU). The corresponding public key, used to verify the signatures, can be attested by the Host TPM Attestation Key (AK). This approach provides sub-microsecond accuracy and the perfect proximity measure of the other data center hosts to the location anchor host, and is suitable for data center environments where precise timing is critical.</li>
+</ul>
+<t>Host proximity manager periodically verifies that the PTP daemon in the location anchor hosts provide proof that the PTP daemon in the application hosts are within the maximum DC round-trip delay from them. The PTP daemon is another workload managed by the workload identity manager.</t>
+<t>Note that attested PTP is a proposed enhancement to the existing PTP hardware and software. For a detailed specification of hardware-rooted attestation for PTP, including verifiable residency and proximity proofs, see [[I-D.ramki-ptp-hardware-rooted-attestation]].</t>
+<t>All geolocation information captured at this layer (Layer 3) is intended for consumption by the Workload Identity Agent. The conveyance of this information in the data plane (e.g., via HTTP headers or within SVIDs) and the associated Proof of Residency (PoR) bindings for various protocols are handled in [[I-D.mw-wimse-transitive-attestation]].</t>
+</section>
+</section>
+
+<section anchor="confidential-computing-considerations"><name>Confidential Computing Considerations</name>
+<t>In confidential computing, the host operating system cannot be trusted. Instead, the platform owner must maintain and verify the relationships between three hardware identifiers:</t>
+
+<ul spacing="compact">
+<li><t>Hardware-rooted certification key -- Vendor-issued, CPU-bound asymmetric key pair used to either sign attestation evidence directly (AMD VCEK) or certify an attestation signing key (Intel PCK). Always anchored in the vendor's root CA.</t>
+
+<ul spacing="compact">
+<li>AMD SEV-SNP &quot;Versioned Chip Endorsement Key -- VCEK&quot; is defined in the AMD SEV-SNP ABI specification (Chapter 1, Glossary, Table 2).</li>
+<li>Intel TDX, &quot;Provisioning Certification Key -- PCK&quot; is defined in the Intel TDX DCAP Quoting Library API documentation (Page 6, Table 1-1: Terminology). Role: Certifies the Attestation Key inside the TDX Quoting Enclave, which signs the quote.</li>
+</ul></li>
+<li>TPM Endorsement Key (EK)</li>
+<li>Geolocation Sensor ID + public key</li>
+</ul>
+<t>Proof of Residency:</t>
+
+<ul spacing="compact">
+<li>The confidential workload generates a hardware attestation that includes its hardware-rooted certification key.</li>
+<li>The platform owner receives this attestation and binds the reported hardware-rooted certification key to the TPM EK.</li>
+<li>This binding produces a cryptographic proof that the workload is running on the expected physical CPU.</li>
+</ul>
+<t>Proof of Geolocation:</t>
+
+<ul spacing="compact">
+<li>The geolocation sensor creates a signed location report using its private key. This is supported in popular GNSS sensors such as u-blox.</li>
+<li>An agent on the bare-metal host periodically polls the sensor and collects these signed reports.</li>
+<li>The platform owner maps each sensor's ID and its signed geolocation to the corresponding CPU ID and TPM EK.</li>
+<li>This mapping yields a verifiable proof that the workload is executing at the claimed physical location.</li>
+</ul>
+<t>Note: The Intel SGX Attestation Service utilizing the Enhanced Privacy ID (EPID) group-signature mechanism is a legacy, privacy-preserving attestation path. Intel has announced that this service will reach end-of-life on April 2 2025, after which EPID-based attestation will no longer be supported. This discussion focuses on current attestation models (e.g., ECDSA-based DCAP for SGX and PCK-based attestation for TDX) and excludes EPID/DAA from scope. ECDSA-based DCAP for SGX and PCK-based attestation for TDX are closely related in structure and trust model -- both are part of Intel's Data Center Attestation Primitives (DCAP).</t>
+</section>
+
+<section anchor="solution-mapping-to-industry-gaps"><name>Solution Mapping to Industry Gaps</name>
+<t>This section maps the layered attestation framework to the industry gaps identified in the Industry Gaps section.</t>
+
+<ul>
+<li><t><strong>Host TPMs for Signature</strong> challenges are addressed by Layer 2 (TPM Platform Attestation): The Workload Identity Agent private key is used for signing, and the Workload Identity Agent public key is signed by the Host TPM APP private key providing a cryptographically verifiable proof of residency of the Workload Identity Agent on the host. Workloads use the Workload Identity Agent to sign requests, avoiding the TPM performance bottleneck (approximately 5 signatures/second).</t>
+</li>
+<li><t><strong>Bearer Tokens</strong>, <strong>PoP Token</strong>, <strong>PoP via Mutual TLS</strong> challenges are addressed by the Workload Identity Agent's ability to provide a cryptographically verifiable proof of residency (Layer 2) which can be consumed by the protocol flows defined in [[I-D.mw-wimse-transitive-attestation]].</t>
+</li>
+<li><t><strong>IP Address-Based Location</strong> and <strong>Wi-Fi-Based Location</strong> challenges are addressed by Layer 3 (Geolocation HW-Based Attestation): Combination of host-local location sensors (e.g., GNSS) with direct hardware-based attestation and mobile network location services provides a more reliable and cryptographically verifiable location than IP address, Wi-Fi-based methods or existing Host OS location services.</t>
+</li>
+<li><t><strong>Trust in Transit</strong> challenges are addressed by the immutable, hardware-rooted attestation established by the Workload Identity Agent, which provides tamper-evident proof of origin across organizational boundaries.</t>
+</li>
+<li><t><strong>IPSEC</strong> challenges are addressed via the PoR mechanism described in [[I-D.mw-wimse-transitive-attestation]], which binds the IKEv2 exchange to the host-level attestation provided by the Workload Identity Agent.</t>
+</li>
+</ul>
+</section>
+
+<section anchor="authorization-policy-implementers"><name>Authorization Policy Implementers</name>
+<t>Policy implementers use attested geographic boundary from Workload to make decisions. Example implementers:</t>
+
+<ul spacing="compact">
+<li>Intermediate proxies (e.g., API gateway, Firewall)</li>
+<li>SaaS application.</li>
+<li>K8s node agent.</li>
+<li>OS process scheduler.</li>
+</ul>
+<t>If the policy implementer is at the SaaS application level, things are simpler. However, if it is pushed down to, say, K8s or OS process scheduler or JVM class loader/deserializer, then malware can be prevented (similar to a code-signed application).</t>
+</section>
+
+<section anchor="security-considerations"><name>Security Considerations</name>
+<t>The proposed framework introduces several security considerations that must be addressed to ensure the integrity and trustworthiness of geofencing:</t>
+
+<section anchor="mapping-to-wimse-threat-model"><name>Mapping to WIMSE Threat Model</name>
+<t>This specification provides technical mitigations for several threats identified in the <strong>WIMSE Architecture</strong> [[I-D.ietf-wimse-architecture]]:</t>
+
+<ul spacing="compact">
+<li><strong>Workload Identity Misappropriation</strong>: By binding the Workload Identity Agent identity to Layer 2 TPM platform attestation, this framework ensures that a Workload Identity Agent identity (and the SVIDs it issues) cannot be misappropriated or exported to an unverified or untrusted host.</li>
+<li><strong>Compromised Agent/Host</strong>: Deployment Option B (Out-of-Band Management) and Layer 2 attestation (measured boot, IMA) provide detection and mitigation against compromised host operating systems, ensuring that a compromised kernel cannot forge attestation results.</li>
+<li><strong>Bearer Token Theft and Replay</strong>: The &quot;Proof of Residency&quot; established in this draft (and conveyed via the Transitive Attestation draft) prevents stolen bearer tokens from being used outside the verified host environment or geographic boundary.</li>
+<li><strong>Implicit Trust in Infrastructure</strong>: Layer 2 and Layer 3 provide cryptographic &quot;Silicon-to-Audit&quot; proof of physical locality and hardware composition, replacing implicit trust in infrastructure providers with auditable hardware-rooted evidence.</li>
+</ul>
+</section>
+
+<section anchor="technical-security-considerations"><name>Technical Security Considerations</name>
+
+<ul>
+<li><t><strong>TPM and Hardware Trust</strong>: The security of the solution depends on the integrity of the TPM and other hardware roots of trust. Physical attacks, firmware vulnerabilities, or supply chain compromises could undermine attestation. Regular updates, secure provisioning, and monitoring are required.</t>
+</li>
+<li><t><strong>Geolocation Spoofing</strong>: Location sensors (e.g., GPS) are susceptible to spoofing or replay attacks. Use of cryptographically authenticated signals (e.g., Galileo GNSS, mobile network) and cross-verification with multiple sources can mitigate this risk.</t>
+</li>
+<li><t><strong>SIM and e-SIM Attacks</strong>: Physical SIM removal or e-SIM swap attacks can break the binding between device and location. Continuous monitoring of device composition and periodic re-attestation are recommended.</t>
+</li>
+<li><t><strong>Software Integrity</strong>: The geolocation agent and supporting software must be protected against tampering. Use of Linux IMA, secure boot, and measured launch environments helps ensure only approved software is executed.</t>
+</li>
+<li><t><strong>Communication Security</strong>: All attestation and geolocation data must be transmitted over secure, authenticated channels (e.g., TLS) to prevent interception or manipulation.</t>
+</li>
+<li><t><strong>Policy Enforcement</strong>: The enforcement of geofence policies must be robust against attempts by malicious workloads or agents to bypass controls. Policy decisions should be based on verifiable, signed attestation evidence.</t>
+</li>
+<li><t><strong>Time Source Integrity</strong>: Trusted time sources are necessary to prevent replay attacks and ensure the freshness of attestation data.</t>
+</li>
+<li><t><strong>Datastore Security</strong>: The Host hardware identity datastore containing trusted host compositions and location sensor details must be protected against unauthorized access and tampering, using encryption and access controls.</t>
+</li>
+<li><t><strong>Management Processor Security</strong> (Option B): The out-of-band (OOB) path protects against <strong>Host CPU/OS</strong> compromise, but it does not protect against <strong>Management Processor (BMC)</strong> compromise. If the BMC is compromised, an attacker can feed fake TPM quotes and inventory data to the management plane. Mitigations include:</t>
+
+<ul spacing="compact">
+<li><strong>Secure Boot/Update</strong>: Ensuring the BMC only runs OEM-signed firmware.</li>
+<li><strong>Strong Authentication</strong>: Enforcing MFA/certificates for Redfish API access.</li>
+<li><strong>Network Segmentation</strong>: Isolating the management network from the host data network.</li>
+<li><strong>Log Integrity</strong>: Shipping BMC security logs to a remote, immutable audit vault.</li>
+</ul></li>
+</ul>
+</section>
+
+<section anchor="proximity-and-anchor-displacement-layer-4"><name>Proximity and Anchor Displacement (Layer 4)</name>
+<t>Proximity-based location schemes (e.g., smartphone-as-anchor, BLE/UWB, or PTP) introduce relay and displacement risks. An attacker could relay BLE signals across a room or move a &quot;location anchor&quot; host without authorization. Mitigations include:
+- <strong>Timestamp-based Anti-Relay</strong>: Using tight RTT windows (UWB) to ensure physical proximity.
+- <strong>Anchor Disagreement Policy</strong>: If a host is seen by multiple anchors, their positions MUST agree within a configured tolerance; otherwise, the host is treated as unverified.
+- <strong>Anchor Integrity</strong>: The anchor device itself (e.g., smartphone) MUST be subject to its own attestation and health checks before it can serve as a truth source.</t>
+<t>By addressing these considerations, the framework aims to provide a secure and reliable foundation for verifiable geofencing in diverse deployment environments.</t>
+</section>
+</section>
+
+<section anchor="iana-considerations"><name>IANA Considerations</name>
+<t>This document has no IANA actions.</t>
+</section>
+
+<section anchor="appendix-items-to-follow-up"><name>Appendix - Items to follow up</name>
+
+<section anchor="open-issues-1-native-ima-re-triggering-partially-addressed"><name>OPEN ISSUES 1: Native IMA re-triggering (Partially Addressed)</name>
+<t>Standardizing the mechanism for re-evaluating IMA measurements upon executable restart without system reboot is still an area of active development in the Linux kernel. This specification currently relies on the Verifier detecting restarts via the IMA log stream.</t>
+</section>
+
+<section anchor="open-issues-2-location-privacy-options"><name>OPEN ISSUES 2: Location privacy options</name>
+<t>The current approach includes some location privacy options for the geolocation in the Geolocation Information Cache. This may need to be expanded further in the future.</t>
+</section>
+
+<section anchor="open-issues-3-attested-ptp-partially-addressed"><name>OPEN ISSUES 3: Attested PTP (Partially Addressed)</name>
+<t>Attested PTP is a software/hardware-based solution using Precision Time Protocol (PTP) for measuring proximity between hosts in a data center. For a detailed specification, see [[I-D.ramki-ptp-hardware-rooted-attestation]]. Standardization of the attested PTP mechanism is ongoing.</t>
+</section>
+
+<section anchor="open-issues-4-geotagging-textual-data"><name>OPEN ISSUES 4: Geotagging textual data</name>
+<t>Popular standard for geotagging photos/videos is EXIF. There is no standard for geotagging textual data. If there is no geolocation tag, data can be stored/processed in non-compliant locations.</t>
+</section>
+
+<section anchor="open-issues-5-attesting-geotags"><name>OPEN ISSUES 5: Attesting Geotags</name>
+<t>There is no standard for attesting (signing) geolocation tag. If geolocation tag is not signed, it can be manipulated through techniques such as VPNs.</t>
+</section>
+</section>
+
+<section anchor="appendix-public-references-for-strict-data-residency-rules"><name>Appendix - Public References for Strict Data Residency Rules</name>
+<t>India -- Reserve Bank of India (RBI): Payment System Data Localization (2018): From RBI Circular RBI/2017-18/153 (April 6, 2018): &quot;All system providers shall ensure that the entire data relating to payment systems operated by them are stored in a system only in India. This data should include the full end-to-end transaction details / information collected / carried / processed as part of the message / payment instruction.&quot;</t>
+<t>South Korea's Data Localization Regulations -- Geospatial Information Management Act (Spatial Data Act): Article 16, Paragraph 1: Prohibits the export of state-led survey data.</t>
+</section>
+
+</middle>
+
+<back>
+
+</back>
+
+</rfc>

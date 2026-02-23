@@ -25,8 +25,9 @@
 <keyword>GNSS</keyword>
 
 <abstract>
-<t>Modern cloud and distributed environments face significant risks from stolen bearer tokens, protocol replay, and trust gaps in transit. This document presents a layered attestation framework for a hardware-dependent Workload Identity Agent (WIA), such as a SPIFFE/SPIRE agent. While the WIMSE architecture assumes a trustworthy agent, it does not specify the normative technical mechanics for its verification. This document fills that gap by covering TPM-based platform attestation (Layer 2) and high-assurance geolocation attestation (Layer 3), integrating out-of-band (OOB) hardware monitoring, cloud-native virtual TPM (vTPM) support, and privacy-preserving Zero-Knowledge Proof (ZKP) verification.</t>
-<t>By binding workload identity to geographic and host-integrity attributes, the framework establishes a &quot;Silicon-to-Audit&quot; chain of trust. This addresses challenges in bearer token theft and data residency while providing a post-quantum cryptographic foundation through mathematical transparency. The solution builds upon the IETF RATS architecture to ensure that only authorized workloads in approved locations can access sensitive services in multi-system environments.</t>
+<t>Modern cloud and distributed environments face significant risks from stolen bearer tokens, protocol replay, and trust gaps in transit. This document defines a <strong>RATS Profile</strong> for high-assurance, hardware-rooted platform and location attestation. It specifies the technical mechanics for verifiable geofencing and host integrity required by the <strong>WIMSE Architecture</strong> [[I-D.ietf-wimse-architecture]] and the <strong>Workload Identity Agent (WIA)</strong>.</t>
+<t>While the WIMSE architecture assumes a trustworthy agent, it does not specify the normative technical mechanics for its verification. This document fills that gap as a specialized RATS profile, covering TPM-based platform attestation (Layer 2) and high-assurance geolocation attestation (Layer 3). It integrates out-of-band (OOB) hardware monitoring, cloud-native virtual TPM (vTPM) support, and privacy-preserving Zero-Knowledge Proof (ZKP) verification to generate <strong>High-Confidence Evidence</strong>.</t>
+<t>By binding identity agent integrity to geographic and host attributes, the framework establishes a &quot;Silicon-to-Audit&quot; chain of trust. This addresses challenges in bearer token theft and data residency while providing a post-quantum cryptographic foundation through mathematical transparency. The solution builds upon the <strong>RATS Architecture [[RFC9334]]</strong> to ensure that only authorized workloads in approved locations can access sensitive services.</t>
 </abstract>
 
 </front>
@@ -86,8 +87,8 @@
 
 <section anchor="introduction"><name>Introduction</name>
 <t>As organizations increasingly adopt cloud and distributed computing, the need to enforce data residency, geolocation affinity, and host affinity has become critical for regulatory compliance and risk management. Traditional approaches rely on trust in infrastructure providers, which are often insufficient in adversarial or multi-tenant environments.</t>
-<t>Modern workload security faces challenges from stolen bearer tokens, protocol replay, and trust gaps in transit. This document defines a layered attestation framework that cryptographically binds workload identity (e.g., SPIFFE SVIDs) to a hardware-verified platform and physical location.</t>
-<t>This framework is part of the broader IETF Workload Identity in Multi System Environments (WIMSE) effort. It provides the hardware-rooted foundation required by the [[I-D.ietf-wimse-architecture]], establishing a &quot;Silicon-to-Audit&quot; chain of trust that ensures sensitive data is only processed by authorized workloads in approved, integral environments. The architecture follows the Remote Attestation Procedures (RATS) framework [[RFC9334]], defining the interactions between Provers, Verifiers, and Relying Parties to establish trust in the Workload Identity Agent (WIA).</t>
+<t>Modern workload security faces challenges from stolen bearer tokens, protocol replay, and trust gaps in transit. This document defines a specialized <strong>RATS Profile</strong> that cryptographically binds the <strong>Workload Identity Agent (WIA)</strong>—the entity responsible for issuing software identities—to a hardware-verified platform and physical location.</t>
+<t>The architecture follows the <strong>RATS Architecture [[RFC9334]]</strong>, defining the interactions between <strong>Provers</strong>, <strong>Verifiers</strong>, and <strong>Relying Parties</strong> to generate and validate <strong>High-Confidence Evidence</strong> regarding the WIA's status. It provides the hardware-rooted &quot;Evidence Layer&quot; required by the high-level <strong>WIMSE Architecture [[I-D.ietf-wimse-architecture]]</strong>, establishing a &quot;Silicon-to-Audit&quot; chain of trust that ensures sensitive data is only processed by authorized workloads in approved, integral environments.</t>
 </section>
 
 <section anchor="relationship-to-transitive-attestation"><name>Relationship to Transitive Attestation</name>
@@ -124,15 +125,15 @@
 <tr>
 <td align="left"><strong>Layer 2</strong></td>
 <td align="left"><strong>Verifiable Geofencing</strong></td>
-<td align="left"><strong>WIMSE/RATS</strong></td>
-<td align="left"><strong>Platform</strong>: Verifies host integrity and WIA hardware residency (TPM).</td>
+<td align="left"><strong>RATS</strong></td>
+<td align="left"><strong>Platform Evidence</strong>: Verifies host integrity and WIA hardware residency (TPM).</td>
 </tr>
 
 <tr>
 <td align="left"><strong>Layer 3</strong></td>
 <td align="left"><strong>Verifiable Geofencing</strong></td>
-<td align="left"><strong>WIMSE/RATS</strong></td>
-<td align="left"><strong>Location</strong>: Verifies physical geography (GNSS/ZKP).</td>
+<td align="left"><strong>RATS</strong></td>
+<td align="left"><strong>Location Evidence</strong>: Verifies physical geography (GNSS/ZKP).</td>
 </tr>
 </tbody>
 </table><t>Together, the complete chain is:</t>

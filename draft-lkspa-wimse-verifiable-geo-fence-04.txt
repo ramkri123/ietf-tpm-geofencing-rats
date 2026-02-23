@@ -55,7 +55,7 @@ Status of This Memo
 
 Krishnan, et al.         Expires 27 August 2026                 [Page 1]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
    Internet-Drafts are working documents of the Internet Engineering
@@ -111,7 +111,7 @@ Table of Contents
 
 Krishnan, et al.         Expires 27 August 2026                 [Page 2]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
      7.2.  End user/IoT hosts - Solution highlights  . . . . . . . .  13
@@ -167,7 +167,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                 [Page 3]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
        9.7.3.  Integration with the Attestation Layers . . . . . . .  36
@@ -223,7 +223,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                 [Page 4]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
    *  *EPID*: Enhanced Privacy ID
@@ -279,7 +279,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                 [Page 5]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
 2.  Introduction
@@ -335,7 +335,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                 [Page 6]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
    *  *Layer 3 -- WIA Geolocation Attestation (Hardware-Dependent):*
@@ -391,7 +391,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                 [Page 7]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
    This document focuses exclusively on Layers 2 and 3: the hardware-
@@ -447,7 +447,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                 [Page 8]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
    compliance with data residency requirements.
@@ -503,7 +503,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                 [Page 9]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
 5.3.  Category 3: Regulatory Compliance
@@ -559,7 +559,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                [Page 10]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
 6.2.2.  Location and Geofencing Challenges
@@ -615,7 +615,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                [Page 11]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
    *  *Option B -- Out-of-Band Management (e.g., HPE iLO):* Validation
@@ -671,7 +671,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                [Page 12]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
       -  This is done using enhancements to existing SPIFFE/SPIRE agent
@@ -727,7 +727,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                [Page 13]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
    +=============+==============+===================+==================+
@@ -783,7 +783,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                [Page 14]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
    *Attestation Report*: The TPM generates an attestation report, which
@@ -839,7 +839,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                [Page 15]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
    1.  The Workload Identity Agent TPM plugin generates a TPM APP
@@ -895,7 +895,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                [Page 16]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
 8.4.  Deployment Option A: Host OS-Based (Keylime)
@@ -951,7 +951,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                [Page 17]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
 8.5.  Deployment Option B: External Management Processor (e.g., HPE iLO)
@@ -1007,7 +1007,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                [Page 18]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
    *  *In-band (Option A):* TPM --[LPC/SPI bus]--> Host CPU/OS --[host
@@ -1063,7 +1063,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                [Page 19]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
    *  *Health and Security State:* The management processor monitors for
@@ -1119,7 +1119,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                [Page 20]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
    *Protection 3 -- IMA Appraisal Mode:* By default, IMA only measures
@@ -1175,7 +1175,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                [Page 21]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
    *  *Residual risk (TOCTOU):* A root adversary could theoretically
@@ -1231,7 +1231,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                [Page 22]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
    *  _Compromise detection:_ If the kernel is compromised and IMA is
@@ -1287,7 +1287,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                [Page 23]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
    *  _Compromise detection:_ A compromised kernel may refuse to deliver
@@ -1343,7 +1343,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                [Page 24]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
    6.  *Compare PCR 10 against golden reference values* to detect
@@ -1399,7 +1399,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                [Page 25]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
 8.6.  Deployment Option C: Cloud-based Virtual TPM (vTPM)
@@ -1455,7 +1455,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                [Page 26]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
       like *AWS NitroTPM* utilize a dedicated hardware security chip
@@ -1511,7 +1511,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                [Page 27]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
    Nitro Attestation Document*) that includes the challenge nonce.  The
@@ -1567,7 +1567,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                [Page 28]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
       -  The consuming organization's Workload Identity Manager verifies
@@ -1623,7 +1623,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                [Page 29]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
 9.2.  Sensor Composition and Binding to TPM EK
@@ -1679,7 +1679,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                [Page 30]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
    3.  All the above details are captured in the Geolocation Information
@@ -1735,7 +1735,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                [Page 31]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
    2.  *PCR 15 Extension:* The agent generates a geolocation response
@@ -1791,7 +1791,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                [Page 32]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
    This architecture is critical for geolocation integrity because a
@@ -1847,7 +1847,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                [Page 33]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
    *  *Unified Evidence:* The same out-of-band TPM Quote that detects
@@ -1903,7 +1903,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                [Page 34]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
    Policy enforcement can then use the composite location to verify that
@@ -1959,7 +1959,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                [Page 35]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
    4.  The Verifier runs the ZKP Verification algorithm using only the
@@ -2015,7 +2015,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                [Page 36]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
                                  Table 3
@@ -2071,7 +2071,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                [Page 37]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
 10.1.  End user location anchor host
@@ -2127,7 +2127,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                [Page 38]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
    *  Hardware-based: PTP hardware (e.g., SmartNIC), after adding
@@ -2183,7 +2183,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                [Page 39]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
    *  The confidential workload generates a hardware attestation that
@@ -2239,7 +2239,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                [Page 40]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
    *  *IP Address-Based Location* and *Wi-Fi-Based Location* challenges
@@ -2295,7 +2295,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                [Page 41]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
    *  *Compromised Agent/Host*: Deployment Option B (Out-of-Band
@@ -2351,7 +2351,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                [Page 42]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
    *  *Time Source Integrity*: Trusted time sources are necessary to
@@ -2407,7 +2407,7 @@ Internet-Draft                    GeoW                     February 2026
 
 Krishnan, et al.         Expires 27 August 2026                [Page 43]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
 16.4.  OPEN ISSUES 4: Geotagging textual data
@@ -2463,7 +2463,7 @@ Authors' Addresses
 
 Krishnan, et al.         Expires 27 August 2026                [Page 44]
 
-Internet-Draft                    GeoW                     February 2026
+Internet-Draft                ZTSA-GEO-POR                 February 2026
 
 
    Srinivasa Addepalli

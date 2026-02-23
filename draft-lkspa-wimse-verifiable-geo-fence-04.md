@@ -1,6 +1,6 @@
 %%%
 title = "Zero-Trust Sovereign AI: Verifiable Geofencing and Residency Proofs for Cybersecure Workloads"
-abbrev = "GeoW"
+abbrev = "ZTSA-GEO-POR"
 category = "info"
 docName = "draft-lkspa-wimse-verifiable-geo-fence-04"
 ipr = "trust200902"

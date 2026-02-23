@@ -3,7 +3,7 @@
 <rfc version="3" ipr="trust200902" docName="draft-lkspa-wimse-verifiable-geo-fence-04" submissionType="IETF" category="info" xml:lang="en" xmlns:xi="http://www.w3.org/2001/XInclude" indexInclude="true">
 
 <front>
-<title abbrev="GeoW">Zero-Trust Sovereign AI: Verifiable Geofencing and Residency Proofs for Cybersecure Workloads</title><seriesInfo value="draft-lkspa-wimse-verifiable-geo-fence-04" stream="IETF" status="informational" name="Internet-Draft"></seriesInfo>
+<title abbrev="ZTSA-GEO-POR">Zero-Trust Sovereign AI: Verifiable Geofencing and Residency Proofs for Cybersecure Workloads</title><seriesInfo value="draft-lkspa-wimse-verifiable-geo-fence-04" stream="IETF" status="informational" name="Internet-Draft"></seriesInfo>
 <author initials="R." surname="Krishnan" fullname="Ram Krishnan"><organization>JPMorgan Chase &amp; Co.</organization><address><postal><street></street>
 </postal><email>ramkri123@gmail.com</email>
 </address></author><author initials="N." surname="Smith" fullname="Ned Smith"><organization>Intel</organization><address><postal><street></street>

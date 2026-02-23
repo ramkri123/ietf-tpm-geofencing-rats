@@ -90,9 +90,9 @@ organization = "Independent"
 
 .# Abstract
 
-Modern cloud and distributed environments face significant risks from stolen bearer tokens, protocol replay, and trust gaps in transit. This document presents a layered attestation framework for a hardware-dependent Workload Identity Agent (WIA). The framework covers TPM-based platform attestation (Layer 2) and high-assurance geolocation attestation (Layer 3), integrating out-of-band (OOB) hardware monitoring, cloud-native virtual TPM (vTPM) support, and privacy-preserving Zero-Knowledge Proof (ZKP) verification.
+Modern cloud and distributed environments face significant risks from stolen bearer tokens, protocol replay, and trust gaps in transit. This document presents a layered attestation framework for a hardware-dependent Workload Identity Agent (WIA), such as a SPIFFE/SPIRE agent. The framework is designed to align with the objectives of the IETF WIMSE working group, covering TPM-based platform attestation (Layer 2) and high-assurance geolocation attestation (Layer 3). It integrates out-of-band (OOB) hardware monitoring, cloud-native virtual TPM (vTPM) support, and privacy-preserving Zero-Knowledge Proof (ZKP) verification.
 
-By binding workload identity to geographic and host-integrity attributes, the framework establishes a "Silicon-to-Audit" chain of trust. This addresses challenges in bearer token theft and data residency while providing a post-quantum cryptographic foundation through mathematical transparency. The solution is designed to scale across on-premises, edge, and cloud environments, ensuring that only authorized workloads in approved locations can access sensitive services.
+By binding workload identity to geographic and host-integrity attributes, the framework establishes a "Silicon-to-Audit" chain of trust. This addresses challenges in bearer token theft and data residency while providing a post-quantum cryptographic foundation through mathematical transparency. The solution builds upon the IETF RATS architecture to ensure that only authorized workloads in approved locations can access sensitive services in multi-system environments.
 
 {mainmatter}
 
@@ -135,7 +135,7 @@ Data Residency Host Geolocation Affinity (aka Geofencing):
 : A compound enforcement mechanism requiring that data and workloads are executed only on authorized hosts located within approved geographic regions.
 
 Workload Identity Agent (WIA):
-: A trusted entity (e.g., SPIRE agent) on each host that manages workload identities. The WIA is verified through platform attestation and issues cryptographically bound identities (e.g., SVIDs) to workloads.
+: A trusted entity (e.g., SPIFFE/SPIRE agent) on each host that manages workload identities. The WIA is verified through platform attestation (Layer 2) and issues cryptographically bound identities (e.g., SVIDs) to workloads. It serves as the primary trust anchor for workload-to-workload communication in the WIMSE architecture.
 
 Location Anchor Host (LAH):
 : A host with a trusted location source (GNSS/5G) cryptographically bound to its hardware root of trust.
@@ -159,7 +159,9 @@ Mathematical Transparency:
 
 As organizations increasingly adopt cloud and distributed computing, the need to enforce data residency, geolocation affinity, and host affinity has become critical for regulatory compliance and risk management. Traditional approaches rely on trust in infrastructure providers, which are often insufficient in adversarial or multi-tenant environments.
 
-Modern workload security faces challenges from stolen bearer tokens, protocol replay, and trust gaps in transit. This document defines a layered attestation framework that cryptographically binds workload identity to a hardware-verified platform and physical location. By establishing this "Silicon-to-Audit" chain of trust, the framework ensures that sensitive data is only processed by authorized workloads in approved, integral environments.
+Modern workload security faces challenges from stolen bearer tokens, protocol replay, and trust gaps in transit. This document defines a layered attestation framework that cryptographically binds workload identity (e.g., SPIFFE SVIDs) to a hardware-verified platform and physical location.
+
+This framework is part of the broader IETF Workload Identity in Multi System Environments (WIMSE) effort. It provides the hardware-rooted foundation required by the [[I-D.ietf-wimse-architecture]], establishing a "Silicon-to-Audit" chain of trust that ensures sensitive data is only processed by authorized workloads in approved, integral environments. The architecture follows the Remote Attestation Procedures (RATS) framework [[RFC9334]], defining the interactions between Provers, Verifiers, and Relying Parties to establish trust in the Workload Identity Agent (WIA).
 
 # Relationship to Transitive Attestation
 
@@ -1135,5 +1137,27 @@ South Korea's Data Localization Regulations -- Geospatial Information Management
     <title>Aegis Sovereign AI: End-to-End Sovereign Unified Identity and Trust Framework</title>
     <author initials="R." surname="Krishnan" fullname="Ram Krishnan"/>
     <date year="2025"/>
+  </front>
+</reference>
+
+<reference anchor="RFC9334" target="https://www.rfc-editor.org/rfc/rfc9334">
+  <front>
+    <title>Remote ATtestation ProcedureS (RATS) Architecture</title>
+    <author initials="H." surname="Birkholz" fullname="Henk Birkholz"/>
+    <author initials="D." surname="Thaler" fullname="Dave Thaler"/>
+    <author initials="M." surname="Richardson" fullname="Michael Richardson"/>
+    <author initials="N." surname="Smith" fullname="Ned Smith"/>
+    <author initials="W." surname="Pan" fullname="Wei Pan"/>
+    <date month="January" year="2023"/>
+  </front>
+</reference>
+
+<reference anchor="I-D.ietf-wimse-architecture" target="https://datatracker.ietf.org/doc/draft-ietf-wimse-architecture/">
+  <front>
+    <title>Workload Identity in Multi-System Environments (WIMSE) Architecture</title>
+    <author initials="P." surname="Howard" fullname="Pieter Howard"/>
+    <author initials="B." surname="Malepati" fullname="Bala Siva Sai Akhil Malepati"/>
+    <author initials="M." surname="Salter" fullname="Mark Salter"/>
+    <date year="2024"/>
   </front>
 </reference>

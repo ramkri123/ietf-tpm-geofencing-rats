@@ -24,20 +24,22 @@ Abstract
    Modern cloud and distributed environments face significant risks from
    stolen bearer tokens, protocol replay, and trust gaps in transit.
    This document presents a layered attestation framework for a
-   hardware-dependent Workload Identity Agent (WIA).  The framework
-   covers TPM-based platform attestation (Layer 2) and high-assurance
-   geolocation attestation (Layer 3), integrating out-of-band (OOB)
-   hardware monitoring, cloud-native virtual TPM (vTPM) support, and
-   privacy-preserving Zero-Knowledge Proof (ZKP) verification.
+   hardware-dependent Workload Identity Agent (WIA), such as a SPIFFE/
+   SPIRE agent.  The framework is designed to align with the objectives
+   of the IETF WIMSE working group, covering TPM-based platform
+   attestation (Layer 2) and high-assurance geolocation attestation
+   (Layer 3).  It integrates out-of-band (OOB) hardware monitoring,
+   cloud-native virtual TPM (vTPM) support, and privacy-preserving Zero-
+   Knowledge Proof (ZKP) verification.
 
    By binding workload identity to geographic and host-integrity
    attributes, the framework establishes a "Silicon-to-Audit" chain of
    trust.  This addresses challenges in bearer token theft and data
    residency while providing a post-quantum cryptographic foundation
-   through mathematical transparency.  The solution is designed to scale
-   across on-premises, edge, and cloud environments, ensuring that only
-   authorized workloads in approved locations can access sensitive
-   services.
+   through mathematical transparency.  The solution builds upon the IETF
+   RATS architecture to ensure that only authorized workloads in
+   approved locations can access sensitive services in multi-system
+   environments.
 
 Status of This Memo
 
@@ -48,8 +50,6 @@ Status of This Memo
    Task Force (IETF).  Note that other groups may also distribute
    working documents as Internet-Drafts.  The list of current Internet-
    Drafts is at https://datatracker.ietf.org/drafts/current/.
-
-
 
 
 
@@ -240,10 +240,12 @@ Internet-Draft                    GeoW                     February 2026
       compound enforcement mechanism requiring that data and workloads
       are executed only on authorized hosts located within approved
       geographic regions.
-   Workload Identity Agent (WIA):  A trusted entity (e.g., SPIRE agent)
-      on each host that manages workload identities.  The WIA is
-      verified through platform attestation and issues cryptographically
-      bound identities (e.g., SVIDs) to workloads.
+   Workload Identity Agent (WIA):  A trusted entity (e.g., SPIFFE/SPIRE
+      agent) on each host that manages workload identities.  The WIA is
+      verified through platform attestation (Layer 2) and issues
+      cryptographically bound identities (e.g., SVIDs) to workloads.  It
+      serves as the primary trust anchor for workload-to-workload
+      communication in the WIMSE architecture.
    Location Anchor Host (LAH):  A host with a trusted location source
       (GNSS/5G) cryptographically bound to its hardware root of trust.
    Composite Geolocation:  A location estimate fused from multiple
@@ -275,8 +277,6 @@ Internet-Draft                    GeoW                     February 2026
 
 
 
-
-
 Krishnan, et al.         Expires 27 August 2026                 [Page 5]
 
 Internet-Draft                    GeoW                     February 2026
@@ -285,10 +285,18 @@ Internet-Draft                    GeoW                     February 2026
    Modern workload security faces challenges from stolen bearer tokens,
    protocol replay, and trust gaps in transit.  This document defines a
    layered attestation framework that cryptographically binds workload
-   identity to a hardware-verified platform and physical location.  By
-   establishing this "Silicon-to-Audit" chain of trust, the framework
-   ensures that sensitive data is only processed by authorized workloads
-   in approved, integral environments.
+   identity (e.g., SPIFFE SVIDs) to a hardware-verified platform and
+   physical location.
+
+   This framework is part of the broader IETF Workload Identity in Multi
+   System Environments (WIMSE) effort.  It provides the hardware-rooted
+   foundation required by the [[I-D.ietf-wimse-architecture]],
+   establishing a "Silicon-to-Audit" chain of trust that ensures
+   sensitive data is only processed by authorized workloads in approved,
+   integral environments.  The architecture follows the Remote
+   Attestation Procedures (RATS) framework [[RFC9334]], defining the
+   interactions between Provers, Verifiers, and Relying Parties to
+   establish trust in the Workload Identity Agent (WIA).
 
 3.  Relationship to Transitive Attestation
 
@@ -321,14 +329,6 @@ Internet-Draft                    GeoW                     February 2026
 
    Together, the complete chain is:
 
-   *  TPM Hardware -> WIA (this draft, Layer 2) -> Workload (transitive
-      attestation draft, Layer 1)
-   *  TPM/Geolocation Hardware -> WIA (this draft, Layers 2+3) ->
-      Workload (transitive attestation draft, Layer 1)
-
-
-
-
 
 
 
@@ -337,6 +337,11 @@ Krishnan, et al.         Expires 27 August 2026                 [Page 6]
 
 Internet-Draft                    GeoW                     February 2026
 
+
+   *  TPM Hardware -> WIA (this draft, Layer 2) -> Workload (transitive
+      attestation draft, Layer 1)
+   *  TPM/Geolocation Hardware -> WIA (this draft, Layers 2+3) ->
+      Workload (transitive attestation draft, Layer 1)
 
    This document focuses exclusively on Layers 2 and 3: the hardware-
    dependent attestation of the WIA itself.  For how workloads prove
@@ -381,11 +386,6 @@ Internet-Draft                    GeoW                     February 2026
    a trusted host with TPM-backed attestation, interacts with
    geolocation and geofencing services to obtain verifiable proof of its
    geographic boundary.  The agent periodically collects location data
-   from trusted sensors, obtains attested composite location from a
-   geolocation service, and enforces geofence policies via a geofencing
-   service.  The resulting attested geofence proof is used to bind
-   workload identity to both the host and its geographic location,
-   enabling secure, policy-driven execution of AI workloads and
 
 
 
@@ -394,6 +394,11 @@ Krishnan, et al.         Expires 27 August 2026                 [Page 7]
 Internet-Draft                    GeoW                     February 2026
 
 
+   from trusted sensors, obtains attested composite location from a
+   geolocation service, and enforces geofence policies via a geofencing
+   service.  The resulting attested geofence proof is used to bind
+   workload identity to both the host and its geographic location,
+   enabling secure, policy-driven execution of AI workloads and
    compliance with data residency requirements.
 
 4.1.3.  Server workload to Server workload - Federated AI
@@ -433,11 +438,6 @@ Internet-Draft                    GeoW                     February 2026
       specific geographic boundary when downloading patient data or
       performing other sensitive operations.
 
-   *  U.S.  Presidential Executive Order compliance directs Cloud
-      Service Provider (CSP) support personnel be located in restricted
-      geographies (e.g., Venezuela, Iran, China, North Korea).  However,
-      those personnel should not be allowed to support U.S. customers.
-      Geolocation enforcement can ensure policy compliance.
 
 
 
@@ -449,6 +449,12 @@ Krishnan, et al.         Expires 27 August 2026                 [Page 8]
 
 Internet-Draft                    GeoW                     February 2026
 
+
+   *  U.S.  Presidential Executive Order compliance directs Cloud
+      Service Provider (CSP) support personnel be located in restricted
+      geographies (e.g., Venezuela, Iran, China, North Korea).  However,
+      those personnel should not be allowed to support U.S. customers.
+      Geolocation enforcement can ensure policy compliance.
 
 4.3.  Category 3: Regulatory Compliance
 
@@ -490,12 +496,6 @@ Internet-Draft                    GeoW                     February 2026
    *  PoP via Mutual TLS: Client certificates are generally not
       supported in browsers.  MITM entities such as API gateways often
       terminate TLS connections.
-   *  Host TPMs for API call signature: Not scalable to sign every API
-      call with a TPM key, as typical enterprise laptops/servers TPMs
-      support only about 5 signatures per second.
-   *  Non-HTTP protocols: No solution for IPSEC etc.
-
-
 
 
 
@@ -505,6 +505,11 @@ Krishnan, et al.         Expires 27 August 2026                 [Page 9]
 
 Internet-Draft                    GeoW                     February 2026
 
+
+   *  Host TPMs for API call signature: Not scalable to sign every API
+      call with a TPM key, as typical enterprise laptops/servers TPMs
+      support only about 5 signatures per second.
+   *  Non-HTTP protocols: No solution for IPSEC etc.
 
 5.2.2.  Location and Geofencing Challenges
 
@@ -550,11 +555,6 @@ Internet-Draft                    GeoW                     February 2026
 
    These layers support three primary deployment options:
 
-   *  *Option A -- Host OS-Based (e.g., Keylime):* Interaction via the
-      host OS with direct TPM access.
-
-
-
 
 
 Krishnan, et al.         Expires 27 August 2026                [Page 10]
@@ -562,6 +562,8 @@ Krishnan, et al.         Expires 27 August 2026                [Page 10]
 Internet-Draft                    GeoW                     February 2026
 
 
+   *  *Option A -- Host OS-Based (e.g., Keylime):* Interaction via the
+      host OS with direct TPM access.
    *  *Option B -- Out-of-Band Management (e.g., HPE iLO):* Validation
       via an isolated management processor, providing protection even
       against compromised host kernels.
@@ -607,8 +609,6 @@ Internet-Draft                    GeoW                     February 2026
       -  HW-based Attested PTP - Relevant for sub microsecond precision
          timing solutions.
 
-   *  Workload identity agent provides proof that workloads run only on
-      workload/location anchor hosts.
 
 
 
@@ -617,6 +617,9 @@ Krishnan, et al.         Expires 27 August 2026                [Page 11]
 
 Internet-Draft                    GeoW                     February 2026
 
+
+   *  Workload identity agent provides proof that workloads run only on
+      workload/location anchor hosts.
 
       -  This is done using enhancements to existing SPIFFE/SPIRE agent
          and TPM plugin and addresses bearer token issue.
@@ -662,9 +665,6 @@ Internet-Draft                    GeoW                     February 2026
    The following table summarizes the architectural and security
    differences between the three deployment options for TPM platform
    attestation.
-
-
-
 
 
 

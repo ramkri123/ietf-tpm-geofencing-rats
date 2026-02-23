@@ -153,15 +153,15 @@ Internet-Draft                    GeoW                     February 2026
        8.7.2.  Verification Flow . . . . . . . . . . . . . . . . . .  34
        8.7.3.  Integration with the Attestation Layers . . . . . . .  35
        8.7.4.  Comparison: Precise Location vs. ZKP  . . . . . . . .  35
+       8.7.5.  Mathematical Transparency and Post-Quantum
+               Foundation  . . . . . . . . . . . . . . . . . . . . .  36
    9.  Scaling the Solution  . . . . . . . . . . . . . . . . . . . .  36
-     9.1.  End user location anchor host . . . . . . . . . . . . . .  36
-     9.2.  Data center location anchor host  . . . . . . . . . . . .  36
-   10. Data Plane Geolocation Extensions . . . . . . . . . . . . . .  37
-     10.1.  HTTP: Workload-Geo-ID Header . . . . . . . . . . . . . .  37
-     10.2.  HTTP: Geolocation in SVID  . . . . . . . . . . . . . . .  38
+     9.1.  End user location anchor host . . . . . . . . . . . . . .  37
+     9.2.  Data center location anchor host  . . . . . . . . . . . .  37
+   10. Data Plane Geolocation Extensions . . . . . . . . . . . . . .  38
+     10.1.  HTTP: Workload-Geo-ID Header . . . . . . . . . . . . . .  38
+     10.2.  HTTP: Geolocation in SVID  . . . . . . . . . . . . . . .  39
      10.3.  IPSEC: Geolocation in IKEv2  . . . . . . . . . . . . . .  39
-   11. Confidential Computing Considerations . . . . . . . . . . . .  39
-   12. Solution Mapping to Industry Gaps . . . . . . . . . . . . . .  40
 
 
 
@@ -170,20 +170,22 @@ Krishnan, et al.         Expires 27 August 2026                 [Page 3]
 Internet-Draft                    GeoW                     February 2026
 
 
-   13. Authorization Policy Implementers . . . . . . . . . . . . . .  41
-   14. Security Considerations . . . . . . . . . . . . . . . . . . .  41
-   15. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  42
+   11. Confidential Computing Considerations . . . . . . . . . . . .  40
+   12. Solution Mapping to Industry Gaps . . . . . . . . . . . . . .  41
+   13. Authorization Policy Implementers . . . . . . . . . . . . . .  42
+   14. Security Considerations . . . . . . . . . . . . . . . . . . .  42
+   15. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  43
    16. Appendix - Items to follow up . . . . . . . . . . . . . . . .  43
      16.1.  OPEN ISSUES 1: Restart time attestation/remote
             verification of workload identity agent for integrity and
-            proof of residency on Host . . . . . . . . . . . . . . .  43
-     16.2.  OPEN ISSUES 2: Location privacy options  . . . . . . . .  43
-     16.3.  OPEN ISSUES 3: Attested PTP (Partially Addressed)  . . .  43
-     16.4.  OPEN ISSUES 4: Geotagging textual data . . . . . . . . .  43
-     16.5.  OPEN ISSUES 5: Attesting Geotags . . . . . . . . . . . .  43
+            proof of residency on Host . . . . . . . . . . . . . . .  44
+     16.2.  OPEN ISSUES 2: Location privacy options  . . . . . . . .  44
+     16.3.  OPEN ISSUES 3: Attested PTP (Partially Addressed)  . . .  44
+     16.4.  OPEN ISSUES 4: Geotagging textual data . . . . . . . . .  44
+     16.5.  OPEN ISSUES 5: Attesting Geotags . . . . . . . . . . . .  44
    17. Appendix - Public References for Strict Data Residency
-           Rules . . . . . . . . . . . . . . . . . . . . . . . . . .  43
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  44
+           Rules . . . . . . . . . . . . . . . . . . . . . . . . . .  44
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  45
 
 1.  Conventions and Definitions
 
@@ -216,8 +218,6 @@ Internet-Draft                    GeoW                     February 2026
    *Key Terms:*
 
    Data Residency:  Technical and Legal Challenges Ensuring compliance
-
-
 
 
 
@@ -1964,6 +1964,38 @@ Internet-Draft                    GeoW                     February 2026
 
                                  Table 2
 
+8.7.5.  Mathematical Transparency and Post-Quantum Foundation
+
+   A critical requirement for sovereign infrastructure is the
+   elimination of Trusted Third Parties (TTPs).  Legacy ZKP systems (Gen
+   3, e.g., Groth16) often required a "Trusted Setup" phase to generate
+   cryptographic parameters.  If the secret data (the "Toxic Waste")
+   from this setup was not properly destroyed, the system's integrity
+   could be compromised.
+
+   As described in [[AegisSovereignAI]], this attestation framework
+   leverages *Gen 4 ZKP (e.g., Plonky2/FRI-based)* to achieve
+   mathematical transparency and future-proof security:
+
+   1.  *No Trusted Setup:* Verification is based on hash-based STARKs
+       and PLONKish arithmetization.  There are no secret parameters to
+       manage or destroy, eliminating the TTP risk entirely.
+   2.  *Verification without Trust:* An auditor only needs to inspect
+       the open-source circuit code.  The mathematical validity of the
+       proof is self-contained and requires no external "Root of Trust"
+       beyond the public circuit definition and the underlying hash
+       function.
+   3.  *Post-Quantum Cryptography (PQC) Foundation:* By utilizing hash-
+       based verification (specifically the Fast Reed-Solomon
+       Interactive Proof of Proximity, or FRI, protocol), the system
+       establishes a foundation for resistance against future quantum
+       computing threats.  Unlike elliptic-curve based systems, hash-
+       based ZKPs are widely believed to be post-quantum secure.
+
+   This ensures that the geofencing framework is not only privacy-
+   preserving but also sovereign and resilient against advanced
+   cryptographic threats.
+
 9.  Scaling the Solution
 
    Having a geolocation sensor on every host is not scalable from a
@@ -1976,6 +2008,15 @@ Internet-Draft                    GeoW                     February 2026
    hosts, the geolocation sensor can be on a host with Mobile network
    and/or GNSS capabilities which can be leveraged by other data center
    hosts.  This host serves as the location anchor host.
+
+
+
+
+
+Krishnan, et al.         Expires 27 August 2026                [Page 36]
+
+Internet-Draft                    GeoW                     February 2026
+
 
 9.1.  End user location anchor host
 
@@ -2010,14 +2051,6 @@ Internet-Draft                    GeoW                     February 2026
    referred to as "attested PTP" -- the PTP software/hardware can be
    enhanced so that all PTP messages are signed with a private key.
 
-
-
-
-Krishnan, et al.         Expires 27 August 2026                [Page 36]
-
-Internet-Draft                    GeoW                     February 2026
-
-
    This signing can be done in two ways:
 
    *  Software-based: PTP software (e.g. Linux PTP daemon), after adding
@@ -2027,6 +2060,20 @@ Internet-Draft                    GeoW                     February 2026
       due to inherent software jitter, but it can still provide a
       reasonable approximation of the proximity of the other data center
       hosts to the location anchor host.
+
+
+
+
+
+
+
+
+
+Krishnan, et al.         Expires 27 August 2026                [Page 37]
+
+Internet-Draft                    GeoW                     February 2026
+
+
    *  Hardware-based: PTP hardware (e.g., SmartNIC), after adding
       timestamp to PTP message, signs the PTP message with its private
       key (e.g., SmartNIC DPU).  The corresponding public key, used to
@@ -2066,19 +2113,22 @@ Internet-Draft                    GeoW                     February 2026
       workload location, client workload location type (e.g. precise,
       approximated, geographic region based), client workload location
       quality (e.g. GNSS, mobile network, Wi-Fi, IP address).
-
-
-
-Krishnan, et al.         Expires 27 August 2026                [Page 37]
-
-Internet-Draft                    GeoW                     February 2026
-
-
    *  Thick or Thin client flag: Indicates whether the client workload
       is a thick client (e.g., Microsoft Teams thick client app) or a
       thin client (e.g., Microsoft Teams thin client browser app).
    *  Type flag: Request signing with geolocation information or SVID
       with geolocation information.
+
+
+
+
+
+
+
+Krishnan, et al.         Expires 27 August 2026                [Page 38]
+
+Internet-Draft                    GeoW                     February 2026
+
 
    The HTTP request is signed as described in [[I-D.mw-wimse-transitive-
    attestation]] using the workload or WIA private key.  Intermediate
@@ -2121,19 +2171,20 @@ Internet-Draft                    GeoW                     February 2026
    The workload SVID can be conveyed in the 'Workload-Geo-ID' header
    field.
 
-
-
-
-
-Krishnan, et al.         Expires 27 August 2026                [Page 38]
-
-Internet-Draft                    GeoW                     February 2026
-
-
 10.3.  IPSEC: Geolocation in IKEv2
 
    In the IPSEC key exchange protocol (IKE), the following geolocation
    extensions are proposed:
+
+
+
+
+
+
+Krishnan, et al.         Expires 27 August 2026                [Page 39]
+
+Internet-Draft                    GeoW                     February 2026
+
 
    *  The IPSEC client includes the Geolocation Information from the
       Workload Identity Agent Geolocation Information Cache in the IPSEC
@@ -2178,18 +2229,18 @@ Internet-Draft                    GeoW                     February 2026
 
    *  The confidential workload generates a hardware attestation that
       includes its hardware-rooted certification key.
-
-
-
-Krishnan, et al.         Expires 27 August 2026                [Page 39]
-
-Internet-Draft                    GeoW                     February 2026
-
-
    *  The platform owner receives this attestation and binds the
       reported hardware-rooted certification key to the TPM EK.
    *  This binding produces a cryptographic proof that the workload is
       running on the expected physical CPU.
+
+
+
+
+Krishnan, et al.         Expires 27 August 2026                [Page 40]
+
+Internet-Draft                    GeoW                     February 2026
+
 
    Proof of Geolocation:
 
@@ -2235,17 +2286,18 @@ Internet-Draft                    GeoW                     February 2026
       attestation draft defines the mTLS PoR and DPoR protocol flows
       that consume the WIA attestation established here.
 
-
-
-Krishnan, et al.         Expires 27 August 2026                [Page 40]
-
-Internet-Draft                    GeoW                     February 2026
-
-
    *  *IP Address-Based Location* and *Wi-Fi-Based Location* challenges
       are addressed by Layer 3 (Geolocation HW-Based Attestation):
       Combination of host-local location sensors (e.g., GNSS) with
       direct hardware-based attestation and mobile network location
+
+
+
+Krishnan, et al.         Expires 27 August 2026                [Page 41]
+
+Internet-Draft                    GeoW                     February 2026
+
+
       services provides a more reliable and cryptographically verifiable
       location than IP address, Wi-Fi-based methods or existing Host OS
       location services.
@@ -2287,22 +2339,20 @@ Internet-Draft                    GeoW                     February 2026
       compromises could undermine attestation.  Regular updates, secure
       provisioning, and monitoring are required.
 
-
-
-
-
-
-
-Krishnan, et al.         Expires 27 August 2026                [Page 41]
-
-Internet-Draft                    GeoW                     February 2026
-
-
    *  *Geolocation Spoofing*: Location sensors (e.g., GPS) are
       susceptible to spoofing or replay attacks.  Use of
       cryptographically authenticated signals (e.g., Galileo GNSS,
       mobile network) and cross-verification with multiple sources can
       mitigate this risk.
+
+
+
+
+
+Krishnan, et al.         Expires 27 August 2026                [Page 42]
+
+Internet-Draft                    GeoW                     February 2026
+
 
    *  *SIM and e-SIM Attacks*: Physical SIM removal or e-SIM swap
       attacks can break the binding between device and location.
@@ -2345,16 +2395,20 @@ Internet-Draft                    GeoW                     February 2026
 
    This document has no IANA actions.
 
+16.  Appendix - Items to follow up
 
 
 
 
-Krishnan, et al.         Expires 27 August 2026                [Page 42]
+
+
+
+
+
+Krishnan, et al.         Expires 27 August 2026                [Page 43]
 
 Internet-Draft                    GeoW                     February 2026
 
-
-16.  Appendix - Items to follow up
 
 16.1.  OPEN ISSUES 1: Restart time attestation/remote verification of
        workload identity agent for integrity and proof of residency on
@@ -2401,18 +2455,16 @@ Internet-Draft                    GeoW                     February 2026
    transaction details / information collected / carried / processed as
    part of the message / payment instruction."
 
-
-
-
-
-Krishnan, et al.         Expires 27 August 2026                [Page 43]
-
-Internet-Draft                    GeoW                     February 2026
-
-
    South Korea's Data Localization Regulations -- Geospatial Information
    Management Act (Spatial Data Act): Article 16, Paragraph 1: Prohibits
    the export of state-led survey data.
+
+
+
+Krishnan, et al.         Expires 27 August 2026                [Page 44]
+
+Internet-Draft                    GeoW                     February 2026
+
 
 Authors' Addresses
 
@@ -2461,4 +2513,8 @@ Authors' Addresses
 
 
 
-Krishnan, et al.         Expires 27 August 2026                [Page 44]
+
+
+
+
+Krishnan, et al.         Expires 27 August 2026                [Page 45]

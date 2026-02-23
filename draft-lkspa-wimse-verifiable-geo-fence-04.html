@@ -1549,6 +1549,9 @@ li > p:last-of-type:only-child {
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.7.2.4">
                     <p id="section-toc.1-1.8.2.7.2.4.1"><a href="#section-8.7.4" class="auto internal xref">8.7.4</a>.  <a href="#name-comparison-precise-location" class="internal xref">Comparison: Precise Location vs. ZKP</a></p>
 </li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.7.2.5">
+                    <p id="section-toc.1-1.8.2.7.2.5.1"><a href="#section-8.7.5" class="auto internal xref">8.7.5</a>.  <a href="#name-mathematical-transparency-a" class="internal xref">Mathematical Transparency and Post-Quantum Foundation</a></p>
+</li>
                 </ul>
 </li>
             </ul>
@@ -3056,6 +3059,27 @@ These monitoring functions are performed over dedicated, low-level hardware inte
               </tr>
             </tbody>
           </table>
+</section>
+</div>
+<div id="mathematical-transparency-and-post-quantum-foundation">
+<section id="section-8.7.5">
+          <h4 id="name-mathematical-transparency-a">
+<a href="#section-8.7.5" class="section-number selfRef">8.7.5. </a><a href="#name-mathematical-transparency-a" class="section-name selfRef">Mathematical Transparency and Post-Quantum Foundation</a>
+          </h4>
+<p id="section-8.7.5-1">A critical requirement for sovereign infrastructure is the elimination of Trusted Third Parties (TTPs). Legacy ZKP systems (Gen 3, e.g., Groth16) often required a "Trusted Setup" phase to generate cryptographic parameters. If the secret data (the "Toxic Waste") from this setup was not properly destroyed, the system's integrity could be compromised.<a href="#section-8.7.5-1" class="pilcrow">¶</a></p>
+<p id="section-8.7.5-2">As described in [[AegisSovereignAI]], this attestation framework leverages <strong>Gen 4 ZKP (e.g., Plonky2/FRI-based)</strong> to achieve mathematical transparency and future-proof security:<a href="#section-8.7.5-2" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="compact type-1" id="section-8.7.5-3">
+<li id="section-8.7.5-3.1">
+              <strong>No Trusted Setup:</strong> Verification is based on hash-based STARKs and PLONKish arithmetization. There are no secret parameters to manage or destroy, eliminating the TTP risk entirely.<a href="#section-8.7.5-3.1" class="pilcrow">¶</a>
+</li>
+            <li id="section-8.7.5-3.2">
+              <strong>Verification without Trust:</strong> An auditor only needs to inspect the open-source circuit code. The mathematical validity of the proof is self-contained and requires no external "Root of Trust" beyond the public circuit definition and the underlying hash function.<a href="#section-8.7.5-3.2" class="pilcrow">¶</a>
+</li>
+            <li id="section-8.7.5-3.3">
+              <strong>Post-Quantum Cryptography (PQC) Foundation:</strong> By utilizing hash-based verification (specifically the Fast Reed-Solomon Interactive Proof of Proximity, or FRI, protocol), the system establishes a foundation for resistance against future quantum computing threats. Unlike elliptic-curve based systems, hash-based ZKPs are widely believed to be post-quantum secure.<a href="#section-8.7.5-3.3" class="pilcrow">¶</a>
+</li>
+          </ol>
+<p id="section-8.7.5-4">This ensures that the geofencing framework is not only privacy-preserving but also sovereign and resilient against advanced cryptographic threats.<a href="#section-8.7.5-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>

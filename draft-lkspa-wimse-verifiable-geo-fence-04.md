@@ -774,6 +774,17 @@ This is especially valuable for cross-organizational and cross-sovereign attesta
 | **GDPR/Sovereignty** | May conflict with data minimization | Compliant by design |
 | **Cross-Org Sharing** | Requires trust in recipient | "Audit without Disclosure" |
 
+### Mathematical Transparency and Post-Quantum Foundation
+
+A critical requirement for sovereign infrastructure is the elimination of Trusted Third Parties (TTPs). Legacy ZKP systems (Gen 3, e.g., Groth16) often required a "Trusted Setup" phase to generate cryptographic parameters. If the secret data (the "Toxic Waste") from this setup was not properly destroyed, the system's integrity could be compromised.
+
+As described in [[AegisSovereignAI]], this attestation framework leverages **Gen 4 ZKP (e.g., Plonky2/FRI-based)** to achieve mathematical transparency and future-proof security:
+
+1. **No Trusted Setup:** Verification is based on hash-based STARKs and PLONKish arithmetization. There are no secret parameters to manage or destroy, eliminating the TTP risk entirely.
+2. **Verification without Trust:** An auditor only needs to inspect the open-source circuit code. The mathematical validity of the proof is self-contained and requires no external "Root of Trust" beyond the public circuit definition and the underlying hash function.
+3. **Post-Quantum Cryptography (PQC) Foundation:** By utilizing hash-based verification (specifically the Fast Reed-Solomon Interactive Proof of Proximity, or FRI, protocol), the system establishes a foundation for resistance against future quantum computing threats. Unlike elliptic-curve based systems, hash-based ZKPs are widely believed to be post-quantum secure.
+
+This ensures that the geofencing framework is not only privacy-preserving but also sovereign and resilient against advanced cryptographic threats.
 
 # Scaling the Solution
 

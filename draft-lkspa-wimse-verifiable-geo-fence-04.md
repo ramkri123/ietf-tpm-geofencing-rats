@@ -445,11 +445,17 @@ The end-to-end attestation paths are therefore:
 Beyond attestation, the management processor performs continuous, out-of-band monitoring of the host's physical and firmware composition. This "Silicon-to-Audit" capability ensures that the hardware identity remains constant and trusted throughout its lifecycle:
 
 * **CPU Integrity Monitoring:** The management processor inventories the host CPUs at every boot and continuously monitors their state. It records and reports:
-    - **Serial Numbers:** Ensuring that the physical CPU silicon has not been swapped.
-    - **Microcode/Firmware Versions:** Verifying that the CPUs are running approved, patched microcode.
+    - **Serial Numbers:** Retrieving the unique electronic serial number (e.g., Intel **PPIN - Protected Processor Inventory Number**) directly from the silicon.
+    - **Microcode/Firmware Versions:** Verifying the current patch level of the CPU's microcode.
     - **Hardware Stepping/Revision:** Confirming the exact hardware version to detect unauthorized hardware substitutions.
-* **Peripheral Inventory:** Similar monitoring is applied to memory modules (DIMM serials), storage controllers, and network adapters.
-* **Health and Security State:** The management processor monitors for hardware-level security events, such as chassis intrusion, thermal anomalies (potential side-channel attacks), or unauthorized component additions.
+* **Peripheral Inventory:** Similar monitoring is applied to memory modules (DIMM serial numbers), storage controllers, and network adapters via the System Management Bus (**SMBus**).
+* **Health and Security State:** The management processor monitors for hardware-level security events, such as chassis intrusion or unauthorized component additions.
+
+**Technical Implementation:**
+These monitoring functions are performed over dedicated, low-level hardware interfaces that operate independently of the host OS and CPU execution:
+* **PECI (Platform Environment Control Interface):** Provides a specialized single-wire bus for the management processor (acting as master) to query CPU registers, thermal data, and identity information.
+* **SMBus/I2C:** Used for inventorying peripherals and reading Field Replaceable Unit (FRU) data from memory and other components.
+* **Side-band Signals:** Dedicated physical lines allow the management processor to monitor the "Security State" of the silicon, such as whether the CPU is in a debug-locked mode or if the hardware fuse settings have been tampered with.
 
 These inventory details are included in the evidence forwarded to the management plane (Step 5 of the Periodic Attestation Cycle), allowing the verifier to cross-reference the host's runtime state against its "golden" manufacturing record.
 

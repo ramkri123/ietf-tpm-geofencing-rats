@@ -2308,10 +2308,10 @@ li > p:last-of-type:only-child {
               <p id="section-7.5.3-2.1.1"><strong>CPU Integrity Monitoring:</strong> The management processor inventories the host CPUs at every boot and continuously monitors their state. It records and reports:<a href="#section-7.5.3-2.1.1" class="pilcrow">¶</a></p>
 <ul class="compact">
 <li class="compact" id="section-7.5.3-2.1.2.1">
-                  <strong>Serial Numbers:</strong> Ensuring that the physical CPU silicon has not been swapped.<a href="#section-7.5.3-2.1.2.1" class="pilcrow">¶</a>
+                  <strong>Serial Numbers:</strong> Retrieving the unique electronic serial number (e.g., Intel <strong>PPIN - Protected Processor Inventory Number</strong>) directly from the silicon.<a href="#section-7.5.3-2.1.2.1" class="pilcrow">¶</a>
 </li>
                 <li class="compact" id="section-7.5.3-2.1.2.2">
-                  <strong>Microcode/Firmware Versions:</strong> Verifying that the CPUs are running approved, patched microcode.<a href="#section-7.5.3-2.1.2.2" class="pilcrow">¶</a>
+                  <strong>Microcode/Firmware Versions:</strong> Verifying the current patch level of the CPU's microcode.<a href="#section-7.5.3-2.1.2.2" class="pilcrow">¶</a>
 </li>
                 <li class="compact" id="section-7.5.3-2.1.2.3">
                   <strong>Hardware Stepping/Revision:</strong> Confirming the exact hardware version to detect unauthorized hardware substitutions.<a href="#section-7.5.3-2.1.2.3" class="pilcrow">¶</a>
@@ -2319,13 +2319,18 @@ li > p:last-of-type:only-child {
               </ul>
 </li>
             <li class="compact" id="section-7.5.3-2.2">
-              <strong>Peripheral Inventory:</strong> Similar monitoring is applied to memory modules (DIMM serials), storage controllers, and network adapters.<a href="#section-7.5.3-2.2" class="pilcrow">¶</a>
+              <strong>Peripheral Inventory:</strong> Similar monitoring is applied to memory modules (DIMM serial numbers), storage controllers, and network adapters via the System Management Bus (<strong>SMBus</strong>).<a href="#section-7.5.3-2.2" class="pilcrow">¶</a>
 </li>
             <li class="compact" id="section-7.5.3-2.3">
-              <strong>Health and Security State:</strong> The management processor monitors for hardware-level security events, such as chassis intrusion, thermal anomalies (potential side-channel attacks), or unauthorized component additions.<a href="#section-7.5.3-2.3" class="pilcrow">¶</a>
+              <strong>Health and Security State:</strong> The management processor monitors for hardware-level security events, such as chassis intrusion or unauthorized component additions.<a href="#section-7.5.3-2.3" class="pilcrow">¶</a>
 </li>
           </ul>
-<p id="section-7.5.3-3">These inventory details are included in the evidence forwarded to the management plane (Step 5 of the Periodic Attestation Cycle), allowing the verifier to cross-reference the host's runtime state against its "golden" manufacturing record.<a href="#section-7.5.3-3" class="pilcrow">¶</a></p>
+<p id="section-7.5.3-3"><strong>Technical Implementation:</strong>
+These monitoring functions are performed over dedicated, low-level hardware interfaces that operate independently of the host OS and CPU execution:
+* <strong>PECI (Platform Environment Control Interface):</strong> Provides a specialized single-wire bus for the management processor (acting as master) to query CPU registers, thermal data, and identity information.
+* <strong>SMBus/I2C:</strong> Used for inventorying peripherals and reading Field Replaceable Unit (FRU) data from memory and other components.
+* <strong>Side-band Signals:</strong> Dedicated physical lines allow the management processor to monitor the "Security State" of the silicon, such as whether the CPU is in a debug-locked mode or if the hardware fuse settings have been tampered with.<a href="#section-7.5.3-3" class="pilcrow">¶</a></p>
+<p id="section-7.5.3-4">These inventory details are included in the evidence forwarded to the management plane (Step 5 of the Periodic Attestation Cycle), allowing the verifier to cross-reference the host's runtime state against its "golden" manufacturing record.<a href="#section-7.5.3-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="silicon-root-of-trust-and-ima-integrity-protection">

@@ -1330,10 +1330,10 @@ li > p:last-of-type:only-child {
         </h2>
 <nav class="toc"><ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
-            <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-conventions-and-definitions" class="internal xref">Conventions and Definitions</a></p>
+            <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
-            <p id="section-toc.1-1.2.1"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
+            <p id="section-toc.1-1.2.1"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-conventions-and-definitions" class="internal xref">Conventions and Definitions</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.1">
                 <p id="section-toc.1-1.2.2.1.1"><a href="#section-2.1" class="auto internal xref">2.1</a>.  <a href="#name-industry-gaps-and-problem-s" class="internal xref">Industry Gaps and Problem Statements</a></p>
@@ -1663,164 +1663,164 @@ li > p:last-of-type:only-child {
 </nav>
 </section>
 </div>
-<div id="conventions-and-definitions">
+<div id="introduction">
 <section id="section-1">
-      <h2 id="name-conventions-and-definitions">
-<a href="#section-1" class="section-number selfRef">1. </a><a href="#name-conventions-and-definitions" class="section-name selfRef">Conventions and Definitions</a>
+      <h2 id="name-introduction">
+<a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
-<p id="section-1-1">The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 [[RFC2119]] [[RFC8174]] when, and only when, they appear in all capitals, as shown here.<a href="#section-1-1" class="pilcrow">¶</a></p>
-<p id="section-1-2"><strong>Acronyms used in this document:</strong><a href="#section-1-2" class="pilcrow">¶</a></p>
+<p id="section-1-1">As organizations increasingly adopt cloud and distributed computing, the need to enforce data residency, geolocation affinity, and Workload Host affinity has become critical for regulatory compliance and risk management. Traditional approaches rely on trust in infrastructure providers, which are often insufficient in adversarial or multi-tenant environments.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">Modern workload security faces challenges from stolen bearer tokens, protocol replay, and trust gaps in transit. This document defines a specialized <strong>RATS Profile</strong> that cryptographically binds the <strong>Workload Identity Agent</strong>—the entity responsible with issuing software identities—to a hardware-verified platform and physical location.<a href="#section-1-2" class="pilcrow">¶</a></p>
+<p id="section-1-3">The architecture follows the <strong>RATS Architecture [[RFC9334]]</strong>, defining the interactions between <strong>Provers</strong>, <strong>Verifiers</strong>, and <strong>Relying Parties</strong> to generate and validate <strong>High-Confidence Evidence</strong> regarding the Workload Identity Agent's status. It provides the hardware-rooted "Evidence Layer" required by the high-level <strong>WIMSE Architecture [[I-D.ietf-wimse-architecture]]</strong>, establishing a "Silicon-to-Audit" chain of trust that ensures sensitive data is only processed by authorized workloads in approved, integral environments.<a href="#section-1-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="conventions-and-definitions">
+<section id="section-2">
+      <h2 id="name-conventions-and-definitions">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-conventions-and-definitions" class="section-name selfRef">Conventions and Definitions</a>
+      </h2>
+<p id="section-2-1">The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 [[RFC2119]] [[RFC8174]] when, and only when, they appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶</a></p>
+<p id="section-2-2"><strong>Acronyms used in this document:</strong><a href="#section-2-2" class="pilcrow">¶</a></p>
 <ul class="compact">
-<li class="compact" id="section-1-3.1">
-          <strong>TPM</strong>: Trusted Platform Module<a href="#section-1-3.1" class="pilcrow">¶</a>
+<li class="compact" id="section-2-3.1">
+          <strong>TPM</strong>: Trusted Platform Module<a href="#section-2-3.1" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="section-1-3.2">
-          <strong>GNSS</strong>: Global Navigation Satellite System<a href="#section-1-3.2" class="pilcrow">¶</a>
+        <li class="compact" id="section-2-3.2">
+          <strong>GNSS</strong>: Global Navigation Satellite System<a href="#section-2-3.2" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="section-1-3.3">
-          <strong>IMEI</strong>: International Mobile Equipment Identity<a href="#section-1-3.3" class="pilcrow">¶</a>
+        <li class="compact" id="section-2-3.3">
+          <strong>IMEI</strong>: International Mobile Equipment Identity<a href="#section-2-3.3" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="section-1-3.4">
-          <strong>IMSI</strong>: International Mobile Subscriber Identity<a href="#section-1-3.4" class="pilcrow">¶</a>
+        <li class="compact" id="section-2-3.4">
+          <strong>IMSI</strong>: International Mobile Subscriber Identity<a href="#section-2-3.4" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="section-1-3.5">
-          <strong>PCR</strong>: Platform Configuration Register<a href="#section-1-3.5" class="pilcrow">¶</a>
+        <li class="compact" id="section-2-3.5">
+          <strong>PCR</strong>: Platform Configuration Register<a href="#section-2-3.5" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="section-1-3.6">
-          <strong>MDM</strong>: Mobile Device Management<a href="#section-1-3.6" class="pilcrow">¶</a>
+        <li class="compact" id="section-2-3.6">
+          <strong>MDM</strong>: Mobile Device Management<a href="#section-2-3.6" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="section-1-3.7">
-          <strong>IPSEC</strong>: Internet Protocol Security<a href="#section-1-3.7" class="pilcrow">¶</a>
+        <li class="compact" id="section-2-3.7">
+          <strong>IPSEC</strong>: Internet Protocol Security<a href="#section-2-3.7" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="section-1-3.8">
-          <strong>BMC</strong>: Baseboard Management Controller<a href="#section-1-3.8" class="pilcrow">¶</a>
+        <li class="compact" id="section-2-3.8">
+          <strong>BMC</strong>: Baseboard Management Controller<a href="#section-2-3.8" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="section-1-3.9">
-          <strong>Workload Identity Agent</strong>: The entity (e.g., SPIRE Agent) managing workload identities.<a href="#section-1-3.9" class="pilcrow">¶</a>
+        <li class="compact" id="section-2-3.9">
+          <strong>Workload Identity Agent</strong>: The entity (e.g., SPIRE Agent) managing workload identities.<a href="#section-2-3.9" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="section-1-3.10">
-          <strong>OOB</strong>: Out-of-Band<a href="#section-1-3.10" class="pilcrow">¶</a>
+        <li class="compact" id="section-2-3.10">
+          <strong>OOB</strong>: Out-of-Band<a href="#section-2-3.10" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="section-1-3.11">
-          <strong>EAT</strong>: Entity Attestation Token<a href="#section-1-3.11" class="pilcrow">¶</a>
+        <li class="compact" id="section-2-3.11">
+          <strong>EAT</strong>: Entity Attestation Token<a href="#section-2-3.11" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="section-1-3.12">
-          <strong>DAA</strong>: Direct Anonymous Attestation<a href="#section-1-3.12" class="pilcrow">¶</a>
+        <li class="compact" id="section-2-3.12">
+          <strong>DAA</strong>: Direct Anonymous Attestation<a href="#section-2-3.12" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="section-1-3.13">
-          <strong>EPID</strong>: Enhanced Privacy ID<a href="#section-1-3.13" class="pilcrow">¶</a>
+        <li class="compact" id="section-2-3.13">
+          <strong>EPID</strong>: Enhanced Privacy ID<a href="#section-2-3.13" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="section-1-3.14">
-          <strong>DCAP</strong>: Data Center Attestation Primitives<a href="#section-1-3.14" class="pilcrow">¶</a>
+        <li class="compact" id="section-2-3.14">
+          <strong>DCAP</strong>: Data Center Attestation Primitives<a href="#section-2-3.14" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="section-1-3.15">
-          <strong>EK</strong>: Endorsement Key<a href="#section-1-3.15" class="pilcrow">¶</a>
+        <li class="compact" id="section-2-3.15">
+          <strong>EK</strong>: Endorsement Key<a href="#section-2-3.15" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="section-1-3.16">
-          <strong>AK</strong>: Attestation Key<a href="#section-1-3.16" class="pilcrow">¶</a>
+        <li class="compact" id="section-2-3.16">
+          <strong>AK</strong>: Attestation Key<a href="#section-2-3.16" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="section-1-3.17">
-          <strong>IMA</strong>: Integrity Measurement Architecture<a href="#section-1-3.17" class="pilcrow">¶</a>
+        <li class="compact" id="section-2-3.17">
+          <strong>IMA</strong>: Integrity Measurement Architecture<a href="#section-2-3.17" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="section-1-3.18">
-          <strong>SPDM</strong>: Security Protocol and Data Model<a href="#section-1-3.18" class="pilcrow">¶</a>
+        <li class="compact" id="section-2-3.18">
+          <strong>SPDM</strong>: Security Protocol and Data Model<a href="#section-2-3.18" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="section-1-3.19">
-          <strong>STARK</strong>: Scalable Transparent ARguments of Knowledge<a href="#section-1-3.19" class="pilcrow">¶</a>
+        <li class="compact" id="section-2-3.19">
+          <strong>STARK</strong>: Scalable Transparent ARguments of Knowledge<a href="#section-2-3.19" class="pilcrow">¶</a>
 </li>
-        <li class="compact" id="section-1-3.20">
-          <strong>ZKP</strong>: Zero-Knowledge Proof<a href="#section-1-3.20" class="pilcrow">¶</a>
+        <li class="compact" id="section-2-3.20">
+          <strong>ZKP</strong>: Zero-Knowledge Proof<a href="#section-2-3.20" class="pilcrow">¶</a>
 </li>
       </ul>
-<p id="section-1-4"><strong>Key Terms:</strong><a href="#section-1-4" class="pilcrow">¶</a></p>
-<span class="break"></span><dl class="dlCompact dlParallel" id="section-1-5">
-        <dt id="section-1-5.1">Data Residency:</dt>
-        <dd style="margin-left: 1.5em" id="section-1-5.2">Technical and Legal Challenges Ensuring compliance with global and local data protection regulations and mandates (e.g., EU GDPR, US HIPAA, PCI DSS). Strict residency rules require that data must be stored and processed exclusively within designated geographic boundaries, enforced via trusted computing and geofencing.<a href="#section-1-5.2" class="pilcrow">¶</a>
+<p id="section-2-4"><strong>Key Terms:</strong><a href="#section-2-4" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlCompact dlParallel" id="section-2-5">
+        <dt id="section-2-5.1">Data Residency:</dt>
+        <dd style="margin-left: 1.5em" id="section-2-5.2">Technical and Legal Challenges Ensuring compliance with global and local data protection regulations and mandates (e.g., EU GDPR, US HIPAA, PCI DSS). Strict residency rules require that data must be stored and processed exclusively within designated geographic boundaries, enforced via trusted computing and geofencing.<a href="#section-2-5.2" class="pilcrow">¶</a>
 </dd>
         <dd class="break"></dd>
-<dt id="section-1-5.3">Data Residency Host-Affinity Requirement:</dt>
-        <dd style="margin-left: 1.5em" id="section-1-5.4">Data must remain bound to explicitly trusted computing environments or Workload Hosts.<a href="#section-1-5.4" class="pilcrow">¶</a>
+<dt id="section-2-5.3">Data Residency Host-Affinity Requirement:</dt>
+        <dd style="margin-left: 1.5em" id="section-2-5.4">Data must remain bound to explicitly trusted computing environments or Workload Hosts.<a href="#section-2-5.4" class="pilcrow">¶</a>
 </dd>
         <dd class="break"></dd>
-<dt id="section-1-5.5">Data Residency Geolocation-Affinity Requirement:</dt>
-        <dd style="margin-left: 1.5em" id="section-1-5.6">Data must not be transferred beyond defined geographic regions.<a href="#section-1-5.6" class="pilcrow">¶</a>
+<dt id="section-2-5.5">Data Residency Geolocation-Affinity Requirement:</dt>
+        <dd style="margin-left: 1.5em" id="section-2-5.6">Data must not be transferred beyond defined geographic regions.<a href="#section-2-5.6" class="pilcrow">¶</a>
 </dd>
         <dd class="break"></dd>
-<dt id="section-1-5.7">Data Residency Host Geolocation Affinity (aka Geofencing):</dt>
-        <dd style="margin-left: 1.5em" id="section-1-5.8">A compound enforcement mechanism requiring that data and workloads are executed only on authorized Workload Hosts located within approved geographic regions.<a href="#section-1-5.8" class="pilcrow">¶</a>
+<dt id="section-2-5.7">Data Residency Host Geolocation Affinity (aka Geofencing):</dt>
+        <dd style="margin-left: 1.5em" id="section-2-5.8">A compound enforcement mechanism requiring that data and workloads are executed only on authorized Workload Hosts located within approved geographic regions.<a href="#section-2-5.8" class="pilcrow">¶</a>
 </dd>
         <dd class="break"></dd>
-<dt id="section-1-5.9">Workload Identity Agent:</dt>
-        <dd style="margin-left: 1.5em" id="section-1-5.10">A trusted entity (e.g., SPIFFE/SPIRE agent) on each Workload Host that manages workload identities. The Workload Identity Agent is verified through platform attestation (Layer 2) and issues cryptographically bound identities (e.g., SVIDs) to workloads. It serves as the primary trust anchor for workload-to-workload communication in the WIMSE architecture.<a href="#section-1-5.10" class="pilcrow">¶</a>
+<dt id="section-2-5.9">Workload Identity Agent:</dt>
+        <dd style="margin-left: 1.5em" id="section-2-5.10">A trusted entity (e.g., SPIFFE/SPIRE agent) on each Workload Host that manages workload identities. The Workload Identity Agent is verified through platform attestation (Layer 2) and issues cryptographically bound identities (e.g., SVIDs) to workloads. It serves as the primary trust anchor for workload-to-workload communication in the WIMSE architecture.<a href="#section-2-5.10" class="pilcrow">¶</a>
 </dd>
         <dd class="break"></dd>
-<dt id="section-1-5.11">Workload Host:</dt>
-        <dd style="margin-left: 1.5em" id="section-1-5.12">The physical or virtual machine running the sovereign workload and its associated Workload Identity Agent. It provides the Outer Evidence (platform attestation) and proves its proximity to a Location Anchor Host to establish residency.<a href="#section-1-5.12" class="pilcrow">¶</a>
+<dt id="section-2-5.11">Workload Host:</dt>
+        <dd style="margin-left: 1.5em" id="section-2-5.12">The physical or virtual machine running the sovereign workload and its associated Workload Identity Agent. It provides the Outer Evidence (platform attestation) and proves its proximity to a Location Anchor Host to establish residency.<a href="#section-2-5.12" class="pilcrow">¶</a>
 </dd>
         <dd class="break"></dd>
-<dt id="section-1-5.13">Location Anchor Host (LAH):</dt>
-        <dd style="margin-left: 1.5em" id="section-1-5.14">A hardware-isolated Location Anchor Host (LAH) (e.g., an HPE server with an iLO 7 Security Processor and a trusted location source like GNSS/5G) that acts as the source of truth for physical residency by providing the Inner Evidence bundle.<a href="#section-1-5.14" class="pilcrow">¶</a>
+<dt id="section-2-5.13">Location Anchor Host (LAH):</dt>
+        <dd style="margin-left: 1.5em" id="section-2-5.14">A hardware-isolated Location Anchor Host (LAH) (e.g., an HPE server with an iLO 7 Security Processor and a trusted location source like GNSS/5G) that acts as the source of truth for physical residency by providing the Inner Evidence bundle.<a href="#section-2-5.14" class="pilcrow">¶</a>
 </dd>
         <dd class="break"></dd>
-<dt id="section-1-5.15">Composite Geolocation:</dt>
-        <dd style="margin-left: 1.5em" id="section-1-5.16">A location estimate fused from multiple sources (e.g., local GNSS and mobile network APIs) to produce a quality-scored, verifiable location claim.<a href="#section-1-5.16" class="pilcrow">¶</a>
+<dt id="section-2-5.15">Composite Geolocation:</dt>
+        <dd style="margin-left: 1.5em" id="section-2-5.16">A location estimate fused from multiple sources (e.g., local GNSS and mobile network APIs) to produce a quality-scored, verifiable location claim.<a href="#section-2-5.16" class="pilcrow">¶</a>
 </dd>
         <dd class="break"></dd>
-<dt id="section-1-5.17">Proof-Of-Residency (PoR) / Co-location:</dt>
-        <dd style="margin-left: 1.5em" id="section-1-5.18">A cryptographic proof that binds a workload's current execution session to a specific, verified local environment or Workload Host.<a href="#section-1-5.18" class="pilcrow">¶</a>
+<dt id="section-2-5.17">Proof-Of-Residency (PoR) / Co-location:</dt>
+        <dd style="margin-left: 1.5em" id="section-2-5.18">A cryptographic proof that binds a workload's current execution session to a specific, verified local environment or Workload Host.<a href="#section-2-5.18" class="pilcrow">¶</a>
 </dd>
         <dd class="break"></dd>
-<dt id="section-1-5.19">Silicon Root of Trust:</dt>
-        <dd style="margin-left: 1.5em" id="section-1-5.20">A hardware-based trust anchor (e.g., HPE Silicon Root of Trust or AWS Nitro Security Chip) that verifies low-level firmware and protects the system from the first moment of power-on.<a href="#section-1-5.20" class="pilcrow">¶</a>
+<dt id="section-2-5.19">Silicon Root of Trust:</dt>
+        <dd style="margin-left: 1.5em" id="section-2-5.20">A hardware-based trust anchor (e.g., HPE Silicon Root of Trust or AWS Nitro Security Chip) that verifies low-level firmware and protects the system from the first moment of power-on.<a href="#section-2-5.20" class="pilcrow">¶</a>
 </dd>
         <dd class="break"></dd>
-<dt id="section-1-5.21">Transparent Zero-Knowledge Proof (ZKP):</dt>
-        <dd style="margin-left: 1.5em" id="section-1-5.22">A ZKP that does not require a "Trusted Setup" or a Trusted Third Party. Mathematical transparency is achieved through non-interactive, hash-based protocols (e.g., STARKs/FRI).<a href="#section-1-5.22" class="pilcrow">¶</a>
+<dt id="section-2-5.21">Transparent Zero-Knowledge Proof (ZKP):</dt>
+        <dd style="margin-left: 1.5em" id="section-2-5.22">A ZKP that does not require a "Trusted Setup" or a Trusted Third Party. Mathematical transparency is achieved through non-interactive, hash-based protocols (e.g., STARKs/FRI).<a href="#section-2-5.22" class="pilcrow">¶</a>
 </dd>
         <dd class="break"></dd>
-<dt id="section-1-5.23">Workload Identity Manager:</dt>
-        <dd style="margin-left: 1.5em" id="section-1-5.24">The control plane entity (e.g., SPIRE Server, Keylime Verifier, or a Cloud IAM service) responsible for managing workload identities (SVIDs), verifying workload-to-agent co-location (Layer 1), and issuing credentials based on fused identity and residency claims.<a href="#section-1-5.24" class="pilcrow">¶</a>
+<dt id="section-2-5.23">Workload Identity Manager:</dt>
+        <dd style="margin-left: 1.5em" id="section-2-5.24">The control plane entity (e.g., SPIRE Server, Keylime Verifier, or a Cloud IAM service) responsible for managing workload identities (SVIDs), verifying workload-to-agent co-location (Layer 1), and issuing credentials based on fused identity and residency claims.<a href="#section-2-5.24" class="pilcrow">¶</a>
 </dd>
         <dd class="break"></dd>
-<dt id="section-1-5.25">Host Management Plane:</dt>
-        <dd style="margin-left: 1.5em" id="section-1-5.26">The infrastructure control plane (e.g., HPE OneView, GreenLake, or AWS Cloud Control) responsible for out-of-band platform management, hardware inventory, and verifying platform-level attestation evidence (Layer 2 and 3) from the management processor (BMC/iLO).<a href="#section-1-5.26" class="pilcrow">¶</a>
+<dt id="section-2-5.25">Host Management Plane:</dt>
+        <dd style="margin-left: 1.5em" id="section-2-5.26">The infrastructure control plane (e.g., HPE OneView, GreenLake, or AWS Cloud Control) responsible for out-of-band platform management, hardware inventory, and verifying platform-level attestation evidence (Layer 2 and 3) from the management processor (BMC/iLO).<a href="#section-2-5.26" class="pilcrow">¶</a>
 </dd>
         <dd class="break"></dd>
-<dt id="section-1-5.27">V-GAP (Verifiable Geofencing Attestation Profile):</dt>
-        <dd style="margin-left: 1.5em" id="section-1-5.28">The nested evidence format defined in this draft for binding identity to physical location.<a href="#section-1-5.28" class="pilcrow">¶</a>
+<dt id="section-2-5.27">V-GAP (Verifiable Geofencing Attestation Profile):</dt>
+        <dd style="margin-left: 1.5em" id="section-2-5.28">The nested evidence format defined in this draft for binding identity to physical location.<a href="#section-2-5.28" class="pilcrow">¶</a>
 </dd>
         <dd class="break"></dd>
-<dt id="section-1-5.29">Temporal Nonce:</dt>
-        <dd style="margin-left: 1.5em" id="section-1-5.30">A hardware-signed high-resolution timestamp that provides freshness without requiring a remote verifier challenge for every cycle.<a href="#section-1-5.30" class="pilcrow">¶</a>
+<dt id="section-2-5.29">Temporal Nonce:</dt>
+        <dd style="margin-left: 1.5em" id="section-2-5.30">A hardware-signed high-resolution timestamp that provides freshness without requiring a remote verifier challenge for every cycle.<a href="#section-2-5.30" class="pilcrow">¶</a>
 </dd>
         <dd class="break"></dd>
-<dt id="section-1-5.31">Proximity Binding:</dt>
-        <dd style="margin-left: 1.5em" id="section-1-5.32">The process of cryptographically proving that the Workload Host and the LAH are physically co-located using Attested PTP.<a href="#section-1-5.32" class="pilcrow">¶</a>
+<dt id="section-2-5.31">Proximity Binding:</dt>
+        <dd style="margin-left: 1.5em" id="section-2-5.32">The process of cryptographically proving that the Workload Host and the LAH are physically co-located using Attested PTP.<a href="#section-2-5.32" class="pilcrow">¶</a>
 </dd>
         <dd class="break"></dd>
-<dt id="section-1-5.33">N_platform (Platform Quote Nonce):</dt>
-        <dd style="margin-left: 1.5em" id="section-1-5.34">A fresh nonce generated by the Host Management Plane and delivered directly to the management processor (OOB). The Workload Host OS and Workload Identity Agent MUST NOT be required to observe N_platform.<a href="#section-1-5.34" class="pilcrow">¶</a>
+<dt id="section-2-5.33">N_platform (Platform Quote Nonce):</dt>
+        <dd style="margin-left: 1.5em" id="section-2-5.34">A fresh nonce generated by the Host Management Plane and delivered directly to the management processor (OOB). The Workload Host OS and Workload Identity Agent MUST NOT be required to observe N_platform.<a href="#section-2-5.34" class="pilcrow">¶</a>
 </dd>
         <dd class="break"></dd>
-<dt id="section-1-5.35">N_fusion (Workload Fusion Nonce):</dt>
-        <dd style="margin-left: 1.5em" id="section-1-5.36">A nonce provided by the Workload Identity Manager specifically for the Workload Identity Agent-to-Workload proof-of-residency / identity fusion flows. This nonce MAY traverse the Workload Host OS.<a href="#section-1-5.36" class="pilcrow">¶</a>
+<dt id="section-2-5.35">N_fusion (Workload Fusion Nonce):</dt>
+        <dd style="margin-left: 1.5em" id="section-2-5.36">A nonce provided by the Workload Identity Manager specifically for the Workload Identity Agent-to-Workload proof-of-residency / identity fusion flows. This nonce MAY traverse the Workload Host OS.<a href="#section-2-5.36" class="pilcrow">¶</a>
 </dd>
         <dd class="break"></dd>
-<dt id="section-1-5.37">N_platform vs. N_fusion Binding:</dt>
-        <dd style="margin-left: 1.5em" id="section-1-5.38">To prevent "mix-and-match" attacks where an attacker combines a fresh workload identity with a stale platform quote, the Host Management Plane SHALL cryptographically bind the two nonces. The Attestation Result produced by the Verifier MUST contain a <strong>Joint Digital Signature</strong> over both <code>N_fusion</code> and the hardware-attested platform claims verified via <code>N_platform</code>. This ensures that the issued SVID is structurally tied to the specific hardware state observed during that exact attestation window.<a href="#section-1-5.38" class="pilcrow">¶</a>
+<dt id="section-2-5.37">N_platform vs. N_fusion Binding:</dt>
+        <dd style="margin-left: 1.5em" id="section-2-5.38">To prevent "mix-and-match" attacks where an attacker combines a fresh workload identity with a stale platform quote, the Host Management Plane SHALL cryptographically bind the two nonces. The Attestation Result produced by the Verifier MUST contain a <strong>Joint Digital Signature</strong> over both <code>N_fusion</code> and the hardware-attested platform claims verified via <code>N_platform</code>. This ensures that the issued SVID is structurally tied to the specific hardware state observed during that exact attestation window.<a href="#section-2-5.38" class="pilcrow">¶</a>
 </dd>
       <dd class="break"></dd>
 </dl>
-</section>
-</div>
-<div id="introduction">
-<section id="section-2">
-      <h2 id="name-introduction">
-<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
-      </h2>
-<p id="section-2-1">As organizations increasingly adopt cloud and distributed computing, the need to enforce data residency, geolocation affinity, and Workload Host affinity has become critical for regulatory compliance and risk management. Traditional approaches rely on trust in infrastructure providers, which are often insufficient in adversarial or multi-tenant environments.<a href="#section-2-1" class="pilcrow">¶</a></p>
-<p id="section-2-2">Modern workload security faces challenges from stolen bearer tokens, protocol replay, and trust gaps in transit. This document defines a specialized <strong>RATS Profile</strong> that cryptographically binds the <strong>Workload Identity Agent</strong>—the entity responsible for issuing software identities—to a hardware-verified platform and physical location.<a href="#section-2-2" class="pilcrow">¶</a></p>
-<p id="section-2-3">The architecture follows the <strong>RATS Architecture [[RFC9334]]</strong>, defining the interactions between <strong>Provers</strong>, <strong>Verifiers</strong>, and <strong>Relying Parties</strong> to generate and validate <strong>High-Confidence Evidence</strong> regarding the Workload Identity Agent's status. It provides the hardware-rooted "Evidence Layer" required by the high-level <strong>WIMSE Architecture [[I-D.ietf-wimse-architecture]]</strong>, establishing a "Silicon-to-Audit" chain of trust that ensures sensitive data is only processed by authorized workloads in approved, integral environments.<a href="#section-2-3" class="pilcrow">¶</a></p>
 <div id="industry-gaps-and-problem-statements">
 <section id="section-2.1">
         <h3 id="name-industry-gaps-and-problem-s">
@@ -2152,11 +2152,12 @@ li > p:last-of-type:only-child {
 
 Inner-Evidence-Bundle = {
     1 =&gt; bstr,                      ; Location Anchor Host AK
-    2 =&gt; bstr,                      ; lah-geolocation-proof-hash (ZKP/Residency)
+    2 =&gt; bstr,                      ; lah-geolocation-proof-hash
     3 =&gt; int,                       ; Privacy Technique (0=None, 1=ZKP, 2=TEE)
     4 =&gt; uint,                      ; Hardware-rooted epoch (Timestamp)
-    ? 5 =&gt; bstr,                    ; Optional freshness-nonce
-    6 =&gt; bstr                       ; Inner Seal over [1, 2, 3, 4, 5]
+    5 =&gt; uint,                      ; accuracy-sub-claim (Nanoseconds)
+    ? 6 =&gt; bstr,                    ; Optional freshness-nonce
+    7 =&gt; bstr                       ; Inner Seal over [1..6]
 }
 </pre><a href="#section-6.2-2" class="pilcrow">¶</a>
 </div>
@@ -2220,7 +2221,7 @@ Inner-Evidence-Bundle = {
           <strong>Regional Specificity:</strong> SVIDs issued by an Edge SPIRE server are cryptographically restricted to that specific deployment and cannot be used in other regions.<a href="#section-8-2.2" class="pilcrow">¶</a>
 </li>
         <li class="compact" id="section-8-2.3">
-          <strong>Unified Host Proximity Enforcement:</strong> In deployments where the Location Anchor Host (LAH) and Workload Host are the same physical machine (Unified Host), the proximity proof MUST be generated via an <strong>internal silicon measurement</strong> (e.g., measuring PCIe latency or local bus delay) rather than a network protocol. In this case, the <code>host-proximity-proof-hash</code> SHALL be set to the cryptographic constant <strong>"SELF"</strong>, formally defined as the 32-byte value <code>SHA-256("Aegis-Self-Proximity")</code>. The Verifier SHALL validate that the reported bus latency is within the microsecond bounds of local silicon to prevent a remote attacker from spoofing a 1:1 residency status.<a href="#section-8-2.3" class="pilcrow">¶</a>
+          <strong>Unified Host Proximity Enforcement:</strong> In deployments where the Location Anchor Host (LAH) and Workload Host are the same physical machine (Unified Host), the proximity proof MUST be generated via an <strong>internal silicon measurement</strong> (e.g., measuring PCIe latency or local bus delay) rather than a network protocol. In this case, the <code>host-proximity-proof-hash</code> SHALL be set to the cryptographic constant <strong>"SELF"</strong>, formally defined as the 32-byte value <code>SHA-256("V-GAP-LOCAL-PROXIMITY")</code>. The Verifier SHALL validate that the reported bus latency is within the microsecond bounds of local silicon to prevent a remote attacker from spoofing a 1:1 residency status.<a href="#section-8-2.3" class="pilcrow">¶</a>
 </li>
       </ul>
 <div id="end-user-location-anchor-host">
@@ -2431,7 +2432,7 @@ Inner-Evidence-Bundle = {
 </li>
           <li id="section-9.4-8.9">The Workload Identity Manager verifies that the decrypted secret matches the original secret used to build the challenge.<a href="#section-9.4-8.9" class="pilcrow">¶</a>
 </li>
-          <li id="section-9.4-8.10">The Workload Identity Manager issues the Workload Identity Agent ID (SVID). <strong>The V-GAP Evidence Bundle (CDDL profile) MUST be embedded as a CRITICAL X.509 extension within the Workload Identity Agent's SVID certificate.</strong> The <strong>Atomic Seal</strong> (Field 4 of the profile) MUST be a standard <strong>TPM2_Quote</strong> where the <code>qualifyingData</code> is the <code>temporal-nonce</code> and the <code>message</code> being signed is the SHA-256 hash of the preceding bytes in the bundle.<a href="#section-9.4-8.10" class="pilcrow">¶</a>
+          <li id="section-9.4-8.10">The Workload Identity Manager issues the Workload Identity Agent ID (SVID). <strong>The V-GAP Evidence Bundle (CBOR-formatted) MUST be embedded as a CRITICAL X.509 extension within the Workload Identity Agent's SVID certificate, encoded as an <code>OCTET STRING</code> containing the CBOR-encoded evidence.</strong> The extension SHALL use the OID <code>1.3.6.1.4.1.60265.1.1</code> (V-GAP). The <strong>Atomic Seal</strong> (Field 4 of the profile) MUST be a standard <strong>TPM2_Quote</strong> where the <code>qualifyingData</code> is the <code>temporal-nonce</code> and the <code>message</code> being signed is the SHA-256 hash of the preceding bytes in the bundle.<a href="#section-9.4-8.10" class="pilcrow">¶</a>
 </li>
           <li id="section-9.4-8.11">
             <strong>Criticality Enforcement:</strong> Any verifier that encounters a Sovereign SVID and does not support the V-GAP OID MUST reject the certificate. This ensures that a residency-constrained workload cannot accidentally be authorized by a gateway that doesn't understand the "Residency Moat."<a href="#section-9.4-8.11" class="pilcrow">¶</a>
@@ -3205,7 +3206,7 @@ Location has a quality associated with it. For example, IP address-based or Wi-F
         <h3 id="name-privacy-preserving-geolocati">
 <a href="#section-9.15" class="section-number selfRef">9.15. </a><a href="#name-privacy-preserving-geolocati" class="section-name selfRef">Privacy-Preserving Geolocation Verification (ZKP)</a>
         </h3>
-<p id="section-9.15-1">As an alternative to sharing precise geolocation coordinates, a Zero-Knowledge Proof (ZKP) can be used to prove that a host is within an approved geographic boundary <strong>without revealing its exact location</strong>. This "Audit without Disclosure" pattern, as described in [[AegisSovereignAI]], is particularly important for sovereignty-sensitive deployments where even the Verifier should not learn the Prover's precise coordinates.<a href="#section-9.15-1" class="pilcrow">¶</a></p>
+<p id="section-9.15-1">As an alternative to sharing precise geolocation coordinates, a Zero-Knowledge Proof (ZKP) can be used to prove that a host is within an approved geographic boundary <strong>without revealing its exact location</strong>. This "Audit without Disclosure" pattern, as described in [[AegisSovereignWorkloads]], is particularly important for sovereignty-sensitive deployments where even the Verifier should not learn the Prover's precise coordinates.<a href="#section-9.15-1" class="pilcrow">¶</a></p>
 <div id="architecture-5">
 <section id="section-9.15.1">
           <h4 id="name-architecture-6">
@@ -3329,7 +3330,7 @@ Location has a quality associated with it. For example, IP address-based or Wi-F
 <a href="#section-9.15.5" class="section-number selfRef">9.15.5. </a><a href="#name-mathematical-transparency-a" class="section-name selfRef">Mathematical Transparency and Post-Quantum Foundation</a>
           </h4>
 <p id="section-9.15.5-1">A critical requirement for sovereign infrastructure is the elimination of Trusted Third Parties (TTPs). Legacy ZKP systems (Gen 3, e.g., Groth16) often required a "Trusted Setup" phase to generate cryptographic parameters. If the secret data (the "Toxic Waste") from this setup was not properly destroyed, the system's integrity could be compromised.<a href="#section-9.15.5-1" class="pilcrow">¶</a></p>
-<p id="section-9.15.5-2">As described in [[AegisSovereignAI]], this attestation framework leverages <strong>Gen 4 ZKP (e.g., Plonky2/FRI-based)</strong> to achieve mathematical transparency and future-proof security:<a href="#section-9.15.5-2" class="pilcrow">¶</a></p>
+<p id="section-9.15.5-2">As described in [[AegisSovereignWorkloads]], this attestation framework leverages <strong>Gen 4 ZKP (e.g., Plonky2/FRI-based)</strong> to achieve mathematical transparency and future-proof security:<a href="#section-9.15.5-2" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="compact type-1" id="section-9.15.5-3">
 <li id="section-9.15.5-3.1">
               <strong>No Trusted Setup:</strong> Verification is based on hash-based STARKs and PLONKish arithmetization. There are no secret parameters to manage or destroy, eliminating the TTP risk entirely.<a href="#section-9.15.5-3.1" class="pilcrow">¶</a>
@@ -3377,16 +3378,17 @@ Location has a quality associated with it. For example, IP address-based or Wi-F
         </h3>
 <p id="section-9.18-1">The goal is to provide an easy-to-use solution that can be used by data center operators without requiring them to install a geolocation sensor on every data center host.<a href="#section-9.18-1" class="pilcrow">¶</a></p>
 <p id="section-9.18-2">PTP is a network protocol that enables precise synchronization of clocks across a computer network and can be used to measure the round-trip time (RTT) between the location anchor host and other data center hosts with sub-microsecond accuracy. To provide cryptographically verifiable proof of residency on the Workload Host -- referred to as "attested PTP" -- the PTP software/hardware can be enhanced so that all PTP messages are signed with a private key.<a href="#section-9.18-2" class="pilcrow">¶</a></p>
-<p id="section-9.18-3">This signing can be done in two ways:<a href="#section-9.18-3" class="pilcrow">¶</a></p>
+<p id="section-9.18-3">The <strong>Canonical PTP Log</strong> for hashing MUST include the signed <strong>Follow_Up</strong> and <strong>Delay_Resp</strong> messages from the PTP exchange. This ensures that the proximity proof is bound to the actual cryptographic evidence of the physical handshake.<a href="#section-9.18-3" class="pilcrow">¶</a></p>
+<p id="section-9.18-4">This signing can be done in two ways:<a href="#section-9.18-4" class="pilcrow">¶</a></p>
 <ul class="compact">
-<li class="compact" id="section-9.18-4.1">Software-based: PTP software (e.g. Linux PTP daemon), after adding timestamp to PTP message, signs the PTP message with its private key -- Linux PTP daemon is a workload managed by workload identity manager. This approach may not provide sub-microsecond accuracy due to inherent software jitter, but it can still provide a reasonable approximation of the proximity of the other data center hosts to the location anchor host.<a href="#section-9.18-4.1" class="pilcrow">¶</a>
+<li class="compact" id="section-9.18-5.1">Software-based: PTP software (e.g. Linux PTP daemon), after adding timestamp to PTP message, signs the PTP message with its private key -- Linux PTP daemon is a workload managed by workload identity manager. This approach may not provide sub-microsecond accuracy due to inherent software jitter, but it can still provide a reasonable approximation of the proximity of the other data center hosts to the location anchor host.<a href="#section-9.18-5.1" class="pilcrow">¶</a>
 </li>
-          <li class="compact" id="section-9.18-4.2">Hardware-based: PTP hardware (e.g., SmartNIC), after adding timestamp to PTP message, signs the PTP message with its private key (e.g., SmartNIC DPU). The corresponding public key, used to verify the signatures, can be attested by the Host TPM Attestation Key (AK). This approach provides sub-microsecond accuracy and the perfect proximity measure of the other data center hosts to the location anchor host, and is suitable for data center environments where precise timing is critical.<a href="#section-9.18-4.2" class="pilcrow">¶</a>
+          <li class="compact" id="section-9.18-5.2">Hardware-based: PTP hardware (e.g., SmartNIC), after adding timestamp to PTP message, signs the PTP message with its private key (e.g., SmartNIC DPU). The corresponding public key, used to verify the signatures, can be attested by the Host TPM Attestation Key (AK). This approach provides sub-microsecond accuracy and the perfect proximity measure of the other data center hosts to the location anchor host, and is suitable for data center environments where precise timing is critical.<a href="#section-9.18-5.2" class="pilcrow">¶</a>
 </li>
         </ul>
-<p id="section-9.18-5">Host proximity manager periodically verifies that the PTP daemon in the location anchor hosts provide proof that the PTP daemon in the Workload Hosts are within the maximum DC round-trip delay from them. The PTP daemon is another workload managed by the workload identity manager.<a href="#section-9.18-5" class="pilcrow">¶</a></p>
-<p id="section-9.18-6">Note that attested PTP is a proposed enhancement to the existing PTP hardware and software. For a detailed specification of hardware-rooted attestation for PTP, including verifiable residency and proximity proofs, see [[I-D.ramki-ptp-hardware-rooted-attestation]].<a href="#section-9.18-6" class="pilcrow">¶</a></p>
-<p id="section-9.18-7">All geolocation information captured at this layer (Layer 3) is intended for consumption by the Workload Identity Agent. The conveyance of this information in the data plane (e.g., via HTTP headers or within SVIDs) and the associated Proof of Residency (PoR) bindings for various protocols are handled in [[I-D.mw-wimse-transitive-attestation]].<a href="#section-9.18-7" class="pilcrow">¶</a></p>
+<p id="section-9.18-6">Host proximity manager periodically verifies that the PTP daemon in the location anchor hosts provide proof that the PTP daemon in the Workload Hosts are within the maximum DC round-trip delay from them. The PTP daemon is another workload managed by the workload identity manager.<a href="#section-9.18-6" class="pilcrow">¶</a></p>
+<p id="section-9.18-7">Note that attested PTP is a proposed enhancement to the existing PTP hardware and software. For a detailed specification of hardware-rooted attestation for PTP, including verifiable residency and proximity proofs, see [[I-D.ramki-ptp-hardware-rooted-attestation]].<a href="#section-9.18-7" class="pilcrow">¶</a></p>
+<p id="section-9.18-8">All geolocation information captured at this layer (Layer 3) is intended for consumption by the Workload Identity Agent. The conveyance of this information in the data plane (e.g., via HTTP headers or within SVIDs) and the associated Proof of Residency (PoR) bindings for various protocols are handled in [[I-D.mw-wimse-transitive-attestation]].<a href="#section-9.18-8" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -3498,7 +3500,7 @@ Location has a quality associated with it. For example, IP address-based or Wi-F
           <h4 id="name-anti-tunneling-and-tee-enfo">
 <a href="#section-12.3.1" class="section-number selfRef">12.3.1. </a><a href="#name-anti-tunneling-and-tee-enfo" class="section-name selfRef">Anti-Tunneling and TEE-Enforced Proximity</a>
           </h4>
-<p id="section-12.3.1-1">To prevent "Proxy Attacks" (where PTP packets are tunneled to a remote anchor to fake proximity), the <strong>Attested PTP daemon</strong> MUST execute within a <strong>Trusted Execution Environment (TEE)</strong> or a secure security processor (e.g., iLO 7). This ensures that the round-trip measurements (RTT) are signed in silicon at the point of origin via <strong>Signed PTP Messages</strong> (e.g., signed <code>Follow_Up</code> or <code>Delay_Resp</code> packets), preventing a compromised Workload Host OS from manipulating results to mask geographic distance.<a href="#section-12.3.1-1" class="pilcrow">¶</a></p>
+<p id="section-12.3.1-1">To prevent "Proxy Attacks" (where PTP packets are tunneled to a remote anchor to fake proximity), the <strong>Attested PTP daemon</strong> MUST execute within a <strong>Trusted Execution Environment (TEE)</strong> or a secure security processor (e.g., iLO 7). This ensures that the round-trip measurements (RTT) are signed in silicon at the point of origin via <strong>Signed PTP Messages</strong> (e.g., signed <code>Follow_Up</code> or <code>Delay_Resp</code> packets), preventing a compromised Workload Host OS from manipulating results to mask geographic distance. <strong>The Proximity Proof itself MUST be a cryptographic signature over the timing metadata produced directly by the TEE; any proofs produced by the Workload Host OS without TEE-witnessed signatures SHALL be rejected.</strong><a href="#section-12.3.1-1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-12.3.1-2.1">
               <p id="section-12.3.1-2.1.1"><strong>TPM and Hardware Trust</strong>: The security of the solution depends on the integrity of the TPM and other hardware roots of trust. Physical attacks, firmware vulnerabilities, or supply chain compromises could undermine attestation. Regular updates, secure provisioning, and monitoring are required.<a href="#section-12.3.1-2.1.1" class="pilcrow">¶</a></p>
@@ -3565,7 +3567,18 @@ Location has a quality associated with it. For example, IP address-based or Wi-F
       <h2 id="name-iana-considerations">
 <a href="#section-13" class="section-number selfRef">13. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
       </h2>
-<p id="section-13-1">This document has no IANA actions.<a href="#section-13-1" class="pilcrow">¶</a></p>
+<p id="section-13-1">IANA is requested to register the following Object Identifier (OID) in the "SMI Numbers" registry under the "SMI Private Enterprise Numbers" (1.3.6.1.4.1) branch, or as appropriate for the V-GAP profile:<a href="#section-13-1" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="section-13-2.1">
+          <strong>OID</strong>: <code>1.3.6.1.4.1.60265.1.1</code><a href="#section-13-2.1" class="pilcrow">¶</a>
+</li>
+        <li class="compact" id="section-13-2.2">
+          <strong>Description</strong>: Verifiable Geofencing Attestation Profile (V-GAP) Evidence Bundle<a href="#section-13-2.2" class="pilcrow">¶</a>
+</li>
+        <li class="compact" id="section-13-2.3">
+          <strong>Reference</strong>: This document, Section 10.<a href="#section-13-2.3" class="pilcrow">¶</a>
+</li>
+      </ul>
 </section>
 </div>
 <div id="appendix-items-to-follow-up">
@@ -3643,8 +3656,9 @@ Inner-Evidence-Bundle = {
     2 =&gt; lah-geolocation-proof-hash,    ; bstr (ZKP/Residency Hash)
     3 =&gt; privacy-technique,         ; int (0=None, 1=ZKP, 2=TEE)
     4 =&gt; lah-timestamp,             ; uint (Hardware-rooted epoch)
-    ? 5 =&gt; freshness-nonce,         ; bstr (Optional if timestamp is attested)
-    6 =&gt; lah-tpm-quote-hash         ; Inner Seal over [1, 2, 3, 4, 5]
+    5 =&gt; accuracy-sub-claim,        ; uint (Nanoseconds)
+    ? 6 =&gt; freshness-nonce,         ; bstr (Optional if timestamp is attested)
+    7 =&gt; lah-tpm-quote-hash         ; Inner Seal over [1..6]
 }
 </pre><a href="#section-16-2" class="pilcrow">¶</a>
 </div>

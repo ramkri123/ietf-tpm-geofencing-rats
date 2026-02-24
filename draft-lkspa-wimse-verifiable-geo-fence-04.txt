@@ -91,8 +91,8 @@ Copyright Notice
 
 Table of Contents
 
-   1.  Conventions and Definitions . . . . . . . . . . . . . . . . .   5
-   2.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   7
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   5
+   2.  Conventions and Definitions . . . . . . . . . . . . . . . . .   5
      2.1.  Industry Gaps and Problem Statements  . . . . . . . . . .   8
        2.1.1.  Data Generation/at-Rest Challenges  . . . . . . . . .   8
        2.1.2.  Data-in-Use Challenges  . . . . . . . . . . . . . . .   8
@@ -136,12 +136,12 @@ Internet-Draft                RATS-GEO-POR                 February 2026
      9.4.  Workload Identity Agent Attestation and Identity
             Issuance . . . . . . . . . . . . . . . . . . . . . . . .  19
      9.5.  Deployment Option A: Workload Host OS-Based (Keylime) . .  20
-       9.5.1.  Architecture  . . . . . . . . . . . . . . . . . . . .  20
+       9.5.1.  Architecture  . . . . . . . . . . . . . . . . . . . .  21
        9.5.2.  Integration with SPIRE  . . . . . . . . . . . . . . .  21
        9.5.3.  Advantages  . . . . . . . . . . . . . . . . . . . . .  21
        9.5.4.  Limitations . . . . . . . . . . . . . . . . . . . . .  21
      9.6.  Deployment Option B: External Management Processor (e.g.,
-            HPE iLO) . . . . . . . . . . . . . . . . . . . . . . . .  21
+            HPE iLO) . . . . . . . . . . . . . . . . . . . . . . . .  22
        9.6.1.  Dual TPM Access Paths . . . . . . . . . . . . . . . .  22
        9.6.2.  Architecture  . . . . . . . . . . . . . . . . . . . .  23
        9.6.3.  Hardware Inventory and Continuous Monitoring  . . . .  23
@@ -201,8 +201,8 @@ Internet-Draft                RATS-GEO-POR                 February 2026
      12.3.  Technical Security Considerations  . . . . . . . . . . .  47
        12.3.1.  Anti-Tunneling and TEE-Enforced Proximity  . . . . .  47
      12.4.  Proximity and Anchor Displacement (Layer 4)  . . . . . .  48
-   13. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  48
-   14. Appendix - Items to follow up . . . . . . . . . . . . . . . .  48
+   13. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  49
+   14. Appendix - Items to follow up . . . . . . . . . . . . . . . .  49
      14.1.  OPEN ISSUES 1: Native IMA re-triggering (Partially
             Addressed) . . . . . . . . . . . . . . . . . . . . . . .  49
      14.2.  OPEN ISSUES 2: Location privacy options  . . . . . . . .  49
@@ -210,7 +210,7 @@ Internet-Draft                RATS-GEO-POR                 February 2026
      14.4.  OPEN ISSUES 4: Geotagging textual data . . . . . . . . .  49
      14.5.  OPEN ISSUES 5: Attesting Geotags . . . . . . . . . . . .  49
    15. Appendix - Public References for Strict Data Residency
-           Rules . . . . . . . . . . . . . . . . . . . . . . . . . .  49
+           Rules . . . . . . . . . . . . . . . . . . . . . . . . . .  50
    16. Appendix - CDDL for V-GAP Profile . . . . . . . . . . . . . .  50
    Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  50
 
@@ -226,7 +226,31 @@ Krishnan, et al.         Expires 28 August 2026                 [Page 4]
 Internet-Draft                RATS-GEO-POR                 February 2026
 
 
-1.  Conventions and Definitions
+1.  Introduction
+
+   As organizations increasingly adopt cloud and distributed computing,
+   the need to enforce data residency, geolocation affinity, and
+   Workload Host affinity has become critical for regulatory compliance
+   and risk management.  Traditional approaches rely on trust in
+   infrastructure providers, which are often insufficient in adversarial
+   or multi-tenant environments.
+
+   Modern workload security faces challenges from stolen bearer tokens,
+   protocol replay, and trust gaps in transit.  This document defines a
+   specialized *RATS Profile* that cryptographically binds the *Workload
+   Identity Agent*—the entity responsible with issuing software
+   identities—to a hardware-verified platform and physical location.
+
+   The architecture follows the *RATS Architecture [[RFC9334]]*,
+   defining the interactions between *Provers*, *Verifiers*, and
+   *Relying Parties* to generate and validate *High-Confidence Evidence*
+   regarding the Workload Identity Agent's status.  It provides the
+   hardware-rooted "Evidence Layer" required by the high-level *WIMSE
+   Architecture [[I-D.ietf-wimse-architecture]]*, establishing a
+   "Silicon-to-Audit" chain of trust that ensures sensitive data is only
+   processed by authorized workloads in approved, integral environments.
+
+2.  Conventions and Definitions
 
    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
    "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
@@ -250,6 +274,14 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    *  *EAT*: Entity Attestation Token
    *  *DAA*: Direct Anonymous Attestation
    *  *EPID*: Enhanced Privacy ID
+
+
+
+Krishnan, et al.         Expires 28 August 2026                 [Page 5]
+
+Internet-Draft                RATS-GEO-POR                 February 2026
+
+
    *  *DCAP*: Data Center Attestation Primitives
    *  *EK*: Endorsement Key
    *  *AK*: Attestation Key
@@ -274,14 +306,6 @@ Internet-Draft                RATS-GEO-POR                 February 2026
       compound enforcement mechanism requiring that data and workloads
       are executed only on authorized Workload Hosts located within
       approved geographic regions.
-
-
-
-Krishnan, et al.         Expires 28 August 2026                 [Page 5]
-
-Internet-Draft                RATS-GEO-POR                 February 2026
-
-
    Workload Identity Agent:  A trusted entity (e.g., SPIFFE/SPIRE agent)
       on each Workload Host that manages workload identities.  The
       Workload Identity Agent is verified through platform attestation
@@ -304,6 +328,16 @@ Internet-Draft                RATS-GEO-POR                 February 2026
       binds a workload's current execution session to a specific,
       verified local environment or Workload Host.
    Silicon Root of Trust:  A hardware-based trust anchor (e.g., HPE
+
+
+
+
+
+Krishnan, et al.         Expires 28 August 2026                 [Page 6]
+
+Internet-Draft                RATS-GEO-POR                 February 2026
+
+
       Silicon Root of Trust or AWS Nitro Security Chip) that verifies
       low-level firmware and protects the system from the first moment
       of power-on.
@@ -330,14 +364,6 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    Proximity Binding:  The process of cryptographically proving that the
       Workload Host and the LAH are physically co-located using Attested
       PTP.
-
-
-
-Krishnan, et al.         Expires 28 August 2026                 [Page 6]
-
-Internet-Draft                RATS-GEO-POR                 February 2026
-
-
    N_platform (Platform Quote Nonce):  A fresh nonce generated by the
       Host Management Plane and delivered directly to the management
       processor (OOB).  The Workload Host OS and Workload Identity Agent
@@ -355,32 +381,6 @@ Internet-Draft                RATS-GEO-POR                 February 2026
       N_platform.  This ensures that the issued SVID is structurally
       tied to the specific hardware state observed during that exact
       attestation window.
-
-2.  Introduction
-
-   As organizations increasingly adopt cloud and distributed computing,
-   the need to enforce data residency, geolocation affinity, and
-   Workload Host affinity has become critical for regulatory compliance
-   and risk management.  Traditional approaches rely on trust in
-   infrastructure providers, which are often insufficient in adversarial
-   or multi-tenant environments.
-
-   Modern workload security faces challenges from stolen bearer tokens,
-   protocol replay, and trust gaps in transit.  This document defines a
-   specialized *RATS Profile* that cryptographically binds the *Workload
-   Identity Agent*—the entity responsible for issuing software
-   identities—to a hardware-verified platform and physical location.
-
-   The architecture follows the *RATS Architecture [[RFC9334]]*,
-   defining the interactions between *Provers*, *Verifiers*, and
-   *Relying Parties* to generate and validate *High-Confidence Evidence*
-   regarding the Workload Identity Agent's status.  It provides the
-   hardware-rooted "Evidence Layer" required by the high-level *WIMSE
-   Architecture [[I-D.ietf-wimse-architecture]]*, establishing a
-   "Silicon-to-Audit" chain of trust that ensures sensitive data is only
-   processed by authorized workloads in approved, integral environments.
-
-
 
 
 
@@ -768,13 +768,13 @@ Internet-Draft                RATS-GEO-POR                 February 2026
 
    Inner-Evidence-Bundle = {
        1 => bstr,                      ; Location Anchor Host AK
-       2 => bstr,                      ; lah-geolocation-proof-hash (ZKP/Residency)
+       2 => bstr,                      ; lah-geolocation-proof-hash
        3 => int,                       ; Privacy Technique (0=None, 1=ZKP, 2=TEE)
        4 => uint,                      ; Hardware-rooted epoch (Timestamp)
-       ? 5 => bstr,                    ; Optional freshness-nonce
-       6 => bstr                       ; Inner Seal over [1, 2, 3, 4, 5]
+       5 => uint,                      ; accuracy-sub-claim (Nanoseconds)
+       ? 6 => bstr,                    ; Optional freshness-nonce
+       7 => bstr                       ; Inner Seal over [1..6]
    }
-
 
 
 
@@ -843,8 +843,8 @@ Internet-Draft                RATS-GEO-POR                 February 2026
 
 
       constant *"SELF"*, formally defined as the 32-byte value SHA-
-      256("Aegis-Self-Proximity").  The Verifier SHALL validate that the
-      reported bus latency is within the microsecond bounds of local
+      256("V-GAP-LOCAL-PROXIMITY").  The Verifier SHALL validate that
+      the reported bus latency is within the microsecond bounds of local
       silicon to prevent a remote attacker from spoofing a 1:1 residency
       status.
 
@@ -1093,10 +1093,12 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    9.   The Workload Identity Manager verifies that the decrypted secret
         matches the original secret used to build the challenge.
    10.  The Workload Identity Manager issues the Workload Identity Agent
-        ID (SVID). *The V-GAP Evidence Bundle (CDDL profile) MUST be
+        ID (SVID). *The V-GAP Evidence Bundle (CBOR-formatted) MUST be
         embedded as a CRITICAL X.509 extension within the Workload
-        Identity Agent's SVID certificate.* The *Atomic Seal* (Field 4
-        of the profile) MUST be a standard *TPM2_Quote* where the
+        Identity Agent's SVID certificate, encoded as an OCTET STRING
+        containing the CBOR-encoded evidence.* The extension SHALL use
+        the OID 1.3.6.1.4.1.60265.1.1 (V-GAP).  The *Atomic Seal* (Field
+        4 of the profile) MUST be a standard *TPM2_Quote* where the
         qualifyingData is the temporal-nonce and the message being
         signed is the SHA-256 hash of the preceding bytes in the bundle.
    11.  *Criticality Enforcement:* Any verifier that encounters a
@@ -1111,8 +1113,6 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    OS with direct TPM access.  An external Keylime Verifier performs
    remote verification.
 
-9.5.1.  Architecture
-
 
 
 
@@ -1121,6 +1121,8 @@ Krishnan, et al.         Expires 28 August 2026                [Page 20]
 
 Internet-Draft                RATS-GEO-POR                 February 2026
 
+
+9.5.1.  Architecture
 
    1.  *Keylime Agent (on Workload Host):* The rust-keylime agent starts
        on the Workload Host OS, registers with the Keylime Registrar,
@@ -1162,14 +1164,12 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    *  Agent compromise could potentially affect attestation integrity
       (mitigated by TPM-bound keys).
 
-9.6.  Deployment Option B: External Management Processor (e.g., HPE iLO)
 
-   In this option, the management processor (BMC) has independent access
-   to the Workload Host TPM and performs attestation independently of
-   the Workload Host OS.  This provides a higher-trust attestation path
-   that solves the "compromised kernel" problem: if a hacker gains root
-   access to the Workload Host OS, they can potentially blind in-band
-   agents (e.g., Keylime agent, SPIRE agent) by feeding them fake data,
+
+
+
+
+
 
 
 
@@ -1178,6 +1178,14 @@ Krishnan, et al.         Expires 28 August 2026                [Page 21]
 Internet-Draft                RATS-GEO-POR                 February 2026
 
 
+9.6.  Deployment Option B: External Management Processor (e.g., HPE iLO)
+
+   In this option, the management processor (BMC) has independent access
+   to the Workload Host TPM and performs attestation independently of
+   the Workload Host OS.  This provides a higher-trust attestation path
+   that solves the "compromised kernel" problem: if a hacker gains root
+   access to the Workload Host OS, they can potentially blind in-band
+   agents (e.g., Keylime agent, SPIRE agent) by feeding them fake data,
    but they cannot spoof the management processor's independent hardware
    path to the TPM.
 
@@ -1216,14 +1224,6 @@ Internet-Draft                RATS-GEO-POR                 February 2026
 
    The end-to-end attestation paths are therefore:
 
-   *  *In-band (Option A):* TPM --[LPC/SPI bus]--> Workload Host CPU/OS
-      --[host NIC, SSH/gRPC]--> Remote Verifier.  The IMA event log and
-      TPM Quote both travel through the Workload Host OS network stack.
-      A compromised kernel sits on this path and can interfere with log
-      delivery, though it cannot forge the hardware-signed TPM Quote.
-
-
-
 
 
 
@@ -1233,6 +1233,12 @@ Krishnan, et al.         Expires 28 August 2026                [Page 22]
 
 Internet-Draft                RATS-GEO-POR                 February 2026
 
+
+   *  *In-band (Option A):* TPM --[LPC/SPI bus]--> Workload Host CPU/OS
+      --[host NIC, SSH/gRPC]--> Remote Verifier.  The IMA event log and
+      TPM Quote both travel through the Workload Host OS network stack.
+      A compromised kernel sits on this path and can interfere with log
+      delivery, though it cannot forge the hardware-signed TPM Quote.
 
    *  *Out-of-band (Option B):* TPM --[I2C/private bus]--> Management
       Processor --[dedicated mgmt NIC, Redfish API]--> Management Plane.
@@ -1276,12 +1282,6 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    *  *Peripheral Inventory:* Similar monitoring is applied to memory
       modules (DIMM serial numbers), storage controllers, and network
       adapters via the System Management Bus (*SMBus*).
-   *  *Health and Security State:* The management processor monitors for
-      hardware-level security events, such as chassis intrusion or
-      unauthorized component additions.
-
-
-
 
 
 
@@ -1289,6 +1289,10 @@ Krishnan, et al.         Expires 28 August 2026                [Page 23]
 
 Internet-Draft                RATS-GEO-POR                 February 2026
 
+
+   *  *Health and Security State:* The management processor monitors for
+      hardware-level security events, such as chassis intrusion or
+      unauthorized component additions.
 
    *Technical Implementation:* These monitoring functions are performed
    over dedicated, low-level hardware interfaces that operate
@@ -1333,10 +1337,6 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    binary, it cannot undo the previous clean measurements in the TPM.
    See Step 6 of the Periodic Attestation Cycle below for the full
    verification procedure.
-
-
-
-
 
 
 
@@ -2201,9 +2201,9 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    Knowledge Proof (ZKP) can be used to prove that a host is within an
    approved geographic boundary *without revealing its exact location*.
    This "Audit without Disclosure" pattern, as described in
-   [[AegisSovereignAI]], is particularly important for sovereignty-
-   sensitive deployments where even the Verifier should not learn the
-   Prover's precise coordinates.
+   [[AegisSovereignWorkloads]], is particularly important for
+   sovereignty-sensitive deployments where even the Verifier should not
+   learn the Prover's precise coordinates.
 
 9.15.1.  Architecture
 
@@ -2333,8 +2333,8 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    from this setup was not properly destroyed, the system's integrity
    could be compromised.
 
-   As described in [[AegisSovereignAI]], this attestation framework
-   leverages *Gen 4 ZKP (e.g., Plonky2/FRI-based)* to achieve
+   As described in [[AegisSovereignWorkloads]], this attestation
+   framework leverages *Gen 4 ZKP (e.g., Plonky2/FRI-based)* to achieve
    mathematical transparency and future-proof security:
 
    1.  *No Trusted Setup:* Verification is based on hash-based STARKs
@@ -2424,6 +2424,11 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    -- referred to as "attested PTP" -- the PTP software/hardware can be
    enhanced so that all PTP messages are signed with a private key.
 
+   The *Canonical PTP Log* for hashing MUST include the signed
+   *Follow_Up* and *Delay_Resp* messages from the PTP exchange.  This
+   ensures that the proximity proof is bound to the actual cryptographic
+   evidence of the physical handshake.
+
    This signing can be done in two ways:
 
    *  Software-based: PTP software (e.g. Linux PTP daemon), after adding
@@ -2452,11 +2457,6 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    hardware and software.  For a detailed specification of hardware-
    rooted attestation for PTP, including verifiable residency and
    proximity proofs, see [[I-D.ramki-ptp-hardware-rooted-attestation]].
-
-
-
-
-
 
 
 
@@ -2589,7 +2589,10 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    measurements (RTT) are signed in silicon at the point of origin via
    *Signed PTP Messages* (e.g., signed Follow_Up or Delay_Resp packets),
    preventing a compromised Workload Host OS from manipulating results
-   to mask geographic distance.
+   to mask geographic distance. *The Proximity Proof itself MUST be a
+   cryptographic signature over the timing metadata produced directly by
+   the TEE; any proofs produced by the Workload Host OS without TEE-
+   witnessed signatures SHALL be rejected.*
 
    *  *TPM and Hardware Trust*: The security of the solution depends on
       the integrity of the TPM and other hardware roots of trust.
@@ -2622,10 +2625,7 @@ Internet-Draft                RATS-GEO-POR                 February 2026
       controls.  Policy decisions should be based on verifiable, signed
       attestation evidence.
 
-   *  *Time Source Integrity & Clock Warp*: Trusted time sources are
-      necessary to prevent replay attacks and ensure the freshness of
-      attestation data.  The Verifier MUST enforce the *Freshness Window
-      Policy (+/- 100ms)* defined in Section 10 to guard against clock-
+
 
 
 
@@ -2634,6 +2634,10 @@ Krishnan, et al.         Expires 28 August 2026                [Page 47]
 Internet-Draft                RATS-GEO-POR                 February 2026
 
 
+   *  *Time Source Integrity & Clock Warp*: Trusted time sources are
+      necessary to prevent replay attacks and ensure the freshness of
+      attestation data.  The Verifier MUST enforce the *Freshness Window
+      Policy (+/- 100ms)* defined in Section 10 to guard against clock-
       drift or clock-warp attacks.  Failure to maintain synchronization
       within this window MUST trigger the *Sync Recovery* or *Immediate
       Revocation* protocols.
@@ -2676,11 +2680,7 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    secure and reliable foundation for verifiable geofencing in diverse
    deployment environments.
 
-13.  IANA Considerations
 
-   This document has no IANA actions.
-
-14.  Appendix - Items to follow up
 
 
 
@@ -2689,6 +2689,20 @@ Krishnan, et al.         Expires 28 August 2026                [Page 48]
 
 Internet-Draft                RATS-GEO-POR                 February 2026
 
+
+13.  IANA Considerations
+
+   IANA is requested to register the following Object Identifier (OID)
+   in the "SMI Numbers" registry under the "SMI Private Enterprise
+   Numbers" (1.3.6.1.4.1) branch, or as appropriate for the V-GAP
+   profile:
+
+   *  *OID*: 1.3.6.1.4.1.60265.1.1
+   *  *Description*: Verifiable Geofencing Attestation Profile (V-GAP)
+      Evidence Bundle
+   *  *Reference*: This document, Section 10.
+
+14.  Appendix - Items to follow up
 
 14.1.  OPEN ISSUES 1: Native IMA re-triggering (Partially Addressed)
 
@@ -2723,6 +2737,15 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    geolocation tag is not signed, it can be manipulated through
    techniques such as VPNs.
 
+
+
+
+
+Krishnan, et al.         Expires 28 August 2026                [Page 49]
+
+Internet-Draft                RATS-GEO-POR                 February 2026
+
+
 15.  Appendix - Public References for Strict Data Residency Rules
 
    India -- Reserve Bank of India (RBI): Payment System Data
@@ -2736,15 +2759,6 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    South Korea's Data Localization Regulations -- Geospatial Information
    Management Act (Spatial Data Act): Article 16, Paragraph 1: Prohibits
    the export of state-led survey data.
-
-
-
-
-
-Krishnan, et al.         Expires 28 August 2026                [Page 49]
-
-Internet-Draft                RATS-GEO-POR                 February 2026
-
 
 16.  Appendix - CDDL for V-GAP Profile
 
@@ -2763,8 +2777,9 @@ Internet-Draft                RATS-GEO-POR                 February 2026
        2 => lah-geolocation-proof-hash,    ; bstr (ZKP/Residency Hash)
        3 => privacy-technique,         ; int (0=None, 1=ZKP, 2=TEE)
        4 => lah-timestamp,             ; uint (Hardware-rooted epoch)
-       ? 5 => freshness-nonce,         ; bstr (Optional if timestamp is attested)
-       6 => lah-tpm-quote-hash         ; Inner Seal over [1, 2, 3, 4, 5]
+       5 => accuracy-sub-claim,        ; uint (Nanoseconds)
+       ? 6 => freshness-nonce,         ; bstr (Optional if timestamp is attested)
+       7 => lah-tpm-quote-hash         ; Inner Seal over [1..6]
    }
 
 Authors' Addresses
@@ -2777,6 +2792,14 @@ Authors' Addresses
    Ned Smith
    Intel
    Email: ned.smith@intel.com
+
+
+
+
+
+Krishnan, et al.         Expires 28 August 2026                [Page 50]
+
+Internet-Draft                RATS-GEO-POR                 February 2026
 
 
    Diego R. Lopez
@@ -2797,4 +2820,37 @@ Authors' Addresses
 
 
 
-Krishnan, et al.         Expires 28 August 2026                [Page 50]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Krishnan, et al.         Expires 28 August 2026                [Page 51]

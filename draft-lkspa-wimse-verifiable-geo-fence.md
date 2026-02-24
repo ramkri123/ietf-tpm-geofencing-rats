@@ -98,6 +98,14 @@ By binding identity agent integrity to geographic and Workload Host attributes, 
 
 {mainmatter}
 
+# Introduction
+
+As organizations increasingly adopt cloud and distributed computing, the need to enforce data residency, geolocation affinity, and Workload Host affinity has become critical for regulatory compliance and risk management. Traditional approaches rely on trust in infrastructure providers, which are often insufficient in adversarial or multi-tenant environments.
+
+Modern workload security faces challenges from stolen bearer tokens, protocol replay, and trust gaps in transit. This document defines a specialized **RATS Profile** that cryptographically binds the **Workload Identity Agent**—the entity responsible with issuing software identities—to a hardware-verified platform and physical location.
+
+The architecture follows the **RATS Architecture [[RFC9334]]**, defining the interactions between **Provers**, **Verifiers**, and **Relying Parties** to generate and validate **High-Confidence Evidence** regarding the Workload Identity Agent's status. It provides the hardware-rooted "Evidence Layer" required by the high-level **WIMSE Architecture [[I-D.ietf-wimse-architecture]]**, establishing a "Silicon-to-Audit" chain of trust that ensures sensitive data is only processed by authorized workloads in approved, integral environments.
+
 # Conventions and Definitions
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 [[RFC2119]] [[RFC8174]] when, and only when, they appear in all capitals, as shown here.
@@ -184,13 +192,6 @@ N_fusion (Workload Fusion Nonce):
 N_platform vs. N_fusion Binding:
 : To prevent "mix-and-match" attacks where an attacker combines a fresh workload identity with a stale platform quote, the Host Management Plane SHALL cryptographically bind the two nonces. The Attestation Result produced by the Verifier MUST contain a **Joint Digital Signature** over both `N_fusion` and the hardware-attested platform claims verified via `N_platform`. This ensures that the issued SVID is structurally tied to the specific hardware state observed during that exact attestation window.
 
-# Introduction
-
-As organizations increasingly adopt cloud and distributed computing, the need to enforce data residency, geolocation affinity, and Workload Host affinity has become critical for regulatory compliance and risk management. Traditional approaches rely on trust in infrastructure providers, which are often insufficient in adversarial or multi-tenant environments.
-
-Modern workload security faces challenges from stolen bearer tokens, protocol replay, and trust gaps in transit. This document defines a specialized **RATS Profile** that cryptographically binds the **Workload Identity Agent**—the entity responsible for issuing software identities—to a hardware-verified platform and physical location.
-
-The architecture follows the **RATS Architecture [[RFC9334]]**, defining the interactions between **Provers**, **Verifiers**, and **Relying Parties** to generate and validate **High-Confidence Evidence** regarding the Workload Identity Agent's status. It provides the hardware-rooted "Evidence Layer" required by the high-level **WIMSE Architecture [[I-D.ietf-wimse-architecture]]**, establishing a "Silicon-to-Audit" chain of trust that ensures sensitive data is only processed by authorized workloads in approved, integral environments.
 
 ## Industry Gaps and Problem Statements
 
@@ -354,11 +355,12 @@ V-GAP-Profile = {
 
 Inner-Evidence-Bundle = {
     1 => bstr,                      ; Location Anchor Host AK
-    2 => bstr,                      ; lah-geolocation-proof-hash (ZKP/Residency)
+    2 => bstr,                      ; lah-geolocation-proof-hash
     3 => int,                       ; Privacy Technique (0=None, 1=ZKP, 2=TEE)
     4 => uint,                      ; Hardware-rooted epoch (Timestamp)
-    ? 5 => bstr,                    ; Optional freshness-nonce
-    6 => bstr                       ; Inner Seal over [1, 2, 3, 4, 5]
+    5 => uint,                      ; accuracy-sub-claim (Nanoseconds)
+    ? 6 => bstr,                    ; Optional freshness-nonce
+    7 => bstr                       ; Inner Seal over [1..6]
 }
 ```
 
@@ -384,7 +386,7 @@ To maintain sub-microsecond determinism and regional sovereignty, identity issua
 
 * **Edge SPIRE Server:** SVID issuance is distributed to Edge SPIRE Servers located within the same sovereign boundary as the workloads.
 * **Regional Specificity:** SVIDs issued by an Edge SPIRE server are cryptographically restricted to that specific deployment and cannot be used in other regions.
-* **Unified Host Proximity Enforcement:** In deployments where the Location Anchor Host (LAH) and Workload Host are the same physical machine (Unified Host), the proximity proof MUST be generated via an **internal silicon measurement** (e.g., measuring PCIe latency or local bus delay) rather than a network protocol. In this case, the `host-proximity-proof-hash` SHALL be set to the cryptographic constant **"SELF"**, formally defined as the 32-byte value `SHA-256("Aegis-Self-Proximity")`. The Verifier SHALL validate that the reported bus latency is within the microsecond bounds of local silicon to prevent a remote attacker from spoofing a 1:1 residency status.
+* **Unified Host Proximity Enforcement:** In deployments where the Location Anchor Host (LAH) and Workload Host are the same physical machine (Unified Host), the proximity proof MUST be generated via an **internal silicon measurement** (e.g., measuring PCIe latency or local bus delay) rather than a network protocol. In this case, the `host-proximity-proof-hash` SHALL be set to the cryptographic constant **"SELF"**, formally defined as the 32-byte value `SHA-256("V-GAP-LOCAL-PROXIMITY")`. The Verifier SHALL validate that the reported bus latency is within the microsecond bounds of local silicon to prevent a remote attacker from spoofing a 1:1 residency status.
 
 ## End user location anchor host
 
@@ -479,7 +481,7 @@ Step 2 (Workload Identity Agent ID issuance):
 7. The Workload Identity Agent decrypts the challenge's secret using its private key.
 8. The Workload Identity Agent sends back the decrypted secret.
 9. The Workload Identity Manager verifies that the decrypted secret matches the original secret used to build the challenge.
-10. The Workload Identity Manager issues the Workload Identity Agent ID (SVID). **The V-GAP Evidence Bundle (CDDL profile) MUST be embedded as a CRITICAL X.509 extension within the Workload Identity Agent's SVID certificate.** The **Atomic Seal** (Field 4 of the profile) MUST be a standard **TPM2_Quote** where the `qualifyingData` is the `temporal-nonce` and the `message` being signed is the SHA-256 hash of the preceding bytes in the bundle.
+10. The Workload Identity Manager issues the Workload Identity Agent ID (SVID). **The V-GAP Evidence Bundle (CBOR-formatted) MUST be embedded as a CRITICAL X.509 extension within the Workload Identity Agent's SVID certificate, encoded as an `OCTET STRING` containing the CBOR-encoded evidence.** The extension SHALL use the OID `1.3.6.1.4.1.60265.1.1` (V-GAP). The **Atomic Seal** (Field 4 of the profile) MUST be a standard **TPM2_Quote** where the `qualifyingData` is the `temporal-nonce` and the `message` being signed is the SHA-256 hash of the preceding bytes in the bundle.
 11. **Criticality Enforcement:** Any verifier that encounters a Sovereign SVID and does not support the V-GAP OID MUST reject the certificate. This ensures that a residency-constrained workload cannot accidentally be authorized by a gateway that doesn't understand the "Residency Moat."
 
 ## Deployment Option A: Workload Host OS-Based (Keylime)
@@ -850,7 +852,7 @@ Policy enforcement can then use the composite location to verify that the host i
 
 ## Privacy-Preserving Geolocation Verification (ZKP)
 
-As an alternative to sharing precise geolocation coordinates, a Zero-Knowledge Proof (ZKP) can be used to prove that a host is within an approved geographic boundary **without revealing its exact location**. This "Audit without Disclosure" pattern, as described in [[AegisSovereignAI]], is particularly important for sovereignty-sensitive deployments where even the Verifier should not learn the Prover's precise coordinates.
+As an alternative to sharing precise geolocation coordinates, a Zero-Knowledge Proof (ZKP) can be used to prove that a host is within an approved geographic boundary **without revealing its exact location**. This "Audit without Disclosure" pattern, as described in [[AegisSovereignWorkloads]], is particularly important for sovereignty-sensitive deployments where even the Verifier should not learn the Prover's precise coordinates.
 
 ### Architecture
 
@@ -898,7 +900,7 @@ This is especially valuable for cross-organizational and cross-sovereign attesta
 
 A critical requirement for sovereign infrastructure is the elimination of Trusted Third Parties (TTPs). Legacy ZKP systems (Gen 3, e.g., Groth16) often required a "Trusted Setup" phase to generate cryptographic parameters. If the secret data (the "Toxic Waste") from this setup was not properly destroyed, the system's integrity could be compromised.
 
-As described in [[AegisSovereignAI]], this attestation framework leverages **Gen 4 ZKP (e.g., Plonky2/FRI-based)** to achieve mathematical transparency and future-proof security:
+As described in [[AegisSovereignWorkloads]], this attestation framework leverages **Gen 4 ZKP (e.g., Plonky2/FRI-based)** to achieve mathematical transparency and future-proof security:
 
 1. **No Trusted Setup:** Verification is based on hash-based STARKs and PLONKish arithmetization. There are no secret parameters to manage or destroy, eliminating the TTP risk entirely.
 2. **Verification without Trust:** An auditor only needs to inspect the open-source circuit code. The mathematical validity of the proof is self-contained and requires no external "Root of Trust" beyond the public circuit definition and the underlying hash function.
@@ -926,6 +928,8 @@ Host proximity manager periodically verifies that the smartphone provides proof 
 The goal is to provide an easy-to-use solution that can be used by data center operators without requiring them to install a geolocation sensor on every data center host.
 
 PTP is a network protocol that enables precise synchronization of clocks across a computer network and can be used to measure the round-trip time (RTT) between the location anchor host and other data center hosts with sub-microsecond accuracy. To provide cryptographically verifiable proof of residency on the Workload Host -- referred to as "attested PTP" -- the PTP software/hardware can be enhanced so that all PTP messages are signed with a private key.
+
+The **Canonical PTP Log** for hashing MUST include the signed **Follow_Up** and **Delay_Resp** messages from the PTP exchange. This ensures that the proximity proof is bound to the actual cryptographic evidence of the physical handshake.
 
 This signing can be done in two ways:
 
@@ -987,7 +991,7 @@ This double-bind ensures that an identity is only valid when used by the authori
 
 ### Anti-Tunneling and TEE-Enforced Proximity
 
-To prevent "Proxy Attacks" (where PTP packets are tunneled to a remote anchor to fake proximity), the **Attested PTP daemon** MUST execute within a **Trusted Execution Environment (TEE)** or a secure security processor (e.g., iLO 7). This ensures that the round-trip measurements (RTT) are signed in silicon at the point of origin via **Signed PTP Messages** (e.g., signed `Follow_Up` or `Delay_Resp` packets), preventing a compromised Workload Host OS from manipulating results to mask geographic distance.
+To prevent "Proxy Attacks" (where PTP packets are tunneled to a remote anchor to fake proximity), the **Attested PTP daemon** MUST execute within a **Trusted Execution Environment (TEE)** or a secure security processor (e.g., iLO 7). This ensures that the round-trip measurements (RTT) are signed in silicon at the point of origin via **Signed PTP Messages** (e.g., signed `Follow_Up` or `Delay_Resp` packets), preventing a compromised Workload Host OS from manipulating results to mask geographic distance. **The Proximity Proof itself MUST be a cryptographic signature over the timing metadata produced directly by the TEE; any proofs produced by the Workload Host OS without TEE-witnessed signatures SHALL be rejected.**
 
 - **TPM and Hardware Trust**: The security of the solution depends on the integrity of the TPM and other hardware roots of trust. Physical attacks, firmware vulnerabilities, or supply chain compromises could undermine attestation. Regular updates, secure provisioning, and monitoring are required.
 
@@ -1022,7 +1026,11 @@ By addressing these considerations, the framework aims to provide a secure and r
 
 # IANA Considerations
 
-This document has no IANA actions.
+IANA is requested to register the following Object Identifier (OID) in the "SMI Numbers" registry under the "SMI Private Enterprise Numbers" (1.3.6.1.4.1) branch, or as appropriate for the V-GAP profile:
+
+* **OID**: `1.3.6.1.4.1.60265.1.1`
+* **Description**: Verifiable Geofencing Attestation Profile (V-GAP) Evidence Bundle
+* **Reference**: This document, Section 10.
 
 # Appendix - Items to follow up
 
@@ -1069,8 +1077,9 @@ Inner-Evidence-Bundle = {
     2 => lah-geolocation-proof-hash,    ; bstr (ZKP/Residency Hash)
     3 => privacy-technique,         ; int (0=None, 1=ZKP, 2=TEE)
     4 => lah-timestamp,             ; uint (Hardware-rooted epoch)
-    ? 5 => freshness-nonce,         ; bstr (Optional if timestamp is attested)
-    6 => lah-tpm-quote-hash         ; Inner Seal over [1, 2, 3, 4, 5]
+    5 => accuracy-sub-claim,        ; uint (Nanoseconds)
+    ? 6 => freshness-nonce,         ; bstr (Optional if timestamp is attested)
+    7 => lah-tpm-quote-hash         ; Inner Seal over [1..6]
 }
 ```
 
@@ -1089,13 +1098,6 @@ Inner-Evidence-Bundle = {
   </front>
 </reference>
 
-<reference anchor="I-D.ietf-wimse-arch" target="https://datatracker.ietf.org/doc/html/draft-ietf-wimse-arch">
-  <front>
-    <title>Workload Identity in a Multi System Environment (WIMSE) Architecture</title>
-    <author initials="Y." surname="Sheffer" fullname="Yaron Sheffer"/>
-    <date month="October" day="21" year="2024"/>
-  </front>
-</reference>
 
 <reference anchor="I-D.mw-wimse-transitive-attestation" target="https://datatracker.ietf.org/doc/html/draft-mw-wimse-transitive-attestation-00">
   <front>
@@ -1275,7 +1277,7 @@ Inner-Evidence-Bundle = {
   </front>
 </reference>
 
-<reference anchor="AegisSovereignAI" target="https://github.com/lfedgeai/AegisSovereignAI/blob/main/hybrid-cloud-poc/README-arch-sovereign-unified-identity.md">
+<reference anchor="AegisSovereignWorkloads" target="https://github.com/lfedgeai/AegisSovereignAI/blob/main/hybrid-cloud-poc/README-arch-sovereign-unified-identity.md">
   <front>
     <title>Aegis Sovereign Workloads: End-to-End Sovereign Unified Identity and Trust Framework</title>
     <author initials="R." surname="Krishnan" fullname="Ram Krishnan"/>
@@ -1301,6 +1303,7 @@ Inner-Evidence-Bundle = {
     <author initials="P." surname="Howard" fullname="Pieter Howard"/>
     <author initials="B." surname="Malepati" fullname="Bala Siva Sai Akhil Malepati"/>
     <author initials="M." surname="Salter" fullname="Mark Salter"/>
+    <author initials="Y." surname="Sheffer" fullname="Yaron Sheffer"/>
     <date year="2024"/>
   </front>
 </reference>

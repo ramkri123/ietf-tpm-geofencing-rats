@@ -34,6 +34,12 @@
 
 <middle>
 
+<section anchor="introduction"><name>Introduction</name>
+<t>As organizations increasingly adopt cloud and distributed computing, the need to enforce data residency, geolocation affinity, and Workload Host affinity has become critical for regulatory compliance and risk management. Traditional approaches rely on trust in infrastructure providers, which are often insufficient in adversarial or multi-tenant environments.</t>
+<t>Modern workload security faces challenges from stolen bearer tokens, protocol replay, and trust gaps in transit. This document defines a specialized <strong>RATS Profile</strong> that cryptographically binds the <strong>Workload Identity Agent</strong>—the entity responsible with issuing software identities—to a hardware-verified platform and physical location.</t>
+<t>The architecture follows the <strong>RATS Architecture [[RFC9334]]</strong>, defining the interactions between <strong>Provers</strong>, <strong>Verifiers</strong>, and <strong>Relying Parties</strong> to generate and validate <strong>High-Confidence Evidence</strong> regarding the Workload Identity Agent's status. It provides the hardware-rooted &quot;Evidence Layer&quot; required by the high-level <strong>WIMSE Architecture [[I-D.ietf-wimse-architecture]]</strong>, establishing a &quot;Silicon-to-Audit&quot; chain of trust that ensures sensitive data is only processed by authorized workloads in approved, integral environments.</t>
+</section>
+
 <section anchor="conventions-and-definitions"><name>Conventions and Definitions</name>
 <t>The key words &quot;MUST&quot;, &quot;MUST NOT&quot;, &quot;REQUIRED&quot;, &quot;SHALL&quot;, &quot;SHALL NOT&quot;, &quot;SHOULD&quot;, &quot;SHOULD NOT&quot;, &quot;RECOMMENDED&quot;, &quot;NOT RECOMMENDED&quot;, &quot;MAY&quot;, and &quot;OPTIONAL&quot; in this document are to be interpreted as described in BCP 14 [[RFC2119]] [[RFC8174]] when, and only when, they appear in all capitals, as shown here.</t>
 <t><strong>Acronyms used in this document:</strong></t>
@@ -102,12 +108,6 @@
 <dt>N_platform vs. N_fusion Binding:</dt>
 <dd>To prevent &quot;mix-and-match&quot; attacks where an attacker combines a fresh workload identity with a stale platform quote, the Host Management Plane SHALL cryptographically bind the two nonces. The Attestation Result produced by the Verifier MUST contain a <strong>Joint Digital Signature</strong> over both <tt>N_fusion</tt> and the hardware-attested platform claims verified via <tt>N_platform</tt>. This ensures that the issued SVID is structurally tied to the specific hardware state observed during that exact attestation window.</dd>
 </dl>
-</section>
-
-<section anchor="introduction"><name>Introduction</name>
-<t>As organizations increasingly adopt cloud and distributed computing, the need to enforce data residency, geolocation affinity, and Workload Host affinity has become critical for regulatory compliance and risk management. Traditional approaches rely on trust in infrastructure providers, which are often insufficient in adversarial or multi-tenant environments.</t>
-<t>Modern workload security faces challenges from stolen bearer tokens, protocol replay, and trust gaps in transit. This document defines a specialized <strong>RATS Profile</strong> that cryptographically binds the <strong>Workload Identity Agent</strong>—the entity responsible for issuing software identities—to a hardware-verified platform and physical location.</t>
-<t>The architecture follows the <strong>RATS Architecture [[RFC9334]]</strong>, defining the interactions between <strong>Provers</strong>, <strong>Verifiers</strong>, and <strong>Relying Parties</strong> to generate and validate <strong>High-Confidence Evidence</strong> regarding the Workload Identity Agent's status. It provides the hardware-rooted &quot;Evidence Layer&quot; required by the high-level <strong>WIMSE Architecture [[I-D.ietf-wimse-architecture]]</strong>, establishing a &quot;Silicon-to-Audit&quot; chain of trust that ensures sensitive data is only processed by authorized workloads in approved, integral environments.</t>
 
 <section anchor="industry-gaps-and-problem-statements"><name>Industry Gaps and Problem Statements</name>
 <t>Modern cloud and distributed environments face significant risks from stolen bearer tokens, protocol replay, and trust gaps in transit. Current geofencing and location verification solutions face significant challenges across different data states, location sources, and authentication mechanisms. This section outlines the key gaps and problems that this specification aims to address.</t>
@@ -316,11 +316,12 @@
 
 Inner-Evidence-Bundle = {
     1 => bstr,                      ; Location Anchor Host AK
-    2 => bstr,                      ; lah-geolocation-proof-hash (ZKP/Residency)
+    2 => bstr,                      ; lah-geolocation-proof-hash
     3 => int,                       ; Privacy Technique (0=None, 1=ZKP, 2=TEE)
     4 => uint,                      ; Hardware-rooted epoch (Timestamp)
-    ? 5 => bstr,                    ; Optional freshness-nonce
-    6 => bstr                       ; Inner Seal over [1, 2, 3, 4, 5]
+    5 => uint,                      ; accuracy-sub-claim (Nanoseconds)
+    ? 6 => bstr,                    ; Optional freshness-nonce
+    7 => bstr                       ; Inner Seal over [1..6]
 }
 ]]></sourcecode>
 </section>
@@ -354,7 +355,7 @@ Inner-Evidence-Bundle = {
 <ul spacing="compact">
 <li><strong>Edge SPIRE Server:</strong> SVID issuance is distributed to Edge SPIRE Servers located within the same sovereign boundary as the workloads.</li>
 <li><strong>Regional Specificity:</strong> SVIDs issued by an Edge SPIRE server are cryptographically restricted to that specific deployment and cannot be used in other regions.</li>
-<li><strong>Unified Host Proximity Enforcement:</strong> In deployments where the Location Anchor Host (LAH) and Workload Host are the same physical machine (Unified Host), the proximity proof MUST be generated via an <strong>internal silicon measurement</strong> (e.g., measuring PCIe latency or local bus delay) rather than a network protocol. In this case, the <tt>host-proximity-proof-hash</tt> SHALL be set to the cryptographic constant <strong>&quot;SELF&quot;</strong>, formally defined as the 32-byte value <tt>SHA-256(&quot;Aegis-Self-Proximity&quot;)</tt>. The Verifier SHALL validate that the reported bus latency is within the microsecond bounds of local silicon to prevent a remote attacker from spoofing a 1:1 residency status.</li>
+<li><strong>Unified Host Proximity Enforcement:</strong> In deployments where the Location Anchor Host (LAH) and Workload Host are the same physical machine (Unified Host), the proximity proof MUST be generated via an <strong>internal silicon measurement</strong> (e.g., measuring PCIe latency or local bus delay) rather than a network protocol. In this case, the <tt>host-proximity-proof-hash</tt> SHALL be set to the cryptographic constant <strong>&quot;SELF&quot;</strong>, formally defined as the 32-byte value <tt>SHA-256(&quot;V-GAP-LOCAL-PROXIMITY&quot;)</tt>. The Verifier SHALL validate that the reported bus latency is within the microsecond bounds of local silicon to prevent a remote attacker from spoofing a 1:1 residency status.</li>
 </ul>
 
 <section anchor="end-user-location-anchor-host"><name>End user location anchor host</name>
@@ -483,7 +484,7 @@ Inner-Evidence-Bundle = {
 <li>The Workload Identity Agent decrypts the challenge's secret using its private key.</li>
 <li>The Workload Identity Agent sends back the decrypted secret.</li>
 <li>The Workload Identity Manager verifies that the decrypted secret matches the original secret used to build the challenge.</li>
-<li>The Workload Identity Manager issues the Workload Identity Agent ID (SVID). <strong>The V-GAP Evidence Bundle (CDDL profile) MUST be embedded as a CRITICAL X.509 extension within the Workload Identity Agent's SVID certificate.</strong> The <strong>Atomic Seal</strong> (Field 4 of the profile) MUST be a standard <strong>TPM2_Quote</strong> where the <tt>qualifyingData</tt> is the <tt>temporal-nonce</tt> and the <tt>message</tt> being signed is the SHA-256 hash of the preceding bytes in the bundle.</li>
+<li>The Workload Identity Manager issues the Workload Identity Agent ID (SVID). <strong>The V-GAP Evidence Bundle (CBOR-formatted) MUST be embedded as a CRITICAL X.509 extension within the Workload Identity Agent's SVID certificate, encoded as an <tt>OCTET STRING</tt> containing the CBOR-encoded evidence.</strong> The extension SHALL use the OID <tt>1.3.6.1.4.1.60265.1.1</tt> (V-GAP). The <strong>Atomic Seal</strong> (Field 4 of the profile) MUST be a standard <strong>TPM2_Quote</strong> where the <tt>qualifyingData</tt> is the <tt>temporal-nonce</tt> and the <tt>message</tt> being signed is the SHA-256 hash of the preceding bytes in the bundle.</li>
 <li><strong>Criticality Enforcement:</strong> Any verifier that encounters a Sovereign SVID and does not support the V-GAP OID MUST reject the certificate. This ensures that a residency-constrained workload cannot accidentally be authorized by a gateway that doesn't understand the &quot;Residency Moat.&quot;</li>
 </ol>
 </section>
@@ -943,7 +944,7 @@ Location has a quality associated with it. For example, IP address-based or Wi-F
 </section>
 
 <section anchor="privacy-preserving-geolocation-verification-zkp-1"><name>Privacy-Preserving Geolocation Verification (ZKP)</name>
-<t>As an alternative to sharing precise geolocation coordinates, a Zero-Knowledge Proof (ZKP) can be used to prove that a host is within an approved geographic boundary <strong>without revealing its exact location</strong>. This &quot;Audit without Disclosure&quot; pattern, as described in [[AegisSovereignAI]], is particularly important for sovereignty-sensitive deployments where even the Verifier should not learn the Prover's precise coordinates.</t>
+<t>As an alternative to sharing precise geolocation coordinates, a Zero-Knowledge Proof (ZKP) can be used to prove that a host is within an approved geographic boundary <strong>without revealing its exact location</strong>. This &quot;Audit without Disclosure&quot; pattern, as described in [[AegisSovereignWorkloads]], is particularly important for sovereignty-sensitive deployments where even the Verifier should not learn the Prover's precise coordinates.</t>
 
 <section anchor="architecture-5"><name>Architecture</name>
 <t>The ZKP geolocation verification separates the problem into three components:</t>
@@ -1030,7 +1031,7 @@ Location has a quality associated with it. For example, IP address-based or Wi-F
 
 <section anchor="mathematical-transparency-and-post-quantum-foundation"><name>Mathematical Transparency and Post-Quantum Foundation</name>
 <t>A critical requirement for sovereign infrastructure is the elimination of Trusted Third Parties (TTPs). Legacy ZKP systems (Gen 3, e.g., Groth16) often required a &quot;Trusted Setup&quot; phase to generate cryptographic parameters. If the secret data (the &quot;Toxic Waste&quot;) from this setup was not properly destroyed, the system's integrity could be compromised.</t>
-<t>As described in [[AegisSovereignAI]], this attestation framework leverages <strong>Gen 4 ZKP (e.g., Plonky2/FRI-based)</strong> to achieve mathematical transparency and future-proof security:</t>
+<t>As described in [[AegisSovereignWorkloads]], this attestation framework leverages <strong>Gen 4 ZKP (e.g., Plonky2/FRI-based)</strong> to achieve mathematical transparency and future-proof security:</t>
 
 <ol spacing="compact">
 <li><strong>No Trusted Setup:</strong> Verification is based on hash-based STARKs and PLONKish arithmetization. There are no secret parameters to manage or destroy, eliminating the TTP risk entirely.</li>
@@ -1059,6 +1060,7 @@ Location has a quality associated with it. For example, IP address-based or Wi-F
 <section anchor="data-center-location-anchor-host-1"><name>Data center location anchor host</name>
 <t>The goal is to provide an easy-to-use solution that can be used by data center operators without requiring them to install a geolocation sensor on every data center host.</t>
 <t>PTP is a network protocol that enables precise synchronization of clocks across a computer network and can be used to measure the round-trip time (RTT) between the location anchor host and other data center hosts with sub-microsecond accuracy. To provide cryptographically verifiable proof of residency on the Workload Host -- referred to as &quot;attested PTP&quot; -- the PTP software/hardware can be enhanced so that all PTP messages are signed with a private key.</t>
+<t>The <strong>Canonical PTP Log</strong> for hashing MUST include the signed <strong>Follow_Up</strong> and <strong>Delay_Resp</strong> messages from the PTP exchange. This ensures that the proximity proof is bound to the actual cryptographic evidence of the physical handshake.</t>
 <t>This signing can be done in two ways:</t>
 
 <ul spacing="compact">
@@ -1123,7 +1125,7 @@ Location has a quality associated with it. For example, IP address-based or Wi-F
 <section anchor="technical-security-considerations"><name>Technical Security Considerations</name>
 
 <section anchor="anti-tunneling-and-tee-enforced-proximity"><name>Anti-Tunneling and TEE-Enforced Proximity</name>
-<t>To prevent &quot;Proxy Attacks&quot; (where PTP packets are tunneled to a remote anchor to fake proximity), the <strong>Attested PTP daemon</strong> MUST execute within a <strong>Trusted Execution Environment (TEE)</strong> or a secure security processor (e.g., iLO 7). This ensures that the round-trip measurements (RTT) are signed in silicon at the point of origin via <strong>Signed PTP Messages</strong> (e.g., signed <tt>Follow_Up</tt> or <tt>Delay_Resp</tt> packets), preventing a compromised Workload Host OS from manipulating results to mask geographic distance.</t>
+<t>To prevent &quot;Proxy Attacks&quot; (where PTP packets are tunneled to a remote anchor to fake proximity), the <strong>Attested PTP daemon</strong> MUST execute within a <strong>Trusted Execution Environment (TEE)</strong> or a secure security processor (e.g., iLO 7). This ensures that the round-trip measurements (RTT) are signed in silicon at the point of origin via <strong>Signed PTP Messages</strong> (e.g., signed <tt>Follow_Up</tt> or <tt>Delay_Resp</tt> packets), preventing a compromised Workload Host OS from manipulating results to mask geographic distance. <strong>The Proximity Proof itself MUST be a cryptographic signature over the timing metadata produced directly by the TEE; any proofs produced by the Workload Host OS without TEE-witnessed signatures SHALL be rejected.</strong></t>
 
 <ul>
 <li><t><strong>TPM and Hardware Trust</strong>: The security of the solution depends on the integrity of the TPM and other hardware roots of trust. Physical attacks, firmware vulnerabilities, or supply chain compromises could undermine attestation. Regular updates, secure provisioning, and monitoring are required.</t>
@@ -1164,7 +1166,13 @@ Location has a quality associated with it. For example, IP address-based or Wi-F
 </section>
 
 <section anchor="iana-considerations"><name>IANA Considerations</name>
-<t>This document has no IANA actions.</t>
+<t>IANA is requested to register the following Object Identifier (OID) in the &quot;SMI Numbers&quot; registry under the &quot;SMI Private Enterprise Numbers&quot; (1.3.6.1.4.1) branch, or as appropriate for the V-GAP profile:</t>
+
+<ul spacing="compact">
+<li><strong>OID</strong>: <tt>1.3.6.1.4.1.60265.1.1</tt></li>
+<li><strong>Description</strong>: Verifiable Geofencing Attestation Profile (V-GAP) Evidence Bundle</li>
+<li><strong>Reference</strong>: This document, Section 10.</li>
+</ul>
 </section>
 
 <section anchor="appendix-items-to-follow-up"><name>Appendix - Items to follow up</name>
@@ -1210,8 +1218,9 @@ Inner-Evidence-Bundle = {
     2 => lah-geolocation-proof-hash,    ; bstr (ZKP/Residency Hash)
     3 => privacy-technique,         ; int (0=None, 1=ZKP, 2=TEE)
     4 => lah-timestamp,             ; uint (Hardware-rooted epoch)
-    ? 5 => freshness-nonce,         ; bstr (Optional if timestamp is attested)
-    6 => lah-tpm-quote-hash         ; Inner Seal over [1, 2, 3, 4, 5]
+    5 => accuracy-sub-claim,        ; uint (Nanoseconds)
+    ? 6 => freshness-nonce,         ; bstr (Optional if timestamp is attested)
+    7 => lah-tpm-quote-hash         ; Inner Seal over [1..6]
 }
 ]]></sourcecode>
 </section>

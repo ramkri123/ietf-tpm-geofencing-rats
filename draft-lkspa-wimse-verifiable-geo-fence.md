@@ -225,7 +225,80 @@ These layers support three primary deployment options:
 - **Option B -- Out-of-Band Management (e.g., HPE iLO)**
 - **Option C -- Cloud-Based Virtual TPM (e.g., AWS Nitro)**
 
-For the workload-level attestation that builds on top of the Workload Identity Agent (Layer 1), see [[I-D.mw-wimse-transitive-attestation]].
+# Relationship to Transitive Attestation
+
+This document is part of a layered attestation architecture that, together with the companion document [[I-D.mw-wimse-transitive-attestation]], provides an end-to-end chain of trust from hardware through to workload identity.
+
+The three layers are:
+
+- **Layer 1 -- Workload Identity Attestation (Hardware-Independent):** Covered by [[I-D.mw-wimse-transitive-attestation]]. Proves that a workload is co-located with a verified Workload Identity Agent via a local mechanism such as a Unix Domain Socket. Defines the mTLS-based Proof of Residency (PoR) and DPoR protocol flows. This layer does NOT concern itself with how the Workload Identity Agent itself was verified—it treats the Workload Identity Agent as an already-attested trust anchor.
+
+- **Layer 2 -- Workload Identity Agent Platform Attestation via TPM (Hardware-Dependent):** Covered by this document. Proves the Workload Identity Agent is running on an approved host via TPM-based measured boot, hardware inventory verification, and credential activation. This establishes the hardware root of trust that Layer 1 relies upon.
+
+- **Layer 3 -- Workload Identity Agent Geolocation Attestation (Hardware-Dependent):** Covered by this document. Proves the attested host (from Layer 2) is within an approved geographic boundary using cryptographically bound sensors (GNSS, mobile modems).
+
+The following table maps these layers to the broader IETF ecosystem, forming a cohesive "Silicon-to-SVID" chain of accountability:
+
+| Layer | Component | WG | Core Responsibility |
+| :--- | :--- | :--- | :--- |
+| **Layer 1** | **Transitive Attestation** | **WIMSE** | **Conveyance**: Binds identity to the local agent (Co-location/Residency). |
+| **Layer 2** | **Verifiable Geofencing** | **RATS** | **Platform Evidence**: Verifies host integrity and Workload Identity Agent hardware residency (TPM). |
+| **Layer 3** | **Verifiable Geofencing** | **RATS** | **Location Evidence**: Verifies physical geography (GNSS/ZKP). |
+
+Together, the complete chain is:
+
+  * TPM Hardware -> Workload Identity Agent (this draft, Layer 2) -> Workload (transitive attestation draft, Layer 1)
+  * TPM/Geolocation Hardware -> Workload Identity Agent (this draft, Layers 2 and 3) -> Workload (transitive attestation draft, Layer 1)
+
+# Addressing WIMSE Architecture Gaps
+
+The high-level **WIMSE Architecture** [[I-D.ietf-wimse-architecture]] establishes the requirement for a trustworthy Workload Identity Agent but delegates the technical mechanics of agent verification to specific profiles. This document fills that technical gap by providing a normative specification for hardware-rooted agent verification.
+
+Without the hardware-rooted "Silicon-to-Audit" proof established in this specification, the WIMSE identity model would rely on implicit trust in the host operating system or infrastructure provider. This draft hardens the WIMSE model against advanced threats by ensuring the Workload Identity Agent itself—and consequently the identities it issues—are anchored to verifiable hardware configuration and physical location.
+
+This document focuses exclusively on Layers 2 and 3: the hardware-dependent attestation of the Workload Identity Agent itself. For how workloads prove they are co-located with an attested Workload Identity Agent, and for the data-plane protocol flows (mTLS PoR, DPoR), see [[I-D.mw-wimse-transitive-attestation]].
+
+# Use Cases
+
+Data residency use cases can be divided into three categories: (1) server-centric location, (2) user-centric location, and (3) regulatory compliance.
+
+## Category 1: Server-centric Location
+
+Enterprises (e.g., healthcare, banking) need cryptographic proof of a trustworthy geographic boundary (i.e., region, zone, country, state, etc.) for cloud-facing workloads.
+
+### Server workload to Server workload - General
+
+Enterprises handling sensitive data rely on dedicated cloud hosts (e.g., EU sovereign cloud providers) that ensure compliance with data residency laws, while also ensuring appropriate levels of service (e.g., high availability). To meet data residency legal requirements, enterprises need to verify that workload data is processed by hosts within a geographic boundary and that workload data is only transmitted between specified geographic boundaries.
+
+### Server workload to Server workload - Agentic AI
+
+Enterprises need to ensure that the AI agent is located within a specific geographic boundary when downloading sensitive data or performing other sensitive operations. A secure AI agent, running on a trusted host with TPM-backed attestation, interacts with geolocation and geofencing services to obtain verifiable proof of its geographic boundary. The agent periodically collects location data from trusted sensors, obtains attested composite location from a geolocation service, and enforces geofence policies via a geofencing service. The resulting attested geofence proof is used to bind workload identity to both the host and its geographic location, enabling secure, policy-driven execution of AI workloads and compliance with data residency requirements.
+
+### Server workload to Server workload - Federated AI
+
+In federated learning scenarios, multiple organizations collaborate to train machine learning models without sharing raw data. Each organization needs to ensure that its training data remains within a specific geographic boundary. This requires cryptographic proof that the training process is occurring on trusted hosts within the defined boundaries.
+
+### User workload to Server workload
+
+Enterprises ensure that they are communicating with a server (e.g., cloud services) located within a specific geographic boundary.
+
+## Category 2: User-centric Location
+
+Enterprises need cryptographic proof of trustworthy geographic boundary for user-facing workloads.
+
+* A server (or proxy) authenticates to clients using different TLS certificates, each signed by a different Certificate Authority (CA), based on the geographic boundaries of user workloads.
+
+* Enterprise Customer Premise Equipment (CPE) provides on-premises computing that is a basis for defining geolocation boundaries. A telco network provides a means for communication between premises.
+
+* Construction and Engineering of SaaS workloads can benefit from attested geographic boundary data from end-user devices to restrict access within specific geopolitical regions (e.g., California). Enabling per-user or group-level geofencing helps prevent fraudulent access originating outside the authorized area.
+
+* Healthcare providers need to ensure that the host is located in a specific geographic boundary when downloading patient data or performing other sensitive operations.
+
+* U.S. Presidential Executive Order compliance directs Cloud Service Provider (CSP) support personnel be located in restricted geographies (e.g., Venezuela, Iran, China, North Korea). However, those personnel should not be allowed to support U.S. customers. Geolocation enforcement can ensure policy compliance.
+
+## Category 3: Regulatory Compliance
+
+Geographic boundary attestation helps satisfy data residency and data sovereignty requirements for regulatory compliance.
 
 ## Server Hosts - Solution highlights
 

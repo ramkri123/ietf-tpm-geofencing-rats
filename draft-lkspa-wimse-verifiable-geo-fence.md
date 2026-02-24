@@ -417,7 +417,7 @@ TPM Platform Attestation establishes three properties:
 | **Network Path** | Shared Host NIC | **Dedicated Management NIC** | Virtualized NIC |
 | **Main Use Case** | General Purpose / On-Prem | High-Assurance / Enterprise | Cloud / EKS / Virtualized |
 
-## Geolocation HW-Based Attestation (Layer 3)
+### Geolocation HW-Based Attestation (Layer 3)
 
 This layer verifies the physical geography of the attested host using cryptographically bound sensors.
 
@@ -902,7 +902,7 @@ As described in [[AegisSovereignAI]], this attestation framework leverages **Gen
 
 This ensures that the geofencing framework is not only privacy-preserving but also sovereign and resilient against advanced cryptographic threats.
 
-# Scaling the Solution
+## Scaling the Solution Logic
 
 Having a geolocation sensor on every host is not scalable from a deployment and management perspective and can be cost prohibitive. In the case of end user hosts, the geolocation sensor can be on a mobile host (e.g., smartphone with Mobile network capabilities and optionally GNSS capabilities) which can be leveraged by a laptop/desktop host which is proximal to the mobile host. The mobile host serves as the location anchor host. In the case of data center hosts, the geolocation sensor can be on a host with Mobile network and/or GNSS capabilities which can be leveraged by other data center hosts. This host serves as the location anchor host.
 

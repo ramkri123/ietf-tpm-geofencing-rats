@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- name="GENERATOR" content="github.com/mmarkdown/mmark Mmark Markdown Processor - mmark.miek.nl" -->
-<rfc version="3" ipr="trust200902" docName="draft-lkspa-wimse-verifiable-geo-fence-10" submissionType="IETF" category="info" xml:lang="en" xmlns:xi="http://www.w3.org/2001/XInclude" indexInclude="true">
+<rfc version="3" ipr="trust200902" docName="draft-lkspa-wimse-verifiable-geo-fence-11" submissionType="IETF" category="info" xml:lang="en" xmlns:xi="http://www.w3.org/2001/XInclude" indexInclude="true">
 
 <front>
-<title abbrev="RATS-GEO-POR">Verifiable Geofencing and Residency Proofs for Sovereign Workloads: A RATS Profile</title><seriesInfo value="draft-lkspa-wimse-verifiable-geo-fence-10" stream="IETF" status="informational" name="Internet-Draft"></seriesInfo>
+<title abbrev="RATS-GEO-POR">Verifiable Geofencing and Residency Proofs for Sovereign Workloads: A RATS Profile</title><seriesInfo value="draft-lkspa-wimse-verifiable-geo-fence-11" stream="IETF" status="informational" name="Internet-Draft"></seriesInfo>
 <author initials="R." surname="Krishnan" fullname="Ram Krishnan"><organization>JPMorgan Chase &amp; Co.</organization><address><postal><street></street>
 </postal><email>ramkri123@gmail.com</email>
 </address></author><author initials="N." surname="Smith" fullname="Ned Smith"><organization>Intel</organization><address><postal><street></street>
@@ -435,10 +435,10 @@
 </tr>
 </tbody>
 </table></section>
-</section>
 
 <section anchor="geolocation-hw-based-attestation-layer-3"><name>Geolocation HW-Based Attestation (Layer 3)</name>
 <t>This layer verifies the physical geography of the attested host using cryptographically bound sensors.</t>
+</section>
 
 <section anchor="privacy-preserving-geolocation-verification-zkp"><name>Privacy-Preserving Geolocation Verification (ZKP)</name>
 <t>Mathematical transparency is achieved through non-interactive, hash-based ZKPs (e.g., STARKs/FRI) to prove residency without disclosing exact coordinates.</t>
@@ -1044,10 +1044,10 @@ Location has a quality associated with it. For example, IP address-based or Wi-F
 <t>This ensures that the geofencing framework is not only privacy-preserving but also sovereign and resilient against advanced cryptographic threats.</t>
 </section>
 </section>
-</section>
 
-<section anchor="scaling-the-solution"><name>Scaling the Solution</name>
+<section anchor="scaling-the-solution-logic"><name>Scaling the Solution Logic</name>
 <t>Having a geolocation sensor on every host is not scalable from a deployment and management perspective and can be cost prohibitive. In the case of end user hosts, the geolocation sensor can be on a mobile host (e.g., smartphone with Mobile network capabilities and optionally GNSS capabilities) which can be leveraged by a laptop/desktop host which is proximal to the mobile host. The mobile host serves as the location anchor host. In the case of data center hosts, the geolocation sensor can be on a host with Mobile network and/or GNSS capabilities which can be leveraged by other data center hosts. This host serves as the location anchor host.</t>
+</section>
 
 <section anchor="end-user-location-anchor-host-1"><name>End user location anchor host</name>
 <t>The goal is to provide an easy-to-use wireless solution that can be used by end users without requiring them to install a geolocation sensor on their laptop/desktop host.</t>

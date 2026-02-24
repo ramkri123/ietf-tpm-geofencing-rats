@@ -1418,6 +1418,11 @@ li > p:last-of-type:only-child {
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1">
                 <p id="section-toc.1-1.7.2.1.1"><a href="#section-7.1" class="auto internal xref">7.1</a>.  <a href="#name-attestation-key-ak-manageme" class="internal xref">Attestation Key (AK) Management</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1.2.1">
+                    <p id="section-toc.1-1.7.2.1.2.1.1"><a href="#section-7.1.1" class="auto internal xref">7.1.1</a>.  <a href="#name-dual-federation-the-complia" class="internal xref">Dual Federation (The Compliance Bridge)</a></p>
+</li>
+                </ul>
 </li>
             </ul>
 </li>
@@ -1623,18 +1628,24 @@ li > p:last-of-type:only-child {
                 <p id="section-toc.1-1.12.2.1.1"><a href="#section-12.1" class="auto internal xref">12.1</a>.  <a href="#name-mapping-to-wimse-threat-mod" class="internal xref">Mapping to WIMSE Threat Model</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.2">
-                <p id="section-toc.1-1.12.2.2.1"><a href="#section-12.2" class="auto internal xref">12.2</a>.  <a href="#name-identity-hijacking-preventi" class="internal xref">Identity Hijacking Prevention</a></p>
+                <p id="section-toc.1-1.12.2.2.1"><a href="#section-12.2" class="auto internal xref">12.2</a>.  <a href="#name-post-quantum-hybridization-" class="internal xref">Post-Quantum Hybridization (Future Proofing)</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.3">
-                <p id="section-toc.1-1.12.2.3.1"><a href="#section-12.3" class="auto internal xref">12.3</a>.  <a href="#name-technical-security-consider" class="internal xref">Technical Security Considerations</a></p>
+                <p id="section-toc.1-1.12.2.3.1"><a href="#section-12.3" class="auto internal xref">12.3</a>.  <a href="#name-sovereign-autonomy-leased-t" class="internal xref">Sovereign Autonomy &amp; Leased Trust</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.4">
+                <p id="section-toc.1-1.12.2.4.1"><a href="#section-12.4" class="auto internal xref">12.4</a>.  <a href="#name-identity-hijacking-preventi" class="internal xref">Identity Hijacking Prevention</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.5">
+                <p id="section-toc.1-1.12.2.5.1"><a href="#section-12.5" class="auto internal xref">12.5</a>.  <a href="#name-technical-security-consider" class="internal xref">Technical Security Considerations</a></p>
 <ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.3.2.1">
-                    <p id="section-toc.1-1.12.2.3.2.1.1"><a href="#section-12.3.1" class="auto internal xref">12.3.1</a>.  <a href="#name-anti-tunneling-and-tee-enfo" class="internal xref">Anti-Tunneling and TEE-Enforced Proximity</a></p>
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.5.2.1">
+                    <p id="section-toc.1-1.12.2.5.2.1.1"><a href="#section-12.5.1" class="auto internal xref">12.5.1</a>.  <a href="#name-anti-tunneling-and-tee-enfo" class="internal xref">Anti-Tunneling and TEE-Enforced Proximity</a></p>
 </li>
                 </ul>
 </li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.4">
-                <p id="section-toc.1-1.12.2.4.1"><a href="#section-12.4" class="auto internal xref">12.4</a>.  <a href="#name-proximity-and-anchor-displa" class="internal xref">Proximity and Anchor Displacement (Layer 4)</a></p>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.6">
+                <p id="section-toc.1-1.12.2.6.1"><a href="#section-12.6" class="auto internal xref">12.6</a>.  <a href="#name-proximity-and-anchor-displa" class="internal xref">Proximity and Anchor Displacement (Layer 4)</a></p>
 </li>
             </ul>
 </li>
@@ -2252,39 +2263,56 @@ Inner-Evidence-Bundle = {
         <h3 id="name-attestation-key-ak-manageme">
 <a href="#section-7.1" class="section-number selfRef">7.1. </a><a href="#name-attestation-key-ak-manageme" class="section-name selfRef">Attestation Key (AK) Management</a>
         </h3>
+<div id="dual-federation-the-compliance-bridge">
+<section id="section-7.1.1">
+          <h4 id="name-dual-federation-the-complia">
+<a href="#section-7.1.1" class="section-number selfRef">7.1.1. </a><a href="#name-dual-federation-the-complia" class="section-name selfRef">Dual Federation (The Compliance Bridge)</a>
+          </h4>
+<p id="section-7.1.1-1">Managing hardware-rooted identities at scale requires a <strong>Dual Federation</strong> model where local operational autonomy is balanced with centralized governance.<a href="#section-7.1.1-1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-7.1-1.1">
-            <strong>Rotation &amp; Sync:</strong> The Edge Management Plane SHALL rotate both the <code>host-tpm-ak</code> and <code>lah-tpm-ak</code> periodically. To maintain the chain of trust during rotation, the Cloud Host Management Plane MUST ONLY accept a newly synced AK if the Edge Management Plane provides a <strong>"Rotation Proof"</strong>—typically a signature from the <em>preceding</em> AK blessing the new AK, or a fresh Out-of-Band (OOB) quote from the hardware root of trust (i.e., iLO 7).<a href="#section-7.1-1.1" class="pilcrow">¶</a>
+<li class="normal" id="section-7.1.1-2.1">
+              <strong>Edge-to-Cloud Handshake:</strong> The Edge Management Plane SHALL maintain local Attestation Keys (AKs) for the <code>host-tpm-ak</code> and <code>lah-tpm-ak</code> to support offline SVID issuance. Periodically, these AKs MUST be synchronized with the Cloud-based <strong>Sovereign Registry</strong>.<a href="#section-7.1.1-2.1" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-7.1-1.2">
-            <strong>Hardware-Rooted Registry:</strong> The Sovereign Verifier MUST maintain a registry mapping verified AKs to their manufacturer <strong>Endorsement Key (EK)</strong> certificates.<a href="#section-7.1-1.2" class="pilcrow">¶</a>
-</li>
-          <li class="normal" id="section-7.1-1.3">
-            <p id="section-7.1-1.3.1"><strong>Credential Activation (Handshake) &amp; The On-Demand Kill-Switch:</strong> To avoid the "MakeCredential tax" (high-latency challenge/response) on every request, the Verifier SHALL perform the full <strong>TPM2_MakeCredential</strong> procedure (linked to the manufacturer EK and HPE Root CA) only upon:<a href="#section-7.1-1.3.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-7.1.1-2.2">
+              <p id="section-7.1.1-2.2.1"><strong>Rotation Proofs:</strong> The Cloud Management Plane MUST ONLY accept a newly synced AK if the Edge Management Plane provides a <strong>"Rotation Proof"</strong>. This proof SHALL be either:<a href="#section-7.1.1-2.2.1" class="pilcrow">¶</a></p>
 <ul class="compact normal">
-<li class="compact normal" id="section-7.1-1.3.2.1">Initial node onboarding.<a href="#section-7.1-1.3.2.1" class="pilcrow">¶</a>
+<li class="compact normal" id="section-7.1.1-2.2.2.1">A digital signature from the <em>preceding</em> AK blessing the new AK.<a href="#section-7.1.1-2.2.2.1" class="pilcrow">¶</a>
 </li>
-              <li class="compact normal" id="section-7.1-1.3.2.2">Node reboot (detected via TPM Clock/ResetCount reset).<a href="#section-7.1-1.3.2.2" class="pilcrow">¶</a>
+                <li class="compact normal" id="section-7.1.1-2.2.2.2">A fresh Out-of-Band (OOB) quote from the hardware root of trust (i.e., iLO 7) verifying the new AK was generated in approved silicon.<a href="#section-7.1.1-2.2.2.2" class="pilcrow">¶</a>
 </li>
-              <li class="compact normal" id="section-7.1-1.3.2.3">Policy violation (e.g., unauthorized firmware update detected via OOB).<a href="#section-7.1-1.3.2.3" class="pilcrow">¶</a>
+              </ul>
 </li>
-              <li class="compact normal" id="section-7.1-1.3.2.4">Failure of the PTP Proximity Proof.<a href="#section-7.1-1.3.2.4" class="pilcrow">¶</a>
+            <li class="normal" id="section-7.1.1-2.3">
+              <strong>Hardware-Rooted Registry:</strong> The Sovereign Verifier MUST maintain a registry mapping verified AKs to their manufacturer <strong>Endorsement Key (EK)</strong> certificates.<a href="#section-7.1.1-2.3" class="pilcrow">¶</a>
 </li>
-              <li class="compact normal" id="section-7.1-1.3.2.5">Escalation to a "Sovereign High-Trust" workload request.<a href="#section-7.1-1.3.2.5" class="pilcrow">¶</a>
+            <li class="normal" id="section-7.1.1-2.4">
+              <p id="section-7.1.1-2.4.1"><strong>Credential Activation (Handshake) &amp; The On-Demand Kill-Switch:</strong> To avoid the "MakeCredential tax" (high-latency challenge/response) on every request, the Verifier SHALL perform the full <strong>TPM2_MakeCredential</strong> procedure (linked to the manufacturer EK and HPE Root CA) only upon:<a href="#section-7.1.1-2.4.1" class="pilcrow">¶</a></p>
+<ul class="compact normal">
+<li class="compact normal" id="section-7.1.1-2.4.2.1">Initial node onboarding.<a href="#section-7.1.1-2.4.2.1" class="pilcrow">¶</a>
 </li>
-            </ul>
-<p id="section-7.1-1.3.3">This serves as the ultimate <strong>Security Baseline</strong>: if the Cloud Verifier detects any drift in the edge posture, it can refuse to release decryption keys until a successful EK-rooted handshake is completed, effectively locking the workload.<a href="#section-7.1-1.3.3" class="pilcrow">¶</a></p>
+                <li class="compact normal" id="section-7.1.1-2.4.2.2">Node reboot (detected via TPM Clock/ResetCount reset).<a href="#section-7.1.1-2.4.2.2" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-7.1-1.4">
-            <p id="section-7.1-1.4.1"><strong>Revocation and Hardware Health Bit:</strong> The Edge Management Plane MUST maintain a <strong>"Hardware Health Bit"</strong> for each node. If the hardware root of trust (e.g., iLO 7) detects a security breach (e.g., chassis intrusion, unauthorized firmware update), it MUST trigger an immediate <strong>AK Revocation</strong> signal to the Sovereign Verifier. The Verifier SHALL instantly invalidate all active SVIDs associated with that AK, regardless of their freshness.<a href="#section-7.1-1.4.1" class="pilcrow">¶</a></p>
+                <li class="compact normal" id="section-7.1.1-2.4.2.3">Policy violation (e.g., unauthorized firmware update detected via OOB).<a href="#section-7.1.1-2.4.2.3" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-7.1-1.5">
-            <p id="section-7.1-1.5.1"><strong>Continuous Validation:</strong> Between full handshakes, the Verifier accepts hardware-signed Quotes from the registered AK as proof of continued residency in approved silicon.<a href="#section-7.1-1.5.1" class="pilcrow">¶</a></p>
+                <li class="compact normal" id="section-7.1.1-2.4.2.4">Failure of the PTP Proximity Proof.<a href="#section-7.1.1-2.4.2.4" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-7.1-1.6">
-            <p id="section-7.1-1.6.1"><strong>Offline Survival &amp; Leased Identity:</strong> In environments with intermittent connectivity (e.g., offshore rigs), the Cloud Verifier MAY issue a <strong>"Leased Identity"</strong> with an extended validity period (e.g., 48 hours). This lease is contingent on the local hardware root of trust (iLO 7) performing continuous monitoring for physical tampering (chassis intrusion, signal jamming) and triggering a local "Self-Destruct" of the identity keys if a breach is detected while offline.<a href="#section-7.1-1.6.1" class="pilcrow">¶</a></p>
+                <li class="compact normal" id="section-7.1.1-2.4.2.5">Escalation to a "Sovereign High-Trust" workload request.<a href="#section-7.1.1-2.4.2.5" class="pilcrow">¶</a>
 </li>
-        </ul>
+              </ul>
+<p id="section-7.1.1-2.4.3">This serves as the ultimate <strong>Security Baseline</strong>: if the Cloud Verifier detects any drift in the edge posture, it can refuse to release decryption keys until a successful EK-rooted handshake is completed, effectively locking the workload.<a href="#section-7.1.1-2.4.3" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-7.1.1-2.5">
+              <p id="section-7.1.1-2.5.1"><strong>Revocation and Hardware Health Bit:</strong> The Edge Management Plane MUST maintain a <strong>"Hardware Health Bit"</strong> for each node. If the hardware root of trust (e.g., iLO 7) detects a security breach (e.g., chassis intrusion, unauthorized firmware update), it MUST trigger an immediate <strong>AK Revocation</strong> signal to the Sovereign Verifier. The Verifier SHALL instantly invalidate all active SVIDs associated with that AK, regardless of their freshness.<a href="#section-7.1.1-2.5.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-7.1.1-2.6">
+              <p id="section-7.1.1-2.6.1"><strong>Continuous Validation:</strong> Between full handshakes, the Verifier accepts hardware-signed Quotes from the registered AK as proof of continued residency in approved silicon.<a href="#section-7.1.1-2.6.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-7.1.1-2.7">
+              <p id="section-7.1.1-2.7.1"><strong>Offline Survival &amp; Leased Identity:</strong> In environments with intermittent connectivity (e.g., offshore rigs), the Cloud Verifier MAY issue a <strong>"Leased Identity"</strong> with an extended validity period (e.g., 48 hours). This lease is contingent on the local hardware root of trust (iLO 7) performing continuous monitoring for physical tampering (chassis intrusion, signal jamming) and triggering a local "Self-Destruct" of the identity keys if a breach is detected while offline.<a href="#section-7.1.1-2.7.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+</section>
+</div>
 </section>
 </div>
 </section>
@@ -3504,10 +3532,18 @@ Location has a quality associated with it. For example, IP address-based or Wi-F
           <strong>Accuracy Validation</strong>: Verify that the <code>accuracy-sub-claim</code> meets the minimum residency confidence required by the workload's policy (e.g., &lt; 100ms drift).<a href="#section-10-2.7" class="pilcrow">¶</a>
 </li>
         <li id="section-10-2.8">
-          <strong>Freshness Window Policy (Clock-Warp Guard)</strong>: The Verifier MUST reject any bundle where the <code>temporal-nonce</code> deviates from the Verifier's own hardware-anchored clock by more than a defined threshold (<strong>Maximum Skew: +/- 100ms</strong>). On rejection, the system SHOULD attempt a <strong>Sync Recovery</strong> (forcing a new <code>N_platform</code> challenge and PTP resynchronization). If Sync Recovery fails twice consecutively, the Verifier MUST trigger an <strong>Immediate Revocation</strong> of the Workload Identity Agent's keys.<a href="#section-10-2.8" class="pilcrow">¶</a>
+          <p id="section-10-2.8.1"><strong>Freshness Window Policy (Clock-Warp Guard &amp; Recovery)</strong>: The Verifier MUST reject any bundle where the <code>temporal-nonce</code> deviates from the Verifier's own hardware-anchored clock by more than a defined threshold (<strong>Maximum Skew: +/- 100ms</strong>).<a href="#section-10-2.8.1" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="section-10-2.8.2.1">
+              <strong>Sync Recovery (Slow Path)</strong>: Upon rejection due to clock-warp, the system SHOULD trigger an immediate <strong>"Slow Path" re-attestation</strong>. This forces a full <strong>TPM2_MakeCredential</strong> challenge-response cycle (Credential Activation) to reset the hardware-anchored time baseline and re-verify the platform posture.<a href="#section-10-2.8.2.1" class="pilcrow">¶</a>
+</li>
+            <li class="compact" id="section-10-2.8.2.2">
+              <strong>Revocation</strong>: If Sync Recovery fails twice consecutively, the Verifier MUST trigger an <strong>Immediate Revocation</strong> of the Workload Identity Agent's keys.<a href="#section-10-2.8.2.2" class="pilcrow">¶</a>
+</li>
+          </ul>
 </li>
         <li id="section-10-2.9">
-          <strong>Downstream Authorization (KMS Gatekeeping)</strong>: Successful verification of the V-GAP Evidence Bundle SHALL be a mandatory precondition for downstream Key Management Services (KMS) or Workload Identity Managers to release high-value assets (e.g., AI model decryption keys or secrets). The Verifier MUST propagate the "Sovereign-Verified" status to the authorization engine.<a href="#section-10-2.9" class="pilcrow">¶</a>
+          <strong>Downstream Authorization (KMS Gatekeeping)</strong>: Successful verification of the V-GAP Evidence Bundle SHALL be a mandatory precondition for a downstream <strong>Key Management Service (KMS)</strong> or Workload Identity Manager to release high-value assets (e.g., AI model decryption keys). The Verifier MUST propagate the "Sovereign-Verified" status to the KMS along with the <code>temporal-nonce</code> for freshness binding.<a href="#section-10-2.9" class="pilcrow">¶</a>
 </li>
       </ol>
 </section>
@@ -3558,73 +3594,91 @@ Location has a quality associated with it. For example, IP address-based or Wi-F
         </ul>
 </section>
 </div>
-<div id="identity-hijacking-prevention">
+<div id="post-quantum-hybridization-future-proofing">
 <section id="section-12.2">
-        <h3 id="name-identity-hijacking-preventi">
-<a href="#section-12.2" class="section-number selfRef">12.2. </a><a href="#name-identity-hijacking-preventi" class="section-name selfRef">Identity Hijacking Prevention</a>
+        <h3 id="name-post-quantum-hybridization-">
+<a href="#section-12.2" class="section-number selfRef">12.2. </a><a href="#name-post-quantum-hybridization-" class="section-name selfRef">Post-Quantum Hybridization (Future Proofing)</a>
         </h3>
-<p id="section-12.2-1">Static bearer tokens and software-only identities are vulnerable to hijacking via proxy attacks or memory scraping. This framework implements a <strong>Double-Bind Mechanism</strong> to prevent identity export:<a href="#section-12.2-1" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="compact type-1" id="section-12.2-2">
-<li id="section-12.2-2.1">
-            <strong>Identity-to-Platform Bind</strong>: The Workload SVID is cryptographically bound to the specific <code>host-tpm-ak</code> of the compute host. If the SVID is stolen and presented from any other host, the Verifier SHALL detect a signature mismatch during mTLS PoR or DPoR verification.<a href="#section-12.2-2.1" class="pilcrow">¶</a>
+<p id="section-12.2-1">While the Zero-Knowledge Proof (ZKP) layers of V-GAP are based on hash-based protocols (e.g., STARKs) which are inherently post-quantum resilient, the underlying TPM Attestation Keys (AKs) typically rely on RSA or ECDSA. To future-proof the "Silicon-to-Audit" chain, implementations SHOULD prepare for <strong>Post-Quantum Hybridization</strong>. This involve:
+- <strong>Hybrid AKs</strong>: Combining a classical AK (ECDSA) with a post-quantum digital signature (e.g., ML-DSA) for the Atomic Seal.
+- <strong>PQ-Resilient Management Plane</strong>: Ensuring the Redfish/OOB path utilizes PQ-safe TLS ciphers for evidence transmission.<a href="#section-12.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="sovereign-autonomy-leased-trust">
+<section id="section-12.3">
+        <h3 id="name-sovereign-autonomy-leased-t">
+<a href="#section-12.3" class="section-number selfRef">12.3. </a><a href="#name-sovereign-autonomy-leased-t" class="section-name selfRef">Sovereign Autonomy &amp; Leased Trust</a>
+        </h3>
+<p id="section-12.3-1">In environments with extended offline periods (e.g., 48+ hours), the system maintains <strong>Sovereign Autonomy</strong> through locally cached health bits. The local hardware root of trust (iLO 7) continues to monitor for hardware-level breaches (chassis intrusion, unauthorized firmware) and can trigger a <strong>Self-Destruct</strong> of identity keys even if the Cloud Verifier is unreachable. Upon reconnection, the edge MUST perform a full "Slow Path" re-attestation to validate its offline history.<a href="#section-12.3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="identity-hijacking-prevention">
+<section id="section-12.4">
+        <h3 id="name-identity-hijacking-preventi">
+<a href="#section-12.4" class="section-number selfRef">12.4. </a><a href="#name-identity-hijacking-preventi" class="section-name selfRef">Identity Hijacking Prevention</a>
+        </h3>
+<p id="section-12.4-1">Static bearer tokens and software-only identities are vulnerable to hijacking via proxy attacks or memory scraping. This framework implements a <strong>Double-Bind Mechanism</strong> to prevent identity export:<a href="#section-12.4-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="compact type-1" id="section-12.4-2">
+<li id="section-12.4-2.1">
+            <strong>Identity-to-Platform Bind</strong>: The Workload SVID is cryptographically bound to the specific <code>host-tpm-ak</code> of the compute host. If the SVID is stolen and presented from any other host, the Verifier SHALL detect a signature mismatch during mTLS PoR or DPoR verification.<a href="#section-12.4-2.1" class="pilcrow">¶</a>
 </li>
-          <li id="section-12.2-2.2">
-            <strong>Platform-to-Location Bind</strong>: The <code>host-tpm-ak</code> is bound to the <code>lah-tpm-ak</code> via the V-GAP nested evidence. This ensures that even if a host's entire software stack is replicated (e.g., via a VM snapshot), it cannot forge a valid proximity proof without access to the physical LAH's hardware-signed Temporal Nonce.<a href="#section-12.2-2.2" class="pilcrow">¶</a>
+          <li id="section-12.4-2.2">
+            <strong>Platform-to-Location Bind</strong>: The <code>host-tpm-ak</code> is bound to the <code>lah-tpm-ak</code> via the V-GAP nested evidence. This ensures that even if a host's entire software stack is replicated (e.g., via a VM snapshot), it cannot forge a valid proximity proof without access to the physical LAH's hardware-signed Temporal Nonce.<a href="#section-12.4-2.2" class="pilcrow">¶</a>
 </li>
         </ol>
-<p id="section-12.2-3">This double-bind ensures that an identity is only valid when used by the authorized workload, on the verified hardware, at the approved physical location.<a href="#section-12.2-3" class="pilcrow">¶</a></p>
+<p id="section-12.4-3">This double-bind ensures that an identity is only valid when used by the authorized workload, on the verified hardware, at the approved physical location.<a href="#section-12.4-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="technical-security-considerations">
-<section id="section-12.3">
+<section id="section-12.5">
         <h3 id="name-technical-security-consider">
-<a href="#section-12.3" class="section-number selfRef">12.3. </a><a href="#name-technical-security-consider" class="section-name selfRef">Technical Security Considerations</a>
+<a href="#section-12.5" class="section-number selfRef">12.5. </a><a href="#name-technical-security-consider" class="section-name selfRef">Technical Security Considerations</a>
         </h3>
 <div id="anti-tunneling-and-tee-enforced-proximity">
-<section id="section-12.3.1">
+<section id="section-12.5.1">
           <h4 id="name-anti-tunneling-and-tee-enfo">
-<a href="#section-12.3.1" class="section-number selfRef">12.3.1. </a><a href="#name-anti-tunneling-and-tee-enfo" class="section-name selfRef">Anti-Tunneling and TEE-Enforced Proximity</a>
+<a href="#section-12.5.1" class="section-number selfRef">12.5.1. </a><a href="#name-anti-tunneling-and-tee-enfo" class="section-name selfRef">Anti-Tunneling and TEE-Enforced Proximity</a>
           </h4>
-<p id="section-12.3.1-1">To prevent "Proxy Attacks" (where PTP packets are tunneled to a remote anchor to fake proximity), the <strong>Attested PTP daemon</strong> MUST execute within a <strong>Trusted Execution Environment (TEE)</strong> or a secure security processor (e.g., iLO 7). This ensures that the round-trip measurements (RTT) are signed in silicon at the point of origin via <strong>Signed PTP Messages</strong> (e.g., signed <code>Follow_Up</code> or <code>Delay_Resp</code> packets), preventing a compromised Workload Host OS from manipulating results to mask geographic distance. <strong>The Proximity Proof itself MUST be a cryptographic signature over the timing metadata produced directly by the TEE; any proofs produced by the Workload Host OS without TEE-witnessed signatures SHALL be rejected.</strong><a href="#section-12.3.1-1" class="pilcrow">¶</a></p>
+<p id="section-12.5.1-1">To prevent "Proxy Attacks" (where PTP packets are tunneled to a remote anchor to fake proximity), the <strong>Attested PTP daemon</strong> MUST execute within a <strong>Trusted Execution Environment (TEE)</strong> or a secure security processor (e.g., iLO 7). This ensures that the round-trip measurements (RTT) are signed in silicon at the point of origin via <strong>Signed PTP Messages</strong> (e.g., signed <code>Follow_Up</code> or <code>Delay_Resp</code> packets), preventing a compromised Workload Host OS from manipulating results to mask geographic distance. <strong>The Proximity Proof itself MUST be a cryptographic signature over the timing metadata produced directly by the TEE; any proofs produced by the Workload Host OS without TEE-witnessed signatures SHALL be rejected.</strong><a href="#section-12.5.1-1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-12.3.1-2.1">
-              <p id="section-12.3.1-2.1.1"><strong>TPM and Hardware Trust</strong>: The security of the solution depends on the integrity of the TPM and other hardware roots of trust. Physical attacks, firmware vulnerabilities, or supply chain compromises could undermine attestation. Regular updates, secure provisioning, and monitoring are required.<a href="#section-12.3.1-2.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-12.5.1-2.1">
+              <p id="section-12.5.1-2.1.1"><strong>TPM and Hardware Trust</strong>: The security of the solution depends on the integrity of the TPM and other hardware roots of trust. Physical attacks, firmware vulnerabilities, or supply chain compromises could undermine attestation. Regular updates, secure provisioning, and monitoring are required.<a href="#section-12.5.1-2.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-12.3.1-2.2">
-              <p id="section-12.3.1-2.2.1"><strong>Geolocation Spoofing</strong>: Location sensors (e.g., GPS) are susceptible to spoofing or replay attacks. Use of cryptographically authenticated signals (e.g., Galileo GNSS, mobile network) and cross-verification with multiple sources can mitigate this risk.<a href="#section-12.3.1-2.2.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-12.5.1-2.2">
+              <p id="section-12.5.1-2.2.1"><strong>Geolocation Spoofing</strong>: Location sensors (e.g., GPS) are susceptible to spoofing or replay attacks. Use of cryptographically authenticated signals (e.g., Galileo GNSS, mobile network) and cross-verification with multiple sources can mitigate this risk.<a href="#section-12.5.1-2.2.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-12.3.1-2.3">
-              <p id="section-12.3.1-2.3.1"><strong>SIM and e-SIM Attacks</strong>: Physical SIM removal or e-SIM swap attacks can break the binding between device and location. Continuous monitoring of device composition and periodic re-attestation are recommended.<a href="#section-12.3.1-2.3.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-12.5.1-2.3">
+              <p id="section-12.5.1-2.3.1"><strong>SIM and e-SIM Attacks</strong>: Physical SIM removal or e-SIM swap attacks can break the binding between device and location. Continuous monitoring of device composition and periodic re-attestation are recommended.<a href="#section-12.5.1-2.3.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-12.3.1-2.4">
-              <p id="section-12.3.1-2.4.1"><strong>Software Integrity</strong>: The geolocation agent and supporting software must be protected against tampering. Use of Linux IMA, secure boot, and measured launch environments helps ensure only approved software is executed.<a href="#section-12.3.1-2.4.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-12.5.1-2.4">
+              <p id="section-12.5.1-2.4.1"><strong>Software Integrity</strong>: The geolocation agent and supporting software must be protected against tampering. Use of Linux IMA, secure boot, and measured launch environments helps ensure only approved software is executed.<a href="#section-12.5.1-2.4.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-12.3.1-2.5">
-              <p id="section-12.3.1-2.5.1"><strong>Communication Security</strong>: All attestation and geolocation data must be transmitted over secure, authenticated channels (e.g., TLS) to prevent interception or manipulation.<a href="#section-12.3.1-2.5.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-12.5.1-2.5">
+              <p id="section-12.5.1-2.5.1"><strong>Communication Security</strong>: All attestation and geolocation data must be transmitted over secure, authenticated channels (e.g., TLS) to prevent interception or manipulation.<a href="#section-12.5.1-2.5.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-12.3.1-2.6">
-              <p id="section-12.3.1-2.6.1"><strong>Policy Enforcement</strong>: The enforcement of geofence policies must be robust against attempts by malicious workloads or agents to bypass controls. Policy decisions should be based on verifiable, signed attestation evidence.<a href="#section-12.3.1-2.6.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-12.5.1-2.6">
+              <p id="section-12.5.1-2.6.1"><strong>Policy Enforcement</strong>: The enforcement of geofence policies must be robust against attempts by malicious workloads or agents to bypass controls. Policy decisions should be based on verifiable, signed attestation evidence.<a href="#section-12.5.1-2.6.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-12.3.1-2.7">
-              <p id="section-12.3.1-2.7.1"><strong>Time Source Integrity &amp; Clock Warp</strong>: Trusted time sources are necessary to prevent replay attacks and ensure the freshness of attestation data. The Verifier MUST enforce the <strong>Freshness Window Policy (+/- 100ms)</strong> defined in Section 10 to guard against clock-drift or clock-warp attacks. Failure to maintain synchronization within this window MUST trigger the <strong>Sync Recovery</strong> or <strong>Immediate Revocation</strong> protocols.<a href="#section-12.3.1-2.7.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-12.5.1-2.7">
+              <p id="section-12.5.1-2.7.1"><strong>Time Source Integrity &amp; Clock Warp</strong>: Trusted time sources are necessary to prevent replay attacks and ensure the freshness of attestation data. The Verifier MUST enforce the <strong>Freshness Window Policy (+/- 100ms)</strong> defined in Section 10 to guard against clock-drift or clock-warp attacks. Failure to maintain synchronization within this window MUST trigger the <strong>Sync Recovery</strong> or <strong>Immediate Revocation</strong> protocols.<a href="#section-12.5.1-2.7.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-12.3.1-2.8">
-              <p id="section-12.3.1-2.8.1"><strong>Datastore Security</strong>: The Host hardware identity datastore containing trusted Workload Host compositions and location sensor details must be protected against unauthorized access and tampering, using encryption and access controls.<a href="#section-12.3.1-2.8.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-12.5.1-2.8">
+              <p id="section-12.5.1-2.8.1"><strong>Datastore Security</strong>: The Host hardware identity datastore containing trusted Workload Host compositions and location sensor details must be protected against unauthorized access and tampering, using encryption and access controls.<a href="#section-12.5.1-2.8.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-12.3.1-2.9">
-              <p id="section-12.3.1-2.9.1"><strong>Management Processor Security</strong> (Option B): The out-of-band (OOB) path protects against <strong>Workload Host CPU/OS</strong> compromise, but it does not protect against <strong>Management Processor (BMC)</strong> compromise. If the BMC is compromised, an attacker can feed fake TPM quotes and inventory data to the management plane. Mitigations include:<a href="#section-12.3.1-2.9.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-12.5.1-2.9">
+              <p id="section-12.5.1-2.9.1"><strong>Management Processor Security</strong> (Option B): The out-of-band (OOB) path protects against <strong>Workload Host CPU/OS</strong> compromise, but it does not protect against <strong>Management Processor (BMC)</strong> compromise. If the BMC is compromised, an attacker can feed fake TPM quotes and inventory data to the management plane. Mitigations include:<a href="#section-12.5.1-2.9.1" class="pilcrow">¶</a></p>
 <ul class="compact normal">
-<li class="compact normal" id="section-12.3.1-2.9.2.1">
-                  <strong>Secure Boot/Update</strong>: Ensuring the BMC only runs OEM-signed firmware.<a href="#section-12.3.1-2.9.2.1" class="pilcrow">¶</a>
+<li class="compact normal" id="section-12.5.1-2.9.2.1">
+                  <strong>Secure Boot/Update</strong>: Ensuring the BMC only runs OEM-signed firmware.<a href="#section-12.5.1-2.9.2.1" class="pilcrow">¶</a>
 </li>
-                <li class="compact normal" id="section-12.3.1-2.9.2.2">
-                  <strong>Strong Authentication</strong>: Enforcing MFA/certificates for Redfish API access.<a href="#section-12.3.1-2.9.2.2" class="pilcrow">¶</a>
+                <li class="compact normal" id="section-12.5.1-2.9.2.2">
+                  <strong>Strong Authentication</strong>: Enforcing MFA/certificates for Redfish API access.<a href="#section-12.5.1-2.9.2.2" class="pilcrow">¶</a>
 </li>
-                <li class="compact normal" id="section-12.3.1-2.9.2.3">
-                  <strong>Network Segmentation</strong>: Isolating the management network from the host data network.<a href="#section-12.3.1-2.9.2.3" class="pilcrow">¶</a>
+                <li class="compact normal" id="section-12.5.1-2.9.2.3">
+                  <strong>Network Segmentation</strong>: Isolating the management network from the host data network.<a href="#section-12.5.1-2.9.2.3" class="pilcrow">¶</a>
 </li>
-                <li class="compact normal" id="section-12.3.1-2.9.2.4">
-                  <strong>Log Integrity</strong>: Shipping BMC security logs to a remote, immutable audit vault.<a href="#section-12.3.1-2.9.2.4" class="pilcrow">¶</a>
+                <li class="compact normal" id="section-12.5.1-2.9.2.4">
+                  <strong>Log Integrity</strong>: Shipping BMC security logs to a remote, immutable audit vault.<a href="#section-12.5.1-2.9.2.4" class="pilcrow">¶</a>
 </li>
               </ul>
 </li>
@@ -3634,15 +3688,15 @@ Location has a quality associated with it. For example, IP address-based or Wi-F
 </section>
 </div>
 <div id="proximity-and-anchor-displacement-layer-4">
-<section id="section-12.4">
+<section id="section-12.6">
         <h3 id="name-proximity-and-anchor-displa">
-<a href="#section-12.4" class="section-number selfRef">12.4. </a><a href="#name-proximity-and-anchor-displa" class="section-name selfRef">Proximity and Anchor Displacement (Layer 4)</a>
+<a href="#section-12.6" class="section-number selfRef">12.6. </a><a href="#name-proximity-and-anchor-displa" class="section-name selfRef">Proximity and Anchor Displacement (Layer 4)</a>
         </h3>
-<p id="section-12.4-1">Proximity-based location schemes (e.g., smartphone-as-anchor, BLE/UWB, or PTP) introduce relay and displacement risks. An attacker could relay BLE signals across a room or move a "location anchor" host without authorization. Mitigations include:
+<p id="section-12.6-1">Proximity-based location schemes (e.g., smartphone-as-anchor, BLE/UWB, or PTP) introduce relay and displacement risks. An attacker could relay BLE signals across a room or move a "location anchor" host without authorization. Mitigations include:
 - <strong>Timestamp-based Anti-Relay</strong>: Using tight RTT windows (UWB) to ensure physical proximity.
 - <strong>Anchor Disagreement Policy</strong>: If a host is seen by multiple anchors, their positions MUST agree within a configured tolerance; otherwise, the host is treated as unverified.
-- <strong>Anchor Integrity</strong>: The anchor device itself (e.g., smartphone) MUST be subject to its own attestation and health checks before it can serve as a truth source.<a href="#section-12.4-1" class="pilcrow">¶</a></p>
-<p id="section-12.4-2">By addressing these considerations, the framework aims to provide a secure and reliable foundation for verifiable geofencing in diverse deployment environments.<a href="#section-12.4-2" class="pilcrow">¶</a></p>
+- <strong>Anchor Integrity</strong>: The anchor device itself (e.g., smartphone) MUST be subject to its own attestation and health checks before it can serve as a truth source.<a href="#section-12.6-1" class="pilcrow">¶</a></p>
+<p id="section-12.6-2">By addressing these considerations, the framework aims to provide a secure and reliable foundation for verifiable geofencing in diverse deployment environments.<a href="#section-12.6-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>

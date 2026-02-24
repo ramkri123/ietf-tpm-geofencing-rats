@@ -379,8 +379,17 @@ Inner-Evidence-Bundle = {
 
 <section anchor="attestation-key-ak-management"><name>Attestation Key (AK) Management</name>
 
+<section anchor="dual-federation-the-compliance-bridge"><name>Dual Federation (The Compliance Bridge)</name>
+<t>Managing hardware-rooted identities at scale requires a <strong>Dual Federation</strong> model where local operational autonomy is balanced with centralized governance.</t>
+
 <ul>
-<li><strong>Rotation &amp; Sync:</strong> The Edge Management Plane SHALL rotate both the <tt>host-tpm-ak</tt> and <tt>lah-tpm-ak</tt> periodically. To maintain the chain of trust during rotation, the Cloud Host Management Plane MUST ONLY accept a newly synced AK if the Edge Management Plane provides a <strong>&quot;Rotation Proof&quot;</strong>—typically a signature from the <em>preceding</em> AK blessing the new AK, or a fresh Out-of-Band (OOB) quote from the hardware root of trust (i.e., iLO 7).</li>
+<li><strong>Edge-to-Cloud Handshake:</strong> The Edge Management Plane SHALL maintain local Attestation Keys (AKs) for the <tt>host-tpm-ak</tt> and <tt>lah-tpm-ak</tt> to support offline SVID issuance. Periodically, these AKs MUST be synchronized with the Cloud-based <strong>Sovereign Registry</strong>.</li>
+<li><t><strong>Rotation Proofs:</strong> The Cloud Management Plane MUST ONLY accept a newly synced AK if the Edge Management Plane provides a <strong>&quot;Rotation Proof&quot;</strong>. This proof SHALL be either:</t>
+
+<ul spacing="compact">
+<li>A digital signature from the <em>preceding</em> AK blessing the new AK.</li>
+<li>A fresh Out-of-Band (OOB) quote from the hardware root of trust (i.e., iLO 7) verifying the new AK was generated in approved silicon.</li>
+</ul></li>
 <li><strong>Hardware-Rooted Registry:</strong> The Sovereign Verifier MUST maintain a registry mapping verified AKs to their manufacturer <strong>Endorsement Key (EK)</strong> certificates.</li>
 <li><t><strong>Credential Activation (Handshake) &amp; The On-Demand Kill-Switch:</strong> To avoid the &quot;MakeCredential tax&quot; (high-latency challenge/response) on every request, the Verifier SHALL perform the full <strong>TPM2_MakeCredential</strong> procedure (linked to the manufacturer EK and HPE Root CA) only upon:</t>
 
@@ -400,6 +409,7 @@ Inner-Evidence-Bundle = {
 <li><t><strong>Offline Survival &amp; Leased Identity:</strong> In environments with intermittent connectivity (e.g., offshore rigs), the Cloud Verifier MAY issue a <strong>&quot;Leased Identity&quot;</strong> with an extended validity period (e.g., 48 hours). This lease is contingent on the local hardware root of trust (iLO 7) performing continuous monitoring for physical tampering (chassis intrusion, signal jamming) and triggering a local &quot;Self-Destruct&quot; of the identity keys if a breach is detected while offline.</t>
 </li>
 </ul>
+</section>
 </section>
 </section>
 
@@ -1138,8 +1148,13 @@ Location has a quality associated with it. For example, IP address-based or Wi-F
 <li><strong>Residency Validation</strong>: Compute the ZKP or boundary check on the geolocation payload.</li>
 <li><strong>Freshness and Clock Sync</strong>: Ensure the <tt>temporal-nonce</tt> is within the policy-defined window relative to the Verifier's clock.</li>
 <li><strong>Accuracy Validation</strong>: Verify that the <tt>accuracy-sub-claim</tt> meets the minimum residency confidence required by the workload's policy (e.g., &lt; 100ms drift).</li>
-<li><strong>Freshness Window Policy (Clock-Warp Guard)</strong>: The Verifier MUST reject any bundle where the <tt>temporal-nonce</tt> deviates from the Verifier's own hardware-anchored clock by more than a defined threshold (<strong>Maximum Skew: +/- 100ms</strong>). On rejection, the system SHOULD attempt a <strong>Sync Recovery</strong> (forcing a new <tt>N_platform</tt> challenge and PTP resynchronization). If Sync Recovery fails twice consecutively, the Verifier MUST trigger an <strong>Immediate Revocation</strong> of the Workload Identity Agent's keys.</li>
-<li><strong>Downstream Authorization (KMS Gatekeeping)</strong>: Successful verification of the V-GAP Evidence Bundle SHALL be a mandatory precondition for downstream Key Management Services (KMS) or Workload Identity Managers to release high-value assets (e.g., AI model decryption keys or secrets). The Verifier MUST propagate the &quot;Sovereign-Verified&quot; status to the authorization engine.</li>
+<li><t><strong>Freshness Window Policy (Clock-Warp Guard &amp; Recovery)</strong>: The Verifier MUST reject any bundle where the <tt>temporal-nonce</tt> deviates from the Verifier's own hardware-anchored clock by more than a defined threshold (<strong>Maximum Skew: +/- 100ms</strong>).</t>
+
+<ul spacing="compact">
+<li><strong>Sync Recovery (Slow Path)</strong>: Upon rejection due to clock-warp, the system SHOULD trigger an immediate <strong>&quot;Slow Path&quot; re-attestation</strong>. This forces a full <strong>TPM2_MakeCredential</strong> challenge-response cycle (Credential Activation) to reset the hardware-anchored time baseline and re-verify the platform posture.</li>
+<li><strong>Revocation</strong>: If Sync Recovery fails twice consecutively, the Verifier MUST trigger an <strong>Immediate Revocation</strong> of the Workload Identity Agent's keys.</li>
+</ul></li>
+<li><strong>Downstream Authorization (KMS Gatekeeping)</strong>: Successful verification of the V-GAP Evidence Bundle SHALL be a mandatory precondition for a downstream <strong>Key Management Service (KMS)</strong> or Workload Identity Manager to release high-value assets (e.g., AI model decryption keys). The Verifier MUST propagate the &quot;Sovereign-Verified&quot; status to the KMS along with the <tt>temporal-nonce</tt> for freshness binding.</li>
 </ol>
 </section>
 
@@ -1165,6 +1180,16 @@ Location has a quality associated with it. For example, IP address-based or Wi-F
 <li><strong>Bearer Token Theft and Replay</strong>: The &quot;Proof of Residency&quot; established in this draft (and conveyed via the Transitive Attestation draft) prevents stolen bearer tokens from being used outside the verified host environment or geographic boundary.</li>
 <li><strong>Implicit Trust in Infrastructure</strong>: Layer 2 and Layer 3 provide cryptographic &quot;Silicon-to-Audit&quot; proof of physical locality and hardware composition, replacing implicit trust in infrastructure providers with auditable hardware-rooted evidence.</li>
 </ul>
+</section>
+
+<section anchor="post-quantum-hybridization-future-proofing"><name>Post-Quantum Hybridization (Future Proofing)</name>
+<t>While the Zero-Knowledge Proof (ZKP) layers of V-GAP are based on hash-based protocols (e.g., STARKs) which are inherently post-quantum resilient, the underlying TPM Attestation Keys (AKs) typically rely on RSA or ECDSA. To future-proof the &quot;Silicon-to-Audit&quot; chain, implementations SHOULD prepare for <strong>Post-Quantum Hybridization</strong>. This involve:
+- <strong>Hybrid AKs</strong>: Combining a classical AK (ECDSA) with a post-quantum digital signature (e.g., ML-DSA) for the Atomic Seal.
+- <strong>PQ-Resilient Management Plane</strong>: Ensuring the Redfish/OOB path utilizes PQ-safe TLS ciphers for evidence transmission.</t>
+</section>
+
+<section anchor="sovereign-autonomy-leased-trust"><name>Sovereign Autonomy &amp; Leased Trust</name>
+<t>In environments with extended offline periods (e.g., 48+ hours), the system maintains <strong>Sovereign Autonomy</strong> through locally cached health bits. The local hardware root of trust (iLO 7) continues to monitor for hardware-level breaches (chassis intrusion, unauthorized firmware) and can trigger a <strong>Self-Destruct</strong> of identity keys even if the Cloud Verifier is unreachable. Upon reconnection, the edge MUST perform a full &quot;Slow Path&quot; re-attestation to validate its offline history.</t>
 </section>
 
 <section anchor="identity-hijacking-prevention"><name>Identity Hijacking Prevention</name>

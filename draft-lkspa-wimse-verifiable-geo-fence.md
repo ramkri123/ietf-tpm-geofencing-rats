@@ -391,7 +391,14 @@ Managing hardware-rooted identities at scale requires automated lifecycle manage
 
 ## Attestation Key (AK) Management
 
-* **Rotation & Sync:** The Edge Management Plane SHALL rotate both the `host-tpm-ak` and `lah-tpm-ak` periodically. To maintain the chain of trust during rotation, the Cloud Host Management Plane MUST ONLY accept a newly synced AK if the Edge Management Plane provides a **"Rotation Proof"**—typically a signature from the *preceding* AK blessing the new AK, or a fresh Out-of-Band (OOB) quote from the hardware root of trust (i.e., iLO 7).
+### Dual Federation (The Compliance Bridge)
+
+Managing hardware-rooted identities at scale requires a **Dual Federation** model where local operational autonomy is balanced with centralized governance.
+
+* **Edge-to-Cloud Handshake:** The Edge Management Plane SHALL maintain local Attestation Keys (AKs) for the `host-tpm-ak` and `lah-tpm-ak` to support offline SVID issuance. Periodically, these AKs MUST be synchronized with the Cloud-based **Sovereign Registry**.
+* **Rotation Proofs:** The Cloud Management Plane MUST ONLY accept a newly synced AK if the Edge Management Plane provides a **"Rotation Proof"**. This proof SHALL be either:
+    - A digital signature from the *preceding* AK blessing the new AK.
+    - A fresh Out-of-Band (OOB) quote from the hardware root of trust (i.e., iLO 7) verifying the new AK was generated in approved silicon.
 * **Hardware-Rooted Registry:** The Sovereign Verifier MUST maintain a registry mapping verified AKs to their manufacturer **Endorsement Key (EK)** certificates.
 * **Credential Activation (Handshake) & The On-Demand Kill-Switch:** To avoid the "MakeCredential tax" (high-latency challenge/response) on every request, the Verifier SHALL perform the full **TPM2_MakeCredential** procedure (linked to the manufacturer EK and HPE Root CA) only upon:
     - Initial node onboarding.
@@ -978,8 +985,10 @@ The Sovereign Verifier executes a multi-stage validation sequence to confirm the
 5.  **Residency Validation**: Compute the ZKP or boundary check on the geolocation payload.
 6.  **Freshness and Clock Sync**: Ensure the `temporal-nonce` is within the policy-defined window relative to the Verifier's clock.
 7.  **Accuracy Validation**: Verify that the `accuracy-sub-claim` meets the minimum residency confidence required by the workload's policy (e.g., < 100ms drift).
-8.  **Freshness Window Policy (Clock-Warp Guard)**: The Verifier MUST reject any bundle where the `temporal-nonce` deviates from the Verifier's own hardware-anchored clock by more than a defined threshold (**Maximum Skew: +/- 100ms**). On rejection, the system SHOULD attempt a **Sync Recovery** (forcing a new `N_platform` challenge and PTP resynchronization). If Sync Recovery fails twice consecutively, the Verifier MUST trigger an **Immediate Revocation** of the Workload Identity Agent's keys.
-9.  **Downstream Authorization (KMS Gatekeeping)**: Successful verification of the V-GAP Evidence Bundle SHALL be a mandatory precondition for downstream Key Management Services (KMS) or Workload Identity Managers to release high-value assets (e.g., AI model decryption keys or secrets). The Verifier MUST propagate the "Sovereign-Verified" status to the authorization engine.
+8.  **Freshness Window Policy (Clock-Warp Guard & Recovery)**: The Verifier MUST reject any bundle where the `temporal-nonce` deviates from the Verifier's own hardware-anchored clock by more than a defined threshold (**Maximum Skew: +/- 100ms**).
+    - **Sync Recovery (Slow Path)**: Upon rejection due to clock-warp, the system SHOULD trigger an immediate **"Slow Path" re-attestation**. This forces a full **TPM2_MakeCredential** challenge-response cycle (Credential Activation) to reset the hardware-anchored time baseline and re-verify the platform posture.
+    - **Revocation**: If Sync Recovery fails twice consecutively, the Verifier MUST trigger an **Immediate Revocation** of the Workload Identity Agent's keys.
+9.  **Downstream Authorization (KMS Gatekeeping)**: Successful verification of the V-GAP Evidence Bundle SHALL be a mandatory precondition for a downstream **Key Management Service (KMS)** or Workload Identity Manager to release high-value assets (e.g., AI model decryption keys). The Verifier MUST propagate the "Sovereign-Verified" status to the KMS along with the `temporal-nonce` for freshness binding.
 
 # Industry Alignment and Policy Guidance
 
@@ -1003,6 +1012,16 @@ This specification provides technical mitigations for several threats identified
 
 * **Bearer Token Theft and Replay**: The "Proof of Residency" established in this draft (and conveyed via the Transitive Attestation draft) prevents stolen bearer tokens from being used outside the verified host environment or geographic boundary.
 * **Implicit Trust in Infrastructure**: Layer 2 and Layer 3 provide cryptographic "Silicon-to-Audit" proof of physical locality and hardware composition, replacing implicit trust in infrastructure providers with auditable hardware-rooted evidence.
+
+## Post-Quantum Hybridization (Future Proofing)
+
+While the Zero-Knowledge Proof (ZKP) layers of V-GAP are based on hash-based protocols (e.g., STARKs) which are inherently post-quantum resilient, the underlying TPM Attestation Keys (AKs) typically rely on RSA or ECDSA. To future-proof the "Silicon-to-Audit" chain, implementations SHOULD prepare for **Post-Quantum Hybridization**. This involve:
+- **Hybrid AKs**: Combining a classical AK (ECDSA) with a post-quantum digital signature (e.g., ML-DSA) for the Atomic Seal.
+- **PQ-Resilient Management Plane**: Ensuring the Redfish/OOB path utilizes PQ-safe TLS ciphers for evidence transmission.
+
+## Sovereign Autonomy & Leased Trust
+
+In environments with extended offline periods (e.g., 48+ hours), the system maintains **Sovereign Autonomy** through locally cached health bits. The local hardware root of trust (iLO 7) continues to monitor for hardware-level breaches (chassis intrusion, unauthorized firmware) and can trigger a **Self-Destruct** of identity keys even if the Cloud Verifier is unreachable. Upon reconnection, the edge MUST perform a full "Slow Path" re-attestation to validate its offline history.
 
 ## Identity Hijacking Prevention
 

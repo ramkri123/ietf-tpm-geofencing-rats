@@ -370,7 +370,7 @@ The V-GAP evidence bundle MUST be structured as two nested cryptographic entitie
 
 ## Formal Data Structure (JSON Schema)
 
-The following JSON Schema defines the structure of the V-GAP Nested Evidence Bundle. The **Outer Bundle** (`v-gap-profile`) cryptographically binds the Identity Agent's **Image Digest** to the hardware-rooted platform integrity, while the **Inner Bundle** (`lah-bundle`) provides the verified geolocation evidence. All binary fields (hashes, public keys, signatures) MUST be Base64URL encoded. Going with JSON instead of CBOR as it is more widely supported and easier to implement and debug.
+The following JSON Schema defines the structure of the V-GAP Nested Evidence Bundle. The **Outer Bundle** (`v-gap-profile`) cryptographically binds the Identity Agent's **Image Digest** to the hardware-rooted platform integrity, while the **Inner Bundle** (`lah-bundle`) provides the verified geolocation evidence. All binary fields (hashes, public keys, signatures) MUST be Base64URL encoded. To ensure deterministic integrity across different platforms and parsers, both the Outer and Inner bundles MUST be serialized using the **JSON Canonicalization Scheme (JCS - [[RFC8785]])** before computing the hashes for the **TPM2_Quote** seals.
 
 ```json
 {
@@ -409,7 +409,7 @@ The following JSON Schema defines the structure of the V-GAP Nested Evidence Bun
         },
         "nonce": {
           "type": "string",
-          "description": "Freshness nonce from Host Identity Management Plane (Base64URL)"
+          "description": "Inner Nonce: Freshness nonce from Host Identity Management Plane (Base64URL)"
         },
         "timestamp": {
           "type": "integer",
@@ -424,7 +424,7 @@ The following JSON Schema defines the structure of the V-GAP Nested Evidence Bun
     },
     "nonce": {
       "type": "string",
-      "description": "Freshness nonce from Workload Identity Management Plane (Base64URL)"
+      "description": "Outer Nonce: Freshness nonce from Workload Identity Management Plane (Base64URL)"
     },
     "timestamp": {
       "type": "integer",
@@ -582,7 +582,7 @@ Step 2 (Identity Agent ID issuance):
 7. The Identity Agent decrypts the challenge's secret using its private key.
 8. The Identity Agent sends back the decrypted secret.
 9. The Workload Identity Management Plane verifies that the decrypted secret matches the original secret used to build the challenge.
-10. The Workload Identity Management Plane issues the Identity Agent ID (SVID). **The V-GAP Evidence Bundle (JSON-formatted) MUST be embedded as a CRITICAL X.509 extension within the Identity Agent's SVID certificate, encoded as an `OCTET STRING` containing the UTF-8 encoded JSON evidence.** The extension SHALL use the OID `1.3.6.1.4.1.60265.1.1` (V-GAP). The **Outer Seal** (`outer-seal`) MUST be a standard **TPM2_Quote** where the `qualifyingData` is the `timestamp` (or `nonce` if present) and the `message` being signed is the SHA-256 hash of the canonical JSON representation of the bundle (excluding the `outer-seal` field itself).
+10. The Workload Identity Management Plane issues the Identity Agent ID (SVID). **The V-GAP Evidence Bundle (JSON-formatted) MUST be embedded as a CRITICAL X.509 extension within the Identity Agent's SVID certificate, encoded as an `OCTET STRING` containing the Base64URL-encoded JSON evidence.** Marking the extension as **CRITICAL** ensures that any non-compliant API gateway or Relying Party that does not recognize the V-GAP profile MUST "fail-closed" and reject the identity. The extension SHALL use the OID `1.3.6.1.4.1.60265.1.1` (V-GAP). The **Outer Seal** (`outer-seal`) MUST be a standard **TPM2_Quote** where the `qualifyingData` is the `timestamp` (or `nonce` if present) and the `message` being signed is the SHA-256 hash of the **JCS-canonicalized** JSON representation of the bundle (excluding the `outer-seal` field itself).
 11. **Criticality Enforcement:** Any verifier that encounters a Sovereign SVID and does not support the V-GAP OID MUST reject the certificate. This ensures that a residency-constrained workload cannot accidentally be authorized by a gateway that doesn't understand the "Residency Moat."
 
 ## Deployment Option A: Workload Host OS-Based (Keylime)
@@ -1056,7 +1056,7 @@ The Sovereign Verifier executes a multi-stage validation sequence to confirm the
 5.  **Residency Validation**: Compute the ZKP or boundary check on the geolocation payload within the **lah-bundle**.
 6.  **Freshness and Clock Sync**: Ensure the `timestamp` (or `nonce` if provided in the bundle) is within the policy-defined window relative to the Verifier's clock.
 7.  **Freshness Window Policy (Clock-Warp Guard & Recovery)**: The Verifier MUST reject any bundle where the `timestamp`/`nonce` deviates from the Verifier's own hardware-anchored clock by more than a defined threshold (**Maximum Skew: +/- 100ms**).
-    - **Sync Recovery (Slow Path)**: Upon rejection due to clock-warp, the system SHOULD trigger an immediate **"Slow Path" re-attestation** (forced `TPM2_MakeCredential` challenge). This serves as a "Soft-Fail" recovery mechanism to re-synchronize the hardware clocks.
+    - **Sync Recovery Protocol (Slow Path)**: Upon rejection due to clock-warp, the system SHOULD trigger an immediate **Sync Recovery**. The Verifier initiates a full hardware-rooted challenge (**TPM2_MakeCredential**) back to the **HPE Root of Trust** of the host. This challenge-response cycle re-synchronizes the hardware-anchored clocks by verifying the host's identity and freshness in a cryptographically isolated manner.
 8.  **Revocation**: If Sync Recovery fails twice consecutively or if the drift significantly exceeds a "Critical Threshold" (e.g., > 1000ms), the Verifier MUST trigger an **Immediate Revocation** of all active SVIDs for that host.
 9.  **Downstream Authorization (KMS Gatekeeping)**: Successful verification of the V-GAP Evidence Bundle SHALL be a mandatory precondition for a downstream **Key Management Service (KMS)** or Workload Identity Management Plane to release high-value assets (e.g., AI model decryption keys). The Verifier MUST propagate the "Sovereign-Verified" status to the KMS along with the residency timestamp for freshness binding.
 
@@ -1399,5 +1399,15 @@ South Korea's Data Localization Regulations -- Geospatial Information Management
     <author initials="M." surname="Salter" fullname="Mark Salter"/>
     <author initials="Y." surname="Sheffer" fullname="Yaron Sheffer"/>
     <date year="2024"/>
+  </front>
+</reference>
+
+<reference anchor="RFC8785" target="https://www.rfc-editor.org/rfc/rfc8785">
+  <front>
+    <title>JSON Canonicalization Scheme (JCS)</title>
+    <author initials="A." surname="Rundgren" fullname="Anders Rundgren"/>
+    <author initials="B." surname="Jordan" fullname="Brian Jordan"/>
+    <author initials="S." surname="Erdtman" fullname="Samuel Erdtman"/>
+    <date month="June" year="2020"/>
   </front>
 </reference>

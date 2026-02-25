@@ -388,7 +388,7 @@ The following JSON Schema defines the structure of the V-GAP Nested Evidence Bun
     },
     "agent-image-digest": {
       "type": "string",
-      "description": "Identity Agent image digest (Base64URL). Measured via IMA or other attestation method."
+      "description": "Identity Agent image digest (Base64URL). This digest MUST be measured in a hardware PCR (typically PCR 10) and cryptographically bound by the 'outer-seal'."
     },
     "lah-bundle": {
       "type": "object",
@@ -586,7 +586,10 @@ Step 2 (Identity Agent ID issuance):
     - **Embedded Profile (Standard)**: The V-GAP bundle MUST be **minified** (removing all optional whitespace), **Base64URL-encoded**, and embedded as a **CRITICAL** X.509 extension (OID `1.3.6.1.4.1.60265.1.1`). This profile is recommended for bundles that fit within standard mTLS certificate limits.
     - **Detached Evidence Profile (High-Assurance)**: For high-complexity bundles where the size exceeds mTLS buffer limits, the SVID extension SHALL contain only the **SHA-256 hash** of the canonicalized JSON bundle (and optionally a Retrieval URI pointing to the Management Plane). The full JSON bundle MUST be provided out-of-band by the **Host Identity Management Plane** during the secure key-release handshake (e.g., via the KMS gatekeeping process).
     
-    Marking the extension as **CRITICAL** ensures that any non-compliant API gateway or Relying Party that does not recognize the V-GAP profile MUST "fail-closed" and reject the identity. The **Outer Seal** (`outer-seal`) MUST be a standard **TPM2_Quote** where the `qualifyingData` is the `timestamp` (or `nonce` if present) and the `message` being signed is the SHA-256 hash of the **JCS-canonicalized** JSON representation of the bundle (excluding the `outer-seal` field itself).
+    Marking the extension as **CRITICAL** ensures that any non-compliant API gateway or Relying Party that does not recognize the V-GAP profile MUST "fail-closed" and reject the identity. The **Outer Seal** (`outer-seal`) MUST be a standard **TPM2_Quote** where:
+    - The `qualifyingData` is the `timestamp` (or `nonce` if present).
+    - The `message` being signed is the SHA-256 hash of the **JCS-canonicalized** JSON representation of the bundle (excluding the `outer-seal` field itself).
+    - The Quote **MUST** cover the PCR index (typically **PCR 10**) where the Identity Agent measurement is stored to ensure the hardware-rooted platform integrity.
 11. **Criticality Enforcement:** Any verifier that encounters a Sovereign SVID and does not support the V-GAP OID MUST reject the certificate. This ensures that a residency-constrained workload cannot accidentally be authorized by a gateway that doesn't understand the "Residency Moat."
 
 ## Deployment Option A: Workload Host OS-Based (Keylime)

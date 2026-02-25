@@ -19,7 +19,7 @@ txt: $(DRAFT).txt
 html: $(DRAFT).html
 xml: $(DRAFT).xml
 
-$(DRAFT).xml: $(DRAFT).md
+$(DRAFT).xml: draft-lkspa-wimse-verifiable-geo-fence.md
 	$(MMARK) $< > $@
 
 $(DRAFT).txt: $(DRAFT).xml

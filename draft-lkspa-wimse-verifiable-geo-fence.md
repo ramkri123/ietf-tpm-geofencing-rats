@@ -1,5 +1,5 @@
 %%%
-title = "Verifiable Geofencing and Residency Proofs for Sovereign Workloads: A RATS Profile"
+title = "Privacy Preserving Verifiable Geofencing with Residency Proofs for Sovereign Workloads"
 abbrev = "RATS-GEO-POR"
 category = "info"
 docName = "draft-lkspa-wimse-verifiable-geo-fence-04"
@@ -90,27 +90,27 @@ organization = "Independent"
 
 .# Abstract
 
-Modern cloud and distributed environments face significant risks from stolen bearer tokens, protocol replay, and trust gaps in transit, particularly in the context of **Sovereign Workloads** and high-assurance requirements. This document defines a **RATS Profile** for high-assurance, hardware-rooted platform and location attestation. It specifies the technical mechanics for verifiable geofencing and Workload Host integrity required by the **WIMSE Architecture** [[I-D.ietf-wimse-architecture]] and the **Workload Identity Agent**.
+Modern cloud and distributed computing rely heavily on software-only identities and bearer tokens that are easily stolen, replayed, or used from unauthorized locations. Furthermore, traditional methods of location verification—such as IP-address-based geolocation—are both easily spoofed via VPNs or proxies and significantly compromise user and infrastructure privacy. For **Sovereign Workloads** and high-assurance environments, these vulnerabilities represent a fundamental failure of the security boundary.
 
-While the WIMSE architecture assumes a trustworthy agent, it does not specify the normative technical mechanics for its verification. This document fills that gap as a specialized RATS profile, covering TPM-based platform attestation (Layer 2) and high-assurance geolocation attestation (Layer 3). It integrates out-of-band (OOB) hardware monitoring, cloud-native virtual TPM (vTPM) support, and privacy-preserving Zero-Knowledge Proof (ZKP) verification to generate **High-Confidence Evidence**.
+This document defines a high assurance profile designed to solve these challenges through hardware-rooted cryptographic certainty. It replaces implicit trust and spoofable indicators with verifiable evidence of both the **Workload Identity Agent's** integrity (via TPM-based platform attestation) and its physical location. Critically, this framework prioritizes **Location Privacy** by utilizing Zero-Knowledge Proofs (ZKP), allowing a workload to prove it is within a compliant "Sovereign Zone" without disclosing precise coordinates that could be used for tracking or exploitation.
 
-By binding identity agent integrity to geographic and Workload Host attributes, the framework establishes a "Silicon-to-Audit" chain of trust. This addresses challenges in bearer token theft and data residency while providing a post-quantum cryptographic foundation through mathematical transparency. The solution builds upon the **RATS Architecture [[RFC9334]]** to ensure that only authorized workloads in approved locations can access sensitive services.
+By binding software identities to persistent silicon identities and verified physical residency, this solution establishes a "Silicon-to-Workload" chain of trust. It ensures that sensitive operations are only performed by authorized workloads running on untampered hardware in cryptographically verified, privacy-preserving geographic boundaries, fulfilling the high-assurance requirements of the **WIMSE Architecture** [[I-D.ietf-wimse-architecture]].
 
 {mainmatter}
 
 # Introduction
 
-As organizations increasingly adopt cloud and distributed computing, the need to enforce data residency, geolocation affinity, and Workload Host affinity has become critical for regulatory compliance and risk management. Traditional approaches rely on trust in infrastructure providers, which are often insufficient in adversarial or multi-tenant environments.
+The **Workload Identity Agent** (e.g., SPIRE Agent) acts as the local-on-host intermediary responsible for managing and issuing identities to workloads. It serves as a "vetting" mechanism, ensuring that a workload's execution environment meets required security and residency policies before granting it the cryptographic credentials necessary for network communication. This RATS Profile provides the technical mechanics to cryptographically bind this agent to the underlying hardware-verified platform and its privacy preserving physical location.
 
-Modern workload security faces challenges from stolen bearer tokens, protocol replay, and trust gaps in transit. This document defines a specialized **RATS Profile** that cryptographically binds the **Workload Identity Agent**—the entity responsible with issuing software identities—to a hardware-verified platform and physical location.
+The architecture follows the **RATS Architecture [[RFC9334]]**, defining the interactions between **Provers**, **Verifiers**, and **Relying Parties** to generate and validate **High-Confidence Evidence** regarding the **Workload Identity Agent's** status. It provides the hardware-rooted "Evidence Layer" required by the high-level **WIMSE Architecture [[I-D.ietf-wimse-architecture]]**, establishing a **"Silicon-to-Workload"** chain of trust that ensures sensitive data is only processed by authorized workloads in approved, integral environments.
 
-The architecture follows the **RATS Architecture [[RFC9334]]**, defining the interactions between **Provers**, **Verifiers**, and **Relying Parties** to generate and validate **High-Confidence Evidence** regarding the **Workload Identity Agent's** status. It provides the hardware-rooted "Evidence Layer" required by the high-level **WIMSE Architecture [[I-D.ietf-wimse-architecture]]**, establishing a **"Silicon-to-Audit"** chain of trust that ensures sensitive data is only processed by authorized workloads in approved, integral environments.
+To maintain **Location Privacy** while providing cryptographic certainty, this profile leverages **Transparent Zero-Knowledge Proofs (ZKPs)**. Unlike traditional ZKP systems, transparent ZKPs require no "Trusted Third Party" or complex "Trusted Setup" phase. They achieved mathematical transparency through non-interactive, hash-based protocols, allowing a platform to prove it is resident within an approved geographic boundary without disclosing the exact coordinates of the underlying hardware.
 
 ## Strategic Narrative: Hardware-Enforced Sovereignty (The Symmetry of Trust)
 
 ### The Compliance Bridge (The Symmetry of Trust)
 
-This framework establishes a "Silicon-to-Audit" chain of trust built on two parallel but federated pillars: the **Workload Identity Management Plane** and the **Host Identity Management Plane**. This symmetry allows for the binding of ephemeral software identities to persistent silicon identities, bridging the "Perception Gap" in modern distributed systems. 
+This framework establishes a **"Silicon-to-Workload"** chain of trust built on two parallel but federated pillars: the **Workload Identity Management Plane** and the **Host Identity Management Plane**. This symmetry allows for the binding of ephemeral software identities to persistent silicon identities, bridging the "Perception Gap" in modern distributed systems. 
 
 The **Compliance Bridge** serves as the normative link between these two planes. It ensures that the **Workload Identity Management Plane** only issues identities (SVIDs) for workloads running on platforms that have been verified integral by the **Host Identity Management Plane**.
 
@@ -269,7 +269,7 @@ Together, the complete chain is:
 
 The high-level **WIMSE Architecture** [[I-D.ietf-wimse-architecture]] establishes the requirement for a trustworthy Identity Agent but delegates the technical mechanics of agent verification to specific profiles. This document fills that technical gap by providing a normative specification for hardware-rooted agent verification.
 
-Without the hardware-rooted "Silicon-to-Audit" proof established in this specification, the WIMSE identity model would rely on implicit trust in the Workload Host OS or infrastructure provider. This draft hardens the WIMSE model against advanced threats by ensuring the Identity Agent itself—and consequently the identities it issues—are anchored to verifiable hardware configuration and physical location.
+Without the hardware-rooted "Silicon-to-Workload" proof established in this specification, the WIMSE identity model would rely on implicit trust in the Workload Host OS or infrastructure provider. This draft hardens the WIMSE model against advanced threats by ensuring the Identity Agent itself—and consequently the identities it issues—are anchored to verifiable hardware configuration and physical location.
 
 This document focuses exclusively on Layers 2 and 3: the hardware-dependent attestation of the Identity Agent itself. For how workloads prove they are co-located with an attested Identity Agent, and for the data-plane protocol flows (mTLS PoR, DPoR), see [[I-D.mw-wimse-transitive-attestation]].
 
@@ -304,7 +304,7 @@ The **Cloud Workload Identity Management Plane** acts as the final verifier and 
 
 ### Enterprise Edge Federated Management (Oil & Gas)
 
-In remote industrial environments (e.g., offshore oil rigs), the "Dual Federation" model ensures resilient operations. An **Edge Host Identity Management Plane** (e.g., HPE OneView) manages local hardware and TPM Attestation Keys (AKs) to support offline autonomy. Periodically, these AKs are synchronized with a **Cloud Host Identity Management Plane** which acts as the global **Sovereign Registry**. This allows local SPIRE servers to issue SVIDs during satellite outages, while the cloud maintains the ultimate "Silicon-to-Audit" verification capability required to release high-value enterprise keys once connectivity is restored.
+In remote industrial environments (e.g., offshore oil rigs), the "Dual Federation" model ensures resilient operations. An **Edge Host Identity Management Plane** (e.g., HPE OneView) manages local hardware and TPM Attestation Keys (AKs) to support offline autonomy. Periodically, these AKs are synchronized with a **Cloud Host Identity Management Plane** which acts as the global **Sovereign Registry**. This allows local SPIRE servers to issue SVIDs during satellite outages, while the cloud maintains the ultimate "Silicon-to-Workload" verification capability required to release high-value enterprise keys once connectivity is restored.
 
 ### User workload to Server workload
 
@@ -665,7 +665,7 @@ The end-to-end attestation paths are therefore:
 
 ### Hardware Inventory and Continuous Monitoring
 
-Beyond attestation, the management processor performs continuous, out-of-band monitoring of the Workload Host's physical and firmware composition. This "Silicon-to-Audit" capability ensures that the hardware identity remains constant and trusted throughout its lifecycle:
+Beyond attestation, the management processor performs continuous, out-of-band monitoring of the Workload Host's physical and firmware composition. This "Silicon-to-Workload" capability ensures that the hardware identity remains constant and trusted throughout its lifecycle:
 
 * **CPU Integrity Monitoring:** The management processor inventories the Workload Host CPUs at every boot and continuously monitors their state. It records and reports:
     - **Serial Numbers:** Retrieving the unique electronic serial number (e.g., Intel **PPIN - Protected Processor Inventory Number**) directly from the silicon.
@@ -1102,11 +1102,11 @@ The proposed framework introduces several security considerations that must be a
 This specification provides technical mitigations for several threats identified in the **WIMSE Architecture** [[I-D.ietf-wimse-architecture]]:
 
 * **Bearer Token Theft and Replay**: The "Proof of Residency" established in this draft (and conveyed via the Transitive Attestation draft) prevents stolen bearer tokens from being used outside the verified host environment or geographic boundary.
-* **Implicit Trust in Infrastructure**: Layer 2 and Layer 3 provide cryptographic "Silicon-to-Audit" proof of physical locality and hardware composition, replacing implicit trust in infrastructure providers with auditable hardware-rooted evidence.
+* **Implicit Trust in Infrastructure**: Layer 2 and Layer 3 provide cryptographic "Silicon-to-Workload" proof of physical locality and hardware composition, replacing implicit trust in infrastructure providers with auditable hardware-rooted evidence.
 
 ## Post-Quantum Hybridization (Future Proofing)
 
-While the Zero-Knowledge Proof (ZKP) layers of V-GAP are based on hash-based protocols (e.g., STARKs) which are inherently post-quantum resilient, the underlying TPM Attestation Keys (AKs) typically rely on RSA or ECDSA. To future-proof the "Silicon-to-Audit" chain, implementations SHOULD prepare for **Post-Quantum Hybridization**. This involve:
+While the Zero-Knowledge Proof (ZKP) layers of V-GAP are based on hash-based protocols (e.g., STARKs) which are inherently post-quantum resilient, the underlying TPM Attestation Keys (AKs) typically rely on RSA or ECDSA. To future-proof the "Silicon-to-Workload" chain, implementations SHOULD prepare for **Post-Quantum Hybridization**. This involve:
 - **Hybrid AKs**: Combining a classical AK (ECDSA) with a post-quantum digital signature (e.g., ML-DSA) for the Atomic Seal.
 - **PQ-Resilient Management Plane**: Ensuring the Redfish/OOB path utilizes PQ-safe TLS ciphers for evidence transmission.
 

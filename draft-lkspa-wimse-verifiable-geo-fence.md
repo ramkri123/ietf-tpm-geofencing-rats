@@ -1055,6 +1055,7 @@ The Sovereign Verifier executes a multi-stage validation sequence to confirm the
 1.  **SVID Extraction**: Retrieve the SVID and the attached V-GAP Evidence Bundle.
 2.  **Hardware Integrity Verification**:
     - **Outer Quote**: Validate the `host-tpm-ak` signature and ensure PCR integrity. The **Outer Quote** MUST cover **PCR 10**, which contains the measurement of the Identity Agent.
+    - **Bundle Stapling (Binding)**: The Verifier MUST confirm that the **Outer Quote** signature cryptographically covers the SHA-256 hash of the JCS-canonicalized `lah-bundle`. This "staples" the geolocation evidence to the platform attestation, preventing "mix-and-match" attacks where an attacker attempts to pair fresh location data with a stale or hijacked platform bundle.
     - **Agent-to-Silicon Binding**: The Verifier MUST validate that the **agent-image-digest** provided in the JSON bundle matches exactly the measurement value contained in the hardware-signed **PCR 10**. If the digest does not match the PCR value, the Verifier MUST reject the bundle as a **Rogue Agent** attack.
 3.  **Proximity Verification**: Verify the `host-proximity-proof-hash` matches expected low-latency bounds (or the "SELF" constant).
 4.  **Inner Quote Verification**: Validate the `location-anchor-host-tpm-ak` signature and ensure the LAH hardware is an approved location source.

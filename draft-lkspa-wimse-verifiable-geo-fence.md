@@ -432,7 +432,7 @@ The following JSON Schema defines the structure of the V-GAP Nested Evidence Bun
     },
     "outer-seal": {
       "type": "string",
-      "description": "TPM2_Quote seal over preceding fields signed by Workload Host AK (Base64URL)"
+      "description": "TPM2_Quote seal over preceding fields signed by Workload Host AK (Base64URL). The TPM Quote MUST cryptographically cover the SHA-256 hash of the JCS-canonicalized 'lah-bundle' to ensure cryptographic stapling (preventing geolocation evidence swapping)."
     }
   },
   "required": ["host-tpm-ak", "host-proximity-proof-hash", "agent-image-digest", "lah-bundle", "nonce", "timestamp", "outer-seal"]
@@ -453,7 +453,7 @@ The following JSON Schema defines the structure of the V-GAP Nested Evidence Bun
 
 ## The Canonical Proximity Log
 
-The `host-proximity-proof-hash` MUST be generated from a **Canonical Proximity Log**, defined as the ordered concatenation of the hardware-signed PTP timing packets (specifically the **Follow_Up** and **Delay_Resp** messages) associated with the proximity handshake. This deterministic bitwise structure ensures that all verifiers perform an identical bitwise match regardless of platform. For Unified Hosts (where the LAH and Workload Host are the same), the hash SHALL be the constant **"SELF"**, defined as the 32-byte hash `SHA-256("V-GAP-LOCAL-BUS-PROXIMITY")`.
+The `host-proximity-proof-hash` MUST be generated from a **Canonical Proximity Log**, defined as the ordered concatenation of the proximity metadata: **PTP Sequence ID** (4 bytes, big-endian) + **Follow_Up** message (signed) + **Delay_Resp** message (signed). This deterministic bitwise structure ensures that all verifiers perform an identical bitwise match regardless of platform. For Unified Hosts (where the LAH and Workload Host are the same), the hash SHALL be the constant **"SELF"**, defined as the 32-byte hash `SHA-256("V-GAP-LOCAL-BUS-PROXIMITY")`.
 
 # Scalable Fleet Management
 
@@ -466,9 +466,10 @@ Managing hardware-rooted identities at scale requires automated lifecycle manage
 Managing hardware-rooted identities at scale requires a **Dual Federation** model where local operational autonomy is balanced with centralized governance.
 
 * **Edge-to-Cloud Handshake:** The Edge Host Identity Management Plane SHALL maintain local Attestation Keys (AKs) for the `host-tpm-ak` and `lah-tpm-ak` to support offline SVID issuance. Periodically, these AKs MUST be synchronized with the Cloud-based **Sovereign Registry**.
-* **Rotation Proofs:** The Cloud Host Identity Management Plane MUST ONLY accept a newly synced AK if the Edge Host Identity Management Plane provides a **"Rotation Proof"**. This proof SHALL be either:
-    - A digital signature from the *preceding* AK blessing the new AK (creating a verifiable hash chain).
-    - A fresh Out-of-Band (OOB) quote from the hardware root of trust (i.e., iLO 7) verifying the new AK was generated in approved silicon.
+* **Rotation Proofs:** The Cloud Host Identity Management Plane MUST ONLY accept a newly synced AK if the Edge Host Identity Management Plane provides a **"Rotation Proof"**. This proof SHALL be a JSON object containing the new AK public key, the AK serial number, and a timestamp, signed by either:
+    - The **preceding verified AK** (creating a verifiable hash chain).
+    - A fresh **hardware-rooted OOB quote** (e.g., iLO 7) verifying that the new AK was generated within the secure enclave of the approved silicon.
+    This prevents a compromised Edge Management Plane from registering rogue, software-emulated keys in the Sovereign Registry.
 * **Hardware-Rooted Registry:** The Sovereign Verifier MUST maintain a registry mapping verified AKs to their manufacturer **Endorsement Key (EK)** certificates.
 * **Credential Activation (Handshake) & The On-Demand Kill-Switch:** To avoid the "MakeCredential tax" (high-latency challenge/response) on every request, the Verifier SHALL perform the full **TPM2_MakeCredential** procedure (linked to the manufacturer EK and HPE Root CA) only upon:
     - Initial node onboarding.
@@ -582,7 +583,11 @@ Step 2 (Identity Agent ID issuance):
 7. The Identity Agent decrypts the challenge's secret using its private key.
 8. The Identity Agent sends back the decrypted secret.
 9. The Workload Identity Management Plane verifies that the decrypted secret matches the original secret used to build the challenge.
-10. The Workload Identity Management Plane issues the Identity Agent ID (SVID). **The V-GAP Evidence Bundle (JSON-formatted) MUST be embedded as a CRITICAL X.509 extension within the Identity Agent's SVID certificate, encoded as an `OCTET STRING` containing the Base64URL-encoded JSON evidence.** Marking the extension as **CRITICAL** ensures that any non-compliant API gateway or Relying Party that does not recognize the V-GAP profile MUST "fail-closed" and reject the identity. The extension SHALL use the OID `1.3.6.1.4.1.60265.1.1` (V-GAP). The **Outer Seal** (`outer-seal`) MUST be a standard **TPM2_Quote** where the `qualifyingData` is the `timestamp` (or `nonce` if present) and the `message` being signed is the SHA-256 hash of the **JCS-canonicalized** JSON representation of the bundle (excluding the `outer-seal` field itself).
+10. The Workload Identity Management Plane issues the Identity Agent ID (SVID). Due to X.509 extension size constraints, the V-GAP Evidence Bundle SHALL be handled according to one of the following two profiles:
+    - **Embedded Profile (Standard)**: The V-GAP bundle is **minified** (removing all optional whitespace), **Base64URL-encoded**, and embedded as a **CRITICAL** X.509 extension (OID `1.3.6.1.4.1.60265.1.1`).
+    - **Detached Evidence Profile (High-Assurance)**: For high-complexity bundles where the size exceeds mTLS buffer limits, the SVID extension SHALL contain only the **SHA-256 hash** of the canonicalized JSON bundle. The full bundle is stored by the **Host Identity Management Plane** and fetched by the Verifier out-of-band during the key-release handshake.
+    
+    Marking the extension as **CRITICAL** ensures that any non-compliant API gateway or Relying Party that does not recognize the V-GAP profile MUST "fail-closed" and reject the identity. The **Outer Seal** (`outer-seal`) MUST be a standard **TPM2_Quote** where the `qualifyingData` is the `timestamp` (or `nonce` if present) and the `message` being signed is the SHA-256 hash of the **JCS-canonicalized** JSON representation of the bundle (excluding the `outer-seal` field itself).
 11. **Criticality Enforcement:** Any verifier that encounters a Sovereign SVID and does not support the V-GAP OID MUST reject the certificate. This ensures that a residency-constrained workload cannot accidentally be authorized by a gateway that doesn't understand the "Residency Moat."
 
 ## Deployment Option A: Workload Host OS-Based (Keylime)
@@ -1049,8 +1054,8 @@ The Sovereign Verifier executes a multi-stage validation sequence to confirm the
 
 1.  **SVID Extraction**: Retrieve the SVID and the attached V-GAP Evidence Bundle.
 2.  **Hardware Integrity Verification**:
-    - **Outer Quote**: Validate the `host-tpm-ak` signature and ensure PCR integrity (PCR 10 for software, PCR 15 for location).
-    - **Agent Integrity**: Validate the **agent-image-digest** against the Enterprise "Known-Good" version. This ensures that the SPIRE Agent has not been replaced by a modified or malicious binary (**Rogue Agent Protection**).
+    - **Outer Quote**: Validate the `host-tpm-ak` signature and ensure PCR integrity. The **Outer Quote** MUST cover **PCR 10**, which contains the measurement of the Identity Agent.
+    - **Agent-to-Silicon Binding**: The Verifier MUST validate that the **agent-image-digest** provided in the JSON bundle matches exactly the measurement value contained in the hardware-signed **PCR 10**. If the digest does not match the PCR value, the Verifier MUST reject the bundle as a **Rogue Agent** attack.
 3.  **Proximity Verification**: Verify the `host-proximity-proof-hash` matches expected low-latency bounds (or the "SELF" constant).
 4.  **Inner Quote Verification**: Validate the `location-anchor-host-tpm-ak` signature and ensure the LAH hardware is an approved location source.
 5.  **Residency Validation**: Compute the ZKP or boundary check on the geolocation payload within the **lah-bundle**.

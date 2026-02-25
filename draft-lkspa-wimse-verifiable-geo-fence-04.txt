@@ -30,7 +30,7 @@ Abstract
    assurance environments, these vulnerabilities represent a fundamental
    failure of the security boundary.
 
-   This document defines a high assurance profile designed to solve
+   This document defines a *High-Assurance Profile* designed to solve
    these challenges through hardware-rooted cryptographic certainty.  It
    replaces implicit trust and spoofable indicators with verifiable
    evidence of both the *Workload Identity Agent's* integrity (via TPM-
@@ -239,10 +239,10 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    to workloads.  It serves as a "vetting" mechanism, ensuring that a
    workload's execution environment meets required security and
    residency policies before granting it the cryptographic credentials
-   necessary for network communication.  This RATS Profile provides the
-   technical mechanics to cryptographically bind this agent to the
-   underlying hardware-verified platform and its privacy preserving
-   physical location.
+   necessary for network communication.  This high assurance profile,
+   RATS Profile, provides the technical mechanics to cryptographically
+   bind this agent to the underlying hardware-verified platform and its
+   privacy preserving physical location.
 
    The architecture follows the *RATS Architecture [[RFC9334]]*,
    defining the interactions between *Provers*, *Verifiers*, and

@@ -417,7 +417,7 @@ The following JSON Schema defines the structure of the V-GAP Nested Evidence Bun
         },
         "inner-seal": {
           "type": "string",
-          "description": "TPM2_Quote Seal over preceding fields signed by LAH AK (Base64URL)"
+          "description": "TPM2_Quote Seal over preceding fields signed by LAH AK (Base64URL). The TPM Quote MUST cryptographically cover the SHA-256 hash of the JCS-canonicalized 'lah-bundle' preceding fields."
         }
       },
       "required": ["lah-tpm-ak", "lah-geolocation-proof-hash", "privacy-technique", "nonce", "timestamp", "inner-seal"]

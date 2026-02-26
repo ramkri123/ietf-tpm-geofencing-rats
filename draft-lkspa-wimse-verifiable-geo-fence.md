@@ -236,7 +236,15 @@ Enterprises need cryptographic proof of trustworthy geographic boundary for user
 
 ## Category 3: Regulatory Compliance
 
-Geographic boundary attestation helps satisfy data residency and data sovereignty requirements for regulatory compliance.
+Geofence attestation helps satisfy data residency and data sovereignty requirements for regulatory compliance.
+
+## Category 4: Beyond regulation - when proving geolocation is still valuable
+
+Geofence attestation (or “in-zone” proofs) can matter for:
+- Reducing cloud control-plane trust: region labels, config, and inventory can drift; evidence-based checks can catch mistakes early.
+- Edge deployments and theft/relocation risk: devices can be moved, cloned, or proxied; requiring “in-zone” evidence before issuing/accepting credentials is a strong control.
+- Customer contractual requirements: “sovereign workloads” are often driven by procurement and enterprise risk requirements even when laws are flexible.
+- Privacy minimization: location is sensitive data in many regimes; proving “inside zone” without exposing coordinates can reduce collection/retention risk. For example, China’s PIPL treats “location tracking” as sensitive personal information.
 
 # Industry Gaps and Problem Statements
 
@@ -312,7 +320,7 @@ The **Compliance Bridge** serves as the normative link between these two planes.
 
 In regulated industries like Oil & Gas, this provides **Edge Autonomy** (local execution during satcom outages) with **Cloud Control** (centralized governance). An issued SVID is effectively "locked" until the Host Identity Management Plane confirms the hardware is untampered and physically resident within the geofence. By binding the **Workload Identity Agent Image Digest** directly to the hardware-rooted **Outer Seal**, we solve the **"Rogue Agent"** problem—ensuring that only authorized software in authorized locations can access high-value enterprise assets, even under local root compromise.
 
-# Verifiable Geofencing Attestation Profile (V-GAP)
+# High-Assurance Profile - Verifiable Geofencing Attestation Profile (V-GAP)
 
 The V-GAP profile transition the geofencing logic from a general proposal to a concrete **RATS/WIMSE Attestation Profile**. This section defines the nested evidence format for binding identity to physical location.
 

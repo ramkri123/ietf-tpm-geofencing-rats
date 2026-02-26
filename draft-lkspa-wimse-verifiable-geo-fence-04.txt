@@ -103,9 +103,9 @@ Table of Contents
        4.1.5.  User workload to Server workload  . . . . . . . . . .   9
      4.2.  Category 2: User-centric Location . . . . . . . . . . . .   9
      4.3.  Category 3: Regulatory Compliance . . . . . . . . . . . .  10
+     4.4.  Category 4: Beyond regulation - when proving geolocation is
+           still valuable  . . . . . . . . . . . . . . . . . . . . .  10
    5.  Industry Gaps and Problem Statements  . . . . . . . . . . . .  10
-     5.1.  Data Generation/at-Rest Challenges  . . . . . . . . . . .  10
-     5.2.  Data-in-Use Challenges  . . . . . . . . . . . . . . . . .  10
 
 
 
@@ -114,40 +114,43 @@ Krishnan, et al.         Expires 30 August 2026                 [Page 2]
 Internet-Draft                RATS-GEO-POR                 February 2026
 
 
-   6.  Approach Overview . . . . . . . . . . . . . . . . . . . . . .  10
+     5.1.  Data Generation/at-Rest Challenges  . . . . . . . . . . .  10
+     5.2.  Data-in-Use Challenges  . . . . . . . . . . . . . . . . .  11
+   6.  Approach Overview . . . . . . . . . . . . . . . . . . . . . .  11
      6.1.  Relationship to Transitive Attestation  . . . . . . . . .  11
-     6.2.  Addressing WIMSE Architecture Gaps  . . . . . . . . . . .  12
+     6.2.  Addressing WIMSE Architecture Gaps  . . . . . . . . . . .  13
      6.3.  The Compliance Bridge - The Symmetry of Trust . . . . . .  13
-   7.  Verifiable Geofencing Attestation Profile (V-GAP) . . . . . .  13
-     7.1.  The Nested Evidence Structure . . . . . . . . . . . . . .  13
-     7.2.  Formal Data Structure (JSON Schema) . . . . . . . . . . .  13
-       7.2.1.  Client or Prover Roles (e.g., Edge Cloud) . . . . . .  15
+   7.  High-Assurance Profile - Verifiable Geofencing Attestation
+           Profile (V-GAP) . . . . . . . . . . . . . . . . . . . . .  14
+     7.1.  The Nested Evidence Structure . . . . . . . . . . . . . .  14
+     7.2.  Formal Data Structure (JSON Schema) . . . . . . . . . . .  14
+       7.2.1.  Client or Prover Roles (e.g., Edge Cloud) . . . . . .  16
        7.2.2.  Server or Relying Party Roles (e.g., Central
-               Cloud)  . . . . . . . . . . . . . . . . . . . . . . .  15
-     7.3.  The Canonical Proximity Log . . . . . . . . . . . . . . .  16
-   8.  Scalable Fleet Management . . . . . . . . . . . . . . . . . .  16
-     8.1.  Attestation Key (AK) Management . . . . . . . . . . . . .  16
-       8.1.1.  Dual Federation (The Compliance Bridge) . . . . . . .  16
-   9.  Distributed SVID Issuance and Scaling . . . . . . . . . . . .  18
+               Cloud)  . . . . . . . . . . . . . . . . . . . . . . .  16
+     7.3.  The Canonical Proximity Log . . . . . . . . . . . . . . .  17
+   8.  Scalable Fleet Management . . . . . . . . . . . . . . . . . .  17
+     8.1.  Attestation Key (AK) Management . . . . . . . . . . . . .  17
+       8.1.1.  Dual Federation (The Compliance Bridge) . . . . . . .  17
+   9.  Distributed SVID Issuance and Scaling . . . . . . . . . . . .  19
      9.1.  Sovereign Handover (Mobile Edge)  . . . . . . . . . . . .  19
      9.2.  Data center location anchor host  . . . . . . . . . . . .  19
    10. Hardware-Rooted Attestation Mechanics (Layer 2 and 3) . . . .  19
-     10.1.  TPM Platform Attestation (Layer 2) . . . . . . . . . . .  19
-       10.1.1.  Overview . . . . . . . . . . . . . . . . . . . . . .  19
+     10.1.  TPM Platform Attestation (Layer 2) . . . . . . . . . . .  20
+       10.1.1.  Overview . . . . . . . . . . . . . . . . . . . . . .  20
        10.1.2.  Comparison of Deployment Options . . . . . . . . . .  20
-       10.1.3.  Geolocation HW-Based Attestation (Layer 3) . . . . .  20
-       10.1.4.  Privacy-Preserving Geolocation Verification (ZKP)  .  20
-     10.2.  Confidential Computing Considerations  . . . . . . . . .  20
+       10.1.3.  Geolocation HW-Based Attestation (Layer 3) . . . . .  21
+       10.1.4.  Privacy-Preserving Geolocation Verification (ZKP)  .  21
+     10.2.  Confidential Computing Considerations  . . . . . . . . .  21
      10.3.  Measured Boot and OS Integrity Attestation . . . . . . .  21
      10.4.  *Workload Identity Agent* Attestation and Identity
              Issuance  . . . . . . . . . . . . . . . . . . . . . . .  22
-     10.5.  Deployment Option A: Workload Host OS-Based (Keylime)  .  24
-       10.5.1.  Architecture . . . . . . . . . . . . . . . . . . . .  24
+     10.5.  Deployment Option A: Workload Host OS-Based (Keylime)  .  25
+       10.5.1.  Architecture . . . . . . . . . . . . . . . . . . . .  25
        10.5.2.  Integration with SPIRE . . . . . . . . . . . . . . .  25
        10.5.3.  Advantages . . . . . . . . . . . . . . . . . . . . .  25
        10.5.4.  Limitations  . . . . . . . . . . . . . . . . . . . .  25
      10.6.  Deployment Option B: External Management Processor (e.g.,
-             HPE iLO)  . . . . . . . . . . . . . . . . . . . . . . .  25
+             HPE iLO)  . . . . . . . . . . . . . . . . . . . . . . .  26
        10.6.1.  Dual TPM Access Paths  . . . . . . . . . . . . . . .  26
        10.6.2.  Architecture . . . . . . . . . . . . . . . . . . . .  27
        10.6.3.  Hardware Inventory and Continuous Monitoring . . . .  27
@@ -159,9 +162,6 @@ Internet-Draft                RATS-GEO-POR                 February 2026
        10.6.8.  Advantages . . . . . . . . . . . . . . . . . . . . .  33
        10.6.9.  Limitations  . . . . . . . . . . . . . . . . . . . .  33
        10.6.10. Architecture . . . . . . . . . . . . . . . . . . . .  34
-       10.6.11. Advantages . . . . . . . . . . . . . . . . . . . . .  34
-       10.6.12. Limitations  . . . . . . . . . . . . . . . . . . . .  35
-
 
 
 
@@ -170,6 +170,8 @@ Krishnan, et al.         Expires 30 August 2026                 [Page 3]
 Internet-Draft                RATS-GEO-POR                 February 2026
 
 
+       10.6.11. Advantages . . . . . . . . . . . . . . . . . . . . .  34
+       10.6.12. Limitations  . . . . . . . . . . . . . . . . . . . .  35
      10.7.  Workload Identity Fusion: Periodic SPIRE
              Re-Attestation  . . . . . . . . . . . . . . . . . . . .  35
      10.8.  Privacy Options for TPM-Based Attestation  . . . . . . .  37
@@ -216,8 +218,6 @@ Internet-Draft                RATS-GEO-POR                 February 2026
      15.1.  OPEN ISSUES 1: Native IMA re-triggering (Partially
             Addressed) . . . . . . . . . . . . . . . . . . . . . . .  54
      15.2.  OPEN ISSUES 2: Location privacy options  . . . . . . . .  54
-     15.3.  OPEN ISSUES 3: Attested PTP (Partially Addressed)  . . .  54
-     15.4.  OPEN ISSUES 4: Geotagging textual data . . . . . . . . .  55
 
 
 
@@ -226,6 +226,8 @@ Krishnan, et al.         Expires 30 August 2026                 [Page 4]
 Internet-Draft                RATS-GEO-POR                 February 2026
 
 
+     15.3.  OPEN ISSUES 3: Attested PTP (Partially Addressed)  . . .  54
+     15.4.  OPEN ISSUES 4: Geotagging textual data . . . . . . . . .  55
      15.5.  OPEN ISSUES 5: Attesting Geotags . . . . . . . . . . . .  55
    16. Appendix - Public References for Strict Data Residency
            Rules . . . . . . . . . . . . . . . . . . . . . . . . . .  55
@@ -272,8 +274,6 @@ Internet-Draft                RATS-GEO-POR                 February 2026
 
    *Acronyms used in this document:*
 
-   *  *TPM*: Trusted Platform Module
-   *  *GNSS*: Global Navigation Satellite System
 
 
 
@@ -282,6 +282,8 @@ Krishnan, et al.         Expires 30 August 2026                 [Page 5]
 Internet-Draft                RATS-GEO-POR                 February 2026
 
 
+   *  *TPM*: Trusted Platform Module
+   *  *GNSS*: Global Navigation Satellite System
    *  *IMEI*: International Mobile Equipment Identity
    *  *IMSI*: International Mobile Subscriber Identity
    *  *PCR*: Platform Configuration Register
@@ -328,8 +330,6 @@ Internet-Draft                RATS-GEO-POR                 February 2026
       the Outer Evidence (platform attestation) and proves its proximity
       to a Location Anchor Host to establish residency.
    Location Anchor Host (LAH):  *Role*: The hardware source of truth for
-
-
 
 
 
@@ -518,8 +518,24 @@ Internet-Draft                RATS-GEO-POR                 February 2026
 
 4.3.  Category 3: Regulatory Compliance
 
-   Geographic boundary attestation helps satisfy data residency and data
+   Geofence attestation helps satisfy data residency and data
    sovereignty requirements for regulatory compliance.
+
+4.4.  Category 4: Beyond regulation - when proving geolocation is still
+      valuable
+
+   Geofence attestation (or “in-zone” proofs) can matter for: - Reducing
+   cloud control-plane trust: region labels, config, and inventory can
+   drift; evidence-based checks can catch mistakes early. - Edge
+   deployments and theft/relocation risk: devices can be moved, cloned,
+   or proxied; requiring “in-zone” evidence before issuing/accepting
+   credentials is a strong control. - Customer contractual requirements:
+   “sovereign workloads” are often driven by procurement and enterprise
+   risk requirements even when laws are flexible. - Privacy
+   minimization: location is sensitive data in many regimes; proving
+   “inside zone” without exposing coordinates can reduce collection/
+   retention risk.  For example, China’s PIPL treats “location tracking”
+   as sensitive personal information.
 
 5.  Industry Gaps and Problem Statements
 
@@ -537,6 +553,15 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    Attesting Geotags:  Existing geotag formats are unsigned and
       forgeable via VPN/MITM attacks.
 
+
+
+
+
+Krishnan, et al.         Expires 30 August 2026                [Page 10]
+
+Internet-Draft                RATS-GEO-POR                 February 2026
+
+
 5.2.  Data-in-Use Challenges
 
    Bearer Token Vulnerabilities:  Bearer tokens are typically generated
@@ -553,14 +578,6 @@ Internet-Draft                RATS-GEO-POR                 February 2026
 
    This specification establishes a "Silicon-to-SVID" chain of
    accountability through three layers:
-
-
-
-
-Krishnan, et al.         Expires 30 August 2026                [Page 10]
-
-Internet-Draft                RATS-GEO-POR                 February 2026
-
 
    *  *Layer 1 -- Workload Identity Attestation (Hardware-Independent):*
       Covered by [[I-D.mw-wimse-transitive-attestation]].  Binds
@@ -585,6 +602,21 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    through to workload identity.
 
    The three layers are:
+
+
+
+
+
+
+
+
+
+
+
+Krishnan, et al.         Expires 30 August 2026                [Page 11]
+
+Internet-Draft                RATS-GEO-POR                 February 2026
+
 
    *  *Layer 1 -- Workload Identity Attestation (Hardware-Independent):*
       Covered by [[I-D.mw-wimse-transitive-attestation]].  Proves that a
@@ -611,13 +643,6 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    The following table maps these layers to the broader IETF ecosystem,
    forming a cohesive "Silicon-to-SVID" chain of accountability:
 
-
-
-Krishnan, et al.         Expires 30 August 2026                [Page 11]
-
-Internet-Draft                RATS-GEO-POR                 February 2026
-
-
     +========+==============+=========+==============================+
     | Layer  | Component    | WG      | Core Responsibility          |
     +========+==============+=========+==============================+
@@ -641,6 +666,14 @@ Internet-Draft                RATS-GEO-POR                 February 2026
 
    *  TPM Hardware -> Identity Agent (this draft, Layer 2) -> Workload
       (transitive attestation draft, Layer 1)
+
+
+
+Krishnan, et al.         Expires 30 August 2026                [Page 12]
+
+Internet-Draft                RATS-GEO-POR                 February 2026
+
+
    *  TPM/Geolocation Hardware -> Identity Agent (this draft, Layers 2
       and 3) -> Workload (transitive attestation draft, Layer 1)
 
@@ -666,14 +699,6 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    and for the data-plane protocol flows (mTLS PoR, DPoR), see [[I-D.mw-
    wimse-transitive-attestation]].
 
-
-
-
-Krishnan, et al.         Expires 30 August 2026                [Page 12]
-
-Internet-Draft                RATS-GEO-POR                 February 2026
-
-
 6.3.  The Compliance Bridge - The Symmetry of Trust
 
    This framework establishes a *"Silicon-to-Workload"* chain of trust
@@ -689,6 +714,22 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    that have been verified integral by the *Host Identity Management
    Plane*.
 
+
+
+
+
+
+
+
+
+
+
+
+Krishnan, et al.         Expires 30 August 2026                [Page 13]
+
+Internet-Draft                RATS-GEO-POR                 February 2026
+
+
    In regulated industries like Oil & Gas, this provides *Edge Autonomy*
    (local execution during satcom outages) with *Cloud Control*
    (centralized governance).  An issued SVID is effectively "locked"
@@ -699,7 +740,8 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    that only authorized software in authorized locations can access
    high-value enterprise assets, even under local root compromise.
 
-7.  Verifiable Geofencing Attestation Profile (V-GAP)
+7.  High-Assurance Profile - Verifiable Geofencing Attestation Profile
+    (V-GAP)
 
    The V-GAP profile transition the geofencing logic from a general
    proposal to a concrete *RATS/WIMSE Attestation Profile*. This section
@@ -722,14 +764,6 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    fields (hashes, public keys, signatures) MUST be Base64URL encoded.
    To ensure deterministic integrity across different platforms and
    parsers, both the Outer and Inner bundles MUST be serialized using
-
-
-
-Krishnan, et al.         Expires 30 August 2026                [Page 13]
-
-Internet-Draft                RATS-GEO-POR                 February 2026
-
-
    the *JSON Canonicalization Scheme (JCS - [[RFC8785]])* before
    computing the hashes for the *TPM2_Quote* seals.
 
@@ -744,6 +778,14 @@ Internet-Draft                RATS-GEO-POR                 February 2026
        },
        "host-proximity-proof-hash": {
          "type": "string",
+
+
+
+Krishnan, et al.         Expires 30 August 2026                [Page 14]
+
+Internet-Draft                RATS-GEO-POR                 February 2026
+
+
          "description": "Proximity proof hash (Base64URL). For Unified Hosts, set to SHA-256('V-GAP-LOCAL-BUS-PROXIMITY')."
        },
        "agent-image-digest": {
@@ -778,14 +820,6 @@ Internet-Draft                RATS-GEO-POR                 February 2026
            "inner-seal": {
              "type": "string",
              "description": "TPM2_Quote Seal over preceding fields signed by LAH AK (Base64URL). The TPM Quote MUST cryptographically cover the SHA-256 hash of the JCS-canonicalized 'lah-bundle' preceding fields."
-
-
-
-Krishnan, et al.         Expires 30 August 2026                [Page 14]
-
-Internet-Draft                RATS-GEO-POR                 February 2026
-
-
            }
          },
          "required": ["lah-tpm-ak", "lah-geolocation-proof-hash", "privacy-technique", "nonce", "timestamp", "inner-seal"]
@@ -800,6 +834,14 @@ Internet-Draft                RATS-GEO-POR                 February 2026
        },
        "outer-seal": {
          "type": "string",
+
+
+
+Krishnan, et al.         Expires 30 August 2026                [Page 15]
+
+Internet-Draft                RATS-GEO-POR                 February 2026
+
+
          "description": "TPM2_Quote seal over preceding fields signed by Workload Host AK (Base64URL). The TPM Quote MUST cryptographically cover the SHA-256 hash of the JCS-canonicalized 'lah-bundle' to ensure cryptographic stapling (preventing geolocation evidence swapping)."
        }
      },
@@ -832,16 +874,6 @@ Internet-Draft                RATS-GEO-POR                 February 2026
       tpm-ak, lah-geolocation-proof-hash, host-proximity-proof-hash, and
       agent-image-digest are present in the "Allow List" for the
       specific Workload Identity domain.
-
-
-
-
-
-Krishnan, et al.         Expires 30 August 2026                [Page 15]
-
-Internet-Draft                RATS-GEO-POR                 February 2026
-
-
    *  *Registry Synchronization*: The *Central Host Identity Management
       Plane* periodically synchronizes the following artifacts with the
       *Edge Host Identity Management Plane*:
@@ -851,6 +883,20 @@ Internet-Draft                RATS-GEO-POR                 February 2026
       -  The "Allow List" of trusted *Workload Identity Agents*.
       -  Verified *geolocation ZKP proofs* and *proximity proofs*
          (adding their hashes to the allowlist).
+
+
+
+
+
+
+
+
+
+
+Krishnan, et al.         Expires 30 August 2026                [Page 16]
+
+Internet-Draft                RATS-GEO-POR                 February 2026
+
 
 7.3.  The Canonical Proximity Log
 
@@ -883,21 +929,6 @@ Internet-Draft                RATS-GEO-POR                 February 2026
       these AKs MUST be synchronized with the Cloud-based *Sovereign
       Registry*.
 
-
-
-
-
-
-
-
-
-
-
-Krishnan, et al.         Expires 30 August 2026                [Page 16]
-
-Internet-Draft                RATS-GEO-POR                 February 2026
-
-
    *  *Rotation Proofs:* The Cloud Host Identity Management Plane MUST
       ONLY accept a newly synced AK if the Edge Host Identity Management
       Plane provides a *"Rotation Proof"*. This cryptographic baseline
@@ -915,6 +946,13 @@ Internet-Draft                RATS-GEO-POR                 February 2026
         "hardware-uuid": "Host_Hardware_UUID",
         "signature": "Base64URL_Signature_from_Previous_AK"
       }
+
+
+
+Krishnan, et al.         Expires 30 August 2026                [Page 17]
+
+Internet-Draft                RATS-GEO-POR                 February 2026
+
 
       Alternatively, a fresh *hardware-rooted Out-of-Band (OOB) quote*
       (e.g., HPE iLO 7) MAY be used to verify that the new AK was
@@ -946,14 +984,6 @@ Internet-Draft                RATS-GEO-POR                 February 2026
       Management Plane MUST maintain a *"Hardware Health Bit"* for each
       node.  If the hardware root of trust (e.g., iLO 7) detects a
       security breach (e.g., chassis intrusion, unauthorized firmware
-
-
-
-Krishnan, et al.         Expires 30 August 2026                [Page 17]
-
-Internet-Draft                RATS-GEO-POR                 February 2026
-
-
       update), it MUST trigger an immediate *AK Revocation* signal to
       the Sovereign Verifier.  The Verifier SHALL instantly invalidate
       all active SVIDs associated with that AK, regardless of their
@@ -971,6 +1001,14 @@ Internet-Draft                RATS-GEO-POR                 February 2026
       for physical tampering (chassis intrusion, signal jamming) and
       triggering a local "Self-Destruct" of the identity keys if a
       breach is detected while offline.
+
+
+
+
+Krishnan, et al.         Expires 30 August 2026                [Page 18]
+
+Internet-Draft                RATS-GEO-POR                 February 2026
+
 
 9.  Distributed SVID Issuance and Scaling
 
@@ -995,21 +1033,6 @@ Internet-Draft                RATS-GEO-POR                 February 2026
       local silicon to prevent a remote attacker from spoofing a 1:1
       residency status.
 
-
-
-
-
-
-
-
-
-
-
-Krishnan, et al.         Expires 30 August 2026                [Page 18]
-
-Internet-Draft                RATS-GEO-POR                 February 2026
-
-
 9.1.  Sovereign Handover (Mobile Edge)
 
    In mobile edge environments (e.g., an AI agent moving from a "Rig-
@@ -1032,6 +1055,17 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    This section describes the technical mechanics for platform and
    location attestation.
 
+
+
+
+
+
+
+Krishnan, et al.         Expires 30 August 2026                [Page 19]
+
+Internet-Draft                RATS-GEO-POR                 February 2026
+
+
 10.1.  TPM Platform Attestation (Layer 2)
 
    TPM Platform Attestation establishes Workload Host integrity through
@@ -1050,21 +1084,6 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    3.  *Workload Identity Agent Integrity:* The *Workload Identity
        Agent* binary was measured (e.g., via Linux IMA) and matches
        approved values before execution.
-
-
-
-
-
-
-
-
-
-
-
-Krishnan, et al.         Expires 30 August 2026                [Page 19]
-
-Internet-Draft                RATS-GEO-POR                 February 2026
-
 
 10.1.2.  Comparison of Deployment Options
 
@@ -1095,6 +1114,14 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    |             | On-Prem      |                   |                  |
    +-------------+--------------+-------------------+------------------+
 
+
+
+
+Krishnan, et al.         Expires 30 August 2026                [Page 20]
+
+Internet-Draft                RATS-GEO-POR                 February 2026
+
+
                                   Table 2
 
 10.1.3.  Geolocation HW-Based Attestation (Layer 3)
@@ -1113,14 +1140,6 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    Deployments in TEEs (e.g., Intel SGX, AMD SEV) MUST bind the V-GAP
    Evidence to the TEE quote via a shared nonce or public key hash in
    the TPM's PCRs.
-
-
-
-
-Krishnan, et al.         Expires 30 August 2026                [Page 20]
-
-Internet-Draft                RATS-GEO-POR                 February 2026
-
 
 10.3.  Measured Boot and OS Integrity Attestation
 
@@ -1146,6 +1165,19 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    referred to as the TCGLog, and stored in the TPM's Platform
    Configuration Registers (PCRs).
 
+
+
+
+
+
+
+
+
+Krishnan, et al.         Expires 30 August 2026                [Page 21]
+
+Internet-Draft                RATS-GEO-POR                 February 2026
+
+
    *Attestation Report*: The TPM generates an attestation report, which
    includes the signed measurements and the boot configuration log.  The
    signature of the attestation report (aka quote) is by a TPM
@@ -1166,17 +1198,6 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    identifiers associated with the hardware platform.  At this point, we
    can be sure that the hardware platform is approved for running
    workloads and is running an approved OS.
-
-
-
-
-
-
-
-Krishnan, et al.         Expires 30 August 2026                [Page 21]
-
-Internet-Draft                RATS-GEO-POR                 February 2026
-
 
 10.4.  *Workload Identity Agent* Attestation and Identity Issuance
 
@@ -1205,6 +1226,14 @@ Internet-Draft                RATS-GEO-POR                 February 2026
 
    Step 1 (Workload Identity Agent TPM APP ID issuance):
 
+
+
+
+Krishnan, et al.         Expires 30 August 2026                [Page 22]
+
+Internet-Draft                RATS-GEO-POR                 February 2026
+
+
    1.  The Workload Identity Agent TPM plugin sends the TPM APP public
        key, TPM AK public key and TPM EK certificate attestation
        parameters to the Workload Identity Management Plane.
@@ -1224,16 +1253,6 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    7.  The Workload Identity Management Plane verifies that the
        decrypted secret matches the original secret used to build the
        challenge.
-
-
-
-
-
-Krishnan, et al.         Expires 30 August 2026                [Page 22]
-
-Internet-Draft                RATS-GEO-POR                 February 2026
-
-
    8.  The Workload Identity Management Plane issues a *Workload
        Identity Agent TPM APP ID* using the TPM APP public key, TPM AK
        public key and TPM EK certificate, binding the agent to the
@@ -1263,6 +1282,14 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    6.   The Workload Identity Management Plane sends the challenge to
         the Workload Identity Agent.
 
+
+
+
+Krishnan, et al.         Expires 30 August 2026                [Page 23]
+
+Internet-Draft                RATS-GEO-POR                 February 2026
+
+
    7.   The Workload Identity Agent decrypts the challenge's secret
         using its private key.
 
@@ -1277,18 +1304,6 @@ Internet-Draft                RATS-GEO-POR                 February 2026
         constraints and the verbosity of JSON compared to binary
         formats, the V-GAP Evidence Bundle SHALL be handled according to
         one of the following two profiles:
-
-
-
-
-
-
-
-
-Krishnan, et al.         Expires 30 August 2026                [Page 23]
-
-Internet-Draft                RATS-GEO-POR                 February 2026
-
 
         *  *Embedded Profile (Standard)*: The V-GAP bundle MUST be
            *minified* (removing all optional whitespace), *Base64URL-
@@ -1322,6 +1337,15 @@ Internet-Draft                RATS-GEO-POR                 February 2026
         workload cannot accidentally be authorized by a gateway that
         doesn't understand the "Residency Moat."
 
+
+
+
+
+Krishnan, et al.         Expires 30 August 2026                [Page 24]
+
+Internet-Draft                RATS-GEO-POR                 February 2026
+
+
 10.5.  Deployment Option A: Workload Host OS-Based (Keylime)
 
    In this option, the TPM attestation agent runs on the Workload Host
@@ -1337,15 +1361,6 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    2.  *Keylime Registrar:* Stores agent registration data (UUID, IP,
        port, TPM keys, mTLS certificate) and serves as a lookup service
        for the Verifier.
-
-
-
-
-Krishnan, et al.         Expires 30 August 2026                [Page 24]
-
-Internet-Draft                RATS-GEO-POR                 February 2026
-
-
    3.  *Keylime Verifier (external):* On attestation request, the
        Verifier queries the Registrar for the agent's AK public key,
        then contacts the agent directly to fetch a fresh TPM quote with
@@ -1379,6 +1394,14 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    *  Agent compromise could potentially affect attestation integrity
       (mitigated by TPM-bound keys).
 
+
+
+
+Krishnan, et al.         Expires 30 August 2026                [Page 25]
+
+Internet-Draft                RATS-GEO-POR                 February 2026
+
+
 10.6.  Deployment Option B: External Management Processor (e.g., HPE
        iLO)
 
@@ -1390,17 +1413,6 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    agents (e.g., Keylime agent, SPIRE agent) by feeding them fake data,
    but they cannot spoof the management processor's independent hardware
    path to the TPM.
-
-
-
-
-
-
-
-Krishnan, et al.         Expires 30 August 2026                [Page 25]
-
-Internet-Draft                RATS-GEO-POR                 February 2026
-
 
 10.6.1.  Dual TPM Access Paths
 
@@ -1437,6 +1449,15 @@ Internet-Draft                RATS-GEO-POR                 February 2026
 
    The end-to-end attestation paths are therefore:
 
+
+
+
+
+Krishnan, et al.         Expires 30 August 2026                [Page 26]
+
+Internet-Draft                RATS-GEO-POR                 February 2026
+
+
    *  *In-band (Option A):* TPM --[LPC/SPI bus]--> Workload Host CPU/OS
       --[host NIC, SSH/gRPC]--> Remote Verifier.  The IMA event log and
       TPM Quote both travel through the Workload Host OS network stack.
@@ -1449,14 +1470,6 @@ Internet-Draft                RATS-GEO-POR                 February 2026
       processor fetches the TPM Quote independently, so a compromised
       kernel cannot intercept, delay, or suppress the attestation
       evidence.
-
-
-
-
-Krishnan, et al.         Expires 30 August 2026                [Page 26]
-
-Internet-Draft                RATS-GEO-POR                 February 2026
-
 
 10.6.2.  Architecture
 
@@ -1493,6 +1506,14 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    *  *Peripheral Inventory:* Similar monitoring is applied to memory
       modules (DIMM serial numbers), storage controllers, and network
       adapters via the System Management Bus (*SMBus*).
+
+
+
+Krishnan, et al.         Expires 30 August 2026                [Page 27]
+
+Internet-Draft                RATS-GEO-POR                 February 2026
+
+
    *  *Health and Security State:* The management processor monitors for
       hardware-level security events, such as chassis intrusion or
       unauthorized component additions.
@@ -1506,14 +1527,6 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    *SMBus/I2C:* Used for inventorying peripherals and reading Field
    Replaceable Unit (FRU) data from memory and other components. *
    *Side-band Signals:* Dedicated physical lines allow the management
-
-
-
-Krishnan, et al.         Expires 30 August 2026                [Page 27]
-
-Internet-Draft                RATS-GEO-POR                 February 2026
-
-
    processor to monitor the "Security State" of the silicon, such as
    whether the CPU is in a debug-locked mode or if the hardware fuse
    settings have been tampered with.
@@ -1549,6 +1562,14 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    See Step 6 of the Periodic Attestation Cycle below for the full
    verification procedure.
 
+
+
+
+Krishnan, et al.         Expires 30 August 2026                [Page 28]
+
+Internet-Draft                RATS-GEO-POR                 February 2026
+
+
    *Protection Layer 3 -- IMA Appraisal Mode:* By default, IMA only
    measures (logs).  In IMA Appraisal mode, the kernel refuses to
    execute any binary or load any library that does not have a valid
@@ -1562,13 +1583,6 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    with its hardware-protected key.  This ensures a compromised kernel
    cannot intercept, delay, or suppress the attestation evidence.  See
    Step 3 of the Periodic Attestation Cycle for the detailed flow.
-
-
-
-Krishnan, et al.         Expires 30 August 2026                [Page 28]
-
-Internet-Draft                RATS-GEO-POR                 February 2026
-
 
    *Protection Layer 5 -- Kernel Lockdown Mode:* Linux Kernel Lockdown
    (integrity or confidentiality mode) prevents even the root user from
@@ -1604,20 +1618,6 @@ Internet-Draft                RATS-GEO-POR                 February 2026
       Any mismatch triggers a trust failure.  See Step 6 of the Periodic
       Attestation Cycle for the full detection procedure.
 
-   *  *Residual risk (TOCTOU):* A root adversary could theoretically
-      load a malicious binary between attestation cycles (time-of-check-
-      time-of-use).  This is mitigated by IMA Appraisal Mode (Protection
-      3) blocking unsigned binaries at load time, Kernel Lockdown
-      (Protection 5) preventing kernel memory modification, and frequent
-      attestation polling intervals.
-
-
-
-
-
-
-
-
 
 
 
@@ -1625,6 +1625,13 @@ Krishnan, et al.         Expires 30 August 2026                [Page 29]
 
 Internet-Draft                RATS-GEO-POR                 February 2026
 
+
+   *  *Residual risk (TOCTOU):* A root adversary could theoretically
+      load a malicious binary between attestation cycles (time-of-check-
+      time-of-use).  This is mitigated by IMA Appraisal Mode (Protection
+      3) blocking unsigned binaries at load time, Kernel Lockdown
+      (Protection 5) preventing kernel memory modification, and frequent
+      attestation polling intervals.
 
 10.6.6.  TPM Swap Attack Protection
 
@@ -1668,19 +1675,14 @@ Internet-Draft                RATS-GEO-POR                 February 2026
       Agent MUST NOT be required to observe N_platform.  Any nonce seen
       by the Workload Host is not sufficient to prove OOB freshness.
 
-   *Step 2 -- Workload Host OS: Normal Operation (Continuous)*
-
-
-
-
-
-
 
 
 Krishnan, et al.         Expires 30 August 2026                [Page 30]
 
 Internet-Draft                RATS-GEO-POR                 February 2026
 
+
+   *Step 2 -- Workload Host OS: Normal Operation (Continuous)*
 
    During normal operation, the Linux kernel's IMA subsystem
    continuously measures every binary, library, and kernel module loaded
@@ -1725,10 +1727,8 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    compromised and conspire to produce a falsified log, the verifier
    will detect the tampering via the PCR mismatch in Step 6.
 
-   *  _Compromise detection:_ A compromised kernel can tamper with this
-      log (remove entries, alter hashes, truncate).  This is expected
-      behavior and is why the log is treated as untrusted.  The verifier
-      will detect any tampering in Step 6.
+
+
 
 
 
@@ -1738,6 +1738,10 @@ Krishnan, et al.         Expires 30 August 2026                [Page 31]
 Internet-Draft                RATS-GEO-POR                 February 2026
 
 
+   *  _Compromise detection:_ A compromised kernel can tamper with this
+      log (remove entries, alter hashes, truncate).  This is expected
+      behavior and is why the log is treated as untrusted.  The verifier
+      will detect any tampering in Step 6.
    *  _Compromise detection:_ A compromised kernel may refuse to deliver
       the log entirely (e.g., kill the agent).  In this case, the
       verifier has a TPM Quote (from Step 3) but no log to verify
@@ -1782,10 +1786,6 @@ Internet-Draft                RATS-GEO-POR                 February 2026
        template and PCR bank expectations per platform profile.
    5.  *Compare the recomputed PCR 10* against the hardware-signed PCR
        10 from the TPM Quote:
-       *  *Match:* The IMA log is consistent with the TPM's
-          measurements.  The system is running approved software.
-
-
 
 
 
@@ -1794,6 +1794,8 @@ Krishnan, et al.         Expires 30 August 2026                [Page 32]
 Internet-Draft                RATS-GEO-POR                 February 2026
 
 
+       *  *Match:* The IMA log is consistent with the TPM's
+          measurements.  The system is running approved software.
        *  *Mismatch:* The IMA log has been tampered with (entries
           removed, altered, or fabricated).  The verifier raises a trust
           failure alert.
@@ -1839,9 +1841,7 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    *  Management processor firmware must itself be trusted and kept up
       to date.
 
-   In cloud environments, physical TPM access is typically virtualized.
-   Cloud providers (e.g., AWS, GCP, Azure, Oracle OCI, IBM Cloud, etc.)
-   provide a Virtual TPM (vTPM) to each guest Virtual Machine (VM).  In
+
 
 
 
@@ -1850,6 +1850,9 @@ Krishnan, et al.         Expires 30 August 2026                [Page 33]
 Internet-Draft                RATS-GEO-POR                 February 2026
 
 
+   In cloud environments, physical TPM access is typically virtualized.
+   Cloud providers (e.g., AWS, GCP, Azure, Oracle OCI, IBM Cloud, etc.)
+   provide a Virtual TPM (vTPM) to each guest Virtual Machine (VM).  In
    this model, the *Cloud Service Provider (CSP)* acts as the *Host
    Identity Management Plane*, managing the underlying physical hardware
    and the hypervisor that provides the vTPM.  This vTPM is a software-
@@ -1893,9 +1896,6 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    *  *Transitive Trust:* The vTPM is rooted in the physical Workload
       Host's TPM, providing hardware-backed assurance even in a
       virtualized environment.
-   *  *Standardized Interface:* Inside the VM, the vTPM appears as a
-      standard /dev/tpm0 device, allowing the reuse of existing tools
-      like Keylime and SPIRE.
 
 
 
@@ -1905,6 +1905,10 @@ Krishnan, et al.         Expires 30 August 2026                [Page 34]
 
 Internet-Draft                RATS-GEO-POR                 February 2026
 
+
+   *  *Standardized Interface:* Inside the VM, the vTPM appears as a
+      standard /dev/tpm0 device, allowing the reuse of existing tools
+      like Keylime and SPIRE.
 
 10.6.12.  Limitations
 
@@ -1950,10 +1954,6 @@ Internet-Draft                RATS-GEO-POR                 February 2026
    SovereignAttestation message.  However, the *Host Identity Management
    Plane* (e.g., HPE OneView/GreenLake) utilizes *N_platform* for the
    hardware-rooted TPM Quote via the OOB path, ensuring it is never seen
-   by the Workload Host.  The Host Identity Management Plane performs
-   the full validation, and the attested claims -- including platform
-   integrity, *hardware composition*, and geolocation -- are returned to
-   the *Workload Identity Management Plane* for SVID issuance.
 
 
 
@@ -1961,6 +1961,11 @@ Krishnan, et al.         Expires 30 August 2026                [Page 35]
 
 Internet-Draft                RATS-GEO-POR                 February 2026
 
+
+   by the Workload Host.  The Host Identity Management Plane performs
+   the full validation, and the attested claims -- including platform
+   integrity, *hardware composition*, and geolocation -- are returned to
+   the *Workload Identity Management Plane* for SVID issuance.
 
    *Cloud vTPM (Option C):* In a cloud deployment, the SPIRE Server
    sends *N_fusion* to the SPIRE Agent running as a system daemon on the
@@ -2004,11 +2009,6 @@ Internet-Draft                RATS-GEO-POR                 February 2026
        Identity Agent or Keylime Agent is compromised, the management
        processor's independent TPM Quote reveals the true platform
        state.
-
-
-
-
-
 
 
 

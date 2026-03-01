@@ -134,14 +134,14 @@ Internet-Draft                RATS-GEO-POR                    March 2026
    10. Operational Considerations  . . . . . . . . . . . . . . . . .  17
      10.1.  Distributed Identity Issuance and Scaling  . . . . . . .  17
      10.2.  Mobility and Sovereign Handover (Informative)  . . . . .  17
-     10.3.  Location Anchor Hosts (Informative)  . . . . . . . . . .  17
+     10.3.  Location Anchor Hosts (Informative)  . . . . . . . . . .  18
    11. Policy Use (Informative)  . . . . . . . . . . . . . . . . . .  18
    12. Security Considerations . . . . . . . . . . . . . . . . . . .  18
    13. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  19
    14. Appendix - Items to Follow Up . . . . . . . . . . . . . . . .  19
      14.1.  OPEN ISSUE: IMA restart behavior . . . . . . . . . . . .  19
      14.2.  OPEN ISSUE: Location privacy options . . . . . . . . . .  19
-     14.3.  OPEN ISSUE: Proximity profiles . . . . . . . . . . . . .  19
+     14.3.  OPEN ISSUE: Proximity profiles . . . . . . . . . . . . .  20
      14.4.  OPEN ISSUE: Geotagging textual data  . . . . . . . . . .  20
      14.5.  OPEN ISSUE: Attesting geotags  . . . . . . . . . . . . .  20
    15. Appendix - Public References for Strict Data Residency
@@ -884,12 +884,12 @@ Internet-Draft                RATS-GEO-POR                    March 2026
 
 9.8.  Deployment Patterns (Informative)
 
-   Implementations commonly fall into these patterns:
+   Implementations commonly fall into the following patterns, differing
+   in how platform integrity evidence and the tpm-quote-seal are
+   collected:
 
-   *  *In-band host attestation*: Evidence collected by host software
-      (for example, Keylime-style deployments).
-   *  *Out-of-band management*: Evidence collected via a management
-      controller/BMC path (for example, iLO-class OOB management).
+
+
 
 
 
@@ -898,10 +898,30 @@ Krishnan, et al.        Expires 2 September 2026               [Page 16]
 Internet-Draft                RATS-GEO-POR                    March 2026
 
 
+   *  *In-band host attestation*: Evidence collected by host software
+      (for example, Keylime-style deployments).  The Workload Identity
+      Management Plane initiates attestation over a host-side agent; the
+      lah-bundle is assembled and sealed by software running on the
+      unified Workload Host / LAH.  This pattern is well-suited to
+      commodity servers and cloud VMs where a BMC path is not available
+      or not required.
+
+   *  *Out-of-band management*: Evidence collected via a management
+      controller / BMC path (for example, iLO-class OOB management).
+      The N_fusion nonce and attestation commands are delivered through
+      a channel that does not traverse the host OS, reducing the host's
+      ability to influence the evidence it provides.  This pattern is
+      recommended for high-assurance environments where the host OS is
+      part of the threat model.
+
    *  *Cloud-hosted attestation environments*: Provider mechanisms
       exposing measured boot and TPM-backed claims (for example, Nitro-
-      class or shielded-instance approaches, including OCI-style
-      shielded instances).
+      class enclaves or shielded VM instances).  The cloud provider
+      supplies a hardware-rooted quote that can serve as the tpm-quote-
+      seal; the geolocation claim is typically derived from the
+      provider's zone or region attestation.  Implementations SHOULD
+      verify that the provider's attestation scope satisfies the
+      geofence policy.
 
 10.  Operational Considerations
 
@@ -926,6 +946,14 @@ Internet-Draft                RATS-GEO-POR                    March 2026
    Identity Agent MUST obtain a new V-GAP bundle that reflects the new
    LAH and current residency.
 
+
+
+
+Krishnan, et al.        Expires 2 September 2026               [Page 17]
+
+Internet-Draft                RATS-GEO-POR                    March 2026
+
+
    Verifiers SHOULD treat this as a normal re-attestation event: -
    platform integrity continuity can remain stable, but - residency
    checks MUST be re-evaluated for the new anchor/boundary.
@@ -943,16 +971,6 @@ Internet-Draft                RATS-GEO-POR                    March 2026
       assist in establishing relative location; protocol details are
       deferred to future profiling work (see [[I-D.ramki-ptp-hardware-
       rooted-attestation]]).
-
-
-
-
-
-
-Krishnan, et al.        Expires 2 September 2026               [Page 17]
-
-Internet-Draft                RATS-GEO-POR                    March 2026
-
 
 11.  Policy Use (Informative)
 
@@ -981,6 +999,17 @@ Internet-Draft                RATS-GEO-POR                    March 2026
       adversarial.  Prefer multiple sources or corroboration where
       feasible, and apply conservative policy when evidence quality
       degrades.
+
+
+
+
+
+
+Krishnan, et al.        Expires 2 September 2026               [Page 18]
+
+Internet-Draft                RATS-GEO-POR                    March 2026
+
+
    *  *Relay and displacement*: When proximity mechanisms are introduced
       in future profiles, implementers should be aware that they are
       vulnerable to relay attacks and anchor displacement.  Mitigations
@@ -997,18 +1026,6 @@ Internet-Draft                RATS-GEO-POR                    March 2026
       policy stores against tampering; treat them as high-value assets.
    *  *Privacy*: Avoid unnecessary collection or retention of precise
       location.  Prefer "in-zone" proofs (ZKP) where policy permits.
-
-
-
-
-
-
-
-
-Krishnan, et al.        Expires 2 September 2026               [Page 18]
-
-Internet-Draft                RATS-GEO-POR                    March 2026
-
 
 13.  IANA Considerations
 
@@ -1041,6 +1058,14 @@ Internet-Draft                RATS-GEO-POR                    March 2026
    selects between precise location, coarse location, and ZKP-based “in-
    zone” proofs.
 
+
+
+
+Krishnan, et al.        Expires 2 September 2026               [Page 19]
+
+Internet-Draft                RATS-GEO-POR                    March 2026
+
+
 14.3.  OPEN ISSUE: Proximity profiles
 
    This document defers proximity proof mechanisms to future profiling
@@ -1056,15 +1081,6 @@ Internet-Draft                RATS-GEO-POR                    March 2026
       policies for multi-anchor deployments.
    *  Profiling the use of CAMARA-style MNO location signals as a
       proximity corroboration mechanism.
-
-
-
-
-
-Krishnan, et al.        Expires 2 September 2026               [Page 19]
-
-Internet-Draft                RATS-GEO-POR                    March 2026
-
 
 14.4.  OPEN ISSUE: Geotagging textual data
 
@@ -1097,6 +1113,15 @@ Authors' Addresses
    Email: ramkri123@gmail.com
 
 
+
+
+
+
+Krishnan, et al.        Expires 2 September 2026               [Page 20]
+
+Internet-Draft                RATS-GEO-POR                    March 2026
+
+
    Ned Smith
    Intel
    Email: ned.smith@intel.com
@@ -1114,32 +1139,7 @@ Authors' Addresses
 
    Srinivasa Addepalli
    Aryaka
-
-
-
-Krishnan, et al.        Expires 2 September 2026               [Page 20]
-
-Internet-Draft                RATS-GEO-POR                    March 2026
-
-
    Email: srinivasa.addepalli@aryaka.com
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

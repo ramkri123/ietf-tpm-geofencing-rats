@@ -434,11 +434,13 @@ For intermittent connectivity, the verifier **MAY** issue identities with extend
 
 ## Deployment Patterns (Informative)
 
-Implementations commonly fall into these patterns:
+Implementations commonly fall into the following patterns, differing in how platform integrity evidence and the `tpm-quote-seal` are collected:
 
-- **In-band host attestation**: Evidence collected by host software (for example, Keylime-style deployments).
-- **Out-of-band management**: Evidence collected via a management controller/BMC path (for example, iLO-class OOB management).
-- **Cloud-hosted attestation environments**: Provider mechanisms exposing measured boot and TPM-backed claims (for example, Nitro-class or shielded-instance approaches, including OCI-style shielded instances).
+- **In-band host attestation**: Evidence collected by host software (for example, Keylime-style deployments). The Workload Identity Management Plane initiates attestation over a host-side agent; the `lah-bundle` is assembled and sealed by software running on the unified Workload Host / LAH. This pattern is well-suited to commodity servers and cloud VMs where a BMC path is not available or not required.
+
+- **Out-of-band management**: Evidence collected via a management controller / BMC path (for example, iLO-class OOB management). The `N_fusion` nonce and attestation commands are delivered through a channel that does not traverse the host OS, reducing the host's ability to influence the evidence it provides. This pattern is recommended for high-assurance environments where the host OS is part of the threat model.
+
+- **Cloud-hosted attestation environments**: Provider mechanisms exposing measured boot and TPM-backed claims (for example, Nitro-class enclaves or shielded VM instances). The cloud provider supplies a hardware-rooted quote that can serve as the `tpm-quote-seal`; the geolocation claim is typically derived from the provider's zone or region attestation. Implementations SHOULD verify that the provider's attestation scope satisfies the geofence policy.
 
 # Operational Considerations
 

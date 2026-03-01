@@ -583,12 +583,15 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
 </section>
 
 <section anchor="deployment-patterns-informative"><name>Deployment Patterns (Informative)</name>
-<t>Implementations commonly fall into these patterns:</t>
+<t>Implementations commonly fall into the following patterns, differing in how platform integrity evidence and the <tt>tpm-quote-seal</tt> are collected:</t>
 
-<ul spacing="compact">
-<li><strong>In-band host attestation</strong>: Evidence collected by host software (for example, Keylime-style deployments).</li>
-<li><strong>Out-of-band management</strong>: Evidence collected via a management controller/BMC path (for example, iLO-class OOB management).</li>
-<li><strong>Cloud-hosted attestation environments</strong>: Provider mechanisms exposing measured boot and TPM-backed claims (for example, Nitro-class or shielded-instance approaches, including OCI-style shielded instances).</li>
+<ul>
+<li><t><strong>In-band host attestation</strong>: Evidence collected by host software (for example, Keylime-style deployments). The Workload Identity Management Plane initiates attestation over a host-side agent; the <tt>lah-bundle</tt> is assembled and sealed by software running on the unified Workload Host / LAH. This pattern is well-suited to commodity servers and cloud VMs where a BMC path is not available or not required.</t>
+</li>
+<li><t><strong>Out-of-band management</strong>: Evidence collected via a management controller / BMC path (for example, iLO-class OOB management). The <tt>N_fusion</tt> nonce and attestation commands are delivered through a channel that does not traverse the host OS, reducing the host's ability to influence the evidence it provides. This pattern is recommended for high-assurance environments where the host OS is part of the threat model.</t>
+</li>
+<li><t><strong>Cloud-hosted attestation environments</strong>: Provider mechanisms exposing measured boot and TPM-backed claims (for example, Nitro-class enclaves or shielded VM instances). The cloud provider supplies a hardware-rooted quote that can serve as the <tt>tpm-quote-seal</tt>; the geolocation claim is typically derived from the provider's zone or region attestation. Implementations SHOULD verify that the provider's attestation scope satisfies the geofence policy.</t>
+</li>
 </ul>
 </section>
 </section>

@@ -1905,7 +1905,7 @@ li > p:last-of-type:only-child {
                 <td class="text-left" rowspan="1" colspan="1">string (Base64URL)</td>
                 <td class="text-center" rowspan="1" colspan="1">Yes</td>
                 <td class="text-left" rowspan="1" colspan="1">
-                  <code>TPM2_Quote</code> produced by the AK in <code>tpm-ak</code>. Qualifying data = <code>SHA-256(JCS({tpm-ak, geolocation-id-hash, geolocation-proof-hash, privacy-technique, nonce, timestamp}))</code>. Binds all fields into a single hardware-sealed statement.</td>
+                  <code>TPM2_Quote</code> produced by the AK in <code>tpm-ak</code>. Qualifying data = <code>SHA-256(JCS({tpm-ak, geolocation-id-hash, geolocation-proof-hash, privacy-technique, nonce, timestamp, workload-identity-agent-image-digest}))</code>. Binds all fields into a single hardware-sealed statement.</td>
               </tr>
               <tr>
                 <td class="text-left" rowspan="1" colspan="1">
@@ -2018,7 +2018,7 @@ li > p:last-of-type:only-child {
 </td>
                 <td class="text-left" rowspan="1" colspan="1">string (Base64URL DER)</td>
                 <td class="text-center" rowspan="1" colspan="1">Yes</td>
-                <td class="text-left" rowspan="1" colspan="1">MNO signing certificate.</td>
+                <td class="text-left" rowspan="1" colspan="1">MNO signing certificate. Verifiers SHOULD validate this certificate chains to a known MNO root before accepting the endorsement.</td>
               </tr>
               <tr>
                 <td class="text-left" rowspan="1" colspan="1">
@@ -2062,7 +2062,7 @@ li > p:last-of-type:only-child {
 </td>
                 <td class="text-left" rowspan="1" colspan="1">string</td>
                 <td class="text-center" rowspan="1" colspan="1">Yes</td>
-                <td class="text-left" rowspan="1" colspan="1">Origin of the workload's key material (e.g., <code>tpm-app-key</code>).</td>
+                <td class="text-left" rowspan="1" colspan="1">Origin of the workload's key material (e.g., <code>"tpm-app-key"</code>). The value is implementer-defined; verifiers SHOULD treat unrecognized values as opaque strings unless policy requires specific values.</td>
               </tr>
             </tbody>
           </table>
@@ -2111,7 +2111,7 @@ li > p:last-of-type:only-child {
 </li>
             <li id="section-9.1.7-1.3">Assert <code>TPMS_ATTEST.type == TPM_ST_ATTEST_QUOTE</code><a href="#section-9.1.7-1.3" class="pilcrow">¶</a>
 </li>
-            <li id="section-9.1.7-1.4">Compute <code>expected_qd = SHA-256(JCS({tpm-ak, geolocation-id-hash, geolocation-proof-hash, privacy-technique, nonce, timestamp}))</code><a href="#section-9.1.7-1.4" class="pilcrow">¶</a>
+            <li id="section-9.1.7-1.4">Compute <code>expected_qd = SHA-256(JCS({tpm-ak, geolocation-id-hash, geolocation-proof-hash, privacy-technique, nonce, timestamp, workload-identity-agent-image-digest}))</code><a href="#section-9.1.7-1.4" class="pilcrow">¶</a>
 </li>
             <li id="section-9.1.7-1.5">Assert <code>TPMS_ATTEST.qualifyingData == expected_qd</code><a href="#section-9.1.7-1.5" class="pilcrow">¶</a>
 </li>
@@ -2252,7 +2252,7 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
 </li>
           <li class="compact" id="section-9.5-2.3">Policy violations or drift signals (e.g., firmware or inventory changes)<br><a href="#section-9.5-2.3" class="pilcrow">¶</a>
 </li>
-          <li class="compact" id="section-9.5-2.4">Failure of proximity or location evidence checks<br><a href="#section-9.5-2.4" class="pilcrow">¶</a>
+          <li class="compact" id="section-9.5-2.4">Failure of location evidence checks<br><a href="#section-9.5-2.4" class="pilcrow">¶</a>
 </li>
           <li class="compact" id="section-9.5-2.5">Explicit elevation to higher assurance policy<br><a href="#section-9.5-2.5" class="pilcrow">¶</a>
 </li>

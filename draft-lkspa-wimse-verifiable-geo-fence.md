@@ -283,7 +283,7 @@ The `lah-bundle` is a hardware-sealed evidence structure embedded as an X.509 ex
 | `geolocation-payload` | object | Yes | Inner location data. Structure depends on `privacy-technique` (see Payload Variants below). Committed to by `geolocation-proof-hash` and optionally signed by `mno-endorsement.mno-sig`. |
 | `nonce` | string (Base64URL) | Yes | N_fusion freshness nonce issued by the Workload Identity Management Plane. Chained: `HMAC(secret, n \|\| chain[n-1])`. Detects skipped/reordered attestations. |
 | `timestamp` | integer (int64) | Yes | Unix epoch seconds. Set by the LAH agent at bundle construction time. |
-| `tpm-quote-seal` | string (Base64URL) | Yes | `TPM2_Quote` produced by the AK in `tpm-ak`. Qualifying data = `SHA-256(JCS({tpm-ak, geolocation-id-hash, geolocation-proof-hash, privacy-technique, nonce, timestamp}))`. Binds all fields into a single hardware-sealed statement. |
+| `tpm-quote-seal` | string (Base64URL) | Yes | `TPM2_Quote` produced by the AK in `tpm-ak`. Qualifying data = `SHA-256(JCS({tpm-ak, geolocation-id-hash, geolocation-proof-hash, privacy-technique, nonce, timestamp, workload-identity-agent-image-digest}))`. Binds all fields into a single hardware-sealed statement. |
 | `workload-identity-agent-image-digest` | string (hex SHA-256) | Yes | SHA-256 digest of the Workload Identity Agent (SPIRE agent) binary, measured at attestation time by the Host Identity Manager (Keylime). Detects agent binary compromise on every renewal cycle. |
 
 ### geolocation-payload Variants
@@ -311,7 +311,7 @@ The `lah-bundle` is a hardware-sealed evidence structure embedded as an X.509 ex
 
 | Field | Type | Required | Description |
 |:------|:-----|:--------:|:------------|
-| `mno-key-cert` | string (Base64URL DER) | Yes | MNO signing certificate. |
+| `mno-key-cert` | string (Base64URL DER) | Yes | MNO signing certificate. Verifiers SHOULD validate this certificate chains to a known MNO root before accepting the endorsement. |
 | `mno-sig` | string (Base64URL) | Yes | ECDSA/EdDSA signature over `JCS(geolocation-payload)` only. The MNO attests location within carrier visibility — does not sign host fields (`tpm-ak`, `nonce`, `tpm-quote-seal`). |
 
 ### workload (Top-Level Sibling)
@@ -319,7 +319,7 @@ The `lah-bundle` is a hardware-sealed evidence structure embedded as an X.509 ex
 | Field | Type | Required | Description |
 |:------|:-----|:--------:|:------------|
 | `workload-id` | string (SPIFFE ID) | Yes | The workload's SPIFFE identity URI (e.g., `spiffe://example.org/python-app`). |
-| `key-source` | string | Yes | Origin of the workload's key material (e.g., `tpm-app-key`). |
+| `key-source` | string | Yes | Origin of the workload's key material (e.g., `"tpm-app-key"`). The value is implementer-defined; verifiers SHOULD treat unrecognized values as opaque strings unless policy requires specific values. |
 
 ### Sensor Type Input Recipes (Opaque to Verifier)
 
@@ -335,7 +335,7 @@ The verifier sees only the opaque hash — never the raw identifiers.
 1. Decode `tpm-quote-seal` (Base64URL → bytes)
 2. Parse `TPMS_ATTEST` structure
 3. Assert `TPMS_ATTEST.type == TPM_ST_ATTEST_QUOTE`
-4. Compute `expected_qd = SHA-256(JCS({tpm-ak, geolocation-id-hash, geolocation-proof-hash, privacy-technique, nonce, timestamp}))`
+4. Compute `expected_qd = SHA-256(JCS({tpm-ak, geolocation-id-hash, geolocation-proof-hash, privacy-technique, nonce, timestamp, workload-identity-agent-image-digest}))`
 5. Assert `TPMS_ATTEST.qualifyingData == expected_qd`
 6. Verify signature over `TPMS_ATTEST` bytes using `tpm-ak` public key (RSASSA-PKCS1-v1_5 or ECDSA)
 
@@ -415,7 +415,7 @@ Credential activation (e.g., `TPM2_MakeCredential`) is expensive to run on every
 - Initial onboarding  
 - Reboot / reset detection (e.g., TPM clock/reset counters)  
 - Policy violations or drift signals (e.g., firmware or inventory changes)  
-- Failure of proximity or location evidence checks  
+- Failure of location evidence checks  
 - Explicit elevation to higher assurance policy  
 
 Between full activations, verifiers **MAY** accept fresh quotes from registered AKs as proof of continued compliance, subject to policy.

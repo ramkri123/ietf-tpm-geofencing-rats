@@ -119,34 +119,34 @@ Internet-Draft                RATS-GEO-POR                    March 2026
        9.1.3.  geolocation-payload Variants  . . . . . . . . . . . .  12
        9.1.4.  mno-endorsement (Optional, Top-Level Sibling) . . . .  13
        9.1.5.  workload (Top-Level Sibling)  . . . . . . . . . . . .  13
-       9.1.6.  Sensor Type Input Recipes (Opaque to Verifier)  . . .  13
+       9.1.6.  Sensor Type Input Recipes (Opaque to Verifier)  . . .  14
        9.1.7.  TPM Quote Verification Procedure  . . . . . . . . . .  14
        9.1.8.  Example Instance (privacy-technique = "zkp")  . . . .  14
-       9.1.9.  Nonce Chain and Merkle Audit Log  . . . . . . . . . .  14
+       9.1.9.  Nonce Chain and Merkle Audit Log  . . . . . . . . . .  15
      9.2.  Scalable Fleet Management . . . . . . . . . . . . . . . .  15
-     9.3.  Key Registry and Synchronization  . . . . . . . . . . . .  15
-     9.4.  Key Rotation  . . . . . . . . . . . . . . . . . . . . . .  15
-       9.4.1.  Example Rotation Proof (Informative)  . . . . . . . .  15
+     9.3.  Key Registry and Synchronization  . . . . . . . . . . . .  16
+     9.4.  Key Rotation  . . . . . . . . . . . . . . . . . . . . . .  16
+       9.4.1.  Example Rotation Proof (Informative)  . . . . . . . .  16
      9.5.  Credential Activation and Re-Verification . . . . . . . .  16
      9.6.  Revocation and Health Signals . . . . . . . . . . . . . .  16
-     9.7.  Disconnected Operation (Leased Identity)  . . . . . . . .  16
-     9.8.  Deployment Patterns (Informative) . . . . . . . . . . . .  16
-   10. Operational Considerations  . . . . . . . . . . . . . . . . .  17
-     10.1.  Distributed Identity Issuance and Scaling  . . . . . . .  17
+     9.7.  Disconnected Operation (Leased Identity)  . . . . . . . .  17
+     9.8.  Deployment Patterns (Informative) . . . . . . . . . . . .  17
+   10. Operational Considerations  . . . . . . . . . . . . . . . . .  18
+     10.1.  Distributed Identity Issuance and Scaling  . . . . . . .  18
      10.2.  Mobility and Sovereign Handover (Informative)  . . . . .  18
      10.3.  Location Anchor Hosts (Informative)  . . . . . . . . . .  18
-   11. Policy Use (Informative)  . . . . . . . . . . . . . . . . . .  18
-   12. Security Considerations . . . . . . . . . . . . . . . . . . .  18
-   13. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  19
-   14. Appendix - Items to Follow Up . . . . . . . . . . . . . . . .  19
-     14.1.  OPEN ISSUE: IMA restart behavior . . . . . . . . . . . .  19
+   11. Policy Use (Informative)  . . . . . . . . . . . . . . . . . .  19
+   12. Security Considerations . . . . . . . . . . . . . . . . . . .  19
+   13. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  20
+   14. Appendix - Items to Follow Up . . . . . . . . . . . . . . . .  20
+     14.1.  OPEN ISSUE: IMA restart behavior . . . . . . . . . . . .  20
      14.2.  OPEN ISSUE: Location privacy options . . . . . . . . . .  20
      14.3.  OPEN ISSUE: Proximity profiles . . . . . . . . . . . . .  20
-     14.4.  OPEN ISSUE: Geotagging textual data  . . . . . . . . . .  20
-     14.5.  OPEN ISSUE: Attesting geotags  . . . . . . . . . . . . .  20
+     14.4.  OPEN ISSUE: Geotagging textual data  . . . . . . . . . .  21
+     14.5.  OPEN ISSUE: Attesting geotags  . . . . . . . . . . . . .  21
    15. Appendix - Public References for Strict Data Residency
-           Rules . . . . . . . . . . . . . . . . . . . . . . . . . .  20
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  20
+           Rules . . . . . . . . . . . . . . . . . . . . . . . . . .  21
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  21
 
 1.  Introduction
 
@@ -508,52 +508,52 @@ Internet-Draft                RATS-GEO-POR                    March 2026
 
 9.1.2.  lah-bundle Fields
 
-   +==============+=============+==========+==========================+
-   | Field        | Type        | Required | Description              |
-   +==============+=============+==========+==========================+
-   | tpm-ak       | string      |   Yes    | TPM Attestation Key      |
-   |              | (Base64URL) |          | public key (PEM-         |
-   |              |             |          | encoded).  Hardware      |
-   |              |             |          | identity anchor.  The    |
-   |              |             |          | TPM enforces that only   |
-   |              |             |          | this key can produce     |
-   |              |             |          | tpm-quote-seal — proving |
-   |              |             |          | co-residency.            |
-   +--------------+-------------+----------+--------------------------+
-   | geolocation- | string      |   Yes    | SHA-256(tpm-ak-bytes     |
-   | id-hash      | (Base64URL) |          | \|\| sensor-unique-id-   |
-   |              |             |          | bytes).  Binds TPM       |
-   |              |             |          | identity to sensor       |
-   |              |             |          | identity without         |
-   |              |             |          | exposing IMEI/IMSI/      |
-   |              |             |          | serial.  Input recipe is |
-   |              |             |          | an agent implementation  |
-   |              |             |          | detail (see Sensor Types |
-   |              |             |          | below).                  |
-   +--------------+-------------+----------+--------------------------+
-   | geolocation- | string      |   Yes    | SHA-256 commitment over  |
-   | proof-hash   | (Base64URL) |          | geolocation-payload.     |
-   |              |             |          | Required in both privacy |
-   |              |             |          | modes.  When privacy-    |
-   |              |             |          | technique=zkp: SHA-      |
-   |              |             |          | 256(zkp-proof-bytes).    |
-   |              |             |          | When privacy-            |
-   |              |             |          | technique=none: SHA-     |
-   |              |             |          | 256(JCS({lat, lon,       |
-   |              |             |          | accuracy})).             |
-   +--------------+-------------+----------+--------------------------+
-   | privacy-     | string enum |   Yes    | "none" = raw lat/lon/    |
-   | technique    |             |          | accuracy in payload.     |
-   |              |             |          | "zkp" = zero-knowledge   |
-   |              |             |          | proof URI in payload.    |
-   |              |             |          | Controls location        |
-   |              |             |          | privacy only; device     |
-   |              |             |          | identity privacy is      |
-   |              |             |          | always protected via     |
-   |              |             |          | geolocation-id-hash.     |
-   +--------------+-------------+----------+--------------------------+
-   | geolocation- | object      |   Yes    | Inner location data.     |
-   | payload      |             |          | Structure depends on     |
+    +==============+=============+==========+=========================+
+    | Field        | Type        | Required | Description             |
+    +==============+=============+==========+=========================+
+    | tpm-ak       | string      |   Yes    | TPM Attestation Key     |
+    |              | (Base64URL) |          | public key (PEM-        |
+    |              |             |          | encoded).  Hardware     |
+    |              |             |          | identity anchor.  The   |
+    |              |             |          | TPM enforces that only  |
+    |              |             |          | this key can produce    |
+    |              |             |          | tpm-quote-seal —        |
+    |              |             |          | proving co-residency.   |
+    +--------------+-------------+----------+-------------------------+
+    | geolocation- | string      |   Yes    | SHA-256(tpm-ak-bytes    |
+    | id-hash      | (Base64URL) |          | \|\| sensor-unique-id-  |
+    |              |             |          | bytes).  Binds TPM      |
+    |              |             |          | identity to sensor      |
+    |              |             |          | identity without        |
+    |              |             |          | exposing IMEI/IMSI/     |
+    |              |             |          | serial.  Input recipe   |
+    |              |             |          | is an agent             |
+    |              |             |          | implementation detail   |
+    |              |             |          | (see Sensor Types       |
+    |              |             |          | below).                 |
+    +--------------+-------------+----------+-------------------------+
+    | geolocation- | string      |   Yes    | SHA-256 commitment over |
+    | proof-hash   | (Base64URL) |          | geolocation-payload.    |
+    |              |             |          | Required in both        |
+    |              |             |          | privacy modes.  When    |
+    |              |             |          | privacy-technique=zkp:  |
+    |              |             |          | SHA-256(zkp-proof-      |
+    |              |             |          | bytes).  When privacy-  |
+    |              |             |          | technique=none: SHA-    |
+    |              |             |          | 256(JCS({lat, lon,      |
+    |              |             |          | accuracy})).            |
+    +--------------+-------------+----------+-------------------------+
+    | privacy-     | string enum |   Yes    | "none" = raw lat/lon/   |
+    | technique    |             |          | accuracy in payload.    |
+    |              |             |          | "zkp" = zero-knowledge  |
+    |              |             |          | proof URI in payload.   |
+    |              |             |          | Controls location       |
+    |              |             |          | privacy only; device    |
+    |              |             |          | identity privacy is     |
+    |              |             |          | always protected via    |
+    |              |             |          | geolocation-id-hash.    |
+    +--------------+-------------+----------+-------------------------+
+    | geolocation- | object      |   Yes    | Inner location data.    |
 
 
 
@@ -562,53 +562,53 @@ Krishnan, et al.        Expires 2 September 2026               [Page 10]
 Internet-Draft                RATS-GEO-POR                    March 2026
 
 
-   |              |             |          | privacy-technique (see   |
-   |              |             |          | Payload Variants below). |
-   |              |             |          | Committed to by          |
-   |              |             |          | geolocation-proof-hash   |
-   |              |             |          | and optionally signed by |
-   |              |             |          | mno-endorsement.mno-sig. |
-   +--------------+-------------+----------+--------------------------+
-   | nonce        | string      |   Yes    | N_fusion freshness nonce |
-   |              | (Base64URL) |          | issued by the Workload   |
-   |              |             |          | Identity Management      |
-   |              |             |          | Plane.  Chained:         |
-   |              |             |          | HMAC(secret, n \|\|      |
-   |              |             |          | chain[n-1]).  Detects    |
-   |              |             |          | skipped/reordered        |
-   |              |             |          | attestations.            |
-   +--------------+-------------+----------+--------------------------+
-   | timestamp    | integer     |   Yes    | Unix epoch seconds.  Set |
-   |              | (int64)     |          | by the LAH agent at      |
-   |              |             |          | bundle construction      |
-   |              |             |          | time.                    |
-   +--------------+-------------+----------+--------------------------+
-   | tpm-quote-   | string      |   Yes    | TPM2_Quote produced by   |
-   | seal         | (Base64URL) |          | the AK in tpm-ak.        |
-   |              |             |          | Qualifying data = SHA-   |
-   |              |             |          | 256(JCS({tpm-ak,         |
-   |              |             |          | geolocation-id-hash,     |
-   |              |             |          | geolocation-proof-hash,  |
-   |              |             |          | privacy-technique,       |
-   |              |             |          | nonce, timestamp})).     |
-   |              |             |          | Binds all fields into a  |
-   |              |             |          | single hardware-sealed   |
-   |              |             |          | statement.               |
-   +--------------+-------------+----------+--------------------------+
-   | workload-    | string (hex |   Yes    | SHA-256 digest of the    |
-   | identity-    | SHA-256)    |          | Workload Identity Agent  |
-   | agent-image- |             |          | (SPIRE agent) binary,    |
-   | digest       |             |          | measured at attestation  |
-   |              |             |          | time by the Host         |
-   |              |             |          | Identity Manager         |
-   |              |             |          | (Keylime).  Detects      |
-   |              |             |          | agent binary compromise  |
-   |              |             |          | on every renewal cycle.  |
-   +--------------+-------------+----------+--------------------------+
-
-                                 Table 2
-
-
+    | payload      |             |          | Structure depends on    |
+    |              |             |          | privacy-technique (see  |
+    |              |             |          | Payload Variants        |
+    |              |             |          | below).  Committed to   |
+    |              |             |          | by geolocation-proof-   |
+    |              |             |          | hash and optionally     |
+    |              |             |          | signed by mno-          |
+    |              |             |          | endorsement.mno-sig.    |
+    +--------------+-------------+----------+-------------------------+
+    | nonce        | string      |   Yes    | N_fusion freshness      |
+    |              | (Base64URL) |          | nonce issued by the     |
+    |              |             |          | Workload Identity       |
+    |              |             |          | Management Plane.       |
+    |              |             |          | Chained: HMAC(secret, n |
+    |              |             |          | \|\| chain[n-1]).       |
+    |              |             |          | Detects skipped/        |
+    |              |             |          | reordered attestations. |
+    +--------------+-------------+----------+-------------------------+
+    | timestamp    | integer     |   Yes    | Unix epoch seconds.     |
+    |              | (int64)     |          | Set by the LAH agent at |
+    |              |             |          | bundle construction     |
+    |              |             |          | time.                   |
+    +--------------+-------------+----------+-------------------------+
+    | tpm-quote-   | string      |   Yes    | TPM2_Quote produced by  |
+    | seal         | (Base64URL) |          | the AK in tpm-ak.       |
+    |              |             |          | Qualifying data = SHA-  |
+    |              |             |          | 256(JCS({tpm-ak,        |
+    |              |             |          | geolocation-id-hash,    |
+    |              |             |          | geolocation-proof-hash, |
+    |              |             |          | privacy-technique,      |
+    |              |             |          | nonce, timestamp,       |
+    |              |             |          | workload-identity-      |
+    |              |             |          | agent-image-digest})).  |
+    |              |             |          | Binds all fields into a |
+    |              |             |          | single hardware-sealed  |
+    |              |             |          | statement.              |
+    +--------------+-------------+----------+-------------------------+
+    | workload-    | string (hex |   Yes    | SHA-256 digest of the   |
+    | identity-    | SHA-256)    |          | Workload Identity Agent |
+    | agent-image- |             |          | (SPIRE agent) binary,   |
+    | digest       |             |          | measured at attestation |
+    |              |             |          | time by the Host        |
+    |              |             |          | Identity Manager        |
+    |              |             |          | (Keylime).  Detects     |
+    |              |             |          | agent binary compromise |
+    |              |             |          | on every renewal cycle. |
+    +--------------+-------------+----------+-------------------------+
 
 
 
@@ -617,6 +617,8 @@ Krishnan, et al.        Expires 2 September 2026               [Page 11]
 
 Internet-Draft                RATS-GEO-POR                    March 2026
 
+
+                                  Table 2
 
 9.1.3.  geolocation-payload Variants
 
@@ -667,8 +669,6 @@ Internet-Draft                RATS-GEO-POR                    March 2026
 
 
 
-
-
 Krishnan, et al.        Expires 2 September 2026               [Page 12]
 
 Internet-Draft                RATS-GEO-POR                    March 2026
@@ -680,8 +680,12 @@ Internet-Draft                RATS-GEO-POR                    March 2026
    | Field        | Type        | Required | Description              |
    +==============+=============+==========+==========================+
    | mno-key-cert | string      |   Yes    | MNO signing certificate. |
-   |              | (Base64URL  |          |                          |
-   |              | DER)        |          |                          |
+   |              | (Base64URL  |          | Verifiers SHOULD         |
+   |              | DER)        |          | validate this            |
+   |              |             |          | certificate chains to a  |
+   |              |             |          | known MNO root before    |
+   |              |             |          | accepting the            |
+   |              |             |          | endorsement.             |
    +--------------+-------------+----------+--------------------------+
    | mno-sig      | string      |   Yes    | ECDSA/EdDSA signature    |
    |              | (Base64URL) |          | over JCS(geolocation-    |
@@ -697,21 +701,34 @@ Internet-Draft                RATS-GEO-POR                    March 2026
 
 9.1.5.  workload (Top-Level Sibling)
 
-       +=============+=========+==========+=======================+
-       | Field       | Type    | Required | Description           |
-       +=============+=========+==========+=======================+
-       | workload-id | string  |   Yes    | The workload's SPIFFE |
-       |             | (SPIFFE |          | identity URI (e.g.,   |
-       |             | ID)     |          | spiffe://example.org/ |
-       |             |         |          | python-app).          |
-       +-------------+---------+----------+-----------------------+
-       | key-source  | string  |   Yes    | Origin of the         |
-       |             |         |          | workload's key        |
-       |             |         |          | material (e.g., tpm-  |
-       |             |         |          | app-key).             |
-       +-------------+---------+----------+-----------------------+
+    +=============+=========+==========+==============================+
+    | Field       | Type    | Required | Description                  |
+    +=============+=========+==========+==============================+
+    | workload-id | string  |   Yes    | The workload's SPIFFE        |
+    |             | (SPIFFE |          | identity URI (e.g.,          |
+    |             | ID)     |          | spiffe://example.org/python- |
+    |             |         |          | app).                        |
+    +-------------+---------+----------+------------------------------+
+    | key-source  | string  |   Yes    | Origin of the workload's key |
+    |             |         |          | material (e.g., "tpm-app-    |
+    |             |         |          | key").  The value is         |
+    |             |         |          | implementer-defined;         |
+    |             |         |          | verifiers SHOULD treat       |
+    |             |         |          | unrecognized values as       |
+    |             |         |          | opaque strings unless policy |
+    |             |         |          | requires specific values.    |
+    +-------------+---------+----------+------------------------------+
 
-                                 Table 6
+                                  Table 6
+
+
+
+
+
+Krishnan, et al.        Expires 2 September 2026               [Page 13]
+
+Internet-Draft                RATS-GEO-POR                    March 2026
+
 
 9.1.6.  Sensor Type Input Recipes (Opaque to Verifier)
 
@@ -722,14 +739,6 @@ Internet-Draft                RATS-GEO-POR                    March 2026
       |                 | \|\| IMSI-bytes)                         |
       +-----------------+------------------------------------------+
       | GNSS receiver   | SHA-256(tpm-ak-bytes \|\| sensor-serial- |
-
-
-
-Krishnan, et al.        Expires 2 September 2026               [Page 13]
-
-Internet-Draft                RATS-GEO-POR                    March 2026
-
-
       |                 | bytes \|\| sensor-class-id-bytes)        |
       +-----------------+------------------------------------------+
 
@@ -743,12 +752,39 @@ Internet-Draft                RATS-GEO-POR                    March 2026
    2.  Parse TPMS_ATTEST structure
    3.  Assert TPMS_ATTEST.type == TPM_ST_ATTEST_QUOTE
    4.  Compute expected_qd = SHA-256(JCS({tpm-ak, geolocation-id-hash,
-       geolocation-proof-hash, privacy-technique, nonce, timestamp}))
+       geolocation-proof-hash, privacy-technique, nonce, timestamp,
+       workload-identity-agent-image-digest}))
    5.  Assert TPMS_ATTEST.qualifyingData == expected_qd
    6.  Verify signature over TPMS_ATTEST bytes using tpm-ak public key
        (RSASSA-PKCS1-v1_5 or ECDSA)
 
 9.1.8.  Example Instance (privacy-technique = "zkp")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Krishnan, et al.        Expires 2 September 2026               [Page 14]
+
+Internet-Draft                RATS-GEO-POR                    March 2026
+
 
    {
      "lah-bundle": {
@@ -777,15 +813,6 @@ Internet-Draft                RATS-GEO-POR                    March 2026
 
 9.1.9.  Nonce Chain and Merkle Audit Log
 
-
-
-
-
-Krishnan, et al.        Expires 2 September 2026               [Page 14]
-
-Internet-Draft                RATS-GEO-POR                    March 2026
-
-
    chain[n] = SHA-256(chain[n-1] || SHA-256(JCS(bundle[n])))
    nonce[n]  = HMAC(secret, n || chain[n-1])
 
@@ -806,6 +833,14 @@ Internet-Draft                RATS-GEO-POR                    March 2026
    Large deployments need lifecycle management for the attestation keys
    referenced by V-GAP (for example, tpm-ak) and for the policies that
    authorize them.
+
+
+
+
+Krishnan, et al.        Expires 2 September 2026               [Page 15]
+
+Internet-Draft                RATS-GEO-POR                    March 2026
+
 
 9.3.  Key Registry and Synchronization
 
@@ -829,19 +864,6 @@ Internet-Draft                RATS-GEO-POR                    March 2026
 
 9.4.1.  Example Rotation Proof (Informative)
 
-
-
-
-
-
-
-
-
-Krishnan, et al.        Expires 2 September 2026               [Page 15]
-
-Internet-Draft                RATS-GEO-POR                    March 2026
-
-
    {
     "new-ak-pub": "Base64URL_Encoded_Public_Key",
     "serial-number": "AK_Serial_XYZ",
@@ -859,13 +881,22 @@ Internet-Draft                RATS-GEO-POR                    March 2026
    *  Reboot / reset detection (e.g., TPM clock/reset counters)
    *  Policy violations or drift signals (e.g., firmware or inventory
       changes)
-   *  Failure of proximity or location evidence checks
+   *  Failure of location evidence checks
    *  Explicit elevation to higher assurance policy
 
    Between full activations, verifiers MAY accept fresh quotes from
    registered AKs as proof of continued compliance, subject to policy.
 
 9.6.  Revocation and Health Signals
+
+
+
+
+
+Krishnan, et al.        Expires 2 September 2026               [Page 16]
+
+Internet-Draft                RATS-GEO-POR                    March 2026
+
 
    *  The edge plane SHOULD maintain a per-node health signal (e.g.,
       tamper, firmware policy violations).
@@ -887,16 +918,6 @@ Internet-Draft                RATS-GEO-POR                    March 2026
    Implementations commonly fall into the following patterns, differing
    in how platform integrity evidence and the tpm-quote-seal are
    collected:
-
-
-
-
-
-
-Krishnan, et al.        Expires 2 September 2026               [Page 16]
-
-Internet-Draft                RATS-GEO-POR                    March 2026
-
 
    *  *In-band host attestation*: Evidence collected by host software
       (for example, Keylime-style deployments).  In this pattern, the
@@ -923,6 +944,16 @@ Internet-Draft                RATS-GEO-POR                    March 2026
       high-assurance environments where the host OS is part of the
       threat model.
 
+
+
+
+
+
+Krishnan, et al.        Expires 2 September 2026               [Page 17]
+
+Internet-Draft                RATS-GEO-POR                    March 2026
+
+
    *  *Cloud-hosted attestation environments*: Provider mechanisms
       exposing measured boot and TPM-backed claims (for example, Nitro-
       class enclaves or shielded VM instances).  The cloud provider
@@ -945,15 +976,6 @@ Internet-Draft                RATS-GEO-POR                    March 2026
    *  *Scoping*: Issued identities SHOULD be scoped so they are not
       accepted outside the intended deployment boundary (for example,
       via trust bundle partitioning and policy).
-
-
-
-
-Krishnan, et al.        Expires 2 September 2026               [Page 17]
-
-Internet-Draft                RATS-GEO-POR                    March 2026
-
-
    *  *Renewal gating*: Issuers SHOULD renew short-lived identities only
       when the verifier result for integrity and residency is valid for
       the requested freshness window.
@@ -976,6 +998,18 @@ Internet-Draft                RATS-GEO-POR                    March 2026
       as an LAH for a nearby client device.  The mechanism by which the
       anchor establishes its own location (and any proximity evidence it
       may provide) is out of scope for this document.
+
+
+
+
+
+
+
+Krishnan, et al.        Expires 2 September 2026               [Page 18]
+
+Internet-Draft                RATS-GEO-POR                    March 2026
+
+
    *  *Data center anchors*: A small set of hosts can act as LAHs for a
       cluster.  Timing-based mechanisms (for example, PTP-derived) may
       assist in establishing relative location; protocol details are
@@ -1002,14 +1036,6 @@ Internet-Draft                RATS-GEO-POR                    March 2026
    tokens by making integrity and residency verifiable.  Implementers
    still need to address:
 
-
-
-
-Krishnan, et al.        Expires 2 September 2026               [Page 18]
-
-Internet-Draft                RATS-GEO-POR                    March 2026
-
-
    *  *Replay and mix-and-match*: Use nonces and stapling so old
       location evidence cannot be combined with a fresh platform quote
       (or vice versa).
@@ -1031,6 +1057,15 @@ Internet-Draft                RATS-GEO-POR                    March 2026
       revocation) when clocks drift or evidence is stale.
    *  *Registry and allowlist integrity*: Protect key registries and
       policy stores against tampering; treat them as high-value assets.
+
+
+
+
+Krishnan, et al.        Expires 2 September 2026               [Page 19]
+
+Internet-Draft                RATS-GEO-POR                    March 2026
+
+
    *  *Privacy*: Avoid unnecessary collection or retention of precise
       location.  Prefer "in-zone" proofs (ZKP) where policy permits.
 
@@ -1059,13 +1094,6 @@ Internet-Draft                RATS-GEO-POR                    March 2026
    Agent restarts without requiring a host reboot, while preserving
    measurement integrity.
 
-
-
-Krishnan, et al.        Expires 2 September 2026               [Page 19]
-
-Internet-Draft                RATS-GEO-POR                    March 2026
-
-
 14.2.  OPEN ISSUE: Location privacy options
 
    Clarify the set of supported privacy techniques and how policy
@@ -1085,6 +1113,15 @@ Internet-Draft                RATS-GEO-POR                    March 2026
    *  Addressing relay and displacement threats, including RTT-based
       acceptance windows, anchor health attestation, and disagreement
       policies for multi-anchor deployments.
+
+
+
+
+Krishnan, et al.        Expires 2 September 2026               [Page 20]
+
+Internet-Draft                RATS-GEO-POR                    March 2026
+
+
    *  Profiling the use of CAMARA-style MNO location signals as a
       proximity corroboration mechanism.
 
@@ -1114,14 +1151,6 @@ Internet-Draft                RATS-GEO-POR                    March 2026
 
 Authors' Addresses
 
-
-
-
-Krishnan, et al.        Expires 2 September 2026               [Page 20]
-
-Internet-Draft                RATS-GEO-POR                    March 2026
-
-
    Ram Krishnan
    JPMorgan Chase & Co.
    Email: ramkri123@gmail.com
@@ -1140,6 +1169,13 @@ Internet-Draft                RATS-GEO-POR                    March 2026
    A Prasad
    Oracle
    Email: a.prasad@oracle.com
+
+
+
+
+Krishnan, et al.        Expires 2 September 2026               [Page 21]
+
+Internet-Draft                RATS-GEO-POR                    March 2026
 
 
    Srinivasa Addepalli
@@ -1173,4 +1209,24 @@ Internet-Draft                RATS-GEO-POR                    March 2026
 
 
 
-Krishnan, et al.        Expires 2 September 2026               [Page 21]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Krishnan, et al.        Expires 2 September 2026               [Page 22]

@@ -291,7 +291,7 @@
 <td align="left"><tt>tpm-quote-seal</tt></td>
 <td align="left">string (Base64URL)</td>
 <td align="center">Yes</td>
-<td align="left"><tt>TPM2_Quote</tt> produced by the AK in <tt>tpm-ak</tt>. Qualifying data = <tt>SHA-256(JCS({tpm-ak, geolocation-id-hash, geolocation-proof-hash, privacy-technique, nonce, timestamp}))</tt>. Binds all fields into a single hardware-sealed statement.</td>
+<td align="left"><tt>TPM2_Quote</tt> produced by the AK in <tt>tpm-ak</tt>. Qualifying data = <tt>SHA-256(JCS({tpm-ak, geolocation-id-hash, geolocation-proof-hash, privacy-technique, nonce, timestamp, workload-identity-agent-image-digest}))</tt>. Binds all fields into a single hardware-sealed statement.</td>
 </tr>
 
 <tr>
@@ -383,7 +383,7 @@
 <td align="left"><tt>mno-key-cert</tt></td>
 <td align="left">string (Base64URL DER)</td>
 <td align="center">Yes</td>
-<td align="left">MNO signing certificate.</td>
+<td align="left">MNO signing certificate. Verifiers SHOULD validate this certificate chains to a known MNO root before accepting the endorsement.</td>
 </tr>
 
 <tr>
@@ -418,7 +418,7 @@
 <td align="left"><tt>key-source</tt></td>
 <td align="left">string</td>
 <td align="center">Yes</td>
-<td align="left">Origin of the workload's key material (e.g., <tt>tpm-app-key</tt>).</td>
+<td align="left">Origin of the workload's key material (e.g., <tt>&quot;tpm-app-key&quot;</tt>). The value is implementer-defined; verifiers SHOULD treat unrecognized values as opaque strings unless policy requires specific values.</td>
 </tr>
 </tbody>
 </table></section>
@@ -452,7 +452,7 @@
 <li>Decode <tt>tpm-quote-seal</tt> (Base64URL → bytes)</li>
 <li>Parse <tt>TPMS_ATTEST</tt> structure</li>
 <li>Assert <tt>TPMS_ATTEST.type == TPM_ST_ATTEST_QUOTE</tt></li>
-<li>Compute <tt>expected_qd = SHA-256(JCS({tpm-ak, geolocation-id-hash, geolocation-proof-hash, privacy-technique, nonce, timestamp}))</tt></li>
+<li>Compute <tt>expected_qd = SHA-256(JCS({tpm-ak, geolocation-id-hash, geolocation-proof-hash, privacy-technique, nonce, timestamp, workload-identity-agent-image-digest}))</tt></li>
 <li>Assert <tt>TPMS_ATTEST.qualifyingData == expected_qd</tt></li>
 <li>Verify signature over <tt>TPMS_ATTEST</tt> bytes using <tt>tpm-ak</tt> public key (RSASSA-PKCS1-v1_5 or ECDSA)</li>
 </ol>
@@ -557,7 +557,7 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
 </li>
 <li>Policy violations or drift signals (e.g., firmware or inventory changes)<br />
 </li>
-<li>Failure of proximity or location evidence checks<br />
+<li>Failure of location evidence checks<br />
 </li>
 <li>Explicit elevation to higher assurance policy<br />
 </li>

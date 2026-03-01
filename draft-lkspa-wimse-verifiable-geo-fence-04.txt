@@ -899,12 +899,16 @@ Internet-Draft                RATS-GEO-POR                    March 2026
 
 
    *  *In-band host attestation*: Evidence collected by host software
-      (for example, Keylime-style deployments).  The Workload Identity
-      Management Plane initiates attestation over a host-side agent; the
-      lah-bundle is assembled and sealed by software running on the
-      unified Workload Host / LAH.  This pattern is well-suited to
-      commodity servers and cloud VMs where a BMC path is not available
-      or not required.
+      (for example, Keylime-style deployments).  In this pattern, the
+      Workload Identity Management Plane (for example, SPIRE Server)
+      generates N_fusion and shares it with the Host Identity Management
+      Plane (for example, Keylime Server) over a server-to-server
+      channel.  The Host Identity Management Plane then delivers
+      N_fusion to the Keylime agent running on the host, which collects
+      TPM and geolocation evidence, assembles the lah-bundle, and
+      returns it via the host-side channel.  This pattern is well-suited
+      to commodity servers and cloud VMs where a BMC path is not
+      available or not required.
 
    *  *Out-of-band management*: Evidence collected via a management
       controller / BMC path (for example, iLO-class OOB management such
@@ -941,10 +945,6 @@ Internet-Draft                RATS-GEO-POR                    March 2026
    *  *Scoping*: Issued identities SHOULD be scoped so they are not
       accepted outside the intended deployment boundary (for example,
       via trust bundle partitioning and policy).
-   *  *Renewal gating*: Issuers SHOULD renew short-lived identities only
-      when the verifier result for integrity and residency is valid for
-      the requested freshness window.
-
 
 
 
@@ -953,6 +953,10 @@ Krishnan, et al.        Expires 2 September 2026               [Page 17]
 
 Internet-Draft                RATS-GEO-POR                    March 2026
 
+
+   *  *Renewal gating*: Issuers SHOULD renew short-lived identities only
+      when the verifier result for integrity and residency is valid for
+      the requested freshness window.
 
 10.2.  Mobility and Sovereign Handover (Informative)
 
@@ -998,10 +1002,6 @@ Internet-Draft                RATS-GEO-POR                    March 2026
    tokens by making integrity and residency verifiable.  Implementers
    still need to address:
 
-   *  *Replay and mix-and-match*: Use nonces and stapling so old
-      location evidence cannot be combined with a fresh platform quote
-      (or vice versa).
-
 
 
 
@@ -1010,6 +1010,9 @@ Krishnan, et al.        Expires 2 September 2026               [Page 18]
 Internet-Draft                RATS-GEO-POR                    March 2026
 
 
+   *  *Replay and mix-and-match*: Use nonces and stapling so old
+      location evidence cannot be combined with a fresh platform quote
+      (or vice versa).
    *  *Location spoofing*: Treat sensor and network inputs as
       adversarial.  Prefer multiple sources or corroboration where
       feasible, and apply conservative policy when evidence quality
@@ -1055,9 +1058,6 @@ Internet-Draft                RATS-GEO-POR                    March 2026
    Define an interoperable way to detect and handle Workload Identity
    Agent restarts without requiring a host reboot, while preserving
    measurement integrity.
-
-
-
 
 
 

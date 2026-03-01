@@ -149,7 +149,7 @@ Location Anchor Host (LAH):
 : Trusted host or device that produces location evidence used to establish residency within a geofence.
 
 Workload Host:
-: Physical or virtual machine running the Workload Identity Agent and workloads; produces platform (outer) evidence. In the unified deployment model, the Workload Host is assumed to be co-located with the Location Anchor Host.
+: Physical or virtual machine running the Workload Identity Agent and workloads; produces platform evidence. Unless otherwise stated, this document assumes the unified deployment model in which the Workload Host and the Location Anchor Host (LAH) are the same machine.
 
 Composite Geolocation:
 : Location estimate fused from multiple sources and accompanied by a quality indicator.

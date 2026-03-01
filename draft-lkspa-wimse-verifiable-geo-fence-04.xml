@@ -82,7 +82,7 @@
 <dt>Location Anchor Host (LAH):</dt>
 <dd>Trusted host or device that produces location evidence used to establish residency within a geofence.</dd>
 <dt>Workload Host:</dt>
-<dd>Physical or virtual machine running the Workload Identity Agent and workloads; produces platform (outer) evidence. In the unified deployment model, the Workload Host is assumed to be co-located with the Location Anchor Host.</dd>
+<dd>Physical or virtual machine running the Workload Identity Agent and workloads; produces platform evidence. Unless otherwise stated, this document assumes the unified deployment model in which the Workload Host and the Location Anchor Host (LAH) are the same machine.</dd>
 <dt>Composite Geolocation:</dt>
 <dd>Location estimate fused from multiple sources and accompanied by a quality indicator.</dd>
 <dt>Proof of Residency (PoR) / Co-location:</dt>

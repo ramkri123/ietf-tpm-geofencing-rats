@@ -90,7 +90,7 @@ organization = "Independent"
 
 .# Abstract
 
-Modern cloud and distributed computing rely heavily on software-only identities and bearer tokens that are easily stolen, replayed, or used from unauthorized locations. Furthermore, traditional methods of location verification - such as IP-address-based geolocation - are easily spoofed via VPNs or proxies and significantly compromises infrastructure security and privacy for **Sovereign Workloads** and high-assurance environments. This document defines a **High-Assurance Profile** designed to solve these challenges through hardware-rooted cryptographic verifiability. 
+Modern cloud and distributed computing rely heavily on software-only identities and bearer tokens that are easily stolen, replayed, or used from unauthorized locations. Furthermore, traditional methods of location verification - such as IP-address-based geolocation - are easily spoofed via VPNs or proxies and significantly compromise infrastructure security and privacy for **Sovereign Workloads** and high-assurance environments. This document defines a **High-Assurance Profile** designed to solve these challenges through hardware-rooted cryptographic verifiability.
 
 A host machine runs a workload identity agent for managing the workload identities on that platform. This proposal replaces implicit trust and spoofable indicators with cryptographically verifiable hardware-rooted evidence of integrity and location for this agent. Critically, this framework prioritizes **Location Privacy** by utilizing Zero-Knowledge Proofs (ZKP), allowing a workload to prove it is within a compliant "Sovereign Zone" without disclosing precise coordinates that could be used for tracking or exploitation.
 
@@ -104,12 +104,11 @@ The **Workload Identity Agent** (e.g., SPIRE Agent) acts as the local-on-host in
 
 The architecture follows the **RATS Architecture [[RFC9334]]**, defining the interactions between **Provers**, **Verifiers**, and **Relying Parties** to generate and validate **High-Confidence Evidence** regarding the **Workload Identity Agent's** status. It provides the hardware-rooted "Evidence Layer" required by the high-level **WIMSE Architecture [[I-D.ietf-wimse-architecture]]**, establishing a **"Silicon-to-Workload"** chain of trust that ensures sensitive data is only processed by authorized workloads in approved, integral environments.
 
-To maintain **Location Privacy** while providing cryptographic verifiability, this profile leverages **Transparent Zero-Knowledge Proofs (ZKPs)**. Unlike traditional ZKP systems, transparent ZKPs require no "Trusted Third Party" or complex "Trusted Setup" phase. They achieved mathematical transparency through non-interactive, hash-based protocols, allowing a platform to prove it is resident within an approved geographic boundary without disclosing the exact coordinates of the underlying hardware.
+To maintain **Location Privacy** while providing cryptographic verifiability, this profile leverages **Transparent Zero-Knowledge Proofs (ZKPs)**. Unlike traditional ZKP systems, transparent ZKPs require no "Trusted Third Party" or complex "Trusted Setup" phase. They achieve mathematical transparency through non-interactive, hash-based protocols, allowing a platform to prove it is resident within an approved geographic boundary without disclosing the exact coordinates of the underlying hardware.
 
 # Conventions and Definitions
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 [[RFC2119]] [[RFC8174]] when, and only when, they appear in all capitals, as shown here.
-
 
 
 ## Abbreviations
@@ -150,7 +149,7 @@ Location Anchor Host (LAH):
 : Trusted host or device that produces location evidence used to establish residency within a geofence.
 
 Workload Host:
-: Physical or virtual machine running the Workload Identity Agent and workloads; produces platform (outer) evidence. For now, we assume the Workload Host is the same as the Location Anchor Host.
+: Physical or virtual machine running the Workload Identity Agent and workloads; produces platform (outer) evidence. In the unified deployment model, the Workload Host is assumed to be co-located with the Location Anchor Host.
 
 Composite Geolocation:
 : Location estimate fused from multiple sources and accompanied by a quality indicator.
@@ -182,33 +181,34 @@ N_fusion (Workload Fusion Nonce):
 # Use Cases
 
 This profile supports attested data residency and geofencing for workloads and (optionally) users. Common use cases fall into: server-centric enforcement, user-centric enforcement, and compliance and risk reduction.
+
 ## Server-centric Enforcement
 
 Enterprises need cryptographic proof that workloads run only on approved hosts within an approved geographic boundary, and that data flows only between approved boundaries.
 
+- **Workload-to-workload (general):** Relying parties accept workload identities only when the issuing host attests platform integrity and "in-zone" residency, preventing credentials from being used outside the approved boundary.
 
-Workload-to-workload (general): Relying parties accept workload identities only when the issuing host attests platform integrity and “in-zone” residency, preventing credentials from being used outside the approved boundary.
+- **Agentic AI workloads:** An AI agent may access sensitive data or perform sensitive actions only when its Workload Identity Agent presents hardware-rooted integrity evidence and a verifiable "in-zone" proof (optionally privacy-preserving), binding identity to both platform state and residency.
 
-Agentic AI workloads: An AI agent may access sensitive data or perform sensitive actions only when its Workload Identity Agent presents hardware-rooted integrity evidence and a verifiable “in-zone” proof (optionally privacy-preserving), binding identity to both platform state and residency.
+- **Federated / edge AI (key or model release):** High-value artifacts (e.g., decryption keys or model weights in federated learning) are released only when the partner/edge host attests it is integral and resident within the required boundary. This is useful for intermittently connected sites.
 
-Federated / edge AI (key or model release): High-value artifacts (e.g., decryption keys or model weights in federated learning) are released only when the partner/edge host attests it is integral and resident within the required boundary. This is useful for intermittently connected sites.
-
-User-to-server: Clients validate that the server endpoint is operating within an approved boundary (e.g., by policy tied to the server’s attested identity and residency evidence).
+- **User-to-server:** Clients validate that the server endpoint is operating within an approved boundary (e.g., by policy tied to the server's attested identity and residency evidence).
 
 
-## User-centric enforcement
+## User-centric Enforcement
+
 Enterprises may also need trustworthy location signals for user-facing access decisions.
-Geofenced access control: User access is permitted only when the user (or user device) proves it is within an allowed boundary, ideally without requiring precise location disclosure.
+
+- **Geofenced access control:** User access is permitted only when the user (or user device) proves it is within an allowed boundary, ideally without requiring precise location disclosure.
+
+- **On-premises boundaries:** Customer-premises equipment can define an enterprise boundary, with a network or enterprise infrastructure providing supporting evidence for policy enforcement.
+
+- **Restricted support geographies:** Administrative or support actions can be allowed only when the operator proves presence within allowed geographies, reducing policy and insider-risk exposure.
 
 
-On-premises boundaries: Customer-premises equipment can define an enterprise boundary, with a network or enterprise infrastructure providing supporting evidence for policy enforcement.
+## Compliance and Risk Reduction
 
-
-Restricted support geographies: Administrative or support actions can be allowed only when the operator proves presence within allowed geographies, reducing policy and insider-risk exposure.
-
-
-## Compliance and risk reduction
-Geofence attestation provides audit-ready evidence to support data residency and sovereignty controls, and it can also reduce non-compliance risk from misconfiguration or spoofable signals. Even when not mandated, “in-zone” proofs help address: configuration drift, edge relocation/proxying, contractual residency requirements, and location-privacy minimization (proving “inside the zone” without storing coordinates).
+Geofence attestation provides audit-ready evidence to support data residency and sovereignty controls, and it can also reduce non-compliance risk from misconfiguration or spoofable signals. Even when not mandated, "in-zone" proofs help address: configuration drift, edge relocation/proxying, contractual residency requirements, and location-privacy minimization (proving "inside the zone" without storing coordinates).
 
 # Motivation and Gaps
 
@@ -505,7 +505,7 @@ IANA is requested to register the following Object Identifier (OID) in the "SMI 
 
 **Mandatory Criticality:** Implementations of this profile MUST mark the X.509 extension containing the V-GAP Evidence Bundle as **CRITICAL**. This ensures that non-compliant gateways fail closed rather than granting access to residency-constrained workloads.
 
-- **OID**: `1.3.6.1.4.1.60265.1.1`
+- **OID**: `1.3.6.1.4.1.55744.1.1`
 - **Description**: Verifiable Geofencing Attestation Profile (V-GAP) Evidence Bundle
 - **Reference**: This document.
 
@@ -525,7 +525,7 @@ Specify one or more proximity evidence profiles (for example, PTP-derived, BLE/U
 
 ## OPEN ISSUE: Geotagging textual data
 
-There no widely deployed standard for geotagging arbitrary textual data objects.
+There is no widely deployed standard for geotagging arbitrary textual data objects.
 
 ## OPEN ISSUE: Attesting geotags
 

@@ -25,7 +25,7 @@ Abstract
    identities and bearer tokens that are easily stolen, replayed, or
    used from unauthorized locations.  Furthermore, traditional methods
    of location verification - such as IP-address-based geolocation - are
-   easily spoofed via VPNs or proxies and significantly compromises
+   easily spoofed via VPNs or proxies and significantly compromise
    infrastructure security and privacy for *Sovereign Workloads* and
    high-assurance environments.  This document defines a *High-Assurance
    Profile* designed to solve these challenges through hardware-rooted
@@ -97,8 +97,8 @@ Table of Contents
    3.  Key Terms . . . . . . . . . . . . . . . . . . . . . . . . . .   5
    4.  Use Cases . . . . . . . . . . . . . . . . . . . . . . . . . .   5
      4.1.  Server-centric Enforcement  . . . . . . . . . . . . . . .   6
-     4.2.  User-centric enforcement  . . . . . . . . . . . . . . . .   6
-     4.3.  Compliance and risk reduction . . . . . . . . . . . . . .   7
+     4.2.  User-centric Enforcement  . . . . . . . . . . . . . . . .   6
+     4.3.  Compliance and Risk Reduction . . . . . . . . . . . . . .   7
    5.  Motivation and Gaps . . . . . . . . . . . . . . . . . . . . .   7
    6.  What This Profile Provides  . . . . . . . . . . . . . . . . .   7
    7.  Composition with Transitive Attestation and WIMSE . . . . . .   8
@@ -184,9 +184,9 @@ Internet-Draft                RATS-GEO-POR                    March 2026
    verifiability, this profile leverages *Transparent Zero-Knowledge
    Proofs (ZKPs)*. Unlike traditional ZKP systems, transparent ZKPs
    require no "Trusted Third Party" or complex "Trusted Setup" phase.
-   They achieved mathematical transparency through non-interactive,
-   hash-based protocols, allowing a platform to prove it is resident
-   within an approved geographic boundary without disclosing the exact
+   They achieve mathematical transparency through non-interactive, hash-
+   based protocols, allowing a platform to prove it is resident within
+   an approved geographic boundary without disclosing the exact
    coordinates of the underlying hardware.
 
 2.  Conventions and Definitions
@@ -241,8 +241,8 @@ Internet-Draft                RATS-GEO-POR                    March 2026
       location evidence used to establish residency within a geofence.
    Workload Host:  Physical or virtual machine running the Workload
       Identity Agent and workloads; produces platform (outer) evidence.
-      For now, we assume the Workload Host is the same as the Location
-      Anchor Host.
+      In the unified deployment model, the Workload Host is assumed to
+      be co-located with the Location Anchor Host.
    Composite Geolocation:  Location estimate fused from multiple sources
       and accompanied by a quality indicator.
    Proof of Residency (PoR) / Co-location:  Evidence that binds a
@@ -288,45 +288,45 @@ Internet-Draft                RATS-GEO-POR                    March 2026
    approved hosts within an approved geographic boundary, and that data
    flows only between approved boundaries.
 
-   Workload-to-workload (general): Relying parties accept workload
-   identities only when the issuing host attests platform integrity and
-   “in-zone” residency, preventing credentials from being used outside
-   the approved boundary.
+   *  *Workload-to-workload (general):* Relying parties accept workload
+      identities only when the issuing host attests platform integrity
+      and "in-zone" residency, preventing credentials from being used
+      outside the approved boundary.
 
-   Agentic AI workloads: An AI agent may access sensitive data or
-   perform sensitive actions only when its Workload Identity Agent
-   presents hardware-rooted integrity evidence and a verifiable “in-
-   zone” proof (optionally privacy-preserving), binding identity to both
-   platform state and residency.
+   *  *Agentic AI workloads:* An AI agent may access sensitive data or
+      perform sensitive actions only when its Workload Identity Agent
+      presents hardware-rooted integrity evidence and a verifiable "in-
+      zone" proof (optionally privacy-preserving), binding identity to
+      both platform state and residency.
 
-   Federated / edge AI (key or model release): High-value artifacts
-   (e.g., decryption keys or model weights in federated learning) are
-   released only when the partner/edge host attests it is integral and
-   resident within the required boundary.  This is useful for
-   intermittently connected sites.
+   *  *Federated / edge AI (key or model release):* High-value artifacts
+      (e.g., decryption keys or model weights in federated learning) are
+      released only when the partner/edge host attests it is integral
+      and resident within the required boundary.  This is useful for
+      intermittently connected sites.
 
-   User-to-server: Clients validate that the server endpoint is
-   operating within an approved boundary (e.g., by policy tied to the
-   server’s attested identity and residency evidence).
+   *  *User-to-server:* Clients validate that the server endpoint is
+      operating within an approved boundary (e.g., by policy tied to the
+      server's attested identity and residency evidence).
 
-4.2.  User-centric enforcement
+4.2.  User-centric Enforcement
 
    Enterprises may also need trustworthy location signals for user-
-   facing access decisions.  Geofenced access control: User access is
-   permitted only when the user (or user device) proves it is within an
-   allowed boundary, ideally without requiring precise location
-   disclosure.
+   facing access decisions.
 
-   On-premises boundaries: Customer-premises equipment can define an
-   enterprise boundary, with a network or enterprise infrastructure
-   providing supporting evidence for policy enforcement.
+   *  *Geofenced access control:* User access is permitted only when the
+      user (or user device) proves it is within an allowed boundary,
+      ideally without requiring precise location disclosure.
 
-   Restricted support geographies: Administrative or support actions can
-   be allowed only when the operator proves presence within allowed
-   geographies, reducing policy and insider-risk exposure.
+   *  *On-premises boundaries:* Customer-premises equipment can define
+      an enterprise boundary, with a network or enterprise
+      infrastructure providing supporting evidence for policy
+      enforcement.
 
-
-
+   *  *Restricted support geographies:* Administrative or support
+      actions can be allowed only when the operator proves presence
+      within allowed geographies, reducing policy and insider-risk
+      exposure.
 
 
 
@@ -338,14 +338,14 @@ Krishnan, et al.        Expires 2 September 2026                [Page 6]
 Internet-Draft                RATS-GEO-POR                    March 2026
 
 
-4.3.  Compliance and risk reduction
+4.3.  Compliance and Risk Reduction
 
    Geofence attestation provides audit-ready evidence to support data
    residency and sovereignty controls, and it can also reduce non-
    compliance risk from misconfiguration or spoofable signals.  Even
-   when not mandated, “in-zone” proofs help address: configuration
+   when not mandated, "in-zone" proofs help address: configuration
    drift, edge relocation/proxying, contractual residency requirements,
-   and location-privacy minimization (proving “inside the zone” without
+   and location-privacy minimization (proving "inside the zone" without
    storing coordinates).
 
 5.  Motivation and Gaps
@@ -1042,7 +1042,7 @@ Internet-Draft                RATS-GEO-POR                    March 2026
    *CRITICAL*. This ensures that non-compliant gateways fail closed
    rather than granting access to residency-constrained workloads.
 
-   *  *OID*: 1.3.6.1.4.1.60265.1.1
+   *  *OID*: 1.3.6.1.4.1.55744.1.1
    *  *Description*: Verifiable Geofencing Attestation Profile (V-GAP)
       Evidence Bundle
    *  *Reference*: This document.
@@ -1080,7 +1080,7 @@ Internet-Draft                RATS-GEO-POR                    March 2026
 
 15.4.  OPEN ISSUE: Geotagging textual data
 
-   There no widely deployed standard for geotagging arbitrary textual
+   There is no widely deployed standard for geotagging arbitrary textual
    data objects.
 
 15.5.  OPEN ISSUE: Attesting geotags

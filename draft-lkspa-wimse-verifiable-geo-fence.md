@@ -463,14 +463,14 @@ When a workload moves between anchors or boundaries, the Workload Identity Agent
 
 Verifiers SHOULD treat this as a normal re-attestation event:
 - platform integrity continuity can remain stable, but
-- proximity and residency checks MUST be re-evaluated for the new anchor/boundary.
+- residency checks MUST be re-evaluated for the new anchor/boundary.
 
 ## Location Anchor Hosts (Informative)
 
 To scale location sensing, a deployment may use dedicated anchors:
 
-- **End-user anchors**: A user device (for example, a phone) can serve as an LAH for a nearby client device using a proximity mechanism (for example, BLE/UWB). The proximity mechanism is out of scope; only the resulting proximity evidence hash is standardized.
-- **Data center anchors**: A small set of hosts can act as LAHs for a cluster. Proximity measurement mechanisms may vary; if a PTP-derived mechanism is used, its protocol details should be profiled separately (see [[I-D.ramki-ptp-hardware-rooted-attestation]]).
+- **End-user anchors**: A user device (for example, a phone) can serve as an LAH for a nearby client device. The mechanism by which the anchor establishes its own location (and any proximity evidence it may provide) is out of scope for this document.
+- **Data center anchors**: A small set of hosts can act as LAHs for a cluster. Timing-based mechanisms (for example, PTP-derived) may assist in establishing relative location; protocol details are deferred to future profiling work (see [[I-D.ramki-ptp-hardware-rooted-attestation]]).
 
 # Policy Use (Informative)
 
@@ -486,18 +486,11 @@ V-GAP reduces reliance on spoofable location signals and stolen tokens by making
 
 - **Replay and mix-and-match**: Use nonces and stapling so old location evidence cannot be combined with a fresh platform quote (or vice versa).
 - **Location spoofing**: Treat sensor and network inputs as adversarial. Prefer multiple sources or corroboration where feasible, and apply conservative policy when evidence quality degrades.
-- **Relay and displacement**: Proximity mechanisms can be relayed or anchors can be moved. Mitigate with tight proximity windows where possible, anchor health checks, and disagreement policies when multiple anchors are observed.
+- **Relay and displacement**: When proximity mechanisms are introduced in future profiles, implementers should be aware that they are vulnerable to relay attacks and anchor displacement. Mitigations (such as tight RTT-based acceptance windows and anchor health checks) are deferred to those profiles.
 - **Management plane compromise**: OOB paths reduce dependence on the host OS but introduce dependence on the management controller and its network. Protect this plane with secure boot/updates, strong authentication, segmentation, and audit logging.
 - **Time and freshness**: Verifiers MUST enforce bounded freshness windows and define recovery behavior (re-attestation, quarantine, revocation) when clocks drift or evidence is stale.
 - **Registry and allowlist integrity**: Protect key registries and policy stores against tampering; treat them as high-value assets.
-- **Privacy**: Avoid unnecessary collection or retention of precise location. Prefer “in-zone” proofs (ZKP) where policy permits.
-
-## Proximity and Anchor Displacement (Informative)
-
-Proximity-based designs (for example, phone-as-anchor or ranging-based methods) are vulnerable to relay and displacement. Mitigations include:
-- tight RTT-based acceptance windows where applicable,
-- requiring anchor attestation and health checks, and
-- policy that treats inconsistent anchor observations as unverified.
+- **Privacy**: Avoid unnecessary collection or retention of precise location. Prefer "in-zone" proofs (ZKP) where policy permits.
 
 # IANA Considerations
 
@@ -521,7 +514,12 @@ Clarify the set of supported privacy techniques and how policy selects between p
 
 ## OPEN ISSUE: Proximity profiles
 
-Specify one or more proximity evidence profiles (for example, PTP-derived, BLE/UWB-derived, or other mechanisms) as separate documents, while keeping V-GAP evidence fields stable.
+This document defers proximity proof mechanisms to future profiling work. Open items include:
+
+- Defining one or more proximity evidence profiles (for example, PTP-derived, BLE/UWB ranging, or network-RTT-based) as separate documents.
+- Specifying how proximity evidence is represented and bound to the V-GAP bundle (for example, as an additional hash field).
+- Addressing relay and displacement threats, including RTT-based acceptance windows, anchor health attestation, and disagreement policies for multi-anchor deployments.
+- Profiling the use of CAMARA-style MNO location signals as a proximity corroboration mechanism.
 
 ## OPEN ISSUE: Geotagging textual data
 

@@ -1451,11 +1451,6 @@ li > p:last-of-type:only-child {
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13">
             <p id="section-toc.1-1.13.1"><a href="#section-13" class="auto internal xref">13</a>. <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.1">
-                <p id="section-toc.1-1.13.2.1.1"><a href="#section-13.1" class="auto internal xref">13.1</a>.  <a href="#name-proximity-and-anchor-displa" class="internal xref">Proximity and Anchor Displacement (Informative)</a></p>
-</li>
-            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14">
             <p id="section-toc.1-1.14.1"><a href="#section-14" class="auto internal xref">14</a>. <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
@@ -2360,7 +2355,7 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
 <p id="section-11.2-1">When a workload moves between anchors or boundaries, the Workload Identity Agent MUST obtain a new V-GAP bundle that reflects the new LAH and current residency.<a href="#section-11.2-1" class="pilcrow">¶</a></p>
 <p id="section-11.2-2">Verifiers SHOULD treat this as a normal re-attestation event:
 - platform integrity continuity can remain stable, but
-- proximity and residency checks MUST be re-evaluated for the new anchor/boundary.<a href="#section-11.2-2" class="pilcrow">¶</a></p>
+- residency checks MUST be re-evaluated for the new anchor/boundary.<a href="#section-11.2-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="location-anchor-hosts-informative">
@@ -2371,10 +2366,10 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
 <p id="section-11.3-1">To scale location sensing, a deployment may use dedicated anchors:<a href="#section-11.3-1" class="pilcrow">¶</a></p>
 <ul class="compact">
 <li class="compact" id="section-11.3-2.1">
-            <strong>End-user anchors</strong>: A user device (for example, a phone) can serve as an LAH for a nearby client device using a proximity mechanism (for example, BLE/UWB). The proximity mechanism is out of scope; only the resulting proximity evidence hash is standardized.<a href="#section-11.3-2.1" class="pilcrow">¶</a>
+            <strong>End-user anchors</strong>: A user device (for example, a phone) can serve as an LAH for a nearby client device. The mechanism by which the anchor establishes its own location (and any proximity evidence it may provide) is out of scope for this document.<a href="#section-11.3-2.1" class="pilcrow">¶</a>
 </li>
           <li class="compact" id="section-11.3-2.2">
-            <strong>Data center anchors</strong>: A small set of hosts can act as LAHs for a cluster. Proximity measurement mechanisms may vary; if a PTP-derived mechanism is used, its protocol details should be profiled separately (see [[I-D.ramki-ptp-hardware-rooted-attestation]]).<a href="#section-11.3-2.2" class="pilcrow">¶</a>
+            <strong>Data center anchors</strong>: A small set of hosts can act as LAHs for a cluster. Timing-based mechanisms (for example, PTP-derived) may assist in establishing relative location; protocol details are deferred to future profiling work (see [[I-D.ramki-ptp-hardware-rooted-attestation]]).<a href="#section-11.3-2.2" class="pilcrow">¶</a>
 </li>
         </ul>
 </section>
@@ -2414,7 +2409,7 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
           <strong>Location spoofing</strong>: Treat sensor and network inputs as adversarial. Prefer multiple sources or corroboration where feasible, and apply conservative policy when evidence quality degrades.<a href="#section-13-2.2" class="pilcrow">¶</a>
 </li>
         <li class="compact" id="section-13-2.3">
-          <strong>Relay and displacement</strong>: Proximity mechanisms can be relayed or anchors can be moved. Mitigate with tight proximity windows where possible, anchor health checks, and disagreement policies when multiple anchors are observed.<a href="#section-13-2.3" class="pilcrow">¶</a>
+          <strong>Relay and displacement</strong>: When proximity mechanisms are introduced in future profiles, implementers should be aware that they are vulnerable to relay attacks and anchor displacement. Mitigations (such as tight RTT-based acceptance windows and anchor health checks) are deferred to those profiles.<a href="#section-13-2.3" class="pilcrow">¶</a>
 </li>
         <li class="compact" id="section-13-2.4">
           <strong>Management plane compromise</strong>: OOB paths reduce dependence on the host OS but introduce dependence on the management controller and its network. Protect this plane with secure boot/updates, strong authentication, segmentation, and audit logging.<a href="#section-13-2.4" class="pilcrow">¶</a>
@@ -2426,20 +2421,9 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
           <strong>Registry and allowlist integrity</strong>: Protect key registries and policy stores against tampering; treat them as high-value assets.<a href="#section-13-2.6" class="pilcrow">¶</a>
 </li>
         <li class="compact" id="section-13-2.7">
-          <strong>Privacy</strong>: Avoid unnecessary collection or retention of precise location. Prefer “in-zone” proofs (ZKP) where policy permits.<a href="#section-13-2.7" class="pilcrow">¶</a>
+          <strong>Privacy</strong>: Avoid unnecessary collection or retention of precise location. Prefer "in-zone" proofs (ZKP) where policy permits.<a href="#section-13-2.7" class="pilcrow">¶</a>
 </li>
       </ul>
-<div id="proximity-and-anchor-displacement-informative">
-<section id="section-13.1">
-        <h3 id="name-proximity-and-anchor-displa">
-<a href="#section-13.1" class="section-number selfRef">13.1. </a><a href="#name-proximity-and-anchor-displa" class="section-name selfRef">Proximity and Anchor Displacement (Informative)</a>
-        </h3>
-<p id="section-13.1-1">Proximity-based designs (for example, phone-as-anchor or ranging-based methods) are vulnerable to relay and displacement. Mitigations include:
-- tight RTT-based acceptance windows where applicable,
-- requiring anchor attestation and health checks, and
-- policy that treats inconsistent anchor observations as unverified.<a href="#section-13.1-1" class="pilcrow">¶</a></p>
-</section>
-</div>
 </section>
 </div>
 <div id="iana-considerations">
@@ -2488,7 +2472,17 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
         <h3 id="name-open-issue-proximity-profil">
 <a href="#section-15.3" class="section-number selfRef">15.3. </a><a href="#name-open-issue-proximity-profil" class="section-name selfRef">OPEN ISSUE: Proximity profiles</a>
         </h3>
-<p id="section-15.3-1">Specify one or more proximity evidence profiles (for example, PTP-derived, BLE/UWB-derived, or other mechanisms) as separate documents, while keeping V-GAP evidence fields stable.<a href="#section-15.3-1" class="pilcrow">¶</a></p>
+<p id="section-15.3-1">This document defers proximity proof mechanisms to future profiling work. Open items include:<a href="#section-15.3-1" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="section-15.3-2.1">Defining one or more proximity evidence profiles (for example, PTP-derived, BLE/UWB ranging, or network-RTT-based) as separate documents.<a href="#section-15.3-2.1" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="section-15.3-2.2">Specifying how proximity evidence is represented and bound to the V-GAP bundle (for example, as an additional hash field).<a href="#section-15.3-2.2" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="section-15.3-2.3">Addressing relay and displacement threats, including RTT-based acceptance windows, anchor health attestation, and disagreement policies for multi-anchor deployments.<a href="#section-15.3-2.3" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="section-15.3-2.4">Profiling the use of CAMARA-style MNO location signals as a proximity corroboration mechanism.<a href="#section-15.3-2.4" class="pilcrow">¶</a>
+</li>
+        </ul>
 </section>
 </div>
 <div id="open-issue-geotagging-textual-data">

@@ -137,11 +137,10 @@ Internet-Draft                RATS-GEO-POR                    March 2026
      11.3.  Location Anchor Hosts (Informative)  . . . . . . . . . .  18
    12. Policy Use (Informative)  . . . . . . . . . . . . . . . . . .  18
    13. Security Considerations . . . . . . . . . . . . . . . . . . .  18
-     13.1.  Proximity and Anchor Displacement (Informative)  . . . .  19
    14. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  19
    15. Appendix - Items to Follow Up . . . . . . . . . . . . . . . .  19
      15.1.  OPEN ISSUE: IMA restart behavior . . . . . . . . . . . .  19
-     15.2.  OPEN ISSUE: Location privacy options . . . . . . . . . .  20
+     15.2.  OPEN ISSUE: Location privacy options . . . . . . . . . .  19
      15.3.  OPEN ISSUE: Proximity profiles . . . . . . . . . . . . .  20
      15.4.  OPEN ISSUE: Geotagging textual data  . . . . . . . . . .  20
      15.5.  OPEN ISSUE: Attesting geotags  . . . . . . . . . . . . .  20
@@ -160,6 +159,7 @@ Internet-Draft                RATS-GEO-POR                    March 2026
    (a specialized RATS Profile) provides the technical mechanics to
    cryptographically bind this agent to the underlying hardware-verified
    platform and its privacy preserving physical location.
+
 
 
 
@@ -955,21 +955,22 @@ Internet-Draft                RATS-GEO-POR                    March 2026
 
 
    Verifiers SHOULD treat this as a normal re-attestation event: -
-   platform integrity continuity can remain stable, but - proximity and
-   residency checks MUST be re-evaluated for the new anchor/boundary.
+   platform integrity continuity can remain stable, but - residency
+   checks MUST be re-evaluated for the new anchor/boundary.
 
 11.3.  Location Anchor Hosts (Informative)
 
    To scale location sensing, a deployment may use dedicated anchors:
 
    *  *End-user anchors*: A user device (for example, a phone) can serve
-      as an LAH for a nearby client device using a proximity mechanism
-      (for example, BLE/UWB).  The proximity mechanism is out of scope;
-      only the resulting proximity evidence hash is standardized.
+      as an LAH for a nearby client device.  The mechanism by which the
+      anchor establishes its own location (and any proximity evidence it
+      may provide) is out of scope for this document.
    *  *Data center anchors*: A small set of hosts can act as LAHs for a
-      cluster.  Proximity measurement mechanisms may vary; if a PTP-
-      derived mechanism is used, its protocol details should be profiled
-      separately (see [[I-D.ramki-ptp-hardware-rooted-attestation]]).
+      cluster.  Timing-based mechanisms (for example, PTP-derived) may
+      assist in establishing relative location; protocol details are
+      deferred to future profiling work (see [[I-D.ramki-ptp-hardware-
+      rooted-attestation]]).
 
 12.  Policy Use (Informative)
 
@@ -998,10 +999,9 @@ Internet-Draft                RATS-GEO-POR                    March 2026
       adversarial.  Prefer multiple sources or corroboration where
       feasible, and apply conservative policy when evidence quality
       degrades.
-   *  *Relay and displacement*: Proximity mechanisms can be relayed or
-      anchors can be moved.  Mitigate with tight proximity windows where
-      possible, anchor health checks, and disagreement policies when
-      multiple anchors are observed.
+
+
+
 
 
 
@@ -1010,6 +1010,11 @@ Krishnan, et al.        Expires 2 September 2026               [Page 18]
 Internet-Draft                RATS-GEO-POR                    March 2026
 
 
+   *  *Relay and displacement*: When proximity mechanisms are introduced
+      in future profiles, implementers should be aware that they are
+      vulnerable to relay attacks and anchor displacement.  Mitigations
+      (such as tight RTT-based acceptance windows and anchor health
+      checks) are deferred to those profiles.
    *  *Management plane compromise*: OOB paths reduce dependence on the
       host OS but introduce dependence on the management controller and
       its network.  Protect this plane with secure boot/updates, strong
@@ -1020,15 +1025,7 @@ Internet-Draft                RATS-GEO-POR                    March 2026
    *  *Registry and allowlist integrity*: Protect key registries and
       policy stores against tampering; treat them as high-value assets.
    *  *Privacy*: Avoid unnecessary collection or retention of precise
-      location.  Prefer “in-zone” proofs (ZKP) where policy permits.
-
-13.1.  Proximity and Anchor Displacement (Informative)
-
-   Proximity-based designs (for example, phone-as-anchor or ranging-
-   based methods) are vulnerable to relay and displacement.  Mitigations
-   include: - tight RTT-based acceptance windows where applicable, -
-   requiring anchor attestation and health checks, and - policy that
-   treats inconsistent anchor observations as unverified.
+      location.  Prefer "in-zone" proofs (ZKP) where policy permits.
 
 14.  IANA Considerations
 
@@ -1055,8 +1052,11 @@ Internet-Draft                RATS-GEO-POR                    March 2026
    Agent restarts without requiring a host reboot, while preserving
    measurement integrity.
 
+15.2.  OPEN ISSUE: Location privacy options
 
-
+   Clarify the set of supported privacy techniques and how policy
+   selects between precise location, coarse location, and ZKP-based “in-
+   zone” proofs.
 
 
 
@@ -1066,17 +1066,21 @@ Krishnan, et al.        Expires 2 September 2026               [Page 19]
 Internet-Draft                RATS-GEO-POR                    March 2026
 
 
-15.2.  OPEN ISSUE: Location privacy options
-
-   Clarify the set of supported privacy techniques and how policy
-   selects between precise location, coarse location, and ZKP-based “in-
-   zone” proofs.
-
 15.3.  OPEN ISSUE: Proximity profiles
 
-   Specify one or more proximity evidence profiles (for example, PTP-
-   derived, BLE/UWB-derived, or other mechanisms) as separate documents,
-   while keeping V-GAP evidence fields stable.
+   This document defers proximity proof mechanisms to future profiling
+   work.  Open items include:
+
+   *  Defining one or more proximity evidence profiles (for example,
+      PTP-derived, BLE/UWB ranging, or network-RTT-based) as separate
+      documents.
+   *  Specifying how proximity evidence is represented and bound to the
+      V-GAP bundle (for example, as an additional hash field).
+   *  Addressing relay and displacement threats, including RTT-based
+      acceptance windows, anchor health attestation, and disagreement
+      policies for multi-anchor deployments.
+   *  Profiling the use of CAMARA-style MNO location signals as a
+      proximity corroboration mechanism.
 
 15.4.  OPEN ISSUE: Geotagging textual data
 
@@ -1109,10 +1113,6 @@ Authors' Addresses
    Email: ramkri123@gmail.com
 
 
-   Ned Smith
-   Intel
-   Email: ned.smith@intel.com
-
 
 
 
@@ -1120,6 +1120,11 @@ Authors' Addresses
 Krishnan, et al.        Expires 2 September 2026               [Page 20]
 
 Internet-Draft                RATS-GEO-POR                    March 2026
+
+
+   Ned Smith
+   Intel
+   Email: ned.smith@intel.com
 
 
    Diego R. Lopez
@@ -1135,11 +1140,6 @@ Internet-Draft                RATS-GEO-POR                    March 2026
    Srinivasa Addepalli
    Aryaka
    Email: srinivasa.addepalli@aryaka.com
-
-
-
-
-
 
 
 

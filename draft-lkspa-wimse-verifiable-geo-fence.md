@@ -172,9 +172,6 @@ Host Identity Management Plane:
 V-GAP (Verifiable Geofencing Attestation Profile):
 : Nested evidence format defined in this document for binding identity to verified platform integrity and verified residency.
 
-N_platform (Platform Quote Nonce):
-: Fresh nonce used for platform attestation, delivered by the Host Identity Management Plane via an OOB path that does not require the Workload Host OS to observe it.
-
 N_fusion (Workload Fusion Nonce):
 : Fresh nonce used to bind identity issuance to a specific attestation interval, delivered by the Workload Identity Management Plane. Corresponds to the `nonce` field in the `lah-bundle`.
 

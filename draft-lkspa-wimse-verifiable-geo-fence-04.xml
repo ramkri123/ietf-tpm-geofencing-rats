@@ -97,8 +97,6 @@
 <dd>Verifies platform integrity and residency evidence, and manages attestation key registration and platform health state (often via OOB paths).</dd>
 <dt>V-GAP (Verifiable Geofencing Attestation Profile):</dt>
 <dd>Nested evidence format defined in this document for binding identity to verified platform integrity and verified residency.</dd>
-<dt>N_platform (Platform Quote Nonce):</dt>
-<dd>Fresh nonce used for platform attestation, delivered by the Host Identity Management Plane via an OOB path that does not require the Workload Host OS to observe it.</dd>
 <dt>N_fusion (Workload Fusion Nonce):</dt>
 <dd>Fresh nonce used to bind identity issuance to a specific attestation interval, delivered by the Workload Identity Management Plane. Corresponds to the <tt>nonce</tt> field in the <tt>lah-bundle</tt>.</dd>
 </dl>

@@ -95,7 +95,7 @@ Table of Contents
    2.  Conventions and Definitions . . . . . . . . . . . . . . . . .   4
      2.1.  Abbreviations . . . . . . . . . . . . . . . . . . . . . .   4
    3.  Key Terms . . . . . . . . . . . . . . . . . . . . . . . . . .   5
-   4.  Use Cases . . . . . . . . . . . . . . . . . . . . . . . . . .   6
+   4.  Use Cases . . . . . . . . . . . . . . . . . . . . . . . . . .   5
      4.1.  Server-centric Enforcement  . . . . . . . . . . . . . . .   6
      4.2.  User-centric Enforcement  . . . . . . . . . . . . . . . .   6
      4.3.  Compliance and Risk Reduction . . . . . . . . . . . . . .   7
@@ -104,8 +104,8 @@ Table of Contents
    7.  Composition with Transitive Attestation and WIMSE . . . . . .   8
    8.  Operational Use: Gating Credentials on Verified Evidence  . .   9
    9.  High-Assurance Profile - Verifiable Geofencing Attestation
-           Profile (V-GAP) . . . . . . . . . . . . . . . . . . . . .  10
-     9.1.  LAH-Bundle: Location Anchor Host Evidence Structure . . .  10
+           Profile (V-GAP) . . . . . . . . . . . . . . . . . . . . .   9
+     9.1.  LAH-Bundle: Location Anchor Host Evidence Structure . . .   9
 
 
 
@@ -114,34 +114,34 @@ Krishnan, et al.        Expires 2 September 2026                [Page 2]
 Internet-Draft                RATS-GEO-POR                    March 2026
 
 
-       9.1.1.  Top-Level Structure . . . . . . . . . . . . . . . . .  10
+       9.1.1.  Top-Level Structure . . . . . . . . . . . . . . . . .   9
        9.1.2.  lah-bundle Fields . . . . . . . . . . . . . . . . . .  10
        9.1.3.  geolocation-payload Variants  . . . . . . . . . . . .  12
        9.1.4.  mno-endorsement (Optional, Top-Level Sibling) . . . .  13
-       9.1.5.  workload (Top-Level Sibling)  . . . . . . . . . . . .  14
-       9.1.6.  Sensor Type Input Recipes (Opaque to Verifier)  . . .  14
+       9.1.5.  workload (Top-Level Sibling)  . . . . . . . . . . . .  13
+       9.1.6.  Sensor Type Input Recipes (Opaque to Verifier)  . . .  13
        9.1.7.  TPM Quote Verification Procedure  . . . . . . . . . .  14
        9.1.8.  Example Instance (privacy-technique = "zkp")  . . . .  14
-       9.1.9.  Nonce Chain and Merkle Audit Log  . . . . . . . . . .  15
+       9.1.9.  Nonce Chain and Merkle Audit Log  . . . . . . . . . .  14
      9.2.  Scalable Fleet Management . . . . . . . . . . . . . . . .  15
-     9.3.  Key Registry and Synchronization  . . . . . . . . . . . .  16
-     9.4.  Key Rotation  . . . . . . . . . . . . . . . . . . . . . .  16
-       9.4.1.  Example Rotation Proof (Informative)  . . . . . . . .  16
+     9.3.  Key Registry and Synchronization  . . . . . . . . . . . .  15
+     9.4.  Key Rotation  . . . . . . . . . . . . . . . . . . . . . .  15
+       9.4.1.  Example Rotation Proof (Informative)  . . . . . . . .  15
      9.5.  Credential Activation and Re-Verification . . . . . . . .  16
      9.6.  Revocation and Health Signals . . . . . . . . . . . . . .  16
-     9.7.  Disconnected Operation (Leased Identity)  . . . . . . . .  17
-     9.8.  Deployment Patterns (Informative) . . . . . . . . . . . .  17
+     9.7.  Disconnected Operation (Leased Identity)  . . . . . . . .  16
+     9.8.  Deployment Patterns (Informative) . . . . . . . . . . . .  16
    10. Operational Considerations  . . . . . . . . . . . . . . . . .  17
      10.1.  Distributed Identity Issuance and Scaling  . . . . . . .  17
-     10.2.  Mobility and Sovereign Handover (Informative)  . . . . .  18
-     10.3.  Location Anchor Hosts (Informative)  . . . . . . . . . .  18
+     10.2.  Mobility and Sovereign Handover (Informative)  . . . . .  17
+     10.3.  Location Anchor Hosts (Informative)  . . . . . . . . . .  17
    11. Policy Use (Informative)  . . . . . . . . . . . . . . . . . .  18
    12. Security Considerations . . . . . . . . . . . . . . . . . . .  18
    13. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  19
    14. Appendix - Items to Follow Up . . . . . . . . . . . . . . . .  19
      14.1.  OPEN ISSUE: IMA restart behavior . . . . . . . . . . . .  19
-     14.2.  OPEN ISSUE: Location privacy options . . . . . . . . . .  20
-     14.3.  OPEN ISSUE: Proximity profiles . . . . . . . . . . . . .  20
+     14.2.  OPEN ISSUE: Location privacy options . . . . . . . . . .  19
+     14.3.  OPEN ISSUE: Proximity profiles . . . . . . . . . . . . .  19
      14.4.  OPEN ISSUE: Geotagging textual data  . . . . . . . . . .  20
      14.5.  OPEN ISSUE: Attesting geotags  . . . . . . . . . . . . .  20
    15. Appendix - Public References for Strict Data Residency
@@ -260,17 +260,17 @@ Internet-Draft                RATS-GEO-POR                    March 2026
    V-GAP (Verifiable Geofencing Attestation Profile):  Nested evidence
       format defined in this document for binding identity to verified
       platform integrity and verified residency.
-   N_platform (Platform Quote Nonce):  Fresh nonce used for platform
-      attestation, delivered by the Host Identity Management Plane via
-      an OOB path that does not require the Workload Host OS to observe
-      it.
    N_fusion (Workload Fusion Nonce):  Fresh nonce used to bind identity
       issuance to a specific attestation interval, delivered by the
       Workload Identity Management Plane.  Corresponds to the nonce
       field in the lah-bundle.
 
+4.  Use Cases
 
-
+   This profile supports attested data residency and geofencing for
+   workloads and (optionally) users.  Common use cases fall into:
+   server-centric enforcement, user-centric enforcement, and compliance
+   and risk reduction.
 
 
 
@@ -281,13 +281,6 @@ Krishnan, et al.        Expires 2 September 2026                [Page 5]
 
 Internet-Draft                RATS-GEO-POR                    March 2026
 
-
-4.  Use Cases
-
-   This profile supports attested data residency and geofencing for
-   workloads and (optionally) users.  Common use cases fall into:
-   server-centric enforcement, user-centric enforcement, and compliance
-   and risk reduction.
 
 4.1.  Server-centric Enforcement
 
@@ -330,6 +323,13 @@ Internet-Draft                RATS-GEO-POR                    March 2026
       infrastructure providing supporting evidence for policy
       enforcement.
 
+   *  *Restricted support geographies:* Administrative or support
+      actions can be allowed only when the operator proves presence
+      within allowed geographies, reducing policy and insider-risk
+      exposure.
+
+
+
 
 
 
@@ -337,11 +337,6 @@ Krishnan, et al.        Expires 2 September 2026                [Page 6]
 
 Internet-Draft                RATS-GEO-POR                    March 2026
 
-
-   *  *Restricted support geographies:* Administrative or support
-      actions can be allowed only when the operator proves presence
-      within allowed geographies, reducing policy and insider-risk
-      exposure.
 
 4.3.  Compliance and Risk Reduction
 
@@ -384,6 +379,11 @@ Internet-Draft                RATS-GEO-POR                    March 2026
    verifiable inputs to authorization and credential issuance, while
    supporting privacy-preserving “in-zone” proofs where available.
 
+   At a high level, the profile enables a relying party (or identity
+   issuer) to require evidence that: 1. the Workload Identity Agent is
+   running on an approved, measured platform; and 2. that platform is
+   resident within an approved geographic boundary (optionally without
+   revealing coordinates).
 
 
 
@@ -393,12 +393,6 @@ Krishnan, et al.        Expires 2 September 2026                [Page 7]
 
 Internet-Draft                RATS-GEO-POR                    March 2026
 
-
-   At a high level, the profile enables a relying party (or identity
-   issuer) to require evidence that: 1. the Workload Identity Agent is
-   running on an approved, measured platform; and 2. that platform is
-   resident within an approved geographic boundary (optionally without
-   revealing coordinates).
 
 7.  Composition with Transitive Attestation and WIMSE
 
@@ -416,39 +410,6 @@ Internet-Draft                RATS-GEO-POR                    March 2026
       -  *Layer 3 — Residency:* Cryptographically verifiable proof the
          attested host is inside an approved boundary (optionally
          privacy-preserving).
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Krishnan, et al.        Expires 2 September 2026                [Page 8]
-
-Internet-Draft                RATS-GEO-POR                    March 2026
-
 
    +======+=========================================+==================+
    |Layer | Document                                | Responsibility   |
@@ -479,6 +440,16 @@ Internet-Draft                RATS-GEO-POR                    March 2026
 
                                   Table 1
 
+
+
+
+
+
+Krishnan, et al.        Expires 2 September 2026                [Page 8]
+
+Internet-Draft                RATS-GEO-POR                    March 2026
+
+
 8.  Operational Use: Gating Credentials on Verified Evidence
 
    This profile assumes two cooperating control planes:
@@ -498,13 +469,6 @@ Internet-Draft                RATS-GEO-POR                    March 2026
    an agent software measurement (e.g., image digest) is covered by
    validated platform evidence, reducing the risk that a modified or
    unauthorized agent obtains credentials.
-
-
-
-Krishnan, et al.        Expires 2 September 2026                [Page 9]
-
-Internet-Draft                RATS-GEO-POR                    March 2026
-
 
    In intermittently connected edge deployments, local operation can
    continue during outages, while centralized policy can be enforced on
@@ -535,6 +499,13 @@ Internet-Draft                RATS-GEO-POR                    March 2026
      "workload": { }
    }
 
+
+
+Krishnan, et al.        Expires 2 September 2026                [Page 9]
+
+Internet-Draft                RATS-GEO-POR                    March 2026
+
+
 9.1.2.  lah-bundle Fields
 
    +==============+=============+==========+==========================+
@@ -554,14 +525,6 @@ Internet-Draft                RATS-GEO-POR                    March 2026
    |              |             |          | bytes).  Binds TPM       |
    |              |             |          | identity to sensor       |
    |              |             |          | identity without         |
-
-
-
-Krishnan, et al.        Expires 2 September 2026               [Page 10]
-
-Internet-Draft                RATS-GEO-POR                    March 2026
-
-
    |              |             |          | exposing IMEI/IMSI/      |
    |              |             |          | serial.  Input recipe is |
    |              |             |          | an agent implementation  |
@@ -591,6 +554,14 @@ Internet-Draft                RATS-GEO-POR                    March 2026
    +--------------+-------------+----------+--------------------------+
    | geolocation- | object      |   Yes    | Inner location data.     |
    | payload      |             |          | Structure depends on     |
+
+
+
+Krishnan, et al.        Expires 2 September 2026               [Page 10]
+
+Internet-Draft                RATS-GEO-POR                    March 2026
+
+
    |              |             |          | privacy-technique (see   |
    |              |             |          | Payload Variants below). |
    |              |             |          | Committed to by          |
@@ -610,14 +581,6 @@ Internet-Draft                RATS-GEO-POR                    March 2026
    | timestamp    | integer     |   Yes    | Unix epoch seconds.  Set |
    |              | (int64)     |          | by the LAH agent at      |
    |              |             |          | bundle construction      |
-
-
-
-Krishnan, et al.        Expires 2 September 2026               [Page 11]
-
-Internet-Draft                RATS-GEO-POR                    March 2026
-
-
    |              |             |          | time.                    |
    +--------------+-------------+----------+--------------------------+
    | tpm-quote-   | string      |   Yes    | TPM2_Quote produced by   |
@@ -645,6 +608,16 @@ Internet-Draft                RATS-GEO-POR                    March 2026
 
                                  Table 2
 
+
+
+
+
+
+Krishnan, et al.        Expires 2 September 2026               [Page 11]
+
+Internet-Draft                RATS-GEO-POR                    March 2026
+
+
 9.1.3.  geolocation-payload Variants
 
    *When privacy-technique = "none" (raw coordinates):*
@@ -667,13 +640,6 @@ Internet-Draft                RATS-GEO-POR                    March 2026
    geolocation-proof-hash = Base64URL(SHA-256(JCS({lat, lon,
    accuracy})))
 
-
-
-Krishnan, et al.        Expires 2 September 2026               [Page 12]
-
-Internet-Draft                RATS-GEO-POR                    March 2026
-
-
    *When privacy-technique = "zkp" (zero-knowledge proof):*
 
    +===============+========+==========+==============================+
@@ -693,6 +659,20 @@ Internet-Draft                RATS-GEO-POR                    March 2026
                                  Table 4
 
    geolocation-proof-hash = Base64URL(SHA-256(zkp-proof-bytes))
+
+
+
+
+
+
+
+
+
+
+Krishnan, et al.        Expires 2 September 2026               [Page 12]
+
+Internet-Draft                RATS-GEO-POR                    March 2026
+
 
 9.1.4.  mno-endorsement (Optional, Top-Level Sibling)
 
@@ -714,21 +694,6 @@ Internet-Draft                RATS-GEO-POR                    March 2026
    +--------------+-------------+----------+--------------------------+
 
                                  Table 5
-
-
-
-
-
-
-
-
-
-
-
-Krishnan, et al.        Expires 2 September 2026               [Page 13]
-
-Internet-Draft                RATS-GEO-POR                    March 2026
-
 
 9.1.5.  workload (Top-Level Sibling)
 
@@ -757,6 +722,14 @@ Internet-Draft                RATS-GEO-POR                    March 2026
       |                 | \|\| IMSI-bytes)                         |
       +-----------------+------------------------------------------+
       | GNSS receiver   | SHA-256(tpm-ak-bytes \|\| sensor-serial- |
+
+
+
+Krishnan, et al.        Expires 2 September 2026               [Page 13]
+
+Internet-Draft                RATS-GEO-POR                    March 2026
+
+
       |                 | bytes \|\| sensor-class-id-bytes)        |
       +-----------------+------------------------------------------+
 
@@ -776,15 +749,6 @@ Internet-Draft                RATS-GEO-POR                    March 2026
        (RSASSA-PKCS1-v1_5 or ECDSA)
 
 9.1.8.  Example Instance (privacy-technique = "zkp")
-
-
-
-
-
-Krishnan, et al.        Expires 2 September 2026               [Page 14]
-
-Internet-Draft                RATS-GEO-POR                    March 2026
-
 
    {
      "lah-bundle": {
@@ -813,6 +777,15 @@ Internet-Draft                RATS-GEO-POR                    March 2026
 
 9.1.9.  Nonce Chain and Merkle Audit Log
 
+
+
+
+
+Krishnan, et al.        Expires 2 September 2026               [Page 14]
+
+Internet-Draft                RATS-GEO-POR                    March 2026
+
+
    chain[n] = SHA-256(chain[n-1] || SHA-256(JCS(bundle[n])))
    nonce[n]  = HMAC(secret, n || chain[n-1])
 
@@ -833,14 +806,6 @@ Internet-Draft                RATS-GEO-POR                    March 2026
    Large deployments need lifecycle management for the attestation keys
    referenced by V-GAP (for example, tpm-ak) and for the policies that
    authorize them.
-
-
-
-
-Krishnan, et al.        Expires 2 September 2026               [Page 15]
-
-Internet-Draft                RATS-GEO-POR                    March 2026
-
 
 9.3.  Key Registry and Synchronization
 
@@ -863,6 +828,19 @@ Internet-Draft                RATS-GEO-POR                    March 2026
       hardware-rooted OOB quote).
 
 9.4.1.  Example Rotation Proof (Informative)
+
+
+
+
+
+
+
+
+
+Krishnan, et al.        Expires 2 September 2026               [Page 15]
+
+Internet-Draft                RATS-GEO-POR                    March 2026
+
 
    {
     "new-ak-pub": "Base64URL_Encoded_Public_Key",
@@ -889,15 +867,6 @@ Internet-Draft                RATS-GEO-POR                    March 2026
 
 9.6.  Revocation and Health Signals
 
-
-
-
-
-Krishnan, et al.        Expires 2 September 2026               [Page 16]
-
-Internet-Draft                RATS-GEO-POR                    March 2026
-
-
    *  The edge plane SHOULD maintain a per-node health signal (e.g.,
       tamper, firmware policy violations).
    *  On severe health signals, the verifier MUST revoke the relevant
@@ -921,6 +890,14 @@ Internet-Draft                RATS-GEO-POR                    March 2026
       (for example, Keylime-style deployments).
    *  *Out-of-band management*: Evidence collected via a management
       controller/BMC path (for example, iLO-class OOB management).
+
+
+
+Krishnan, et al.        Expires 2 September 2026               [Page 16]
+
+Internet-Draft                RATS-GEO-POR                    March 2026
+
+
    *  *Cloud-hosted attestation environments*: Provider mechanisms
       exposing measured boot and TPM-backed claims (for example, Nitro-
       class or shielded-instance approaches, including OCI-style
@@ -942,17 +919,6 @@ Internet-Draft                RATS-GEO-POR                    March 2026
    *  *Renewal gating*: Issuers SHOULD renew short-lived identities only
       when the verifier result for integrity and residency is valid for
       the requested freshness window.
-
-
-
-
-
-
-
-Krishnan, et al.        Expires 2 September 2026               [Page 17]
-
-Internet-Draft                RATS-GEO-POR                    March 2026
-
 
 10.2.  Mobility and Sovereign Handover (Informative)
 
@@ -978,6 +944,16 @@ Internet-Draft                RATS-GEO-POR                    March 2026
       deferred to future profiling work (see [[I-D.ramki-ptp-hardware-
       rooted-attestation]]).
 
+
+
+
+
+
+Krishnan, et al.        Expires 2 September 2026               [Page 17]
+
+Internet-Draft                RATS-GEO-POR                    March 2026
+
+
 11.  Policy Use (Informative)
 
    Relying parties and identity issuers can use V-GAP results as inputs
@@ -1001,15 +977,6 @@ Internet-Draft                RATS-GEO-POR                    March 2026
    *  *Replay and mix-and-match*: Use nonces and stapling so old
       location evidence cannot be combined with a fresh platform quote
       (or vice versa).
-
-
-
-
-Krishnan, et al.        Expires 2 September 2026               [Page 18]
-
-Internet-Draft                RATS-GEO-POR                    March 2026
-
-
    *  *Location spoofing*: Treat sensor and network inputs as
       adversarial.  Prefer multiple sources or corroboration where
       feasible, and apply conservative policy when evidence quality
@@ -1030,6 +997,18 @@ Internet-Draft                RATS-GEO-POR                    March 2026
       policy stores against tampering; treat them as high-value assets.
    *  *Privacy*: Avoid unnecessary collection or retention of precise
       location.  Prefer "in-zone" proofs (ZKP) where policy permits.
+
+
+
+
+
+
+
+
+Krishnan, et al.        Expires 2 September 2026               [Page 18]
+
+Internet-Draft                RATS-GEO-POR                    March 2026
+
 
 13.  IANA Considerations
 
@@ -1056,16 +1035,6 @@ Internet-Draft                RATS-GEO-POR                    March 2026
    Agent restarts without requiring a host reboot, while preserving
    measurement integrity.
 
-
-
-
-
-
-Krishnan, et al.        Expires 2 September 2026               [Page 19]
-
-Internet-Draft                RATS-GEO-POR                    March 2026
-
-
 14.2.  OPEN ISSUE: Location privacy options
 
    Clarify the set of supported privacy techniques and how policy
@@ -1087,6 +1056,15 @@ Internet-Draft                RATS-GEO-POR                    March 2026
       policies for multi-anchor deployments.
    *  Profiling the use of CAMARA-style MNO location signals as a
       proximity corroboration mechanism.
+
+
+
+
+
+Krishnan, et al.        Expires 2 September 2026               [Page 19]
+
+Internet-Draft                RATS-GEO-POR                    March 2026
+
 
 14.4.  OPEN ISSUE: Geotagging textual data
 
@@ -1114,14 +1092,6 @@ Internet-Draft                RATS-GEO-POR                    March 2026
 
 Authors' Addresses
 
-
-
-
-Krishnan, et al.        Expires 2 September 2026               [Page 20]
-
-Internet-Draft                RATS-GEO-POR                    March 2026
-
-
    Ram Krishnan
    JPMorgan Chase & Co.
    Email: ramkri123@gmail.com
@@ -1144,7 +1114,37 @@ Internet-Draft                RATS-GEO-POR                    March 2026
 
    Srinivasa Addepalli
    Aryaka
+
+
+
+Krishnan, et al.        Expires 2 September 2026               [Page 20]
+
+Internet-Draft                RATS-GEO-POR                    March 2026
+
+
    Email: srinivasa.addepalli@aryaka.com
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

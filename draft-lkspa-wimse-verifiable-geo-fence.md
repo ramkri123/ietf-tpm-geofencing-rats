@@ -1,6 +1,6 @@
 %%%
 title = "Privacy Preserving Verifiable Geofencing with Residency Proofs for Sovereign Workloads"
-abbrev = "RATS-GEO-POR"
+abbrev = "V-GAP"
 category = "info"
 docName = "draft-lkspa-wimse-verifiable-geo-fence-04"
 ipr = "trust200902"
@@ -254,7 +254,7 @@ Where policy requires it, the verifier can additionally require that an agent so
 In intermittently connected edge deployments, local operation can continue during outages, while centralized policy can be enforced on renewal and on release of high-value secrets once connectivity is available.
 
 
-# High-Assurance Profile - Verifiable Geofencing Attestation Profile (V-GAP)
+# High-Assurance Profile: Verifiable Geofencing Attestation Profile (V-GAP)
 
 V-GAP is a RATS/WIMSE attestation profile that binds a **Workload Identity Agent** to (1) hardware-rooted host integrity and (2) verified residency within a configured geofence. It does this with an evidence bundle from a **Location Anchor Host (LAH)**.
 
@@ -294,7 +294,7 @@ The `lah-bundle` is a hardware-sealed evidence structure embedded as an X.509 ex
 |:------|:-----|:--------:|:------------|
 | `lat` | number (float64) | Yes | Latitude, WGS-84 decimal degrees |
 | `lon` | number (float64) | Yes | Longitude, WGS-84 decimal degrees |
-| `accuracy` | number (float64) | Yes | Accuracy radius in metres |
+| `accuracy` | number (float64) | Yes | Accuracy radius in meters |
 
 `geolocation-proof-hash = Base64URL(SHA-256(JCS({lat, lon, accuracy})))`
 
@@ -370,6 +370,8 @@ The verifier sees only the opaque hash — never the raw identifiers.
 
 ### Nonce Chain and Merkle Audit Log
 
+Where `bundle[n]` denotes the JCS-canonicalized `lah-bundle` object at attestation interval `n`:
+
 ```
 chain[n] = SHA-256(chain[n-1] || SHA-256(JCS(bundle[n])))
 nonce[n]  = HMAC(secret, n || chain[n-1])
@@ -377,8 +379,8 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
 
 | Mechanism | Role |
 |:----------|:-----|
-| Chained nonce | Input control — agent cannot submit without responding to the management plane's current state |
-| Merkle chain | Audit output — proves inclusion of past bundles, detects gaps, enables regulatory audit |
+| Chained nonce | Input control — agent cannot submit without responding to the management plane's current state. |
+| Merkle chain | Audit output — proves inclusion of past bundles, detects gaps, and enables regulatory audit. |
 
 ## Scalable Fleet Management
 
@@ -477,15 +479,15 @@ Relying parties and identity issuers can use V-GAP results as inputs to authoriz
 
 # Security Considerations
 
-V-GAP reduces reliance on spoofable location signals and stolen tokens by making integrity and residency verifiable. Implementers still need to address:
+V-GAP reduces reliance on spoofable location signals and stolen tokens by making integrity and residency cryptographically verifiable. Implementers still need to address the following threats:
 
-- **Replay and mix-and-match**: Use nonces and stapling so old location evidence cannot be combined with a fresh platform quote (or vice versa).
-- **Location spoofing**: Treat sensor and network inputs as adversarial. Prefer multiple sources or corroboration where feasible, and apply conservative policy when evidence quality degrades.
-- **Relay and displacement**: When proximity mechanisms are introduced in future profiles, implementers should be aware that they are vulnerable to relay attacks and anchor displacement. Mitigations (such as tight RTT-based acceptance windows and anchor health checks) are deferred to those profiles.
-- **Management plane compromise**: OOB paths reduce dependence on the host OS but introduce dependence on the management controller and its network. Protect this plane with secure boot/updates, strong authentication, segmentation, and audit logging.
-- **Time and freshness**: Verifiers MUST enforce bounded freshness windows and define recovery behavior (re-attestation, quarantine, revocation) when clocks drift or evidence is stale.
-- **Registry and allowlist integrity**: Protect key registries and policy stores against tampering; treat them as high-value assets.
-- **Privacy**: Avoid unnecessary collection or retention of precise location. Prefer "in-zone" proofs (ZKP) where policy permits.
+- **Replay and mix-and-match**: Use nonces and evidence stapling so that old location evidence cannot be combined with a fresh platform quote (or vice versa).
+- **Location spoofing**: Treat sensor and network inputs as adversarial. Prefer multiple, corroborating sources where feasible, and apply conservative policy when evidence quality degrades.
+- **Relay and displacement**: When proximity mechanisms are introduced in future profiles, implementers should be aware that they are vulnerable to relay attacks and anchor displacement. Mitigations (such as tight RTT-based acceptance windows and anchor health attestation) are deferred to those future profiles.
+- **Management plane compromise**: OOB paths reduce dependence on the host OS but introduce dependence on the management controller and its network. Protect this plane with secure boot, authenticated updates, strong access controls, network segmentation, and audit logging.
+- **Time and freshness**: Verifiers MUST enforce bounded freshness windows and MUST define recovery behavior (re-attestation, quarantine, or revocation) when clocks drift or evidence becomes stale.
+- **Registry and allowlist integrity**: Protect key registries and policy stores against tampering; treat them as high-value privileged assets.
+- **Privacy**: Avoid unnecessary collection or retention of precise location data. Prefer "in-zone" proofs (ZKP) where policy permits.
 
 # IANA Considerations
 
@@ -497,17 +499,19 @@ IANA is requested to register the following Object Identifier (OID) in the "SMI 
 - **Description**: Verifiable Geofencing Attestation Profile (V-GAP) Evidence Bundle
 - **Reference**: This document.
 
-# Appendix - Items to Follow Up
+# Appendix: Open Issues
 
-## OPEN ISSUE: IMA restart behavior
+The following items are unresolved and are tracked for future revisions of this document.
 
-Define an interoperable way to detect and handle Workload Identity Agent restarts without requiring a host reboot, while preserving measurement integrity.
+## IMA Restart Behavior
 
-## OPEN ISSUE: Location privacy options
+Define an interoperable way to detect and handle Workload Identity Agent restarts without requiring a full host reboot, while preserving measurement integrity.
 
-Clarify the set of supported privacy techniques and how policy selects between precise location, coarse location, and ZKP-based “in-zone” proofs.
+## Location Privacy Options
 
-## OPEN ISSUE: Proximity profiles
+Clarify the complete set of supported privacy techniques and define the policy logic for selecting between precise location disclosure, coarse location, and ZKP-based "in-zone" proofs.
+
+## Proximity Profiles
 
 This document defers proximity proof mechanisms to future profiling work. Open items include:
 
@@ -516,15 +520,15 @@ This document defers proximity proof mechanisms to future profiling work. Open i
 - Addressing relay and displacement threats, including RTT-based acceptance windows, anchor health attestation, and disagreement policies for multi-anchor deployments.
 - Profiling the use of CAMARA-style MNO location signals as a proximity corroboration mechanism.
 
-## OPEN ISSUE: Geotagging textual data
+## Geotagging Textual Data
 
 There is no widely deployed standard for geotagging arbitrary textual data objects.
 
-## OPEN ISSUE: Attesting geotags
+## Attesting Geotags
 
-There is no widely deployed standard for signing geotags to prevent manipulation.
+There is no widely deployed standard for cryptographically signing geotags to prevent manipulation.
 
-# Appendix - Public References for Strict Data Residency Rules
+# Appendix: Public References for Strict Data Residency Rules
 
 India -- Reserve Bank of India (RBI): Payment System Data Localization (2018): From RBI Circular RBI/2017-18/153 (April 6, 2018): "All system providers shall ensure that the entire data relating to payment systems operated by them are stored in a system only in India. This data should include the full end-to-end transaction details / information collected / carried / processed as part of the message / payment instruction."
 

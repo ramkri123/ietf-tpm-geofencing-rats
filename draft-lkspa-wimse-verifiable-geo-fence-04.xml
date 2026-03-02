@@ -3,7 +3,7 @@
 <rfc version="3" ipr="trust200902" docName="draft-lkspa-wimse-verifiable-geo-fence-04" submissionType="IETF" category="info" xml:lang="en" xmlns:xi="http://www.w3.org/2001/XInclude" indexInclude="true">
 
 <front>
-<title abbrev="RATS-GEO-POR">Privacy Preserving Verifiable Geofencing with Residency Proofs for Sovereign Workloads</title><seriesInfo value="draft-lkspa-wimse-verifiable-geo-fence-04" stream="IETF" status="informational" name="Internet-Draft"></seriesInfo>
+<title abbrev="V-GAP">Privacy Preserving Verifiable Geofencing with Residency Proofs for Sovereign Workloads</title><seriesInfo value="draft-lkspa-wimse-verifiable-geo-fence-04" stream="IETF" status="informational" name="Internet-Draft"></seriesInfo>
 <author initials="R." surname="Krishnan" fullname="Ram Krishnan"><organization>JPMorgan Chase &amp; Co.</organization><address><postal><street></street>
 </postal><email>ramkri123@gmail.com</email>
 </address></author><author initials="N." surname="Smith" fullname="Ned Smith"><organization>Intel</organization><address><postal><street></street>
@@ -210,7 +210,7 @@
 <t>In intermittently connected edge deployments, local operation can continue during outages, while centralized policy can be enforced on renewal and on release of high-value secrets once connectivity is available.</t>
 </section>
 
-<section anchor="high-assurance-profile-verifiable-geofencing-attestation-profile-v-gap"><name>High-Assurance Profile - Verifiable Geofencing Attestation Profile (V-GAP)</name>
+<section anchor="high-assurance-profile-verifiable-geofencing-attestation-profile-v-gap"><name>High-Assurance Profile: Verifiable Geofencing Attestation Profile (V-GAP)</name>
 <t>V-GAP is a RATS/WIMSE attestation profile that binds a <strong>Workload Identity Agent</strong> to (1) hardware-rooted host integrity and (2) verified residency within a configured geofence. It does this with an evidence bundle from a <strong>Location Anchor Host (LAH)</strong>.</t>
 
 <section anchor="lah-bundle-location-anchor-host-evidence-structure"><name>LAH-Bundle: Location Anchor Host Evidence Structure</name>
@@ -249,7 +249,7 @@
 <td align="left"><tt>geolocation-id-hash</tt></td>
 <td align="left">string (Base64URL)</td>
 <td align="center">Yes</td>
-<td align="left"><tt>SHA-256(tpm-ak-bytes \|\| sensor-unique-id-bytes)</tt>. Binds TPM identity to sensor identity without exposing IMEI/IMSI/serial. Input recipe is an agent implementation detail (see Sensor Types below).</td>
+<td align="left"><tt>SHA-256(tpm-ak-bytes)</tt>. Binds TPM identity to sensor identity - assumption is sensor integrity is handled by OOB host management plane</td>
 </tr>
 
 <tr>
@@ -334,7 +334,7 @@
 <td align="left"><tt>accuracy</tt></td>
 <td align="left">number (float64)</td>
 <td align="center">Yes</td>
-<td align="left">Accuracy radius in metres</td>
+<td align="left">Accuracy radius in meters</td>
 </tr>
 </tbody>
 </table><t><tt>geolocation-proof-hash = Base64URL(SHA-256(JCS({lat, lon, accuracy})))</tt></t>
@@ -488,6 +488,7 @@
 </section>
 
 <section anchor="nonce-chain-and-merkle-audit-log"><name>Nonce Chain and Merkle Audit Log</name>
+<t>Where <tt>bundle[n]</tt> denotes the JCS-canonicalized <tt>lah-bundle</tt> object at attestation interval <tt>n</tt>:</t>
 
 <artwork><![CDATA[chain[n] = SHA-256(chain[n-1] || SHA-256(JCS(bundle[n])))
 nonce[n]  = HMAC(secret, n || chain[n-1])
@@ -503,12 +504,12 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
 <tbody>
 <tr>
 <td align="left">Chained nonce</td>
-<td align="left">Input control — agent cannot submit without responding to the management plane's current state</td>
+<td align="left">Input control — agent cannot submit without responding to the management plane's current state.</td>
 </tr>
 
 <tr>
 <td align="left">Merkle chain</td>
-<td align="left">Audit output — proves inclusion of past bundles, detects gaps, enables regulatory audit</td>
+<td align="left">Audit output — proves inclusion of past bundles, detects gaps, and enables regulatory audit.</td>
 </tr>
 </tbody>
 </table></section>
@@ -636,16 +637,16 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
 </section>
 
 <section anchor="security-considerations"><name>Security Considerations</name>
-<t>V-GAP reduces reliance on spoofable location signals and stolen tokens by making integrity and residency verifiable. Implementers still need to address:</t>
+<t>V-GAP reduces reliance on spoofable location signals and stolen tokens by making integrity and residency cryptographically verifiable. Implementers still need to address the following threats:</t>
 
 <ul spacing="compact">
-<li><strong>Replay and mix-and-match</strong>: Use nonces and stapling so old location evidence cannot be combined with a fresh platform quote (or vice versa).</li>
-<li><strong>Location spoofing</strong>: Treat sensor and network inputs as adversarial. Prefer multiple sources or corroboration where feasible, and apply conservative policy when evidence quality degrades.</li>
-<li><strong>Relay and displacement</strong>: When proximity mechanisms are introduced in future profiles, implementers should be aware that they are vulnerable to relay attacks and anchor displacement. Mitigations (such as tight RTT-based acceptance windows and anchor health checks) are deferred to those profiles.</li>
-<li><strong>Management plane compromise</strong>: OOB paths reduce dependence on the host OS but introduce dependence on the management controller and its network. Protect this plane with secure boot/updates, strong authentication, segmentation, and audit logging.</li>
-<li><strong>Time and freshness</strong>: Verifiers MUST enforce bounded freshness windows and define recovery behavior (re-attestation, quarantine, revocation) when clocks drift or evidence is stale.</li>
-<li><strong>Registry and allowlist integrity</strong>: Protect key registries and policy stores against tampering; treat them as high-value assets.</li>
-<li><strong>Privacy</strong>: Avoid unnecessary collection or retention of precise location. Prefer &quot;in-zone&quot; proofs (ZKP) where policy permits.</li>
+<li><strong>Replay and mix-and-match</strong>: Use nonces and evidence stapling so that old location evidence cannot be combined with a fresh platform quote (or vice versa).</li>
+<li><strong>Location spoofing</strong>: Treat sensor and network inputs as adversarial. Prefer multiple, corroborating sources where feasible, and apply conservative policy when evidence quality degrades.</li>
+<li><strong>Relay and displacement</strong>: When proximity mechanisms are introduced in future profiles, implementers should be aware that they are vulnerable to relay attacks and anchor displacement. Mitigations (such as tight RTT-based acceptance windows and anchor health attestation) are deferred to those future profiles.</li>
+<li><strong>Management plane compromise</strong>: OOB paths reduce dependence on the host OS but introduce dependence on the management controller and its network. Protect this plane with secure boot, authenticated updates, strong access controls, network segmentation, and audit logging.</li>
+<li><strong>Time and freshness</strong>: Verifiers MUST enforce bounded freshness windows and MUST define recovery behavior (re-attestation, quarantine, or revocation) when clocks drift or evidence becomes stale.</li>
+<li><strong>Registry and allowlist integrity</strong>: Protect key registries and policy stores against tampering; treat them as high-value privileged assets.</li>
+<li><strong>Privacy</strong>: Avoid unnecessary collection or retention of precise location data. Prefer &quot;in-zone&quot; proofs (ZKP) where policy permits.</li>
 </ul>
 </section>
 
@@ -660,17 +661,18 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
 </ul>
 </section>
 
-<section anchor="appendix-items-to-follow-up"><name>Appendix - Items to Follow Up</name>
+<section anchor="appendix-open-issues"><name>Appendix: Open Issues</name>
+<t>The following items are unresolved and are tracked for future revisions of this document.</t>
 
-<section anchor="open-issue-ima-restart-behavior"><name>OPEN ISSUE: IMA restart behavior</name>
-<t>Define an interoperable way to detect and handle Workload Identity Agent restarts without requiring a host reboot, while preserving measurement integrity.</t>
+<section anchor="ima-restart-behavior"><name>IMA Restart Behavior</name>
+<t>Define an interoperable way to detect and handle Workload Identity Agent restarts without requiring a full host reboot, while preserving measurement integrity.</t>
 </section>
 
-<section anchor="open-issue-location-privacy-options"><name>OPEN ISSUE: Location privacy options</name>
-<t>Clarify the set of supported privacy techniques and how policy selects between precise location, coarse location, and ZKP-based “in-zone” proofs.</t>
+<section anchor="location-privacy-options"><name>Location Privacy Options</name>
+<t>Clarify the complete set of supported privacy techniques and define the policy logic for selecting between precise location disclosure, coarse location, and ZKP-based &quot;in-zone&quot; proofs.</t>
 </section>
 
-<section anchor="open-issue-proximity-profiles"><name>OPEN ISSUE: Proximity profiles</name>
+<section anchor="proximity-profiles"><name>Proximity Profiles</name>
 <t>This document defers proximity proof mechanisms to future profiling work. Open items include:</t>
 
 <ul spacing="compact">
@@ -681,16 +683,16 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
 </ul>
 </section>
 
-<section anchor="open-issue-geotagging-textual-data"><name>OPEN ISSUE: Geotagging textual data</name>
+<section anchor="geotagging-textual-data"><name>Geotagging Textual Data</name>
 <t>There is no widely deployed standard for geotagging arbitrary textual data objects.</t>
 </section>
 
-<section anchor="open-issue-attesting-geotags"><name>OPEN ISSUE: Attesting geotags</name>
-<t>There is no widely deployed standard for signing geotags to prevent manipulation.</t>
+<section anchor="attesting-geotags"><name>Attesting Geotags</name>
+<t>There is no widely deployed standard for cryptographically signing geotags to prevent manipulation.</t>
 </section>
 </section>
 
-<section anchor="appendix-public-references-for-strict-data-residency-rules"><name>Appendix - Public References for Strict Data Residency Rules</name>
+<section anchor="appendix-public-references-for-strict-data-residency-rules"><name>Appendix: Public References for Strict Data Residency Rules</name>
 <t>India -- Reserve Bank of India (RBI): Payment System Data Localization (2018): From RBI Circular RBI/2017-18/153 (April 6, 2018): &quot;All system providers shall ensure that the entire data relating to payment systems operated by them are stored in a system only in India. This data should include the full end-to-end transaction details / information collected / carried / processed as part of the message / payment instruction.&quot;</t>
 <t>South Korea's Data Localization Regulations -- Geospatial Information Management Act (Spatial Data Act): Article 16, Paragraph 1: Prohibits the export of state-led survey data.</t>
 </section>

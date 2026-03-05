@@ -477,6 +477,26 @@ Relying parties and identity issuers can use V-GAP results as inputs to authoriz
 - **KMS gatekeeping**: Release of high-value assets (for example, decryption keys) SHOULD depend on a recent successful verification result.
 - **Fail closed**: If V-GAP evidence is carried in an X.509 extension and marked CRITICAL, any implementation that does not understand the extension will reject the credential.
 
+# Implementation Status
+
+[Note to RFC Editor: This section may be removed before publication as per {{RFC7942}}.]
+
+A reference implementation of the V-GAP profile is publicly available:
+
+- **Repository**: <https://github.com/lfedgeai/AegisSovereignAI>
+- **Path**: `hybrid-cloud-poc/`
+- **License**: Apache 2.0
+
+The implementation demonstrates the **in-band host attestation** deployment pattern ({{deployment-patterns-informative}}) using:
+
+- **TPM 2.0** hardware root of trust (AK-based quotes, PCR 15 TOCTOU protection)
+- **SPIRE** (Workload Identity Management Plane) with a custom `unifiedidentity` plugin that embeds the `lah-bundle` as an X.509 extension (OID `1.3.6.1.4.1.55744.1.1`)
+- **Keylime** (Host Identity Management Plane) with IMA measurement of the SPIRE agent binary (`workload-identity-agent-image-digest`)
+- **Plonky2** STARK prover for `privacy-technique = "zkp"` geofence proofs
+- **Geolocation sensor cascade**: Mobile/CAMARA, GNSS/GPS, and config-file fallback with IMEI/IMSI binding for `geolocation-id-hash`
+
+The implementation includes automated end-to-end tests (`./run-demo.sh`) that exercise the full attestation flow from TPM quote construction through ZKP proof generation and SVID issuance with embedded V-GAP evidence.
+
 # Security Considerations
 
 V-GAP reduces reliance on spoofable location signals and stolen tokens by making integrity and residency cryptographically verifiable. Implementers still need to address the following threats:

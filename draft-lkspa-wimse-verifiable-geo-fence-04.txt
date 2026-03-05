@@ -5,14 +5,14 @@
 RATS                                                         R. Krishnan
 Internet-Draft                                      JPMorgan Chase & Co.
 Intended status: Informational                                  N. Smith
-Expires: 3 September 2026                                          Intel
+Expires: 6 September 2026                                          Intel
                                                                 D. Lopez
                                                               Telefonica
                                                                A. Prasad
                                                                   Oracle
                                                             S. Addepalli
                                                                   Aryaka
-                                                            2 March 2026
+                                                            5 March 2026
 
 
    Privacy Preserving Verifiable Geofencing with Residency Proofs for
@@ -53,7 +53,7 @@ Abstract
 
 
 
-Krishnan, et al.        Expires 3 September 2026                [Page 1]
+Krishnan, et al.        Expires 6 September 2026                [Page 1]
 
 Internet-Draft                    V-GAP                       March 2026
 
@@ -73,7 +73,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 3 September 2026.
+   This Internet-Draft will expire on 6 September 2026.
 
 Copyright Notice
 
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Krishnan, et al.        Expires 3 September 2026                [Page 2]
+Krishnan, et al.        Expires 6 September 2026                [Page 2]
 
 Internet-Draft                    V-GAP                       March 2026
 
@@ -136,17 +136,18 @@ Internet-Draft                    V-GAP                       March 2026
      10.2.  Mobility and Sovereign Handover (Informative)  . . . . .  18
      10.3.  Location Anchor Hosts (Informative)  . . . . . . . . . .  19
    11. Policy Use (Informative)  . . . . . . . . . . . . . . . . . .  19
-   12. Security Considerations . . . . . . . . . . . . . . . . . . .  19
-   13. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  20
-   14. Appendix: Open Issues . . . . . . . . . . . . . . . . . . . .  20
-     14.1.  IMA Restart Behavior . . . . . . . . . . . . . . . . . .  20
-     14.2.  Location Privacy Options . . . . . . . . . . . . . . . .  21
-     14.3.  Proximity Profiles . . . . . . . . . . . . . . . . . . .  21
-     14.4.  Geotagging Textual Data  . . . . . . . . . . . . . . . .  21
-     14.5.  Attesting Geotags  . . . . . . . . . . . . . . . . . . .  21
-   15. Appendix: Public References for Strict Data Residency
-           Rules . . . . . . . . . . . . . . . . . . . . . . . . . .  21
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  21
+   12. Implementation Status . . . . . . . . . . . . . . . . . . . .  19
+   13. Security Considerations . . . . . . . . . . . . . . . . . . .  20
+   14. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  21
+   15. Appendix: Open Issues . . . . . . . . . . . . . . . . . . . .  21
+     15.1.  IMA Restart Behavior . . . . . . . . . . . . . . . . . .  21
+     15.2.  Location Privacy Options . . . . . . . . . . . . . . . .  21
+     15.3.  Proximity Profiles . . . . . . . . . . . . . . . . . . .  21
+     15.4.  Geotagging Textual Data  . . . . . . . . . . . . . . . .  22
+     15.5.  Attesting Geotags  . . . . . . . . . . . . . . . . . . .  22
+   16. Appendix: Public References for Strict Data Residency
+           Rules . . . . . . . . . . . . . . . . . . . . . . . . . .  22
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  22
 
 1.  Introduction
 
@@ -164,8 +165,7 @@ Internet-Draft                    V-GAP                       March 2026
 
 
 
-
-Krishnan, et al.        Expires 3 September 2026                [Page 3]
+Krishnan, et al.        Expires 6 September 2026                [Page 3]
 
 Internet-Draft                    V-GAP                       March 2026
 
@@ -221,7 +221,7 @@ Internet-Draft                    V-GAP                       March 2026
 
 
 
-Krishnan, et al.        Expires 3 September 2026                [Page 4]
+Krishnan, et al.        Expires 6 September 2026                [Page 4]
 
 Internet-Draft                    V-GAP                       March 2026
 
@@ -277,7 +277,7 @@ Internet-Draft                    V-GAP                       March 2026
 
 
 
-Krishnan, et al.        Expires 3 September 2026                [Page 5]
+Krishnan, et al.        Expires 6 September 2026                [Page 5]
 
 Internet-Draft                    V-GAP                       March 2026
 
@@ -333,7 +333,7 @@ Internet-Draft                    V-GAP                       March 2026
 
 
 
-Krishnan, et al.        Expires 3 September 2026                [Page 6]
+Krishnan, et al.        Expires 6 September 2026                [Page 6]
 
 Internet-Draft                    V-GAP                       March 2026
 
@@ -389,7 +389,7 @@ Internet-Draft                    V-GAP                       March 2026
 
 
 
-Krishnan, et al.        Expires 3 September 2026                [Page 7]
+Krishnan, et al.        Expires 6 September 2026                [Page 7]
 
 Internet-Draft                    V-GAP                       March 2026
 
@@ -445,7 +445,7 @@ Internet-Draft                    V-GAP                       March 2026
 
 
 
-Krishnan, et al.        Expires 3 September 2026                [Page 8]
+Krishnan, et al.        Expires 6 September 2026                [Page 8]
 
 Internet-Draft                    V-GAP                       March 2026
 
@@ -501,7 +501,7 @@ Internet-Draft                    V-GAP                       March 2026
 
 
 
-Krishnan, et al.        Expires 3 September 2026                [Page 9]
+Krishnan, et al.        Expires 6 September 2026                [Page 9]
 
 Internet-Draft                    V-GAP                       March 2026
 
@@ -557,7 +557,7 @@ Internet-Draft                    V-GAP                       March 2026
 
 
 
-Krishnan, et al.        Expires 3 September 2026               [Page 10]
+Krishnan, et al.        Expires 6 September 2026               [Page 10]
 
 Internet-Draft                    V-GAP                       March 2026
 
@@ -613,7 +613,7 @@ Internet-Draft                    V-GAP                       March 2026
 
 
 
-Krishnan, et al.        Expires 3 September 2026               [Page 11]
+Krishnan, et al.        Expires 6 September 2026               [Page 11]
 
 Internet-Draft                    V-GAP                       March 2026
 
@@ -669,7 +669,7 @@ Internet-Draft                    V-GAP                       March 2026
 
 
 
-Krishnan, et al.        Expires 3 September 2026               [Page 12]
+Krishnan, et al.        Expires 6 September 2026               [Page 12]
 
 Internet-Draft                    V-GAP                       March 2026
 
@@ -725,7 +725,7 @@ Internet-Draft                    V-GAP                       March 2026
 
 
 
-Krishnan, et al.        Expires 3 September 2026               [Page 13]
+Krishnan, et al.        Expires 6 September 2026               [Page 13]
 
 Internet-Draft                    V-GAP                       March 2026
 
@@ -781,7 +781,7 @@ Internet-Draft                    V-GAP                       March 2026
 
 
 
-Krishnan, et al.        Expires 3 September 2026               [Page 14]
+Krishnan, et al.        Expires 6 September 2026               [Page 14]
 
 Internet-Draft                    V-GAP                       March 2026
 
@@ -837,7 +837,7 @@ Internet-Draft                    V-GAP                       March 2026
 
 
 
-Krishnan, et al.        Expires 3 September 2026               [Page 15]
+Krishnan, et al.        Expires 6 September 2026               [Page 15]
 
 Internet-Draft                    V-GAP                       March 2026
 
@@ -893,7 +893,7 @@ Internet-Draft                    V-GAP                       March 2026
 
 
 
-Krishnan, et al.        Expires 3 September 2026               [Page 16]
+Krishnan, et al.        Expires 6 September 2026               [Page 16]
 
 Internet-Draft                    V-GAP                       March 2026
 
@@ -949,7 +949,7 @@ Internet-Draft                    V-GAP                       March 2026
 
 
 
-Krishnan, et al.        Expires 3 September 2026               [Page 17]
+Krishnan, et al.        Expires 6 September 2026               [Page 17]
 
 Internet-Draft                    V-GAP                       March 2026
 
@@ -1005,7 +1005,7 @@ Internet-Draft                    V-GAP                       March 2026
 
 
 
-Krishnan, et al.        Expires 3 September 2026               [Page 18]
+Krishnan, et al.        Expires 6 September 2026               [Page 18]
 
 Internet-Draft                    V-GAP                       March 2026
 
@@ -1038,7 +1038,50 @@ Internet-Draft                    V-GAP                       March 2026
       and marked CRITICAL, any implementation that does not understand
       the extension will reject the credential.
 
-12.  Security Considerations
+12.  Implementation Status
+
+   [Note to RFC Editor: This section may be removed before publication
+   as per {{RFC7942}}.]
+
+   A reference implementation of the V-GAP profile is publicly
+   available:
+
+   *  *Repository*: https://github.com/lfedgeai/AegisSovereignAI
+      (https://github.com/lfedgeai/AegisSovereignAI)
+   *  *Path*: hybrid-cloud-poc/
+   *  *License*: Apache 2.0
+
+   The implementation demonstrates the *in-band host attestation*
+   deployment pattern ({{deployment-patterns-informative}}) using:
+
+   *  *TPM 2.0* hardware root of trust (AK-based quotes, PCR 15 TOCTOU
+      protection)
+
+
+
+
+
+Krishnan, et al.        Expires 6 September 2026               [Page 19]
+
+Internet-Draft                    V-GAP                       March 2026
+
+
+   *  *SPIRE* (Workload Identity Management Plane) with a custom
+      unifiedidentity plugin that embeds the lah-bundle as an X.509
+      extension (OID 1.3.6.1.4.1.55744.1.1)
+   *  *Keylime* (Host Identity Management Plane) with IMA measurement of
+      the SPIRE agent binary (workload-identity-agent-image-digest)
+   *  *Plonky2* STARK prover for privacy-technique = "zkp" geofence
+      proofs
+   *  *Geolocation sensor cascade*: Mobile/CAMARA, GNSS/GPS, and config-
+      file fallback with IMEI/IMSI binding for geolocation-id-hash
+
+   The implementation includes automated end-to-end tests (./run-
+   demo.sh) that exercise the full attestation flow from TPM quote
+   construction through ZKP proof generation and SVID issuance with
+   embedded V-GAP evidence.
+
+13.  Security Considerations
 
    V-GAP reduces reliance on spoofable location signals and stolen
    tokens by making integrity and residency cryptographically
@@ -1057,15 +1100,6 @@ Internet-Draft                    V-GAP                       March 2026
       vulnerable to relay attacks and anchor displacement.  Mitigations
       (such as tight RTT-based acceptance windows and anchor health
       attestation) are deferred to those future profiles.
-
-
-
-
-Krishnan, et al.        Expires 3 September 2026               [Page 19]
-
-Internet-Draft                    V-GAP                       March 2026
-
-
    *  *Management plane compromise*: OOB paths reduce dependence on the
       host OS but introduce dependence on the management controller and
       its network.  Protect this plane with secure boot, authenticated
@@ -1078,11 +1112,21 @@ Internet-Draft                    V-GAP                       March 2026
    *  *Registry and allowlist integrity*: Protect key registries and
       policy stores against tampering; treat them as high-value
       privileged assets.
+
+
+
+
+
+Krishnan, et al.        Expires 6 September 2026               [Page 20]
+
+Internet-Draft                    V-GAP                       March 2026
+
+
    *  *Privacy*: Avoid unnecessary collection or retention of precise
       location data.  Prefer "in-zone" proofs (ZKP) where policy
       permits.
 
-13.  IANA Considerations
+14.  IANA Considerations
 
    IANA is requested to register the following Object Identifier (OID)
    in the "SMI Numbers" registry under the "SMI Private Enterprise
@@ -1099,36 +1143,24 @@ Internet-Draft                    V-GAP                       March 2026
       Evidence Bundle
    *  *Reference*: This document.
 
-14.  Appendix: Open Issues
+15.  Appendix: Open Issues
 
    The following items are unresolved and are tracked for future
    revisions of this document.
 
-14.1.  IMA Restart Behavior
+15.1.  IMA Restart Behavior
 
    Define an interoperable way to detect and handle Workload Identity
    Agent restarts without requiring a full host reboot, while preserving
    measurement integrity.
 
-
-
-
-
-
-
-
-Krishnan, et al.        Expires 3 September 2026               [Page 20]
-
-Internet-Draft                    V-GAP                       March 2026
-
-
-14.2.  Location Privacy Options
+15.2.  Location Privacy Options
 
    Clarify the complete set of supported privacy techniques and define
    the policy logic for selecting between precise location disclosure,
    coarse location, and ZKP-based "in-zone" proofs.
 
-14.3.  Proximity Profiles
+15.3.  Proximity Profiles
 
    This document defers proximity proof mechanisms to future profiling
    work.  Open items include:
@@ -1138,23 +1170,31 @@ Internet-Draft                    V-GAP                       March 2026
       documents.
    *  Specifying how proximity evidence is represented and bound to the
       V-GAP bundle (for example, as an additional hash field).
+
+
+
+Krishnan, et al.        Expires 6 September 2026               [Page 21]
+
+Internet-Draft                    V-GAP                       March 2026
+
+
    *  Addressing relay and displacement threats, including RTT-based
       acceptance windows, anchor health attestation, and disagreement
       policies for multi-anchor deployments.
    *  Profiling the use of CAMARA-style MNO location signals as a
       proximity corroboration mechanism.
 
-14.4.  Geotagging Textual Data
+15.4.  Geotagging Textual Data
 
    There is no widely deployed standard for geotagging arbitrary textual
    data objects.
 
-14.5.  Attesting Geotags
+15.5.  Attesting Geotags
 
    There is no widely deployed standard for cryptographically signing
    geotags to prevent manipulation.
 
-15.  Appendix: Public References for Strict Data Residency Rules
+16.  Appendix: Public References for Strict Data Residency Rules
 
    India -- Reserve Bank of India (RBI): Payment System Data
    Localization (2018): From RBI Circular RBI/2017-18/153 (April 6,
@@ -1170,14 +1210,6 @@ Internet-Draft                    V-GAP                       March 2026
 
 Authors' Addresses
 
-
-
-
-Krishnan, et al.        Expires 3 September 2026               [Page 21]
-
-Internet-Draft                    V-GAP                       March 2026
-
-
    Ram Krishnan
    JPMorgan Chase & Co.
    Email: ramkri123@gmail.com
@@ -1191,6 +1223,15 @@ Internet-Draft                    V-GAP                       March 2026
    Diego R. Lopez
    Telefonica
    Email: diego.r.lopez@telefonica.com
+
+
+
+
+
+
+Krishnan, et al.        Expires 6 September 2026               [Page 22]
+
+Internet-Draft                    V-GAP                       March 2026
 
 
    A Prasad
@@ -1229,4 +1270,19 @@ Internet-Draft                    V-GAP                       March 2026
 
 
 
-Krishnan, et al.        Expires 3 September 2026               [Page 22]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Krishnan, et al.        Expires 6 September 2026               [Page 23]

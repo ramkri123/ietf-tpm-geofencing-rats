@@ -1,9 +1,9 @@
 # Verifiable Geofencing and Residency Proofs for Cybersecure Workloads
 
-[![IETF Draft](https://img.shields.io/badge/IETF-Internet--Draft-blue.svg)](https://datatracker.ietf.org/doc/draft-lkspa-wimse-verifiable-geo-fence/)
-[![WIMSE WG](https://img.shields.io/badge/WG-WIMSE-green.svg)](https://datatracker.ietf.org/wg/wimse/about/)
+[![IETF Draft](https://img.shields.io/badge/IETF-Internet--Draft-blue.svg)](https://datatracker.ietf.org/doc/draft-lkspa-rats-verifiable-geo-fence/)
+[![RATS WG](https://img.shields.io/badge/WG-RATS-green.svg)](https://datatracker.ietf.org/wg/rats/about/)
 
-This is the working area for the IETF Internet-Draft **"Zero-Trust Sovereign AI: Verifiable Geofencing and Residency Proofs for Cybersecure Workloads"** ([draft-lkspa-wimse-verifiable-geo-fence](https://datatracker.ietf.org/doc/draft-lkspa-wimse-verifiable-geo-fence/)).
+This is the working area for the IETF Internet-Draft **"Zero-Trust Sovereign AI: Verifiable Geofencing and Residency Proofs for Cybersecure Workloads"** ([draft-lkspa-rats-verifiable-geo-fence](https://datatracker.ietf.org/doc/draft-lkspa-rats-verifiable-geo-fence/)).
 
 ## Overview
 
@@ -44,4 +44,4 @@ make clean
 
 ## Contributing
 
-Feedback is welcome via GitHub issues or the [WIMSE mailing list](https://www.ietf.org/mailman/listinfo/wimse).
+Feedback is welcome via GitHub issues or the [RATS mailing list](https://www.ietf.org/mailman/listinfo/rats).

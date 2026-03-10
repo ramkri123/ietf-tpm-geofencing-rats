@@ -2,7 +2,7 @@
 title = "Privacy Preserving Verifiable Geofencing with Residency Proofs for Sovereign Workloads"
 abbrev = "V-GAP"
 category = "info"
-docName = "draft-lkspa-wimse-verifiable-geo-fence-04"
+docName = "draft-lkspa-rats-verifiable-geo-fence-00"
 ipr = "trust200902"
 area = "Security"
 workgroup = "RATS"
@@ -10,7 +10,7 @@ keyword = ["geofencing", "attestation", "workload identity", "residency", "TPM",
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "draft-lkspa-wimse-verifiable-geo-fence-04"
+value = "draft-lkspa-rats-verifiable-geo-fence-00"
 stream = "IETF"
 status = "informational"
 
@@ -102,7 +102,7 @@ By binding software identities to persistent silicon identities and verified phy
 
 The **Workload Identity Agent** (e.g., SPIRE Agent) acts as the local-on-host intermediary responsible for managing and issuing identities to workloads. It serves as a vetting mechanism, ensuring that a workload's execution environment meets required security and residency policies before granting it the cryptographic credentials necessary for network communication. This High-Assurance Profile (a specialized RATS Profile) provides the technical mechanics to cryptographically bind this agent to the underlying hardware-verified platform and its privacy-preserving physical location.
 
-The architecture follows the RATS Architecture {{!RFC9334}}, defining the interactions between Provers, Verifiers, and Relying Parties to generate and validate high-confidence evidence regarding the Workload Identity Agent's status. It provides the hardware-rooted evidence layer required by the WIMSE Architecture {{I-D.ietf-wimse-architecture}}, establishing a "Silicon-to-Workload" chain of trust that ensures sensitive data is only processed by authorized workloads in approved, measured environments.
+The architecture follows the RATS Architecture {{!RFC9334}}, defining the interactions between Provers, Verifiers, and Relying Parties to generate and validate high-confidence evidence regarding the Workload Identity Agent's status. It provides the hardware-rooted evidence layer required by the Workload Identity Architecture {{I-D.ietf-wimse-architecture}}, establishing a "Silicon-to-Workload" chain of trust that ensures sensitive data is only processed by authorized workloads in approved, measured environments.
 
 To maintain location privacy while providing cryptographic verifiability, this profile leverages Transparent Zero-Knowledge Proofs (ZKPs). Unlike traditional ZKP systems, transparent ZKPs require no trusted third party or complex trusted setup phase. They achieve mathematical transparency through non-interactive, hash-based protocols, allowing a platform to prove it is resident within an approved geographic boundary without disclosing the exact coordinates of the underlying hardware.
 
@@ -225,7 +225,7 @@ At a high level, the profile enables a relying party (or identity issuer) to req
 1. the Workload Identity Agent is running on an approved, measured platform; and
 2. that platform is resident within an approved geographic boundary (optionally without revealing coordinates).
 
-# Composition with Transitive Attestation and WIMSE
+# Composition with Transitive Attestation
 
 This profile is designed to compose with {{I-D.mw-wimse-transitive-attestation}} and the **WIMSE Architecture** {{I-D.ietf-wimse-architecture}}.
 
@@ -256,7 +256,7 @@ In intermittently connected edge deployments, local operation can continue durin
 
 # High-Assurance Profile: Verifiable Geofencing Attestation Profile (V-GAP)
 
-V-GAP is a RATS/WIMSE attestation profile that binds a **Workload Identity Agent** to (1) hardware-rooted host integrity and (2) verified residency within a configured geofence. It does this with an evidence bundle from a **Location Anchor Host (LAH)**.
+V-GAP is a RATS attestation profile that binds a **Workload Identity Agent** to (1) hardware-rooted host integrity and (2) verified residency within a configured geofence. It does this with an evidence bundle from a **Location Anchor Host (LAH)**.
 
 ## LAH-Bundle: Location Anchor Host Evidence Structure
 

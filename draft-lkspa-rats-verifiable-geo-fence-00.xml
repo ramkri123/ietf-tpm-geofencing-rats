@@ -1,33 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- name="GENERATOR" content="github.com/mmarkdown/mmark Mmark Markdown Processor - mmark.miek.nl" -->
-<rfc version="3" ipr="trust200902" docName="draft-lkspa-wimse-verifiable-geo-fence-04" submissionType="IETF" category="info" xml:lang="en" xmlns:xi="http://www.w3.org/2001/XInclude" indexInclude="true">
+<rfc version="3" ipr="trust200902" submissionType="IETF" xml:lang="en" xmlns:xi="http://www.w3.org/2001/XInclude" indexInclude="true">
 
 <front>
-<title abbrev="V-GAP">Privacy Preserving Verifiable Geofencing with Residency Proofs for Sovereign Workloads</title><seriesInfo value="draft-lkspa-wimse-verifiable-geo-fence-04" stream="IETF" status="informational" name="Internet-Draft"></seriesInfo>
-<author initials="R." surname="Krishnan" fullname="Ram Krishnan"><organization>JPMorgan Chase &amp; Co.</organization><address><postal><street></street>
-</postal><email>ramkri123@gmail.com</email>
-</address></author><author initials="N." surname="Smith" fullname="Ned Smith"><organization>Intel</organization><address><postal><street></street>
-</postal><email>ned.smith@intel.com</email>
-</address></author><author initials="D." surname="Lopez" fullname="Diego R. Lopez"><organization>Telefonica</organization><address><postal><street></street>
-</postal><email>diego.r.lopez@telefonica.com</email>
-</address></author><author initials="A." surname="Prasad" fullname="A Prasad"><organization>Oracle</organization><address><postal><street></street>
-</postal><email>a.prasad@oracle.com</email>
-</address></author><author initials="S." surname="Addepalli" fullname="Srinivasa Addepalli"><organization>Aryaka</organization><address><postal><street></street>
-</postal><email>srinivasa.addepalli@aryaka.com</email>
-</address></author><date/>
-<area>Security</area>
-<workgroup>RATS</workgroup>
-<keyword>geofencing</keyword>
-<keyword>attestation</keyword>
-<keyword>workload identity</keyword>
-<keyword>residency</keyword>
-<keyword>TPM</keyword>
-<keyword>GNSS</keyword>
+<title></title><seriesInfo></seriesInfo>
+<date/>
+<area>Internet</area>
+<workgroup></workgroup>
 
 <abstract>
 <t>Modern cloud and distributed computing rely heavily on software-only identities and bearer tokens that are easily stolen, replayed, or used from unauthorized locations. Furthermore, traditional methods of location verification - such as IP-address-based geolocation - are easily spoofed via VPNs or proxies and significantly compromise infrastructure security and privacy for <strong>Sovereign Workloads</strong> and high-assurance environments. This document defines a <strong>High-Assurance Profile</strong> designed to solve these challenges through hardware-rooted cryptographic verifiability.</t>
 <t>A host machine runs a workload identity agent for managing the workload identities on that platform. This proposal replaces implicit trust and spoofable indicators with cryptographically verifiable hardware-rooted evidence of integrity and location for this agent. Critically, this framework prioritizes <strong>Location Privacy</strong> by utilizing Zero-Knowledge Proofs (ZKP), allowing a workload to prove it is within a compliant &quot;Sovereign Zone&quot; without disclosing precise coordinates that could be used for tracking or exploitation.</t>
-<t>By binding software identities to persistent silicon identities and verified physical residency, this solution establishes a &quot;Silicon-to-Workload&quot; chain of trust. It ensures that sensitive operations are only performed by authorized workloads running on untampered hardware in cryptographically verified, privacy-preserving geographic boundaries, fulfilling the high-assurance requirements of the <strong>WIMSE Architecture</strong> [[I-D.ietf-wimse-architecture]].</t>
+<t>By binding software identities to persistent silicon identities and verified physical residency, this solution establishes a &quot;Silicon-to-Workload&quot; chain of trust. It ensures that sensitive operations are only performed by authorized workloads running on untampered hardware in cryptographically verified, privacy-preserving geographic boundaries, fulfilling the high-assurance requirements of the <strong>WIMSE Architecture</strong> {{I-D.ietf-wimse-architecture}}.</t>
 </abstract>
 
 </front>
@@ -36,12 +20,12 @@
 
 <section anchor="introduction"><name>Introduction</name>
 <t>The <strong>Workload Identity Agent</strong> (e.g., SPIRE Agent) acts as the local-on-host intermediary responsible for managing and issuing identities to workloads. It serves as a vetting mechanism, ensuring that a workload's execution environment meets required security and residency policies before granting it the cryptographic credentials necessary for network communication. This High-Assurance Profile (a specialized RATS Profile) provides the technical mechanics to cryptographically bind this agent to the underlying hardware-verified platform and its privacy-preserving physical location.</t>
-<t>The architecture follows the RATS Architecture [[RFC9334]], defining the interactions between Provers, Verifiers, and Relying Parties to generate and validate high-confidence evidence regarding the Workload Identity Agent's status. It provides the hardware-rooted evidence layer required by the WIMSE Architecture [[I-D.ietf-wimse-architecture]], establishing a &quot;Silicon-to-Workload&quot; chain of trust that ensures sensitive data is only processed by authorized workloads in approved, measured environments.</t>
+<t>The architecture follows the RATS Architecture {{!RFC9334}}, defining the interactions between Provers, Verifiers, and Relying Parties to generate and validate high-confidence evidence regarding the Workload Identity Agent's status. It provides the hardware-rooted evidence layer required by the WIMSE Architecture {{I-D.ietf-wimse-architecture}}, establishing a &quot;Silicon-to-Workload&quot; chain of trust that ensures sensitive data is only processed by authorized workloads in approved, measured environments.</t>
 <t>To maintain location privacy while providing cryptographic verifiability, this profile leverages Transparent Zero-Knowledge Proofs (ZKPs). Unlike traditional ZKP systems, transparent ZKPs require no trusted third party or complex trusted setup phase. They achieve mathematical transparency through non-interactive, hash-based protocols, allowing a platform to prove it is resident within an approved geographic boundary without disclosing the exact coordinates of the underlying hardware.</t>
 </section>
 
 <section anchor="conventions-and-definitions"><name>Conventions and Definitions</name>
-<t>The key words &quot;MUST&quot;, &quot;MUST NOT&quot;, &quot;REQUIRED&quot;, &quot;SHALL&quot;, &quot;SHALL NOT&quot;, &quot;SHOULD&quot;, &quot;SHOULD NOT&quot;, &quot;RECOMMENDED&quot;, &quot;NOT RECOMMENDED&quot;, &quot;MAY&quot;, and &quot;OPTIONAL&quot; in this document are to be interpreted as described in BCP 14 [[RFC2119]] [[RFC8174]] when, and only when, they appear in all capitals, as shown here.</t>
+<t>The key words &quot;MUST&quot;, &quot;MUST NOT&quot;, &quot;REQUIRED&quot;, &quot;SHALL&quot;, &quot;SHALL NOT&quot;, &quot;SHOULD&quot;, &quot;SHOULD NOT&quot;, &quot;RECOMMENDED&quot;, &quot;NOT RECOMMENDED&quot;, &quot;MAY&quot;, and &quot;OPTIONAL&quot; in this document are to be interpreted as described in BCP 14 {{!RFC2119}} {{!RFC8174}} when, and only when, they appear in all capitals, as shown here.</t>
 
 <section anchor="abbreviations"><name>Abbreviations</name>
 
@@ -156,11 +140,11 @@
 2. that platform is resident within an approved geographic boundary (optionally without revealing coordinates).</t>
 </section>
 
-<section anchor="composition-with-transitive-attestation-and-wimse"><name>Composition with Transitive Attestation and WIMSE</name>
-<t>This profile is designed to compose with [[I-D.mw-wimse-transitive-attestation]] and the <strong>WIMSE Architecture</strong> [[I-D.ietf-wimse-architecture]].</t>
+<section anchor="composition-with-transitive-attestation-and-spice"><name>Composition with Transitive Attestation and SPICE</name>
+<t>This profile is designed to compose with {{I-D.mw-wimse-transitive-attestation}} and the <strong>WIMSE Architecture</strong> {{I-D.ietf-wimse-architecture}}.</t>
 
 <ul spacing="compact">
-<li><strong><eref target="Layer 1">[I-D.mw-wimse-transitive-attestation]</eref>:</strong> Binds a workload to a <em>local</em> Workload Identity Agent (co-location / PoR), treating the agent as a trust anchor.</li>
+<li><strong>{{I-D.mw-wimse-transitive-attestation}} (Layer 1):</strong> Binds a workload to a <em>local</em> Workload Identity Agent (co-location / PoR), treating the agent as a trust anchor.</li>
 <li><t><strong>This document (Layers 2 and 3):</strong> Defines how that Workload Identity Agent is itself verified:</t>
 
 <ul spacing="compact">
@@ -180,7 +164,7 @@
 <tbody>
 <tr>
 <td align="left"><strong>Layer 1</strong></td>
-<td align="left">[[I-D.mw-wimse-transitive-attestation]]</td>
+<td align="left">{{I-D.mw-wimse-transitive-attestation}}</td>
 <td align="left">Bind workload to a local Workload Identity Agent (co-location / PoR).</td>
 </tr>
 
@@ -211,7 +195,7 @@
 </section>
 
 <section anchor="high-assurance-profile-verifiable-geofencing-attestation-profile-v-gap"><name>High-Assurance Profile: Verifiable Geofencing Attestation Profile (V-GAP)</name>
-<t>V-GAP is a RATS/WIMSE attestation profile that binds a <strong>Workload Identity Agent</strong> to (1) hardware-rooted host integrity and (2) verified residency within a configured geofence. It does this with an evidence bundle from a <strong>Location Anchor Host (LAH)</strong>.</t>
+<t>V-GAP is a RATS attestation profile that binds a <strong>Workload Identity Agent</strong> to (1) hardware-rooted host integrity and (2) verified residency within a configured geofence. It does this with an evidence bundle from a <strong>Location Anchor Host (LAH)</strong>.</t>
 
 <section anchor="lah-bundle-location-anchor-host-evidence-structure"><name>LAH-Bundle: Location Anchor Host Evidence Structure</name>
 <t>The <tt>lah-bundle</tt> is a hardware-sealed evidence structure embedded as an X.509 extension (OID <tt>1.3.6.1.4.1.65284.1.1</tt>) in a SPIRE SVID. It binds a workload identity to physically verifiable claims — TPM hardware identity, privacy-preserving geolocation, and agent binary integrity — without exposing PII.</t>
@@ -621,7 +605,7 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
 
 <ul spacing="compact">
 <li><strong>End-user anchors</strong>: A user device (for example, a phone) can serve as an LAH for a nearby client device. The mechanism by which the anchor establishes its own location (and any proximity evidence it may provide) is out of scope for this document.</li>
-<li><strong>Data center anchors</strong>: A small set of hosts can act as LAHs for a cluster. Timing-based mechanisms (for example, PTP-derived) may assist in establishing relative location; protocol details are deferred to future profiling work (see [[I-D.ramki-ptp-hardware-rooted-attestation]]).</li>
+<li><strong>Data center anchors</strong>: A small set of hosts can act as LAHs for a cluster. Timing-based mechanisms (for example, PTP-derived) may assist in establishing relative location; protocol details are deferred to future profiling work (see {{I-D.ramki-ptp-hardware-rooted-attestation}}).</li>
 </ul>
 </section>
 </section>
@@ -637,7 +621,7 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
 </section>
 
 <section anchor="implementation-status"><name>Implementation Status</name>
-<t>[Note to RFC Editor: This section may be removed before publication as per {{RFC7942}}.]</t>
+<t>[Note to RFC Editor: This section may be removed before publication as per {{!RFC7942}}.]</t>
 <t>A reference implementation of the V-GAP profile is publicly available:</t>
 
 <ul spacing="compact">
@@ -679,6 +663,7 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
 <li><strong>OID</strong>: <tt>1.3.6.1.4.1.65284.1.1</tt></li>
 <li><strong>Description</strong>: Verifiable Geofencing Attestation Profile (V-GAP) Evidence Bundle</li>
 <li><strong>Reference</strong>: This document.</li>
+<li><strong>PEN</strong>: 65284 (IANA Private Enterprise Number assigned to Ram Krishnan)</li>
 </ul>
 </section>
 

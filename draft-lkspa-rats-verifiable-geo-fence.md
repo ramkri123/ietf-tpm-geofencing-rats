@@ -7,6 +7,7 @@ ipr = "trust200902"
 area = "Security"
 workgroup = "RATS"
 keyword = ["geofencing", "attestation", "workload identity", "residency", "TPM", "GNSS"]
+date = 2026-03-10
 
 [seriesInfo]
 name = "Internet-Draft"

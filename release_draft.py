@@ -7,7 +7,7 @@ import argparse
 from pathlib import Path
 
 # --- Configuration (User can edit these) ---
-VERSION = "04"    # Set explicitly (e.g., "00") to target a version, or leave empty "" for latest.
+VERSION = "00"    # Set explicitly (e.g., "00") to target a version, or leave empty "" for latest.
 SOURCE = ""     # Master file (e.g. "draft-mw-spice.md"). If empty, uses [prefix].md.
 AUTO_BUMP = False # Set to True to automatically increment the version on every run.
 PUSH = True      # Set to False to commit locally only by default.

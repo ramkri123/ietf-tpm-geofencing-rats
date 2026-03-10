@@ -54,7 +54,7 @@ organization = "Aryaka"
   [author.address]
   email = "srinivasa.addepalli@aryaka.com"
 
-{{contributor}}
+[[contributor]]
 initials = "B."
 surname = "Malepati"
 fullname = "Bala Siva Sai Akhil Malepati"
@@ -62,7 +62,7 @@ organization = "Independent"
   [contributor.address]
   email = "saiakhil2012@yahoo.com"
 
-{{contributor}}
+[[contributor]]
 initials = "G."
 surname = "Arfaoui"
 fullname = "Ghada Arfaoui"
@@ -70,7 +70,7 @@ organization = "Orange"
   [contributor.address]
   email = "ghada.arfaoui@orange.com"
 
-{{contributor}}
+[[contributor]]
 initials = "M."
 surname = "Epley"
 fullname = "Michael Epley"
@@ -78,7 +78,7 @@ organization = "Red Hat"
   [contributor.address]
   email = "mepley@redhat.com"
 
-{{contributor}}
+[[contributor]]
 initials = "V."
 surname = "Masilamani"
 fullname = "Vijay Masilamani"

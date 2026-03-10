@@ -1,12 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- name="GENERATOR" content="github.com/mmarkdown/mmark Mmark Markdown Processor - mmark.miek.nl" -->
-<rfc version="3" ipr="trust200902" submissionType="IETF" xml:lang="en" xmlns:xi="http://www.w3.org/2001/XInclude" indexInclude="true">
+<rfc version="3" ipr="trust200902" docName="draft-lkspa-rats-verifiable-geo-fence-00" submissionType="IETF" category="info" xml:lang="en" xmlns:xi="http://www.w3.org/2001/XInclude" indexInclude="true">
 
 <front>
-<title></title><seriesInfo></seriesInfo>
-<date/>
-<area>Internet</area>
-<workgroup></workgroup>
+<title abbrev="V-GAP">Privacy Preserving Verifiable Geofencing with Residency Proofs for Sovereign Workloads</title><seriesInfo value="draft-lkspa-rats-verifiable-geo-fence-00" stream="IETF" status="informational" name="Internet-Draft"></seriesInfo>
+<author initials="R." surname="Krishnan" fullname="Ram Krishnan"><organization>JPMorgan Chase &amp; Co.</organization><address><postal><street></street>
+</postal><email>ramkri123@gmail.com</email>
+</address></author><author initials="N." surname="Smith" fullname="Ned Smith"><organization>Intel</organization><address><postal><street></street>
+</postal><email>ned.smith@intel.com</email>
+</address></author><author initials="D." surname="Lopez" fullname="Diego R. Lopez"><organization>Telefonica</organization><address><postal><street></street>
+</postal><email>diego.r.lopez@telefonica.com</email>
+</address></author><author initials="A." surname="Prasad" fullname="A Prasad"><organization>Oracle</organization><address><postal><street></street>
+</postal><email>a.prasad@oracle.com</email>
+</address></author><author initials="S." surname="Addepalli" fullname="Srinivasa Addepalli"><organization>Aryaka</organization><address><postal><street></street>
+</postal><email>srinivasa.addepalli@aryaka.com</email>
+</address></author><date/>
+<area>Security</area>
+<workgroup>RATS</workgroup>
+<keyword>geofencing</keyword>
+<keyword>attestation</keyword>
+<keyword>workload identity</keyword>
+<keyword>residency</keyword>
+<keyword>TPM</keyword>
+<keyword>GNSS</keyword>
 
 <abstract>
 <t>Modern cloud and distributed computing rely heavily on software-only identities and bearer tokens that are easily stolen, replayed, or used from unauthorized locations. Furthermore, traditional methods of location verification - such as IP-address-based geolocation - are easily spoofed via VPNs or proxies and significantly compromise infrastructure security and privacy for <strong>Sovereign Workloads</strong> and high-assurance environments. This document defines a <strong>High-Assurance Profile</strong> designed to solve these challenges through hardware-rooted cryptographic verifiability.</t>
@@ -20,7 +36,7 @@
 
 <section anchor="introduction"><name>Introduction</name>
 <t>The <strong>Workload Identity Agent</strong> (e.g., SPIRE Agent) acts as the local-on-host intermediary responsible for managing and issuing identities to workloads. It serves as a vetting mechanism, ensuring that a workload's execution environment meets required security and residency policies before granting it the cryptographic credentials necessary for network communication. This High-Assurance Profile (a specialized RATS Profile) provides the technical mechanics to cryptographically bind this agent to the underlying hardware-verified platform and its privacy-preserving physical location.</t>
-<t>The architecture follows the RATS Architecture {{!RFC9334}}, defining the interactions between Provers, Verifiers, and Relying Parties to generate and validate high-confidence evidence regarding the Workload Identity Agent's status. It provides the hardware-rooted evidence layer required by the WIMSE Architecture {{I-D.ietf-wimse-architecture}}, establishing a &quot;Silicon-to-Workload&quot; chain of trust that ensures sensitive data is only processed by authorized workloads in approved, measured environments.</t>
+<t>The architecture follows the RATS Architecture {{!RFC9334}}, defining the interactions between Provers, Verifiers, and Relying Parties to generate and validate high-confidence evidence regarding the Workload Identity Agent's status. It provides the hardware-rooted evidence layer required by the Workload Identity Architecture {{I-D.ietf-wimse-architecture}}, establishing a &quot;Silicon-to-Workload&quot; chain of trust that ensures sensitive data is only processed by authorized workloads in approved, measured environments.</t>
 <t>To maintain location privacy while providing cryptographic verifiability, this profile leverages Transparent Zero-Knowledge Proofs (ZKPs). Unlike traditional ZKP systems, transparent ZKPs require no trusted third party or complex trusted setup phase. They achieve mathematical transparency through non-interactive, hash-based protocols, allowing a platform to prove it is resident within an approved geographic boundary without disclosing the exact coordinates of the underlying hardware.</t>
 </section>
 
@@ -140,7 +156,7 @@
 2. that platform is resident within an approved geographic boundary (optionally without revealing coordinates).</t>
 </section>
 
-<section anchor="composition-with-transitive-attestation-and-spice"><name>Composition with Transitive Attestation and SPICE</name>
+<section anchor="composition-with-transitive-attestation"><name>Composition with Transitive Attestation</name>
 <t>This profile is designed to compose with {{I-D.mw-wimse-transitive-attestation}} and the <strong>WIMSE Architecture</strong> {{I-D.ietf-wimse-architecture}}.</t>
 
 <ul spacing="compact">

@@ -95,7 +95,7 @@ Modern cloud and distributed computing rely heavily on software-only identities 
 
 A host machine runs a workload identity agent for managing the workload identities on that platform. This proposal replaces implicit trust and spoofable indicators with cryptographically verifiable hardware-rooted evidence of integrity and location for this agent. Critically, this framework prioritizes **Location Privacy** by utilizing Zero-Knowledge Proofs (ZKP), allowing a workload to prove it is within a compliant "Sovereign Zone" without disclosing precise coordinates that could be used for tracking or exploitation.
 
-By binding software identities to persistent silicon identities and verified physical residency, this solution establishes a "Silicon-to-Workload" chain of trust. It ensures that sensitive operations are only performed by authorized workloads running on untampered hardware in cryptographically verified, privacy-preserving geographic boundaries, fulfilling the high-assurance requirements of the **WIMSE Architecture** {{I-D.ietf-wimse-architecture}}.
+By binding software identities to persistent silicon identities and verified physical residency, this solution establishes a "Silicon-to-Workload" chain of trust. It ensures that sensitive operations are only performed by authorized workloads running on untampered hardware in cryptographically verified, privacy-preserving geographic boundaries, fulfilling the high-assurance requirements of the **WIMSE Architecture** {{!I-D.ietf-wimse-architecture}}.
 
 {mainmatter}
 
@@ -103,7 +103,7 @@ By binding software identities to persistent silicon identities and verified phy
 
 The **Workload Identity Agent** (e.g., SPIRE Agent) acts as the local-on-host intermediary responsible for managing and issuing identities to workloads. It serves as a vetting mechanism, ensuring that a workload's execution environment meets required security and residency policies before granting it the cryptographic credentials necessary for network communication. This High-Assurance Profile (a specialized RATS Profile) provides the technical mechanics to cryptographically bind this agent to the underlying hardware-verified platform and its privacy-preserving physical location.
 
-The architecture follows the RATS Architecture {{!RFC9334}}, defining the interactions between Provers, Verifiers, and Relying Parties to generate and validate high-confidence evidence regarding the Workload Identity Agent's status. It provides the hardware-rooted evidence layer required by the Workload Identity Architecture {{I-D.ietf-wimse-architecture}}, establishing a "Silicon-to-Workload" chain of trust that ensures sensitive data is only processed by authorized workloads in approved, measured environments.
+The architecture follows the RATS Architecture {{!RFC9334}}, defining the interactions between Provers, Verifiers, and Relying Parties to generate and validate high-confidence evidence regarding the Workload Identity Agent's status. It provides the hardware-rooted evidence layer required by the Workload Identity Architecture {{!I-D.ietf-wimse-architecture}}, establishing a "Silicon-to-Workload" chain of trust that ensures sensitive data is only processed by authorized workloads in approved, measured environments.
 
 To maintain location privacy while providing cryptographic verifiability, this profile leverages Transparent Zero-Knowledge Proofs (ZKPs). Unlike traditional ZKP systems, transparent ZKPs require no trusted third party or complex trusted setup phase. They achieve mathematical transparency through non-interactive, hash-based protocols, allowing a platform to prove it is resident within an approved geographic boundary without disclosing the exact coordinates of the underlying hardware.
 
@@ -228,16 +228,16 @@ At a high level, the profile enables a relying party (or identity issuer) to req
 
 # Composition with Transitive Attestation
 
-This profile is designed to compose with {{I-D.mw-wimse-transitive-attestation}} and the **WIMSE Architecture** {{I-D.ietf-wimse-architecture}}.
+This profile is designed to compose with {{!I-D.mw-wimse-transitive-attestation}} and the **WIMSE Architecture** {{!I-D.ietf-wimse-architecture}}.
 
-- **{{I-D.mw-wimse-transitive-attestation}} (Layer 1):** Binds a workload to a *local* Workload Identity Agent (co-location / PoR), treating the agent as a trust anchor.
+- **{{!I-D.mw-wimse-transitive-attestation}} (Layer 1):** Binds a workload to a *local* Workload Identity Agent (co-location / PoR), treating the agent as a trust anchor.
 - **This document (Layers 2 and 3):** Defines how that Workload Identity Agent is itself verified:
   - **Layer 2 — Platform integrity:** Hardware-rooted evidence of the host state (e.g., TPM-based attestation).
   - **Layer 3 — Residency:** Cryptographically verifiable proof the attested host is inside an approved boundary (optionally privacy-preserving).
 
 | Layer | Document | Responsibility |
 | :--- | :--- | :--- |
-| **Layer 1** | {{I-D.mw-wimse-transitive-attestation}} | Bind workload to a local Workload Identity Agent (co-location / PoR). |
+| **Layer 1** | {{!I-D.mw-wimse-transitive-attestation}} | Bind workload to a local Workload Identity Agent (co-location / PoR). |
 | **Layer 2** | This document | Verify Workload Host integrity for the Workload Identity Agent (platform evidence). |
 | **Layer 3** | This document | Verify Workload Host residency within an approved boundary (location evidence). |
 
@@ -248,7 +248,7 @@ This profile assumes two cooperating control planes:
 - **Host Identity Management Plane:** Verifies platform integrity and residency evidence and produces an attestation result.
 - **Workload Identity Management Plane:** Issues or renews workload identities (e.g., SVIDs) only when the attestation result satisfies policy.
 
-To prevent mix-and-match and replay, attestation results SHOULD be fresh and SHOULD be bound to the identity issuance event (e.g., by cryptographically binding freshness values used for platform quotes and workload credential issuance within the verifier result).
+To prevent mix-and-match and replay, attestation results MUST be fresh and MUST be bound to the identity issuance event (e.g., by cryptographically binding freshness values used for platform quotes and workload credential issuance within the verifier result).
 
 Where policy requires it, the verifier can additionally require that an agent software measurement (e.g., image digest) is covered by validated platform evidence, reducing the risk that a modified or unauthorized agent obtains credentials.
 
@@ -390,14 +390,14 @@ Large deployments need lifecycle management for the attestation keys referenced 
 ## Key Registry and Synchronization
 
 - A Cloud (central) Host Identity Management Plane maintains a registry of accepted AK public keys and associated metadata (e.g., EK certificate chain, hardware identity, and status).
-- An Edge Host Identity Management Plane **MAY** maintain a local registry to support disconnected operation and periodically synchronizes updates to the central registry.
+- An Edge Host Identity Management Plane MAY maintain a local registry to support disconnected operation and periodically synchronizes updates to the central registry.
 
 ## Key Rotation
 
 To prevent rogue key injection during rotation:
 
-- The central registry **MUST** accept a new AK only if the edge plane provides a rotation proof that chains the new AK to previously accepted state.
-- A rotation proof **MUST** be a JCS-canonicalized object signed by the previously accepted AK (or, if available, validated by a fresh hardware-rooted OOB quote).
+- The central registry MUST accept a new AK only if the edge plane provides a rotation proof that chains the new AK to previously accepted state.
+- A rotation proof MUST be a JCS-canonicalized object signed by the previously accepted AK (or, if available, validated by a fresh hardware-rooted OOB quote).
 
 ### Example Rotation Proof (Informative)
 
@@ -413,7 +413,7 @@ To prevent rogue key injection during rotation:
 
 ## Credential Activation and Re-Verification
 
-Credential activation (e.g., `TPM2_MakeCredential`) is expensive to run on every request. Verifiers **SHOULD** perform it on events such as:
+Credential activation (e.g., `TPM2_MakeCredential`) is expensive to run on every request. Verifiers SHOULD perform it on events such as:
 
 - Initial onboarding  
 - Reboot / reset detection (e.g., TPM clock/reset counters)  
@@ -421,19 +421,19 @@ Credential activation (e.g., `TPM2_MakeCredential`) is expensive to run on every
 - Failure of location evidence checks  
 - Explicit elevation to higher assurance policy  
 
-Between full activations, verifiers **MAY** accept fresh quotes from registered AKs as proof of continued compliance, subject to policy.
+Between full activations, verifiers MAY accept fresh quotes from registered AKs as proof of continued compliance, subject to policy.
 
 ## Revocation and Health Signals
 
-- The edge plane **SHOULD** maintain a per-node health signal (e.g., tamper, firmware policy violations).
-- On severe health signals, the verifier **MUST** revoke the relevant AK(s) and reject identities derived from them according to policy.
+- The edge plane SHOULD maintain a per-node health signal (e.g., tamper, firmware policy violations).
+- On severe health signals, the verifier MUST revoke the relevant AK(s) and reject identities derived from them according to policy.
 
 ## Disconnected Operation (Leased Identity)
 
-For intermittent connectivity, the verifier **MAY** issue identities with extended validity (a lease) under policy. If a lease is used:
+For intermittent connectivity, the verifier MAY issue identities with extended validity (a lease) under policy. If a lease is used:
 
-- The edge plane **MUST** revoke or refuse renewal locally on tamper/drift signals.
-- The workload **MUST** re-attest and satisfy current policy on reconnection before renewal or release of high-value secrets.
+- The edge plane MUST revoke or refuse renewal locally on tamper/drift signals.
+- The workload MUST re-attest and satisfy current policy on reconnection before renewal or release of high-value secrets.
 
 ## Deployment Patterns (Informative)
 
@@ -443,7 +443,7 @@ Implementations commonly fall into the following patterns, differing in how plat
 
 - **Out-of-band management**: Evidence collected via a management controller / BMC path (for example, iLO-class OOB management such as HPE OneView). In this pattern, the Workload Identity Management Plane (for example, SPIRE Server) generates `N_fusion` and shares it with the Host Identity Management Plane (for example, HPE OneView) over a server-to-server channel. The Host Identity Management Plane then delivers `N_fusion` to the host via the BMC / OOB path — bypassing the host OS entirely. The host TPM seals the `lah-bundle` with that nonce, and the sealed bundle is returned via the same OOB path. This pattern is recommended for high-assurance environments where the host OS is part of the threat model.
 
-- **Cloud-hosted attestation environments**: Provider mechanisms exposing measured boot and TPM-backed claims (for example, Nitro-class enclaves or shielded VM instances). The cloud provider supplies a hardware-rooted quote that can serve as the `tpm-quote-seal`; the geolocation claim is typically derived from the provider's zone or region attestation. Implementations SHOULD verify that the provider's attestation scope satisfies the geofence policy.
+- **Cloud-hosted attestation environments**: Provider mechanisms exposing measured boot and TPM-backed claims (for example, Nitro-class enclaves or shielded VM instances). The cloud provider supplies a hardware-rooted quote that can serve as the `tpm-quote-seal`; the geolocation claim is typically derived from the provider's zone or region attestation. Implementations should verify that the provider's attestation scope satisfies the geofence policy.
 
 # Operational Considerations
 
@@ -455,7 +455,7 @@ To support edge deployments and intermittent connectivity, identity issuance may
 - **Scoping**: Issued identities SHOULD be scoped so they are not accepted outside the intended deployment boundary (for example, via trust bundle partitioning and policy).
 - **Renewal gating**: Issuers SHOULD renew short-lived identities only when the verifier result for integrity and residency is valid for the requested freshness window.
 
-## Mobility and Sovereign Handover (Informative)
+## Mobility and Sovereign Handover
 
 When a workload moves between anchors or boundaries, the Workload Identity Agent MUST obtain a new V-GAP bundle that reflects the new LAH and current residency.
 
@@ -475,7 +475,7 @@ To scale location sensing, a deployment may use dedicated anchors:
 Relying parties and identity issuers can use V-GAP results as inputs to authorization.
 
 - **ABAC**: Residency and integrity can be mandatory claims for sensitive operations.
-- **KMS gatekeeping**: Release of high-value assets (for example, decryption keys) SHOULD depend on a recent successful verification result.
+- **KMS gatekeeping**: Release of high-value assets (for example, decryption keys) should depend on a recent successful verification result.
 - **Fail closed**: If V-GAP evidence is carried in an X.509 extension and marked CRITICAL, any implementation that does not understand the extension will reject the credential.
 
 # Implementation Status

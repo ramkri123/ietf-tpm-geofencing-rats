@@ -13,7 +13,7 @@
 <meta content='
        Modern cloud and distributed computing rely heavily on software-only identities and bearer tokens that are easily stolen, replayed, or used from unauthorized locations. Furthermore, traditional methods of location verification - such as IP-address-based geolocation - are easily spoofed via VPNs or proxies and significantly compromise infrastructure security and privacy for  Sovereign Workloads  and high-assurance environments. This document defines a  High-Assurance Profile  designed to solve these challenges through hardware-rooted cryptographic verifiability. 
        A host machine runs a workload identity agent for managing the workload identities on that platform. This proposal replaces implicit trust and spoofable indicators with cryptographically verifiable hardware-rooted evidence of integrity and location for this agent. Critically, this framework prioritizes  Location Privacy  by utilizing Zero-Knowledge Proofs (ZKP), allowing a workload to prove it is within a compliant "Sovereign Zone" without disclosing precise coordinates that could be used for tracking or exploitation. 
-       By binding software identities to persistent silicon identities and verified physical residency, this solution establishes a "Silicon-to-Workload" chain of trust. It ensures that sensitive operations are only performed by authorized workloads running on untampered hardware in cryptographically verified, privacy-preserving geographic boundaries, fulfilling the high-assurance requirements of the  WIMSE Architecture  {{I-D.ietf-wimse-architecture}}. 
+       By binding software identities to persistent silicon identities and verified physical residency, this solution establishes a "Silicon-to-Workload" chain of trust. It ensures that sensitive operations are only performed by authorized workloads running on untampered hardware in cryptographically verified, privacy-preserving geographic boundaries, fulfilling the high-assurance requirements of the  WIMSE Architecture  {{!I-D.ietf-wimse-architecture}}. 
     ' name="description">
 <meta content="xml2rfc 3.31.0" name="generator">
 <meta content="geofencing" name="keyword">
@@ -1281,7 +1281,7 @@ li > p:last-of-type:only-child {
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
 <p id="section-abstract-1">Modern cloud and distributed computing rely heavily on software-only identities and bearer tokens that are easily stolen, replayed, or used from unauthorized locations. Furthermore, traditional methods of location verification - such as IP-address-based geolocation - are easily spoofed via VPNs or proxies and significantly compromise infrastructure security and privacy for <strong>Sovereign Workloads</strong> and high-assurance environments. This document defines a <strong>High-Assurance Profile</strong> designed to solve these challenges through hardware-rooted cryptographic verifiability.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 <p id="section-abstract-2">A host machine runs a workload identity agent for managing the workload identities on that platform. This proposal replaces implicit trust and spoofable indicators with cryptographically verifiable hardware-rooted evidence of integrity and location for this agent. Critically, this framework prioritizes <strong>Location Privacy</strong> by utilizing Zero-Knowledge Proofs (ZKP), allowing a workload to prove it is within a compliant "Sovereign Zone" without disclosing precise coordinates that could be used for tracking or exploitation.<a href="#section-abstract-2" class="pilcrow">¶</a></p>
-<p id="section-abstract-3">By binding software identities to persistent silicon identities and verified physical residency, this solution establishes a "Silicon-to-Workload" chain of trust. It ensures that sensitive operations are only performed by authorized workloads running on untampered hardware in cryptographically verified, privacy-preserving geographic boundaries, fulfilling the high-assurance requirements of the <strong>WIMSE Architecture</strong> {{I-D.ietf-wimse-architecture}}.<a href="#section-abstract-3" class="pilcrow">¶</a></p>
+<p id="section-abstract-3">By binding software identities to persistent silicon identities and verified physical residency, this solution establishes a "Silicon-to-Workload" chain of trust. It ensures that sensitive operations are only performed by authorized workloads running on untampered hardware in cryptographically verified, privacy-preserving geographic boundaries, fulfilling the high-assurance requirements of the <strong>WIMSE Architecture</strong> {{!I-D.ietf-wimse-architecture}}.<a href="#section-abstract-3" class="pilcrow">¶</a></p>
 </section>
 <div id="status-of-memo">
 <section id="section-boilerplate.1">
@@ -1441,7 +1441,7 @@ li > p:last-of-type:only-child {
                 <p id="section-toc.1-1.10.2.1.1"><a href="#section-10.1" class="auto internal xref">10.1</a>.  <a href="#name-distributed-identity-issuan" class="internal xref">Distributed Identity Issuance and Scaling</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.2">
-                <p id="section-toc.1-1.10.2.2.1"><a href="#section-10.2" class="auto internal xref">10.2</a>.  <a href="#name-mobility-and-sovereign-hand" class="internal xref">Mobility and Sovereign Handover (Informative)</a></p>
+                <p id="section-toc.1-1.10.2.2.1"><a href="#section-10.2" class="auto internal xref">10.2</a>.  <a href="#name-mobility-and-sovereign-hand" class="internal xref">Mobility and Sovereign Handover</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.3">
                 <p id="section-toc.1-1.10.2.3.1"><a href="#section-10.3" class="auto internal xref">10.3</a>.  <a href="#name-location-anchor-hosts-infor" class="internal xref">Location Anchor Hosts (Informative)</a></p>
@@ -1496,7 +1496,7 @@ li > p:last-of-type:only-child {
 <a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
 <p id="section-1-1">The <strong>Workload Identity Agent</strong> (e.g., SPIRE Agent) acts as the local-on-host intermediary responsible for managing and issuing identities to workloads. It serves as a vetting mechanism, ensuring that a workload's execution environment meets required security and residency policies before granting it the cryptographic credentials necessary for network communication. This High-Assurance Profile (a specialized RATS Profile) provides the technical mechanics to cryptographically bind this agent to the underlying hardware-verified platform and its privacy-preserving physical location.<a href="#section-1-1" class="pilcrow">¶</a></p>
-<p id="section-1-2">The architecture follows the RATS Architecture {{!RFC9334}}, defining the interactions between Provers, Verifiers, and Relying Parties to generate and validate high-confidence evidence regarding the Workload Identity Agent's status. It provides the hardware-rooted evidence layer required by the Workload Identity Architecture {{I-D.ietf-wimse-architecture}}, establishing a "Silicon-to-Workload" chain of trust that ensures sensitive data is only processed by authorized workloads in approved, measured environments.<a href="#section-1-2" class="pilcrow">¶</a></p>
+<p id="section-1-2">The architecture follows the RATS Architecture {{!RFC9334}}, defining the interactions between Provers, Verifiers, and Relying Parties to generate and validate high-confidence evidence regarding the Workload Identity Agent's status. It provides the hardware-rooted evidence layer required by the Workload Identity Architecture {{!I-D.ietf-wimse-architecture}}, establishing a "Silicon-to-Workload" chain of trust that ensures sensitive data is only processed by authorized workloads in approved, measured environments.<a href="#section-1-2" class="pilcrow">¶</a></p>
 <p id="section-1-3">To maintain location privacy while providing cryptographic verifiability, this profile leverages Transparent Zero-Knowledge Proofs (ZKPs). Unlike traditional ZKP systems, transparent ZKPs require no trusted third party or complex trusted setup phase. They achieve mathematical transparency through non-interactive, hash-based protocols, allowing a platform to prove it is resident within an approved geographic boundary without disclosing the exact coordinates of the underlying hardware.<a href="#section-1-3" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -1731,10 +1731,10 @@ li > p:last-of-type:only-child {
       <h2 id="name-composition-with-transitive">
 <a href="#section-7" class="section-number selfRef">7. </a><a href="#name-composition-with-transitive" class="section-name selfRef">Composition with Transitive Attestation</a>
       </h2>
-<p id="section-7-1">This profile is designed to compose with {{I-D.mw-wimse-transitive-attestation}} and the <strong>WIMSE Architecture</strong> {{I-D.ietf-wimse-architecture}}.<a href="#section-7-1" class="pilcrow">¶</a></p>
+<p id="section-7-1">This profile is designed to compose with {{!I-D.mw-wimse-transitive-attestation}} and the <strong>WIMSE Architecture</strong> {{!I-D.ietf-wimse-architecture}}.<a href="#section-7-1" class="pilcrow">¶</a></p>
 <ul class="compact">
 <li class="compact" id="section-7-2.1">
-          <strong>{{I-D.mw-wimse-transitive-attestation}} (Layer 1):</strong> Binds a workload to a <em>local</em> Workload Identity Agent (co-location / PoR), treating the agent as a trust anchor.<a href="#section-7-2.1" class="pilcrow">¶</a>
+          <strong>{{!I-D.mw-wimse-transitive-attestation}} (Layer 1):</strong> Binds a workload to a <em>local</em> Workload Identity Agent (co-location / PoR), treating the agent as a trust anchor.<a href="#section-7-2.1" class="pilcrow">¶</a>
 </li>
         <li class="compact" id="section-7-2.2">
           <p id="section-7-2.2.1"><strong>This document (Layers 2 and 3):</strong> Defines how that Workload Identity Agent is itself verified:<a href="#section-7-2.2.1" class="pilcrow">¶</a></p>
@@ -1762,7 +1762,7 @@ li > p:last-of-type:only-child {
             <td class="text-left" rowspan="1" colspan="1">
               <strong>Layer 1</strong>
 </td>
-            <td class="text-left" rowspan="1" colspan="1">{{I-D.mw-wimse-transitive-attestation}}</td>
+            <td class="text-left" rowspan="1" colspan="1">{{!I-D.mw-wimse-transitive-attestation}}</td>
             <td class="text-left" rowspan="1" colspan="1">Bind workload to a local Workload Identity Agent (co-location / PoR).</td>
           </tr>
           <tr>
@@ -1797,7 +1797,7 @@ li > p:last-of-type:only-child {
           <strong>Workload Identity Management Plane:</strong> Issues or renews workload identities (e.g., SVIDs) only when the attestation result satisfies policy.<a href="#section-8-2.2" class="pilcrow">¶</a>
 </li>
       </ul>
-<p id="section-8-3">To prevent mix-and-match and replay, attestation results SHOULD be fresh and SHOULD be bound to the identity issuance event (e.g., by cryptographically binding freshness values used for platform quotes and workload credential issuance within the verifier result).<a href="#section-8-3" class="pilcrow">¶</a></p>
+<p id="section-8-3">To prevent mix-and-match and replay, attestation results MUST be fresh and MUST be bound to the identity issuance event (e.g., by cryptographically binding freshness values used for platform quotes and workload credential issuance within the verifier result).<a href="#section-8-3" class="pilcrow">¶</a></p>
 <p id="section-8-4">Where policy requires it, the verifier can additionally require that an agent software measurement (e.g., image digest) is covered by validated platform evidence, reducing the risk that a modified or unauthorized agent obtains credentials.<a href="#section-8-4" class="pilcrow">¶</a></p>
 <p id="section-8-5">In intermittently connected edge deployments, local operation can continue during outages, while centralized policy can be enforced on renewal and on release of high-value secrets once connectivity is available.<a href="#section-8-5" class="pilcrow">¶</a></p>
 </section>
@@ -2209,7 +2209,7 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
 <ul class="compact">
 <li class="compact" id="section-9.3-1.1">A Cloud (central) Host Identity Management Plane maintains a registry of accepted AK public keys and associated metadata (e.g., EK certificate chain, hardware identity, and status).<a href="#section-9.3-1.1" class="pilcrow">¶</a>
 </li>
-          <li class="compact" id="section-9.3-1.2">An Edge Host Identity Management Plane <span class="bcp14">MAY</span> maintain a local registry to support disconnected operation and periodically synchronizes updates to the central registry.<a href="#section-9.3-1.2" class="pilcrow">¶</a>
+          <li class="compact" id="section-9.3-1.2">An Edge Host Identity Management Plane MAY maintain a local registry to support disconnected operation and periodically synchronizes updates to the central registry.<a href="#section-9.3-1.2" class="pilcrow">¶</a>
 </li>
         </ul>
 </section>
@@ -2221,9 +2221,9 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
         </h3>
 <p id="section-9.4-1">To prevent rogue key injection during rotation:<a href="#section-9.4-1" class="pilcrow">¶</a></p>
 <ul class="compact">
-<li class="compact" id="section-9.4-2.1">The central registry <span class="bcp14">MUST</span> accept a new AK only if the edge plane provides a rotation proof that chains the new AK to previously accepted state.<a href="#section-9.4-2.1" class="pilcrow">¶</a>
+<li class="compact" id="section-9.4-2.1">The central registry MUST accept a new AK only if the edge plane provides a rotation proof that chains the new AK to previously accepted state.<a href="#section-9.4-2.1" class="pilcrow">¶</a>
 </li>
-          <li class="compact" id="section-9.4-2.2">A rotation proof <span class="bcp14">MUST</span> be a JCS-canonicalized object signed by the previously accepted AK (or, if available, validated by a fresh hardware-rooted OOB quote).<a href="#section-9.4-2.2" class="pilcrow">¶</a>
+          <li class="compact" id="section-9.4-2.2">A rotation proof MUST be a JCS-canonicalized object signed by the previously accepted AK (or, if available, validated by a fresh hardware-rooted OOB quote).<a href="#section-9.4-2.2" class="pilcrow">¶</a>
 </li>
         </ul>
 <div id="example-rotation-proof-informative">
@@ -2250,7 +2250,7 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
         <h3 id="name-credential-activation-and-r">
 <a href="#section-9.5" class="section-number selfRef">9.5. </a><a href="#name-credential-activation-and-r" class="section-name selfRef">Credential Activation and Re-Verification</a>
         </h3>
-<p id="section-9.5-1">Credential activation (e.g., <code>TPM2_MakeCredential</code>) is expensive to run on every request. Verifiers <span class="bcp14">SHOULD</span> perform it on events such as:<a href="#section-9.5-1" class="pilcrow">¶</a></p>
+<p id="section-9.5-1">Credential activation (e.g., <code>TPM2_MakeCredential</code>) is expensive to run on every request. Verifiers SHOULD perform it on events such as:<a href="#section-9.5-1" class="pilcrow">¶</a></p>
 <ul class="compact">
 <li class="compact" id="section-9.5-2.1">Initial onboarding<br><a href="#section-9.5-2.1" class="pilcrow">¶</a>
 </li>
@@ -2263,7 +2263,7 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
           <li class="compact" id="section-9.5-2.5">Explicit elevation to higher assurance policy<br><a href="#section-9.5-2.5" class="pilcrow">¶</a>
 </li>
         </ul>
-<p id="section-9.5-3">Between full activations, verifiers <span class="bcp14">MAY</span> accept fresh quotes from registered AKs as proof of continued compliance, subject to policy.<a href="#section-9.5-3" class="pilcrow">¶</a></p>
+<p id="section-9.5-3">Between full activations, verifiers MAY accept fresh quotes from registered AKs as proof of continued compliance, subject to policy.<a href="#section-9.5-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="revocation-and-health-signals">
@@ -2272,9 +2272,9 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
 <a href="#section-9.6" class="section-number selfRef">9.6. </a><a href="#name-revocation-and-health-signa" class="section-name selfRef">Revocation and Health Signals</a>
         </h3>
 <ul class="compact">
-<li class="compact" id="section-9.6-1.1">The edge plane <span class="bcp14">SHOULD</span> maintain a per-node health signal (e.g., tamper, firmware policy violations).<a href="#section-9.6-1.1" class="pilcrow">¶</a>
+<li class="compact" id="section-9.6-1.1">The edge plane SHOULD maintain a per-node health signal (e.g., tamper, firmware policy violations).<a href="#section-9.6-1.1" class="pilcrow">¶</a>
 </li>
-          <li class="compact" id="section-9.6-1.2">On severe health signals, the verifier <span class="bcp14">MUST</span> revoke the relevant AK(s) and reject identities derived from them according to policy.<a href="#section-9.6-1.2" class="pilcrow">¶</a>
+          <li class="compact" id="section-9.6-1.2">On severe health signals, the verifier MUST revoke the relevant AK(s) and reject identities derived from them according to policy.<a href="#section-9.6-1.2" class="pilcrow">¶</a>
 </li>
         </ul>
 </section>
@@ -2284,11 +2284,11 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
         <h3 id="name-disconnected-operation-leas">
 <a href="#section-9.7" class="section-number selfRef">9.7. </a><a href="#name-disconnected-operation-leas" class="section-name selfRef">Disconnected Operation (Leased Identity)</a>
         </h3>
-<p id="section-9.7-1">For intermittent connectivity, the verifier <span class="bcp14">MAY</span> issue identities with extended validity (a lease) under policy. If a lease is used:<a href="#section-9.7-1" class="pilcrow">¶</a></p>
+<p id="section-9.7-1">For intermittent connectivity, the verifier MAY issue identities with extended validity (a lease) under policy. If a lease is used:<a href="#section-9.7-1" class="pilcrow">¶</a></p>
 <ul class="compact">
-<li class="compact" id="section-9.7-2.1">The edge plane <span class="bcp14">MUST</span> revoke or refuse renewal locally on tamper/drift signals.<a href="#section-9.7-2.1" class="pilcrow">¶</a>
+<li class="compact" id="section-9.7-2.1">The edge plane MUST revoke or refuse renewal locally on tamper/drift signals.<a href="#section-9.7-2.1" class="pilcrow">¶</a>
 </li>
-          <li class="compact" id="section-9.7-2.2">The workload <span class="bcp14">MUST</span> re-attest and satisfy current policy on reconnection before renewal or release of high-value secrets.<a href="#section-9.7-2.2" class="pilcrow">¶</a>
+          <li class="compact" id="section-9.7-2.2">The workload MUST re-attest and satisfy current policy on reconnection before renewal or release of high-value secrets.<a href="#section-9.7-2.2" class="pilcrow">¶</a>
 </li>
         </ul>
 </section>
@@ -2307,7 +2307,7 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
             <p id="section-9.8-2.2.1"><strong>Out-of-band management</strong>: Evidence collected via a management controller / BMC path (for example, iLO-class OOB management such as HPE OneView). In this pattern, the Workload Identity Management Plane (for example, SPIRE Server) generates <code>N_fusion</code> and shares it with the Host Identity Management Plane (for example, HPE OneView) over a server-to-server channel. The Host Identity Management Plane then delivers <code>N_fusion</code> to the host via the BMC / OOB path — bypassing the host OS entirely. The host TPM seals the <code>lah-bundle</code> with that nonce, and the sealed bundle is returned via the same OOB path. This pattern is recommended for high-assurance environments where the host OS is part of the threat model.<a href="#section-9.8-2.2.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-9.8-2.3">
-            <p id="section-9.8-2.3.1"><strong>Cloud-hosted attestation environments</strong>: Provider mechanisms exposing measured boot and TPM-backed claims (for example, Nitro-class enclaves or shielded VM instances). The cloud provider supplies a hardware-rooted quote that can serve as the <code>tpm-quote-seal</code>; the geolocation claim is typically derived from the provider's zone or region attestation. Implementations SHOULD verify that the provider's attestation scope satisfies the geofence policy.<a href="#section-9.8-2.3.1" class="pilcrow">¶</a></p>
+            <p id="section-9.8-2.3.1"><strong>Cloud-hosted attestation environments</strong>: Provider mechanisms exposing measured boot and TPM-backed claims (for example, Nitro-class enclaves or shielded VM instances). The cloud provider supplies a hardware-rooted quote that can serve as the <code>tpm-quote-seal</code>; the geolocation claim is typically derived from the provider's zone or region attestation. Implementations should verify that the provider's attestation scope satisfies the geofence policy.<a href="#section-9.8-2.3.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>
@@ -2338,10 +2338,10 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
         </ul>
 </section>
 </div>
-<div id="mobility-and-sovereign-handover-informative">
+<div id="mobility-and-sovereign-handover">
 <section id="section-10.2">
         <h3 id="name-mobility-and-sovereign-hand">
-<a href="#section-10.2" class="section-number selfRef">10.2. </a><a href="#name-mobility-and-sovereign-hand" class="section-name selfRef">Mobility and Sovereign Handover (Informative)</a>
+<a href="#section-10.2" class="section-number selfRef">10.2. </a><a href="#name-mobility-and-sovereign-hand" class="section-name selfRef">Mobility and Sovereign Handover</a>
         </h3>
 <p id="section-10.2-1">When a workload moves between anchors or boundaries, the Workload Identity Agent MUST obtain a new V-GAP bundle that reflects the new LAH and current residency.<a href="#section-10.2-1" class="pilcrow">¶</a></p>
 <p id="section-10.2-2">Verifiers SHOULD treat this as a normal re-attestation event:
@@ -2378,7 +2378,7 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
           <strong>ABAC</strong>: Residency and integrity can be mandatory claims for sensitive operations.<a href="#section-11-2.1" class="pilcrow">¶</a>
 </li>
         <li class="compact" id="section-11-2.2">
-          <strong>KMS gatekeeping</strong>: Release of high-value assets (for example, decryption keys) SHOULD depend on a recent successful verification result.<a href="#section-11-2.2" class="pilcrow">¶</a>
+          <strong>KMS gatekeeping</strong>: Release of high-value assets (for example, decryption keys) should depend on a recent successful verification result.<a href="#section-11-2.2" class="pilcrow">¶</a>
 </li>
         <li class="compact" id="section-11-2.3">
           <strong>Fail closed</strong>: If V-GAP evidence is carried in an X.509 extension and marked CRITICAL, any implementation that does not understand the extension will reject the credential.<a href="#section-11-2.3" class="pilcrow">¶</a>

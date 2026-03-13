@@ -47,7 +47,7 @@ Abstract
    only performed by authorized workloads running on untampered hardware
    in cryptographically verified, privacy-preserving geographic
    boundaries, fulfilling the high-assurance requirements of the *WIMSE
-   Architecture* {{I-D.ietf-wimse-architecture}}.
+   Architecture* {{!I-D.ietf-wimse-architecture}}.
 
 
 
@@ -133,7 +133,7 @@ Internet-Draft                    V-GAP                       March 2026
      9.8.  Deployment Patterns (Informative) . . . . . . . . . . . .  17
    10. Operational Considerations  . . . . . . . . . . . . . . . . .  18
      10.1.  Distributed Identity Issuance and Scaling  . . . . . . .  18
-     10.2.  Mobility and Sovereign Handover (Informative)  . . . . .  18
+     10.2.  Mobility and Sovereign Handover  . . . . . . . . . . . .  18
      10.3.  Location Anchor Hosts (Informative)  . . . . . . . . . .  19
    11. Policy Use (Informative)  . . . . . . . . . . . . . . . . . .  19
    12. Implementation Status . . . . . . . . . . . . . . . . . . . .  19
@@ -174,7 +174,7 @@ Internet-Draft                    V-GAP                       March 2026
    the interactions between Provers, Verifiers, and Relying Parties to
    generate and validate high-confidence evidence regarding the Workload
    Identity Agent's status.  It provides the hardware-rooted evidence
-   layer required by the Workload Identity Architecture {{I-D.ietf-
+   layer required by the Workload Identity Architecture {{!I-D.ietf-
    wimse-architecture}}, establishing a "Silicon-to-Workload" chain of
    trust that ensures sensitive data is only processed by authorized
    workloads in approved, measured environments.
@@ -396,11 +396,11 @@ Internet-Draft                    V-GAP                       March 2026
 
 7.  Composition with Transitive Attestation
 
-   This profile is designed to compose with {{I-D.mw-wimse-transitive-
-   attestation}} and the *WIMSE Architecture* {{I-D.ietf-wimse-
+   This profile is designed to compose with {{!I-D.mw-wimse-transitive-
+   attestation}} and the *WIMSE Architecture* {{!I-D.ietf-wimse-
    architecture}}.
 
-   *  *{{I-D.mw-wimse-transitive-attestation}} (Layer 1):* Binds a
+   *  *{{!I-D.mw-wimse-transitive-attestation}} (Layer 1):* Binds a
       workload to a _local_ Workload Identity Agent (co-location / PoR),
       treating the agent as a trust anchor.
    *  *This document (Layers 2 and 3):* Defines how that Workload
@@ -411,35 +411,35 @@ Internet-Draft                    V-GAP                       March 2026
          attested host is inside an approved boundary (optionally
          privacy-preserving).
 
-   +======+=========================================+==================+
-   |Layer | Document                                | Responsibility   |
-   +======+=========================================+==================+
-   |*Layer| {{I-D.mw-wimse-transitive-attestation}} | Bind workload    |
-   |1*    |                                         | to a local       |
-   |      |                                         | Workload         |
-   |      |                                         | Identity Agent   |
-   |      |                                         | (co-location /   |
-   |      |                                         | PoR).            |
-   +------+-----------------------------------------+------------------+
-   |*Layer| This document                           | Verify Workload  |
-   |2*    |                                         | Host integrity   |
-   |      |                                         | for the          |
-   |      |                                         | Workload         |
-   |      |                                         | Identity Agent   |
-   |      |                                         | (platform        |
-   |      |                                         | evidence).       |
-   +------+-----------------------------------------+------------------+
-   |*Layer| This document                           | Verify Workload  |
-   |3*    |                                         | Host residency   |
-   |      |                                         | within an        |
-   |      |                                         | approved         |
-   |      |                                         | boundary         |
-   |      |                                         | (location        |
-   |      |                                         | evidence).       |
-   +------+-----------------------------------------+------------------+
+   +======+==========================================+=================+
+   |Layer | Document                                 | Responsibility  |
+   +======+==========================================+=================+
+   |*Layer| {{!I-D.mw-wimse-transitive-attestation}} | Bind workload   |
+   |1*    |                                          | to a local      |
+   |      |                                          | Workload        |
+   |      |                                          | Identity Agent  |
+   |      |                                          | (co-location /  |
+   |      |                                          | PoR).           |
+   +------+------------------------------------------+-----------------+
+   |*Layer| This document                            | Verify          |
+   |2*    |                                          | Workload Host   |
+   |      |                                          | integrity for   |
+   |      |                                          | the Workload    |
+   |      |                                          | Identity Agent  |
+   |      |                                          | (platform       |
+   |      |                                          | evidence).      |
+   +------+------------------------------------------+-----------------+
+   |*Layer| This document                            | Verify          |
+   |3*    |                                          | Workload Host   |
+   |      |                                          | residency       |
+   |      |                                          | within an       |
+   |      |                                          | approved        |
+   |      |                                          | boundary        |
+   |      |                                          | (location       |
+   |      |                                          | evidence).      |
+   +------+------------------------------------------+-----------------+
 
                                   Table 1
-
 
 
 
@@ -460,8 +460,8 @@ Internet-Draft                    V-GAP                       March 2026
       identities (e.g., SVIDs) only when the attestation result
       satisfies policy.
 
-   To prevent mix-and-match and replay, attestation results SHOULD be
-   fresh and SHOULD be bound to the identity issuance event (e.g., by
+   To prevent mix-and-match and replay, attestation results MUST be
+   fresh and MUST be bound to the identity issuance event (e.g., by
    cryptographically binding freshness values used for platform quotes
    and workload credential issuance within the verifier result).
 
@@ -972,7 +972,7 @@ Internet-Draft                    V-GAP                       March 2026
       class enclaves or shielded VM instances).  The cloud provider
       supplies a hardware-rooted quote that can serve as the tpm-quote-
       seal; the geolocation claim is typically derived from the
-      provider's zone or region attestation.  Implementations SHOULD
+      provider's zone or region attestation.  Implementations should
       verify that the provider's attestation scope satisfies the
       geofence policy.
 
@@ -993,7 +993,7 @@ Internet-Draft                    V-GAP                       March 2026
       when the verifier result for integrity and residency is valid for
       the requested freshness window.
 
-10.2.  Mobility and Sovereign Handover (Informative)
+10.2.  Mobility and Sovereign Handover
 
    When a workload moves between anchors or boundaries, the Workload
    Identity Agent MUST obtain a new V-GAP bundle that reflects the new
@@ -1032,7 +1032,7 @@ Internet-Draft                    V-GAP                       March 2026
    *  *ABAC*: Residency and integrity can be mandatory claims for
       sensitive operations.
    *  *KMS gatekeeping*: Release of high-value assets (for example,
-      decryption keys) SHOULD depend on a recent successful verification
+      decryption keys) should depend on a recent successful verification
       result.
    *  *Fail closed*: If V-GAP evidence is carried in an X.509 extension
       and marked CRITICAL, any implementation that does not understand

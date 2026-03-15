@@ -140,14 +140,8 @@ Internet-Draft                    V-GAP                       March 2026
      E.1.  Example Instance (privacy-technique = "zkp")  . . . . . .  21
      E.2.  Sensor Type Input Recipes . . . . . . . . . . . . . . . .  22
    Appendix F.  Implementation Status  . . . . . . . . . . . . . . .  22
-   Appendix G.  Open Issues  . . . . . . . . . . . . . . . . . . . .  23
-     G.1.  IMA Restart Behavior  . . . . . . . . . . . . . . . . . .  23
-     G.2.  Location Privacy Options  . . . . . . . . . . . . . . . .  23
-     G.3.  Proximity Profiles  . . . . . . . . . . . . . . . . . . .  24
-     G.4.  Geotagging Textual Data . . . . . . . . . . . . . . . . .  24
-     G.5.  Attesting Geotags . . . . . . . . . . . . . . . . . . . .  24
-   Appendix H.  Data Residency References  . . . . . . . . . . . . .  24
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  24
+   Appendix G.  Data Residency References  . . . . . . . . . . . . .  23
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  23
 
 1.  Introduction
 
@@ -161,6 +155,12 @@ Internet-Draft                    V-GAP                       March 2026
    *  *Unverifiable location metadata:* Location tags for data objects
       are typically unsigned, making provenance and integrity difficult
       to validate.
+   *  *Token theft and replay:* Bearer tokens can be copied and replayed
+      from unauthorized hosts or locations.
+   *  *Implicit trust in "region" and transit:* A relying party often
+      cannot cryptographically verify a server's physical residency, and
+      requests may traverse intermediaries that expand the effective
+      trust boundary.
 
 
 
@@ -169,13 +169,6 @@ Krishnan, et al.        Expires 11 September 2026               [Page 3]
 
 Internet-Draft                    V-GAP                       March 2026
 
-
-   *  *Token theft and replay:* Bearer tokens can be copied and replayed
-      from unauthorized hosts or locations.
-   *  *Implicit trust in "region" and transit:* A relying party often
-      cannot cryptographically verify a server's physical residency, and
-      requests may traverse intermediaries that expand the effective
-      trust boundary.
 
    This document defines the Verifiable Geofencing Attestation Profile
    (V-GAP), a profile of the RATS Architecture {{!RFC9334}} that makes
@@ -203,6 +196,13 @@ Internet-Draft                    V-GAP                       March 2026
    transitive-attestation}}. Together, these three layers form a
    complete chain of trust from silicon to workload, as required by the
    WIMSE Architecture {{!I-D.ietf-wimse-architecture}}.
+
+
+
+
+
+
+
 
 
 
@@ -1262,61 +1262,7 @@ Internet-Draft                    V-GAP                       March 2026
    construction through ZKP proof generation and SVID issuance with
    embedded V-GAP Evidence.
 
-Appendix G.  Open Issues
-
-   The following items are unresolved and are tracked for future
-   revisions of this document.
-
-G.1.  IMA Restart Behavior
-
-   Define an interoperable way to detect and handle Workload Identity
-   Agent restarts without requiring a full host reboot, while preserving
-   measurement integrity.
-
-G.2.  Location Privacy Options
-
-   Clarify the complete set of supported privacy techniques and define
-   the policy logic for selecting between precise location disclosure,
-   coarse location, and ZKP-based "in-zone" proofs.
-
-
-
-
-
-
-
-Krishnan, et al.        Expires 11 September 2026              [Page 23]
-
-Internet-Draft                    V-GAP                       March 2026
-
-
-G.3.  Proximity Profiles
-
-   This document defers proximity proof mechanisms to future profiling
-   work.  Open items include:
-
-   *  Defining one or more proximity evidence profiles (for example,
-      PTP-derived, BLE/UWB ranging, or network-RTT-based) as separate
-      documents.
-   *  Specifying how proximity evidence is represented and bound to the
-      V-GAP bundle (for example, as an additional hash field).
-   *  Addressing relay and displacement threats, including RTT-based
-      acceptance windows, anchor health attestation, and disagreement
-      policies for multi-anchor deployments.
-   *  Profiling the use of CAMARA-style MNO location signals as a
-      proximity corroboration mechanism.
-
-G.4.  Geotagging Textual Data
-
-   There is no widely deployed standard for geotagging arbitrary textual
-   data objects.
-
-G.5.  Attesting Geotags
-
-   There is no widely deployed standard for cryptographically signing
-   geotags to prevent manipulation.
-
-Appendix H.  Data Residency References
+Appendix G.  Data Residency References
 
    India -- Reserve Bank of India (RBI): Payment System Data
    Localization (2018): From RBI Circular RBI/2017-18/153 (April 6,
@@ -1339,9 +1285,7 @@ Authors' Addresses
 
 
 
-
-
-Krishnan, et al.        Expires 11 September 2026              [Page 24]
+Krishnan, et al.        Expires 11 September 2026              [Page 23]
 
 Internet-Draft                    V-GAP                       March 2026
 
@@ -1397,4 +1341,4 @@ Internet-Draft                    V-GAP                       March 2026
 
 
 
-Krishnan, et al.        Expires 11 September 2026              [Page 25]
+Krishnan, et al.        Expires 11 September 2026              [Page 24]

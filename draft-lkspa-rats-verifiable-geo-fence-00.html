@@ -1473,30 +1473,10 @@ li > p:last-of-type:only-child {
             <p id="section-toc.1-1.13.1"><a href="#appendix-F" class="auto internal xref">Appendix F</a>.  <a href="#name-implementation-status" class="internal xref">Implementation Status</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14">
-            <p id="section-toc.1-1.14.1"><a href="#appendix-G" class="auto internal xref">Appendix G</a>.  <a href="#name-open-issues" class="internal xref">Open Issues</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14.2.1">
-                <p id="section-toc.1-1.14.2.1.1"><a href="#appendix-G.1" class="auto internal xref">G.1</a>.  <a href="#name-ima-restart-behavior" class="internal xref">IMA Restart Behavior</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14.2.2">
-                <p id="section-toc.1-1.14.2.2.1"><a href="#appendix-G.2" class="auto internal xref">G.2</a>.  <a href="#name-location-privacy-options" class="internal xref">Location Privacy Options</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14.2.3">
-                <p id="section-toc.1-1.14.2.3.1"><a href="#appendix-G.3" class="auto internal xref">G.3</a>.  <a href="#name-proximity-profiles" class="internal xref">Proximity Profiles</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14.2.4">
-                <p id="section-toc.1-1.14.2.4.1"><a href="#appendix-G.4" class="auto internal xref">G.4</a>.  <a href="#name-geotagging-textual-data" class="internal xref">Geotagging Textual Data</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14.2.5">
-                <p id="section-toc.1-1.14.2.5.1"><a href="#appendix-G.5" class="auto internal xref">G.5</a>.  <a href="#name-attesting-geotags" class="internal xref">Attesting Geotags</a></p>
-</li>
-            </ul>
+            <p id="section-toc.1-1.14.1"><a href="#appendix-G" class="auto internal xref">Appendix G</a>.  <a href="#name-data-residency-references" class="internal xref">Data Residency References</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.15">
-            <p id="section-toc.1-1.15.1"><a href="#appendix-H" class="auto internal xref">Appendix H</a>.  <a href="#name-data-residency-references" class="internal xref">Data Residency References</a></p>
-</li>
-          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.16">
-            <p id="section-toc.1-1.16.1"><a href="#appendix-I" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
+            <p id="section-toc.1-1.15.1"><a href="#appendix-H" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
 </li>
         </ul>
 </nav>
@@ -2558,75 +2538,17 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
 <p id="appendix-F-6">The implementation includes automated end-to-end tests (<code>./run-demo.sh</code>) that exercise the full attestation flow from TPM quote construction through ZKP proof generation and SVID issuance with embedded V-GAP Evidence.<a href="#appendix-F-6" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="open-issues">
-<section id="appendix-G">
-      <h2 id="name-open-issues">
-<a href="#appendix-G" class="section-number selfRef">Appendix G. </a><a href="#name-open-issues" class="section-name selfRef">Open Issues</a>
-      </h2>
-<p id="appendix-G-1">The following items are unresolved and are tracked for future revisions of this document.<a href="#appendix-G-1" class="pilcrow">¶</a></p>
-<div id="ima-restart-behavior">
-<section id="appendix-G.1">
-        <h3 id="name-ima-restart-behavior">
-<a href="#appendix-G.1" class="section-number selfRef">G.1. </a><a href="#name-ima-restart-behavior" class="section-name selfRef">IMA Restart Behavior</a>
-        </h3>
-<p id="appendix-G.1-1">Define an interoperable way to detect and handle Workload Identity Agent restarts without requiring a full host reboot, while preserving measurement integrity.<a href="#appendix-G.1-1" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="location-privacy-options">
-<section id="appendix-G.2">
-        <h3 id="name-location-privacy-options">
-<a href="#appendix-G.2" class="section-number selfRef">G.2. </a><a href="#name-location-privacy-options" class="section-name selfRef">Location Privacy Options</a>
-        </h3>
-<p id="appendix-G.2-1">Clarify the complete set of supported privacy techniques and define the policy logic for selecting between precise location disclosure, coarse location, and ZKP-based "in-zone" proofs.<a href="#appendix-G.2-1" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="proximity-profiles">
-<section id="appendix-G.3">
-        <h3 id="name-proximity-profiles">
-<a href="#appendix-G.3" class="section-number selfRef">G.3. </a><a href="#name-proximity-profiles" class="section-name selfRef">Proximity Profiles</a>
-        </h3>
-<p id="appendix-G.3-1">This document defers proximity proof mechanisms to future profiling work. Open items include:<a href="#appendix-G.3-1" class="pilcrow">¶</a></p>
-<ul class="compact">
-<li class="compact" id="appendix-G.3-2.1">Defining one or more proximity evidence profiles (for example, PTP-derived, BLE/UWB ranging, or network-RTT-based) as separate documents.<a href="#appendix-G.3-2.1" class="pilcrow">¶</a>
-</li>
-          <li class="compact" id="appendix-G.3-2.2">Specifying how proximity evidence is represented and bound to the V-GAP bundle (for example, as an additional hash field).<a href="#appendix-G.3-2.2" class="pilcrow">¶</a>
-</li>
-          <li class="compact" id="appendix-G.3-2.3">Addressing relay and displacement threats, including RTT-based acceptance windows, anchor health attestation, and disagreement policies for multi-anchor deployments.<a href="#appendix-G.3-2.3" class="pilcrow">¶</a>
-</li>
-          <li class="compact" id="appendix-G.3-2.4">Profiling the use of CAMARA-style MNO location signals as a proximity corroboration mechanism.<a href="#appendix-G.3-2.4" class="pilcrow">¶</a>
-</li>
-        </ul>
-</section>
-</div>
-<div id="geotagging-textual-data">
-<section id="appendix-G.4">
-        <h3 id="name-geotagging-textual-data">
-<a href="#appendix-G.4" class="section-number selfRef">G.4. </a><a href="#name-geotagging-textual-data" class="section-name selfRef">Geotagging Textual Data</a>
-        </h3>
-<p id="appendix-G.4-1">There is no widely deployed standard for geotagging arbitrary textual data objects.<a href="#appendix-G.4-1" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="attesting-geotags">
-<section id="appendix-G.5">
-        <h3 id="name-attesting-geotags">
-<a href="#appendix-G.5" class="section-number selfRef">G.5. </a><a href="#name-attesting-geotags" class="section-name selfRef">Attesting Geotags</a>
-        </h3>
-<p id="appendix-G.5-1">There is no widely deployed standard for cryptographically signing geotags to prevent manipulation.<a href="#appendix-G.5-1" class="pilcrow">¶</a></p>
-</section>
-</div>
-</section>
-</div>
 <div id="data-residency-references">
-<section id="appendix-H">
+<section id="appendix-G">
       <h2 id="name-data-residency-references">
-<a href="#appendix-H" class="section-number selfRef">Appendix H. </a><a href="#name-data-residency-references" class="section-name selfRef">Data Residency References</a>
+<a href="#appendix-G" class="section-number selfRef">Appendix G. </a><a href="#name-data-residency-references" class="section-name selfRef">Data Residency References</a>
       </h2>
-<p id="appendix-H-1">India -- Reserve Bank of India (RBI): Payment System Data Localization (2018): From RBI Circular RBI/2017-18/153 (April 6, 2018): "All system providers shall ensure that the entire data relating to payment systems operated by them are stored in a system only in India. This data should include the full end-to-end transaction details / information collected / carried / processed as part of the message / payment instruction."<a href="#appendix-H-1" class="pilcrow">¶</a></p>
-<p id="appendix-H-2">South Korea's Data Localization Regulations -- Geospatial Information Management Act (Spatial Data Act): Article 16, Paragraph 1: Prohibits the export of state-led survey data.<a href="#appendix-H-2" class="pilcrow">¶</a></p>
+<p id="appendix-G-1">India -- Reserve Bank of India (RBI): Payment System Data Localization (2018): From RBI Circular RBI/2017-18/153 (April 6, 2018): "All system providers shall ensure that the entire data relating to payment systems operated by them are stored in a system only in India. This data should include the full end-to-end transaction details / information collected / carried / processed as part of the message / payment instruction."<a href="#appendix-G-1" class="pilcrow">¶</a></p>
+<p id="appendix-G-2">South Korea's Data Localization Regulations -- Geospatial Information Management Act (Spatial Data Act): Article 16, Paragraph 1: Prohibits the export of state-led survey data.<a href="#appendix-G-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="authors-addresses">
-<section id="appendix-I">
+<section id="appendix-H">
       <h2 id="name-authors-addresses">
 <a href="#name-authors-addresses" class="section-name selfRef">Authors' Addresses</a>
       </h2>

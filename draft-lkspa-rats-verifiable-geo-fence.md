@@ -558,35 +558,6 @@ The implementation demonstrates the **in-band host attestation** deployment patt
 
 The implementation includes automated end-to-end tests (`./run-demo.sh`) that exercise the full attestation flow from TPM quote construction through ZKP proof generation and SVID issuance with embedded V-GAP Evidence.
 
-# Open Issues
-
-The following items are unresolved and are tracked for future revisions of this document.
-
-## IMA Restart Behavior
-
-Define an interoperable way to detect and handle Workload Identity Agent restarts without requiring a full host reboot, while preserving measurement integrity.
-
-## Location Privacy Options
-
-Clarify the complete set of supported privacy techniques and define the policy logic for selecting between precise location disclosure, coarse location, and ZKP-based "in-zone" proofs.
-
-## Proximity Profiles
-
-This document defers proximity proof mechanisms to future profiling work. Open items include:
-
-- Defining one or more proximity evidence profiles (for example, PTP-derived, BLE/UWB ranging, or network-RTT-based) as separate documents.
-- Specifying how proximity evidence is represented and bound to the V-GAP bundle (for example, as an additional hash field).
-- Addressing relay and displacement threats, including RTT-based acceptance windows, anchor health attestation, and disagreement policies for multi-anchor deployments.
-- Profiling the use of CAMARA-style MNO location signals as a proximity corroboration mechanism.
-
-## Geotagging Textual Data
-
-There is no widely deployed standard for geotagging arbitrary textual data objects.
-
-## Attesting Geotags
-
-There is no widely deployed standard for cryptographically signing geotags to prevent manipulation.
-
 # Data Residency References
 
 India -- Reserve Bank of India (RBI): Payment System Data Localization (2018): From RBI Circular RBI/2017-18/153 (April 6, 2018): "All system providers shall ensure that the entire data relating to payment systems operated by them are stored in a system only in India. This data should include the full end-to-end transaction details / information collected / carried / processed as part of the message / payment instruction."

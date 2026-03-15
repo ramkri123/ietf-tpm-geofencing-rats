@@ -751,37 +751,6 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
 <t>The implementation includes automated end-to-end tests (<tt>./run-demo.sh</tt>) that exercise the full attestation flow from TPM quote construction through ZKP proof generation and SVID issuance with embedded V-GAP Evidence.</t>
 </section>
 
-<section anchor="open-issues"><name>Open Issues</name>
-<t>The following items are unresolved and are tracked for future revisions of this document.</t>
-
-<section anchor="ima-restart-behavior"><name>IMA Restart Behavior</name>
-<t>Define an interoperable way to detect and handle Workload Identity Agent restarts without requiring a full host reboot, while preserving measurement integrity.</t>
-</section>
-
-<section anchor="location-privacy-options"><name>Location Privacy Options</name>
-<t>Clarify the complete set of supported privacy techniques and define the policy logic for selecting between precise location disclosure, coarse location, and ZKP-based &quot;in-zone&quot; proofs.</t>
-</section>
-
-<section anchor="proximity-profiles"><name>Proximity Profiles</name>
-<t>This document defers proximity proof mechanisms to future profiling work. Open items include:</t>
-
-<ul spacing="compact">
-<li>Defining one or more proximity evidence profiles (for example, PTP-derived, BLE/UWB ranging, or network-RTT-based) as separate documents.</li>
-<li>Specifying how proximity evidence is represented and bound to the V-GAP bundle (for example, as an additional hash field).</li>
-<li>Addressing relay and displacement threats, including RTT-based acceptance windows, anchor health attestation, and disagreement policies for multi-anchor deployments.</li>
-<li>Profiling the use of CAMARA-style MNO location signals as a proximity corroboration mechanism.</li>
-</ul>
-</section>
-
-<section anchor="geotagging-textual-data"><name>Geotagging Textual Data</name>
-<t>There is no widely deployed standard for geotagging arbitrary textual data objects.</t>
-</section>
-
-<section anchor="attesting-geotags"><name>Attesting Geotags</name>
-<t>There is no widely deployed standard for cryptographically signing geotags to prevent manipulation.</t>
-</section>
-</section>
-
 <section anchor="data-residency-references"><name>Data Residency References</name>
 <t>India -- Reserve Bank of India (RBI): Payment System Data Localization (2018): From RBI Circular RBI/2017-18/153 (April 6, 2018): &quot;All system providers shall ensure that the entire data relating to payment systems operated by them are stored in a system only in India. This data should include the full end-to-end transaction details / information collected / carried / processed as part of the message / payment instruction.&quot;</t>
 <t>South Korea's Data Localization Regulations -- Geospatial Information Management Act (Spatial Data Act): Article 16, Paragraph 1: Prohibits the export of state-led survey data.</t>

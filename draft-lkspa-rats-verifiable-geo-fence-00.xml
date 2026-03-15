@@ -25,9 +25,8 @@
 <keyword>GNSS</keyword>
 
 <abstract>
-<t>Modern cloud and distributed computing rely heavily on software-only identities and bearer tokens that are easily stolen, replayed, or used from unauthorized locations. Furthermore, traditional methods of location verification - such as IP-address-based geolocation - are easily spoofed via VPNs or proxies and significantly compromise infrastructure security and privacy for <strong>Sovereign Workloads</strong> and high-assurance environments. This document defines the <strong>Verifiable Geofencing Attestation Profile (V-GAP)</strong>, a profile of the RATS Architecture {{!RFC9334}}, that solves these challenges through hardware-rooted cryptographic verifiability.</t>
-<t>A host machine runs a workload identity agent for managing the workload identities on that platform. This profile replaces implicit trust and spoofable indicators with cryptographically verifiable hardware-rooted Evidence of integrity and location for this agent. Critically, this framework prioritizes <strong>Location Privacy</strong> by utilizing Zero-Knowledge Proofs (ZKP), allowing a workload to prove it is within a compliant &quot;Sovereign Zone&quot; without disclosing precise coordinates that could be used for tracking or exploitation.</t>
-<t>By binding software identities to persistent silicon identities and verified physical residency, this solution establishes a &quot;Silicon-to-Workload&quot; chain of trust. It ensures that sensitive operations are only performed by authorized workloads running on untampered hardware in cryptographically verified, privacy-preserving geographic boundaries, fulfilling the high-assurance requirements of the <strong>WIMSE Architecture</strong> {{!I-D.ietf-wimse-architecture}}.</t>
+<t>Software-only workload identities and bearer tokens are easily stolen, replayed, or used from unauthorized locations. Traditional location signals such as IP-based geolocation are spoofable and provide no hardware-rooted verifiability. This document defines the Verifiable Geofencing Attestation Profile (V-GAP), a profile of the RATS Architecture {{!RFC9334}}, that binds workload identity issuance to cryptographically verifiable Evidence of platform integrity and geographic residency.</t>
+<t>V-GAP enables a host running a Workload Identity Agent to prove that the platform is measured, untampered, and resident within an approved geographic boundary — optionally without revealing precise coordinates, using transparent Zero-Knowledge Proofs (ZKPs). By binding software identities to persistent silicon identities and verified physical residency, V-GAP establishes a silicon-to-workload chain of trust that fulfils the requirements of the WIMSE Architecture {{!I-D.ietf-wimse-architecture}}.</t>
 </abstract>
 
 </front>
@@ -221,15 +220,16 @@
 </tr>
 
 <tr>
-<td align="left">Downstream Relying Party</td>
+<td align="left">Downstream Relying Party (note 1)</td>
 <td align="left">mTLS peer / service consumer</td>
 <td align="left">Consumes the workload credential containing the V-GAP extension; trusts the CA signature as proxy for verified integrity and residency.</td>
 </tr>
 </tbody>
-</table></section>
+</table><t>Note 1: &quot;Downstream Relying Party&quot; is not a role defined by {{!RFC9334}}. It is used here to distinguish the entity that consumes the issued credential from the Relying Party that consumes the Attestation Result.</t>
+</section>
 
 <section anchor="evidence-flow"><name>Evidence Flow</name>
-<t>The V-GAP evidence flow follows the RATS passport model:</t>
+<t>The V-GAP evidence flow follows the RATS background-check model ({{!RFC9334}}, Section 3.2): the Attester conveys Evidence to the Verifier, the Verifier appraises it and conveys the Attestation Result to the Relying Party.</t>
 
 <artwork><![CDATA[Attester (LAH)
     |
@@ -246,7 +246,7 @@ Relying Party + Credential Issuer (Workload Identity Mgmt Plane)
 Downstream Relying Party (mTLS peer)
 ]]></artwork>
 <t>The Relying Party in V-GAP also acts as a Credential Issuer (CA): it materializes the Attestation Result into an X.509 workload identity credential (for example, a SPIFFE SVID) containing the V-GAP Evidence as a CRITICAL extension. This &quot;trust translator&quot; pattern allows downstream consumers to rely on standard X.509/mTLS verification without needing to understand RATS or V-GAP directly.</t>
-<t>When the V-GAP extension is marked CRITICAL (as required by this profile), any downstream Relying Party that does not understand the extension MUST reject the credential, enforcing fail-closed behavior for residency-constrained workloads.</t>
+<t>Implementations of this profile MUST mark the X.509 extension containing the V-GAP Evidence Bundle as CRITICAL. When marked CRITICAL, any downstream Relying Party that does not understand the extension MUST reject the credential, enforcing fail-closed behavior for residency-constrained workloads.</t>
 </section>
 
 <section anchor="v-gap-evidence-structure"><name>V-GAP Evidence Structure</name>
@@ -285,7 +285,7 @@ Downstream Relying Party (mTLS peer)
 <td align="left"><tt>geolocation-id-hash</tt></td>
 <td align="left">string (Base64URL)</td>
 <td align="center">Yes</td>
-<td align="left"><tt>SHA-256(tpm-ak-bytes)</tt>. Binds TPM identity to sensor identity - assumption is sensor integrity is handled by OOB host management plane</td>
+<td align="left">SHA-256 over <tt>tpm-ak-bytes</tt> concatenated with any sensor-specific identifiers (see Sensor Type Input Recipes appendix for per-sensor constructions). Binds the TPM identity anchor to the geolocation sensor identity. Sensor integrity is assumed to be established by the host management plane via an out-of-band channel.</td>
 </tr>
 
 <tr>
@@ -313,7 +313,7 @@ Downstream Relying Party (mTLS peer)
 <td align="left"><tt>nonce</tt></td>
 <td align="left">string (Base64URL)</td>
 <td align="center">Yes</td>
-<td align="left">N_fusion freshness nonce issued by the Relying Party (Workload Identity Management Plane). Chained: <tt>HMAC(secret, n \|\| chain[n-1])</tt>. Detects skipped/reordered attestations.</td>
+<td align="left">Freshness nonce (N_fusion) issued by the Relying Party (Workload Identity Management Plane) for each attestation interval. Implementations may use chained nonce constructions for additional audit guarantees (see Nonce Chain and Merkle Audit Log appendix).</td>
 </tr>
 
 <tr>
@@ -456,7 +456,7 @@ Downstream Relying Party (mTLS peer)
 <td align="left"><tt>key-source</tt></td>
 <td align="left">string</td>
 <td align="center">Yes</td>
-<td align="left">Origin of the workload's key material (e.g., <tt>&quot;tpm-app-key&quot;</tt>). The value is implementer-defined; Verifiers SHOULD treat unrecognized values as opaque strings unless policy requires specific values.</td>
+<td align="left">Identifier for the origin of the workload's key material (for example, <tt>&quot;tpm-app-key&quot;</tt>). Values are deployment-specific; this field is recorded for audit and policy evaluation.</td>
 </tr>
 </tbody>
 </table></section>
@@ -504,7 +504,6 @@ Downstream Relying Party (mTLS peer)
 
 <section anchor="iana-considerations"><name>IANA Considerations</name>
 <t>IANA is requested to register the following Object Identifier (OID) in the &quot;SMI Numbers&quot; registry under the &quot;SMI Private Enterprise Numbers&quot; (1.3.6.1.4.1) branch, or as appropriate for the V-GAP profile.</t>
-<t><strong>Mandatory Criticality:</strong> Implementations of this profile MUST mark the X.509 extension containing the V-GAP Evidence Bundle as <strong>CRITICAL</strong>. This ensures that non-compliant gateways fail closed rather than granting access to residency-constrained workloads.</t>
 
 <ul spacing="compact">
 <li><strong>OID</strong>: <tt>1.3.6.1.4.1.65284.1.1</tt></li>

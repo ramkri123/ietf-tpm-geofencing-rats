@@ -91,11 +91,9 @@ organization = "Independent"
 
 .# Abstract
 
-Modern cloud and distributed computing rely heavily on software-only identities and bearer tokens that are easily stolen, replayed, or used from unauthorized locations. Furthermore, traditional methods of location verification - such as IP-address-based geolocation - are easily spoofed via VPNs or proxies and significantly compromise infrastructure security and privacy for **Sovereign Workloads** and high-assurance environments. This document defines the **Verifiable Geofencing Attestation Profile (V-GAP)**, a profile of the RATS Architecture {{!RFC9334}}, that solves these challenges through hardware-rooted cryptographic verifiability.
+Software-only workload identities and bearer tokens are easily stolen, replayed, or used from unauthorized locations. Traditional location signals such as IP-based geolocation are spoofable and provide no hardware-rooted verifiability. This document defines the Verifiable Geofencing Attestation Profile (V-GAP), a profile of the RATS Architecture {{!RFC9334}}, that binds workload identity issuance to cryptographically verifiable Evidence of platform integrity and geographic residency.
 
-A host machine runs a workload identity agent for managing the workload identities on that platform. This profile replaces implicit trust and spoofable indicators with cryptographically verifiable hardware-rooted Evidence of integrity and location for this agent. Critically, this framework prioritizes **Location Privacy** by utilizing Zero-Knowledge Proofs (ZKP), allowing a workload to prove it is within a compliant "Sovereign Zone" without disclosing precise coordinates that could be used for tracking or exploitation.
-
-By binding software identities to persistent silicon identities and verified physical residency, this solution establishes a "Silicon-to-Workload" chain of trust. It ensures that sensitive operations are only performed by authorized workloads running on untampered hardware in cryptographically verified, privacy-preserving geographic boundaries, fulfilling the high-assurance requirements of the **WIMSE Architecture** {{!I-D.ietf-wimse-architecture}}.
+V-GAP enables a host running a Workload Identity Agent to prove that the platform is measured, untampered, and resident within an approved geographic boundary — optionally without revealing precise coordinates, using transparent Zero-Knowledge Proofs (ZKPs). By binding software identities to persistent silicon identities and verified physical residency, V-GAP establishes a silicon-to-workload chain of trust that fulfils the requirements of the WIMSE Architecture {{!I-D.ietf-wimse-architecture}}.
 
 {mainmatter}
 
@@ -239,11 +237,13 @@ V-GAP instantiates the RATS Architecture {{!RFC9334}} with the following role as
 | Verifier | Host Identity Management Plane | Appraises V-GAP Evidence — validates TPM quotes, checks PCRs, verifies geolocation proofs — and produces an Attestation Result. |
 | Endorser | Mobile Network Operator (MNO) | Provides a location Endorsement (`mno-endorsement`) attesting device location within carrier visibility. |
 | Relying Party + Credential Issuer | Workload Identity Management Plane | Consumes the Attestation Result and decides whether to issue or renew workload credentials (e.g., X.509-SVIDs). Also acts as the CA that signs the credential. |
-| Downstream Relying Party | mTLS peer / service consumer | Consumes the workload credential containing the V-GAP extension; trusts the CA signature as proxy for verified integrity and residency. |
+| Downstream Relying Party (note 1) | mTLS peer / service consumer | Consumes the workload credential containing the V-GAP extension; trusts the CA signature as proxy for verified integrity and residency. |
+
+Note 1: "Downstream Relying Party" is not a role defined by {{!RFC9334}}. It is used here to distinguish the entity that consumes the issued credential from the Relying Party that consumes the Attestation Result.
 
 ## Evidence Flow
 
-The V-GAP evidence flow follows the RATS passport model:
+The V-GAP evidence flow follows the RATS background-check model ({{!RFC9334}}, Section 3.2): the Attester conveys Evidence to the Verifier, the Verifier appraises it and conveys the Attestation Result to the Relying Party.
 
 ~~~
 Attester (LAH)
@@ -263,7 +263,7 @@ Downstream Relying Party (mTLS peer)
 
 The Relying Party in V-GAP also acts as a Credential Issuer (CA): it materializes the Attestation Result into an X.509 workload identity credential (for example, a SPIFFE SVID) containing the V-GAP Evidence as a CRITICAL extension. This "trust translator" pattern allows downstream consumers to rely on standard X.509/mTLS verification without needing to understand RATS or V-GAP directly.
 
-When the V-GAP extension is marked CRITICAL (as required by this profile), any downstream Relying Party that does not understand the extension MUST reject the credential, enforcing fail-closed behavior for residency-constrained workloads.
+Implementations of this profile MUST mark the X.509 extension containing the V-GAP Evidence Bundle as CRITICAL. When marked CRITICAL, any downstream Relying Party that does not understand the extension MUST reject the credential, enforcing fail-closed behavior for residency-constrained workloads.
 
 ## V-GAP Evidence Structure
 
@@ -284,11 +284,11 @@ The `lah-bundle` is the RATS Evidence structure defined by this profile. It is a
 | Field | Type | Required | Description |
 |:------|:-----|:--------:|:------------|
 | `tpm-ak` | string (Base64URL) | Yes | TPM Attestation Key public key (PEM-encoded). Hardware identity anchor. The TPM enforces that only this key can produce `tpm-quote-seal` — proving co-residency. |
-| `geolocation-id-hash` | string (Base64URL) | Yes | `SHA-256(tpm-ak-bytes)`. Binds TPM identity to sensor identity - assumption is sensor integrity is handled by OOB host management plane |
+| `geolocation-id-hash` | string (Base64URL) | Yes | SHA-256 over `tpm-ak-bytes` concatenated with any sensor-specific identifiers (see Sensor Type Input Recipes appendix for per-sensor constructions). Binds the TPM identity anchor to the geolocation sensor identity. Sensor integrity is assumed to be established by the host management plane via an out-of-band channel. |
 | `geolocation-proof-hash` | string (Base64URL) | Yes | SHA-256 commitment over `geolocation-payload`. Required in both privacy modes. When `privacy-technique=zkp`: `SHA-256(zkp-proof-bytes)`. When `privacy-technique=none`: `SHA-256(JCS({lat, lon, accuracy}))`. |
 | `privacy-technique` | string enum | Yes | `"none"` = raw lat/lon/accuracy in payload. `"zkp"` = zero-knowledge proof URI in payload. Controls location privacy only; device identity privacy is always protected via `geolocation-id-hash`. |
 | `geolocation-payload` | object | Yes | Inner location data. Structure depends on `privacy-technique` (see Payload Variants below). Committed to by `geolocation-proof-hash` and optionally signed by `mno-endorsement.mno-sig`. |
-| `nonce` | string (Base64URL) | Yes | N_fusion freshness nonce issued by the Relying Party (Workload Identity Management Plane). Chained: `HMAC(secret, n \|\| chain[n-1])`. Detects skipped/reordered attestations. |
+| `nonce` | string (Base64URL) | Yes | Freshness nonce (N_fusion) issued by the Relying Party (Workload Identity Management Plane) for each attestation interval. Implementations may use chained nonce constructions for additional audit guarantees (see Nonce Chain and Merkle Audit Log appendix). |
 | `timestamp` | integer (int64) | Yes | Unix epoch seconds. Set by the Attester (LAH) at bundle construction time. |
 | `tpm-quote-seal` | string (Base64URL) | Yes | `TPM2_Quote` produced by the AK in `tpm-ak`. Qualifying data = `SHA-256(JCS({tpm-ak, geolocation-id-hash, geolocation-proof-hash, privacy-technique, nonce, timestamp, workload-identity-agent-image-digest}))`. Binds all fields into a single hardware-sealed statement. |
 | `workload-identity-agent-image-digest` | string (hex SHA-256) | Yes | SHA-256 digest of the Workload Identity Agent binary, measured at attestation time by the Verifier (Host Identity Management Plane). Detects agent binary compromise on every renewal cycle. |
@@ -330,7 +330,7 @@ The `workload` object binds the V-GAP Evidence to a specific workload identity, 
 | Field | Type | Required | Description |
 |:------|:-----|:--------:|:------------|
 | `workload-id` | string (SPIFFE ID) | Yes | The workload's SPIFFE identity URI (e.g., `spiffe://example.org/python-app`). |
-| `key-source` | string | Yes | Origin of the workload's key material (e.g., `"tpm-app-key"`). The value is implementer-defined; Verifiers SHOULD treat unrecognized values as opaque strings unless policy requires specific values. |
+| `key-source` | string | Yes | Identifier for the origin of the workload's key material (for example, `"tpm-app-key"`). Values are deployment-specific; this field is recorded for audit and policy evaluation. |
 
 ## TPM Quote Verification Procedure
 
@@ -370,8 +370,6 @@ V-GAP reduces reliance on spoofable location signals and stolen tokens by making
 # IANA Considerations
 
 IANA is requested to register the following Object Identifier (OID) in the "SMI Numbers" registry under the "SMI Private Enterprise Numbers" (1.3.6.1.4.1) branch, or as appropriate for the V-GAP profile.
-
-**Mandatory Criticality:** Implementations of this profile MUST mark the X.509 extension containing the V-GAP Evidence Bundle as **CRITICAL**. This ensures that non-compliant gateways fail closed rather than granting access to residency-constrained workloads.
 
 - **OID**: `1.3.6.1.4.1.65284.1.1`
 - **Description**: Verifiable Geofencing Attestation Profile (V-GAP) Evidence Bundle

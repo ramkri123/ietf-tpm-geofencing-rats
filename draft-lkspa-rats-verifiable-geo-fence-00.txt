@@ -21,42 +21,23 @@ Expires: 11 September 2026                                         Intel
 
 Abstract
 
-   Modern cloud and distributed computing rely heavily on software-only
-   identities and bearer tokens that are easily stolen, replayed, or
-   used from unauthorized locations.  Furthermore, traditional methods
-   of location verification - such as IP-address-based geolocation - are
-   easily spoofed via VPNs or proxies and significantly compromise
-   infrastructure security and privacy for *Sovereign Workloads* and
-   high-assurance environments.  This document defines the *Verifiable
-   Geofencing Attestation Profile (V-GAP)*, a profile of the RATS
-   Architecture {{!RFC9334}}, that solves these challenges through
-   hardware-rooted cryptographic verifiability.
+   Software-only workload identities and bearer tokens are easily
+   stolen, replayed, or used from unauthorized locations.  Traditional
+   location signals such as IP-based geolocation are spoofable and
+   provide no hardware-rooted verifiability.  This document defines the
+   Verifiable Geofencing Attestation Profile (V-GAP), a profile of the
+   RATS Architecture {{!RFC9334}}, that binds workload identity issuance
+   to cryptographically verifiable Evidence of platform integrity and
+   geographic residency.
 
-   A host machine runs a workload identity agent for managing the
-   workload identities on that platform.  This profile replaces implicit
-   trust and spoofable indicators with cryptographically verifiable
-   hardware-rooted Evidence of integrity and location for this agent.
-   Critically, this framework prioritizes *Location Privacy* by
-   utilizing Zero-Knowledge Proofs (ZKP), allowing a workload to prove
-   it is within a compliant "Sovereign Zone" without disclosing precise
-   coordinates that could be used for tracking or exploitation.
-
-   By binding software identities to persistent silicon identities and
-   verified physical residency, this solution establishes a "Silicon-to-
-   Workload" chain of trust.  It ensures that sensitive operations are
-   only performed by authorized workloads running on untampered hardware
-   in cryptographically verified, privacy-preserving geographic
-   boundaries, fulfilling the high-assurance requirements of the *WIMSE
-   Architecture* {{!I-D.ietf-wimse-architecture}}.
-
-
-
-
-
-Krishnan, et al.        Expires 11 September 2026               [Page 1]
-
-Internet-Draft                    V-GAP                       March 2026
-
+   V-GAP enables a host running a Workload Identity Agent to prove that
+   the platform is measured, untampered, and resident within an approved
+   geographic boundary — optionally without revealing precise
+   coordinates, using transparent Zero-Knowledge Proofs (ZKPs).  By
+   binding software identities to persistent silicon identities and
+   verified physical residency, V-GAP establishes a silicon-to-workload
+   chain of trust that fulfils the requirements of the WIMSE
+   Architecture {{!I-D.ietf-wimse-architecture}}.
 
 Status of This Memo
 
@@ -67,6 +48,15 @@ Status of This Memo
    Task Force (IETF).  Note that other groups may also distribute
    working documents as Internet-Drafts.  The list of current Internet-
    Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+
+
+
+
+Krishnan, et al.        Expires 11 September 2026               [Page 1]
+
+Internet-Draft                    V-GAP                       March 2026
+
 
    Internet-Drafts are draft documents valid for a maximum of six months
    and may be updated, replaced, or obsoleted by other documents at any
@@ -95,17 +85,27 @@ Table of Contents
      1.1.  Scope and Layering  . . . . . . . . . . . . . . . . . . .   4
    2.  Conventions and Definitions . . . . . . . . . . . . . . . . .   5
      2.1.  Abbreviations . . . . . . . . . . . . . . . . . . . . . .   5
-   3.  Key Terms . . . . . . . . . . . . . . . . . . . . . . . . . .   6
-   4.  Use Cases . . . . . . . . . . . . . . . . . . . . . . . . . .   7
-     4.1.  Server-centric Enforcement  . . . . . . . . . . . . . . .   7
+   3.  Key Terms . . . . . . . . . . . . . . . . . . . . . . . . . .   5
+   4.  Use Cases . . . . . . . . . . . . . . . . . . . . . . . . . .   6
+     4.1.  Server-centric Enforcement  . . . . . . . . . . . . . . .   6
      4.2.  User-centric Enforcement  . . . . . . . . . . . . . . . .   7
-     4.3.  Compliance and Risk Reduction . . . . . . . . . . . . . .   8
+     4.3.  Compliance and Risk Reduction . . . . . . . . . . . . . .   7
    5.  Verifiable Geofencing Attestation Profile (V-GAP) . . . . . .   8
      5.1.  RATS Role Mapping . . . . . . . . . . . . . . . . . . . .   8
      5.2.  Evidence Flow . . . . . . . . . . . . . . . . . . . . . .   9
-     5.3.  V-GAP Evidence Structure  . . . . . . . . . . . . . . . .  10
+     5.3.  V-GAP Evidence Structure  . . . . . . . . . . . . . . . .   9
        5.3.1.  Top-Level Structure . . . . . . . . . . . . . . . . .  10
-       5.3.2.  lah-bundle Fields . . . . . . . . . . . . . . . . . .  11
+       5.3.2.  lah-bundle Fields . . . . . . . . . . . . . . . . . .  10
+       5.3.3.  geolocation-payload Variants  . . . . . . . . . . . .  12
+       5.3.4.  MNO Endorsement (RATS Endorsement)  . . . . . . . . .  13
+       5.3.5.  Workload Identity Binding . . . . . . . . . . . . . .  14
+     5.4.  TPM Quote Verification Procedure  . . . . . . . . . . . .  14
+     5.5.  Freshness and Replay Prevention . . . . . . . . . . . . .  14
+   6.  Security Considerations . . . . . . . . . . . . . . . . . . .  15
+   7.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  16
+   Appendix A.  Operational Guidance . . . . . . . . . . . . . . . .  16
+     A.1.  Gating Credentials on Verified Evidence . . . . . . . . .  16
+     A.2.  Distributed Identity Issuance and Scaling . . . . . . . .  16
 
 
 
@@ -114,34 +114,24 @@ Krishnan, et al.        Expires 11 September 2026               [Page 2]
 Internet-Draft                    V-GAP                       March 2026
 
 
-       5.3.3.  geolocation-payload Variants  . . . . . . . . . . . .  13
-       5.3.4.  MNO Endorsement (RATS Endorsement)  . . . . . . . . .  14
-       5.3.5.  Workload Identity Binding . . . . . . . . . . . . . .  14
-     5.4.  TPM Quote Verification Procedure  . . . . . . . . . . . .  15
-     5.5.  Freshness and Replay Prevention . . . . . . . . . . . . .  15
-   6.  Security Considerations . . . . . . . . . . . . . . . . . . .  16
-   7.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  17
-   Appendix A.  Operational Guidance . . . . . . . . . . . . . . . .  17
-     A.1.  Gating Credentials on Verified Evidence . . . . . . . . .  17
-     A.2.  Distributed Identity Issuance and Scaling . . . . . . . .  17
-     A.3.  Mobility and Sovereign Handover . . . . . . . . . . . . .  18
-     A.4.  Location Anchor Hosts . . . . . . . . . . . . . . . . . .  18
-   Appendix B.  Scalable Fleet Management  . . . . . . . . . . . . .  18
-     B.1.  Nonce Chain and Merkle Audit Log  . . . . . . . . . . . .  18
-     B.2.  Key Registry and Synchronization  . . . . . . . . . . . .  19
-     B.3.  Key Rotation  . . . . . . . . . . . . . . . . . . . . . .  19
-       B.3.1.  Example Rotation Proof  . . . . . . . . . . . . . . .  19
-     B.4.  Credential Activation and Re-Verification . . . . . . . .  19
-     B.5.  Revocation and Health Signals . . . . . . . . . . . . . .  20
-     B.6.  Disconnected Operation (Leased Identity)  . . . . . . . .  20
-   Appendix C.  Deployment Patterns  . . . . . . . . . . . . . . . .  20
-   Appendix D.  Policy Use . . . . . . . . . . . . . . . . . . . . .  21
-   Appendix E.  V-GAP Examples and Sensor Recipes  . . . . . . . . .  21
-     E.1.  Example Instance (privacy-technique = "zkp")  . . . . . .  21
-     E.2.  Sensor Type Input Recipes . . . . . . . . . . . . . . . .  22
-   Appendix F.  Implementation Status  . . . . . . . . . . . . . . .  22
-   Appendix G.  Data Residency References  . . . . . . . . . . . . .  23
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  23
+     A.3.  Mobility and Sovereign Handover . . . . . . . . . . . . .  17
+     A.4.  Location Anchor Hosts . . . . . . . . . . . . . . . . . .  17
+   Appendix B.  Scalable Fleet Management  . . . . . . . . . . . . .  17
+     B.1.  Nonce Chain and Merkle Audit Log  . . . . . . . . . . . .  17
+     B.2.  Key Registry and Synchronization  . . . . . . . . . . . .  18
+     B.3.  Key Rotation  . . . . . . . . . . . . . . . . . . . . . .  18
+       B.3.1.  Example Rotation Proof  . . . . . . . . . . . . . . .  18
+     B.4.  Credential Activation and Re-Verification . . . . . . . .  18
+     B.5.  Revocation and Health Signals . . . . . . . . . . . . . .  19
+     B.6.  Disconnected Operation (Leased Identity)  . . . . . . . .  19
+   Appendix C.  Deployment Patterns  . . . . . . . . . . . . . . . .  19
+   Appendix D.  Policy Use . . . . . . . . . . . . . . . . . . . . .  20
+   Appendix E.  V-GAP Examples and Sensor Recipes  . . . . . . . . .  20
+     E.1.  Example Instance (privacy-technique = "zkp")  . . . . . .  20
+     E.2.  Sensor Type Input Recipes . . . . . . . . . . . . . . . .  21
+   Appendix F.  Implementation Status  . . . . . . . . . . . . . . .  21
+   Appendix G.  Data Residency References  . . . . . . . . . . . . .  22
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  22
 
 1.  Introduction
 
@@ -162,14 +152,6 @@ Internet-Draft                    V-GAP                       March 2026
       requests may traverse intermediaries that expand the effective
       trust boundary.
 
-
-
-
-Krishnan, et al.        Expires 11 September 2026               [Page 3]
-
-Internet-Draft                    V-GAP                       March 2026
-
-
    This document defines the Verifiable Geofencing Attestation Profile
    (V-GAP), a profile of the RATS Architecture {{!RFC9334}} that makes
    *platform integrity* and *geofence residency* verifiable inputs to
@@ -180,6 +162,13 @@ Internet-Draft                    V-GAP                       March 2026
        platform (platform integrity); and
    2.  that platform is resident within an approved geographic boundary,
        optionally without revealing coordinates (residency).
+
+
+
+Krishnan, et al.        Expires 11 September 2026               [Page 3]
+
+Internet-Draft                    V-GAP                       March 2026
+
 
    To maintain location privacy while providing cryptographic
    verifiability, V-GAP supports Transparent Zero-Knowledge Proofs
@@ -196,35 +185,6 @@ Internet-Draft                    V-GAP                       March 2026
    transitive-attestation}}. Together, these three layers form a
    complete chain of trust from silicon to workload, as required by the
    WIMSE Architecture {{!I-D.ietf-wimse-architecture}}.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Krishnan, et al.        Expires 11 September 2026               [Page 4]
-
-Internet-Draft                    V-GAP                       March 2026
-
 
    +======+==========================================+=================+
    |Layer | Scope                                    | Responsibility  |
@@ -255,6 +215,17 @@ Internet-Draft                    V-GAP                       March 2026
 
                                   Table 1
 
+
+
+
+
+
+
+Krishnan, et al.        Expires 11 September 2026               [Page 4]
+
+Internet-Draft                    V-GAP                       March 2026
+
+
 2.  Conventions and Definitions
 
    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
@@ -274,14 +245,6 @@ Internet-Draft                    V-GAP                       March 2026
    *  *IMA*: Integrity Measurement Architecture
    *  *IMEI*: International Mobile Equipment Identity
    *  *IMSI*: International Mobile Subscriber Identity
-
-
-
-Krishnan, et al.        Expires 11 September 2026               [Page 5]
-
-Internet-Draft                    V-GAP                       March 2026
-
-
    *  *LAH*: Location Anchor Host
    *  *OOB*: Out-of-Band
    *  *PCR*: Platform Configuration Register
@@ -311,6 +274,14 @@ Internet-Draft                    V-GAP                       March 2026
       otherwise stated, this document assumes the unified deployment
       model in which the Workload Host and the Location Anchor Host
       (LAH) are the same machine.
+
+
+
+Krishnan, et al.        Expires 11 September 2026               [Page 5]
+
+Internet-Draft                    V-GAP                       March 2026
+
+
    Composite Geolocation:  Location estimate fused from multiple sources
       and accompanied by a quality indicator.
    Proof of Residency (PoR) / Co-location:  Evidence that binds a
@@ -330,14 +301,6 @@ Internet-Draft                    V-GAP                       March 2026
       platform health state (often via OOB paths).  In RATS terms, this
       plane acts as the Verifier.
    V-GAP (Verifiable Geofencing Attestation Profile):  Nested evidence
-
-
-
-Krishnan, et al.        Expires 11 September 2026               [Page 6]
-
-Internet-Draft                    V-GAP                       March 2026
-
-
       format defined in this document for binding identity to verified
       platform integrity and verified residency.
    N_fusion (Workload Fusion Nonce):  Fresh nonce used to bind identity
@@ -363,6 +326,18 @@ Internet-Draft                    V-GAP                       March 2026
       and "in-zone" residency, preventing credentials from being used
       outside the approved boundary.
 
+
+
+
+
+
+
+
+Krishnan, et al.        Expires 11 September 2026               [Page 6]
+
+Internet-Draft                    V-GAP                       March 2026
+
+
    *  *Agentic AI workloads:* An AI agent may access sensitive data or
       perform sensitive actions only when its Workload Identity Agent
       presents hardware-rooted integrity evidence and a verifiable "in-
@@ -383,16 +358,6 @@ Internet-Draft                    V-GAP                       March 2026
 
    Enterprises may also need trustworthy location signals for user-
    facing access decisions.
-
-
-
-
-
-
-Krishnan, et al.        Expires 11 September 2026               [Page 7]
-
-Internet-Draft                    V-GAP                       March 2026
-
 
    *  *Geofenced access control:* User access is permitted only when the
       user (or user device) proves it is within an allowed boundary,
@@ -418,6 +383,17 @@ Internet-Draft                    V-GAP                       March 2026
    and location-privacy minimization (proving "inside the zone" without
    storing coordinates).
 
+
+
+
+
+
+
+Krishnan, et al.        Expires 11 September 2026               [Page 7]
+
+Internet-Draft                    V-GAP                       March 2026
+
+
 5.  Verifiable Geofencing Attestation Profile (V-GAP)
 
    V-GAP is a profile of the RATS Architecture {{!RFC9334}} that binds a
@@ -431,24 +407,6 @@ Internet-Draft                    V-GAP                       March 2026
 
    V-GAP instantiates the RATS Architecture {{!RFC9334}} with the
    following role assignments.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Krishnan, et al.        Expires 11 September 2026               [Page 8]
-
-Internet-Draft                    V-GAP                       March 2026
-
 
    +================+============+====================================+
    | RATS Role      | V-GAP      | Function                           |
@@ -476,35 +434,33 @@ Internet-Draft                    V-GAP                       March 2026
    +----------------+------------+------------------------------------+
    | Downstream     | mTLS peer  | Consumes the workload credential   |
    | Relying Party  | / service  | containing the V-GAP extension;    |
-   |                | consumer   | trusts the CA signature as proxy   |
+   | (note 1)       | consumer   | trusts the CA signature as proxy   |
    |                |            | for verified integrity and         |
    |                |            | residency.                         |
    +----------------+------------+------------------------------------+
 
                                  Table 2
 
-5.2.  Evidence Flow
-
-   The V-GAP evidence flow follows the RATS passport model:
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-Krishnan, et al.        Expires 11 September 2026               [Page 9]
+Krishnan, et al.        Expires 11 September 2026               [Page 8]
 
 Internet-Draft                    V-GAP                       March 2026
 
+
+   Note 1: "Downstream Relying Party" is not a role defined by
+   {{!RFC9334}}. It is used here to distinguish the entity that consumes
+   the issued credential from the Relying Party that consumes the
+   Attestation Result.
+
+5.2.  Evidence Flow
+
+   The V-GAP evidence flow follows the RATS background-check model
+   ({{!RFC9334}}, Section 3.2): the Attester conveys Evidence to the
+   Verifier, the Verifier appraises it and conveys the Attestation
+   Result to the Relying Party.
 
    Attester (LAH)
        |
@@ -527,8 +483,9 @@ Internet-Draft                    V-GAP                       March 2026
    downstream consumers to rely on standard X.509/mTLS verification
    without needing to understand RATS or V-GAP directly.
 
-   When the V-GAP extension is marked CRITICAL (as required by this
-   profile), any downstream Relying Party that does not understand the
+   Implementations of this profile MUST mark the X.509 extension
+   containing the V-GAP Evidence Bundle as CRITICAL.  When marked
+   CRITICAL, any downstream Relying Party that does not understand the
    extension MUST reject the credential, enforcing fail-closed behavior
    for residency-constrained workloads.
 
@@ -542,6 +499,13 @@ Internet-Draft                    V-GAP                       March 2026
    privacy-preserving geolocation, and agent binary integrity — without
    exposing PII.
 
+
+
+Krishnan, et al.        Expires 11 September 2026               [Page 9]
+
+Internet-Draft                    V-GAP                       March 2026
+
+
 5.3.1.  Top-Level Structure
 
    {
@@ -550,10 +514,46 @@ Internet-Draft                    V-GAP                       March 2026
      "workload": { }
    }
 
+5.3.2.  lah-bundle Fields
 
-
-
-
+   +==============+=============+==========+===========================+
+   | Field        | Type        | Required | Description               |
+   +==============+=============+==========+===========================+
+   | tpm-ak       | string      |   Yes    | TPM Attestation Key       |
+   |              | (Base64URL) |          | public key (PEM-          |
+   |              |             |          | encoded).  Hardware       |
+   |              |             |          | identity anchor.  The     |
+   |              |             |          | TPM enforces that only    |
+   |              |             |          | this key can produce      |
+   |              |             |          | tpm-quote-seal —          |
+   |              |             |          | proving co-residency.     |
+   +--------------+-------------+----------+---------------------------+
+   | geolocation- | string      |   Yes    | SHA-256 over tpm-ak-      |
+   | id-hash      | (Base64URL) |          | bytes concatenated with   |
+   |              |             |          | any sensor-specific       |
+   |              |             |          | identifiers (see Sensor   |
+   |              |             |          | Type Input Recipes        |
+   |              |             |          | appendix for per-sensor   |
+   |              |             |          | constructions).  Binds    |
+   |              |             |          | the TPM identity anchor   |
+   |              |             |          | to the geolocation        |
+   |              |             |          | sensor identity.          |
+   |              |             |          | Sensor integrity is       |
+   |              |             |          | assumed to be             |
+   |              |             |          | established by the host   |
+   |              |             |          | management plane via an   |
+   |              |             |          | out-of-band channel.      |
+   +--------------+-------------+----------+---------------------------+
+   | geolocation- | string      |   Yes    | SHA-256 commitment over   |
+   | proof-hash   | (Base64URL) |          | geolocation-payload.      |
+   |              |             |          | Required in both          |
+   |              |             |          | privacy modes.  When      |
+   |              |             |          | privacy-technique=zkp:    |
+   |              |             |          | SHA-256(zkp-proof-        |
+   |              |             |          | bytes).  When privacy-    |
+   |              |             |          | technique=none: SHA-      |
+   |              |             |          | 256(JCS({lat, lon,        |
+   |              |             |          | accuracy})).              |
 
 
 
@@ -562,54 +562,54 @@ Krishnan, et al.        Expires 11 September 2026              [Page 10]
 Internet-Draft                    V-GAP                       March 2026
 
 
-5.3.2.  lah-bundle Fields
-
-    +==============+=============+==========+=========================+
-    | Field        | Type        | Required | Description             |
-    +==============+=============+==========+=========================+
-    | tpm-ak       | string      |   Yes    | TPM Attestation Key     |
-    |              | (Base64URL) |          | public key (PEM-        |
-    |              |             |          | encoded).  Hardware     |
-    |              |             |          | identity anchor.  The   |
-    |              |             |          | TPM enforces that only  |
-    |              |             |          | this key can produce    |
-    |              |             |          | tpm-quote-seal —        |
-    |              |             |          | proving co-residency.   |
-    +--------------+-------------+----------+-------------------------+
-    | geolocation- | string      |   Yes    | SHA-256(tpm-ak-bytes).  |
-    | id-hash      | (Base64URL) |          | Binds TPM identity to   |
-    |              |             |          | sensor identity -       |
-    |              |             |          | assumption is sensor    |
-    |              |             |          | integrity is handled by |
-    |              |             |          | OOB host management     |
-    |              |             |          | plane                   |
-    +--------------+-------------+----------+-------------------------+
-    | geolocation- | string      |   Yes    | SHA-256 commitment over |
-    | proof-hash   | (Base64URL) |          | geolocation-payload.    |
-    |              |             |          | Required in both        |
-    |              |             |          | privacy modes.  When    |
-    |              |             |          | privacy-technique=zkp:  |
-    |              |             |          | SHA-256(zkp-proof-      |
-    |              |             |          | bytes).  When privacy-  |
-    |              |             |          | technique=none: SHA-    |
-    |              |             |          | 256(JCS({lat, lon,      |
-    |              |             |          | accuracy})).            |
-    +--------------+-------------+----------+-------------------------+
-    | privacy-     | string enum |   Yes    | "none" = raw lat/lon/   |
-    | technique    |             |          | accuracy in payload.    |
-    |              |             |          | "zkp" = zero-knowledge  |
-    |              |             |          | proof URI in payload.   |
-    |              |             |          | Controls location       |
-    |              |             |          | privacy only; device    |
-    |              |             |          | identity privacy is     |
-    |              |             |          | always protected via    |
-    |              |             |          | geolocation-id-hash.    |
-    +--------------+-------------+----------+-------------------------+
-    | geolocation- | object      |   Yes    | Inner location data.    |
-    | payload      |             |          | Structure depends on    |
-    |              |             |          | privacy-technique (see  |
-    |              |             |          | Payload Variants        |
-    |              |             |          | below).  Committed to   |
+   +--------------+-------------+----------+---------------------------+
+   | privacy-     | string enum |   Yes    | "none" = raw lat/lon/     |
+   | technique    |             |          | accuracy in payload.      |
+   |              |             |          | "zkp" = zero-knowledge    |
+   |              |             |          | proof URI in payload.     |
+   |              |             |          | Controls location         |
+   |              |             |          | privacy only; device      |
+   |              |             |          | identity privacy is       |
+   |              |             |          | always protected via      |
+   |              |             |          | geolocation-id-hash.      |
+   +--------------+-------------+----------+---------------------------+
+   | geolocation- | object      |   Yes    | Inner location data.      |
+   | payload      |             |          | Structure depends on      |
+   |              |             |          | privacy-technique (see    |
+   |              |             |          | Payload Variants          |
+   |              |             |          | below).  Committed to     |
+   |              |             |          | by geolocation-proof-     |
+   |              |             |          | hash and optionally       |
+   |              |             |          | signed by mno-            |
+   |              |             |          | endorsement.mno-sig.      |
+   +--------------+-------------+----------+---------------------------+
+   | nonce        | string      |   Yes    | Freshness nonce           |
+   |              | (Base64URL) |          | (N_fusion) issued by      |
+   |              |             |          | the Relying Party         |
+   |              |             |          | (Workload Identity        |
+   |              |             |          | Management Plane) for     |
+   |              |             |          | each attestation          |
+   |              |             |          | interval.                 |
+   |              |             |          | Implementations may use   |
+   |              |             |          | chained nonce             |
+   |              |             |          | constructions for         |
+   |              |             |          | additional audit          |
+   |              |             |          | guarantees (see Nonce     |
+   |              |             |          | Chain and Merkle Audit    |
+   |              |             |          | Log appendix).            |
+   +--------------+-------------+----------+---------------------------+
+   | timestamp    | integer     |   Yes    | Unix epoch seconds.       |
+   |              | (int64)     |          | Set by the Attester       |
+   |              |             |          | (LAH) at bundle           |
+   |              |             |          | construction time.        |
+   +--------------+-------------+----------+---------------------------+
+   | tpm-quote-   | string      |   Yes    | TPM2_Quote produced by    |
+   | seal         | (Base64URL) |          | the AK in tpm-ak.         |
+   |              |             |          | Qualifying data = SHA-    |
+   |              |             |          | 256(JCS({tpm-ak,          |
+   |              |             |          | geolocation-id-hash,      |
+   |              |             |          | geolocation-proof-hash,   |
+   |              |             |          | privacy-technique,        |
 
 
 
@@ -618,61 +618,25 @@ Krishnan, et al.        Expires 11 September 2026              [Page 11]
 Internet-Draft                    V-GAP                       March 2026
 
 
-    |              |             |          | by geolocation-proof-   |
-    |              |             |          | hash and optionally     |
-    |              |             |          | signed by mno-          |
-    |              |             |          | endorsement.mno-sig.    |
-    +--------------+-------------+----------+-------------------------+
-    | nonce        | string      |   Yes    | N_fusion freshness      |
-    |              | (Base64URL) |          | nonce issued by the     |
-    |              |             |          | Relying Party (Workload |
-    |              |             |          | Identity Management     |
-    |              |             |          | Plane).  Chained:       |
-    |              |             |          | HMAC(secret, n \|\|     |
-    |              |             |          | chain[n-1]).  Detects   |
-    |              |             |          | skipped/reordered       |
-    |              |             |          | attestations.           |
-    +--------------+-------------+----------+-------------------------+
-    | timestamp    | integer     |   Yes    | Unix epoch seconds.     |
-    |              | (int64)     |          | Set by the Attester     |
-    |              |             |          | (LAH) at bundle         |
-    |              |             |          | construction time.      |
-    +--------------+-------------+----------+-------------------------+
-    | tpm-quote-   | string      |   Yes    | TPM2_Quote produced by  |
-    | seal         | (Base64URL) |          | the AK in tpm-ak.       |
-    |              |             |          | Qualifying data = SHA-  |
-    |              |             |          | 256(JCS({tpm-ak,        |
-    |              |             |          | geolocation-id-hash,    |
-    |              |             |          | geolocation-proof-hash, |
-    |              |             |          | privacy-technique,      |
-    |              |             |          | nonce, timestamp,       |
-    |              |             |          | workload-identity-      |
-    |              |             |          | agent-image-digest})).  |
-    |              |             |          | Binds all fields into a |
-    |              |             |          | single hardware-sealed  |
-    |              |             |          | statement.              |
-    +--------------+-------------+----------+-------------------------+
-    | workload-    | string (hex |   Yes    | SHA-256 digest of the   |
-    | identity-    | SHA-256)    |          | Workload Identity Agent |
-    | agent-image- |             |          | binary, measured at     |
-    | digest       |             |          | attestation time by the |
-    |              |             |          | Verifier (Host Identity |
-    |              |             |          | Management Plane).      |
-    |              |             |          | Detects agent binary    |
-    |              |             |          | compromise on every     |
-    |              |             |          | renewal cycle.          |
-    +--------------+-------------+----------+-------------------------+
+   |              |             |          | nonce, timestamp,         |
+   |              |             |          | workload-identity-        |
+   |              |             |          | agent-image-digest})).    |
+   |              |             |          | Binds all fields into a   |
+   |              |             |          | single hardware-sealed    |
+   |              |             |          | statement.                |
+   +--------------+-------------+----------+---------------------------+
+   | workload-    | string (hex |   Yes    | SHA-256 digest of the     |
+   | identity-    | SHA-256)    |          | Workload Identity Agent   |
+   | agent-image- |             |          | binary, measured at       |
+   | digest       |             |          | attestation time by the   |
+   |              |             |          | Verifier (Host Identity   |
+   |              |             |          | Management Plane).        |
+   |              |             |          | Detects agent binary      |
+   |              |             |          | compromise on every       |
+   |              |             |          | renewal cycle.            |
+   +--------------+-------------+----------+---------------------------+
 
                                   Table 3
-
-
-
-
-
-Krishnan, et al.        Expires 11 September 2026              [Page 12]
-
-Internet-Draft                    V-GAP                       March 2026
-
 
 5.3.3.  geolocation-payload Variants
 
@@ -698,6 +662,18 @@ Internet-Draft                    V-GAP                       March 2026
 
    *When privacy-technique = "zkp" (zero-knowledge proof):*
 
+
+
+
+
+
+
+
+Krishnan, et al.        Expires 11 September 2026              [Page 12]
+
+Internet-Draft                    V-GAP                       March 2026
+
+
    +===============+========+==========+==============================+
    | Field         | Type   | Required | Description                  |
    +===============+========+==========+==============================+
@@ -715,20 +691,6 @@ Internet-Draft                    V-GAP                       March 2026
                                  Table 5
 
    geolocation-proof-hash = Base64URL(SHA-256(zkp-proof-bytes))
-
-
-
-
-
-
-
-
-
-
-Krishnan, et al.        Expires 11 September 2026              [Page 13]
-
-Internet-Draft                    V-GAP                       March 2026
-
 
 5.3.4.  MNO Endorsement (RATS Endorsement)
 
@@ -761,50 +723,37 @@ Internet-Draft                    V-GAP                       March 2026
 
                                  Table 6
 
+
+
+Krishnan, et al.        Expires 11 September 2026              [Page 13]
+
+Internet-Draft                    V-GAP                       March 2026
+
+
 5.3.5.  Workload Identity Binding
 
    The workload object binds the V-GAP Evidence to a specific workload
    identity, enabling the Verifier to associate platform and residency
    claims with the credential being issued.
 
+    +=============+=========+==========+=============================+
+    | Field       | Type    | Required | Description                 |
+    +=============+=========+==========+=============================+
+    | workload-id | string  |   Yes    | The workload's SPIFFE       |
+    |             | (SPIFFE |          | identity URI (e.g.,         |
+    |             | ID)     |          | spiffe://example.org/       |
+    |             |         |          | python-app).                |
+    +-------------+---------+----------+-----------------------------+
+    | key-source  | string  |   Yes    | Identifier for the origin   |
+    |             |         |          | of the workload's key       |
+    |             |         |          | material (for example,      |
+    |             |         |          | "tpm-app-key").  Values are |
+    |             |         |          | deployment-specific; this   |
+    |             |         |          | field is recorded for audit |
+    |             |         |          | and policy evaluation.      |
+    +-------------+---------+----------+-----------------------------+
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-Krishnan, et al.        Expires 11 September 2026              [Page 14]
-
-Internet-Draft                    V-GAP                       March 2026
-
-
-    +=============+=========+==========+==============================+
-    | Field       | Type    | Required | Description                  |
-    +=============+=========+==========+==============================+
-    | workload-id | string  |   Yes    | The workload's SPIFFE        |
-    |             | (SPIFFE |          | identity URI (e.g.,          |
-    |             | ID)     |          | spiffe://example.org/python- |
-    |             |         |          | app).                        |
-    +-------------+---------+----------+------------------------------+
-    | key-source  | string  |   Yes    | Origin of the workload's key |
-    |             |         |          | material (e.g., "tpm-app-    |
-    |             |         |          | key").  The value is         |
-    |             |         |          | implementer-defined;         |
-    |             |         |          | Verifiers SHOULD treat       |
-    |             |         |          | unrecognized values as       |
-    |             |         |          | opaque strings unless policy |
-    |             |         |          | requires specific values.    |
-    +-------------+---------+----------+------------------------------+
-
-                                  Table 7
+                                 Table 7
 
 5.4.  TPM Quote Verification Procedure
 
@@ -829,19 +778,18 @@ Internet-Draft                    V-GAP                       March 2026
    To prevent mix-and-match and replay attacks, Verifiers MUST enforce
    the following:
 
-   *  Attestation Results MUST be fresh and MUST be bound to the
-      credential issuance event (for example, by cryptographically
-      binding freshness values used for platform quotes and workload
-      credential issuance within the Verifier result).
 
 
 
-
-Krishnan, et al.        Expires 11 September 2026              [Page 15]
+Krishnan, et al.        Expires 11 September 2026              [Page 14]
 
 Internet-Draft                    V-GAP                       March 2026
 
 
+   *  Attestation Results MUST be fresh and MUST be bound to the
+      credential issuance event (for example, by cryptographically
+      binding freshness values used for platform quotes and workload
+      credential issuance within the Verifier result).
    *  The nonce field in the lah-bundle MUST be a freshness value issued
       by the Relying Party (Workload Identity Management Plane) for each
       attestation interval.
@@ -884,19 +832,19 @@ Internet-Draft                    V-GAP                       March 2026
    *  *Registry and allowlist integrity*: Protect key registries and
       policy stores against tampering; treat them as high-value
       privileged assets.
-   *  *Privacy*: Avoid unnecessary collection or retention of precise
-      location data.  Prefer "in-zone" proofs (ZKP) where policy
-      permits.
 
 
 
 
 
-
-Krishnan, et al.        Expires 11 September 2026              [Page 16]
+Krishnan, et al.        Expires 11 September 2026              [Page 15]
 
 Internet-Draft                    V-GAP                       March 2026
 
+
+   *  *Privacy*: Avoid unnecessary collection or retention of precise
+      location data.  Prefer "in-zone" proofs (ZKP) where policy
+      permits.
 
 7.  IANA Considerations
 
@@ -904,11 +852,6 @@ Internet-Draft                    V-GAP                       March 2026
    in the "SMI Numbers" registry under the "SMI Private Enterprise
    Numbers" (1.3.6.1.4.1) branch, or as appropriate for the V-GAP
    profile.
-
-   *Mandatory Criticality:* Implementations of this profile MUST mark
-   the X.509 extension containing the V-GAP Evidence Bundle as
-   *CRITICAL*. This ensures that non-compliant gateways fail closed
-   rather than granting access to residency-constrained workloads.
 
    *  *OID*: 1.3.6.1.4.1.65284.1.1
    *  *Description*: Verifiable Geofencing Attestation Profile (V-GAP)
@@ -949,7 +892,8 @@ A.2.  Distributed Identity Issuance and Scaling
 
 
 
-Krishnan, et al.        Expires 11 September 2026              [Page 17]
+
+Krishnan, et al.        Expires 11 September 2026              [Page 16]
 
 Internet-Draft                    V-GAP                       March 2026
 
@@ -1005,7 +949,7 @@ B.1.  Nonce Chain and Merkle Audit Log
 
 
 
-Krishnan, et al.        Expires 11 September 2026              [Page 18]
+Krishnan, et al.        Expires 11 September 2026              [Page 17]
 
 Internet-Draft                    V-GAP                       March 2026
 
@@ -1061,7 +1005,7 @@ B.4.  Credential Activation and Re-Verification
 
 
 
-Krishnan, et al.        Expires 11 September 2026              [Page 19]
+Krishnan, et al.        Expires 11 September 2026              [Page 18]
 
 Internet-Draft                    V-GAP                       March 2026
 
@@ -1117,7 +1061,7 @@ Appendix C.  Deployment Patterns
 
 
 
-Krishnan, et al.        Expires 11 September 2026              [Page 20]
+Krishnan, et al.        Expires 11 September 2026              [Page 19]
 
 Internet-Draft                    V-GAP                       March 2026
 
@@ -1173,7 +1117,7 @@ E.1.  Example Instance (privacy-technique = "zkp")
 
 
 
-Krishnan, et al.        Expires 11 September 2026              [Page 21]
+Krishnan, et al.        Expires 11 September 2026              [Page 20]
 
 Internet-Draft                    V-GAP                       March 2026
 
@@ -1229,7 +1173,7 @@ Appendix F.  Implementation Status
 
 
 
-Krishnan, et al.        Expires 11 September 2026              [Page 22]
+Krishnan, et al.        Expires 11 September 2026              [Page 21]
 
 Internet-Draft                    V-GAP                       March 2026
 
@@ -1285,7 +1229,7 @@ Authors' Addresses
 
 
 
-Krishnan, et al.        Expires 11 September 2026              [Page 23]
+Krishnan, et al.        Expires 11 September 2026              [Page 22]
 
 Internet-Draft                    V-GAP                       March 2026
 
@@ -1341,4 +1285,4 @@ Internet-Draft                    V-GAP                       March 2026
 
 
 
-Krishnan, et al.        Expires 11 September 2026              [Page 24]
+Krishnan, et al.        Expires 11 September 2026              [Page 23]

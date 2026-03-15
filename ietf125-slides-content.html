@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>IETF 125 — V-GAP Slide Content (copy-paste to Google Slides)</title>
+<style>
+  body { font-family: 'Segoe UI', Arial, sans-serif; max-width: 900px; margin: 40px auto; color: #222; }
+  h1 { color: #1a73e8; border-bottom: 2px solid #1a73e8; padding-bottom: 8px; }
+  h2 { color: #333; margin-top: 40px; }
+  h3 { color: #555; }
+  table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+  th, td { border: 1px solid #ccc; padding: 10px 14px; text-align: left; font-size: 15px; }
+  th { background: #1a73e8; color: white; font-weight: 600; }
+  tr:nth-child(even) { background: #f5f7fa; }
+  .speaker-note { background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px 14px; margin: 12px 0; font-style: italic; font-size: 14px; }
+  .slide-sep { border: none; border-top: 3px dashed #1a73e8; margin: 40px 0; }
+  pre { background: #f0f0f0; padding: 16px; border-radius: 6px; font-size: 14px; overflow-x: auto; }
+  ul { line-height: 1.8; }
+</style>
+</head>
+<body>
+
+<h1>IETF 125 — RATS WG: draft-lkspa-rats-verifiable-geo-fence-00</h1>
+<p><em>Open this file in your browser, select each slide's content, and paste into Google Slides. Tables will paste as native tables.</em></p>
+
+<hr class="slide-sep">
+
+<!-- ============ SLIDE 1 ============ -->
+<h2>Slide 1: Why Workload Geofencing Needs Hardware Roots</h2>
+
+<ul>
+  <li><strong>Token theft &amp; replay</strong> — Bearer tokens and software-only identities can be stolen and used from any location</li>
+  <li><strong>Spoofable location</strong> — IP geolocation, VPNs, cloud region labels provide zero cryptographic assurance</li>
+  <li><strong>Regulatory pressure</strong> — RBI India, South Korea Spatial Data Act require provable data residency</li>
+  <li><strong>Unsigned location metadata</strong> — No integrity, no audit trail, no verifiable provenance</li>
+  <li><strong>The gap</strong> — No cryptographic link between a workload's identity, its platform integrity, and its physical location</li>
+</ul>
+
+<div class="speaker-note">
+  <strong>Speaker note:</strong> "The core gap is: today, nothing binds WHERE a workload runs to WHO it claims to be, with hardware-rooted proof."
+</div>
+
+<hr class="slide-sep">
+
+<!-- ============ SLIDE 2 ============ -->
+<h2>Slide 2: V-GAP — Verifiable Geofencing Attestation Profile</h2>
+
+<ul>
+  <li><strong>RATS Architecture profile</strong> (RFC 9334) — builds on existing RATS plumbing</li>
+  <li>Binds workload identity issuance to two hardware-rooted proofs:
+    <ul>
+      <li><strong>Platform integrity</strong> — TPM quote seals all evidence fields</li>
+      <li><strong>Geographic residency</strong> — "in-zone" proof, optionally privacy-preserving via transparent ZKPs</li>
+    </ul>
+  </li>
+  <li>Credential issued <strong>only when both pass</strong> — fail-closed via X.509 CRITICAL extension</li>
+</ul>
+
+<h3>Three-Layer Trust Chain (silicon → agent → workload)</h3>
+
+<table>
+  <tr><th>Layer</th><th>What</th><th>How</th></tr>
+  <tr><td>Layer 1</td><td>Workload ↔ Agent binding</td><td>Transitive Attestation (draft-mw-wimse)</td></tr>
+  <tr><td>Layer 2</td><td>Platform integrity</td><td>TPM quote + PCR validation (this document)</td></tr>
+  <tr><td>Layer 3</td><td>Residency verification</td><td>Geolocation proof + MNO endorsement (this document)</td></tr>
+</table>
+
+<div class="speaker-note">
+  <strong>Speaker note:</strong> "V-GAP is Layer 2 + Layer 3. Layer 1 is handled by transitive attestation. Together they give you silicon-to-workload trust."
+</div>
+
+<hr class="slide-sep">
+
+<!-- ============ SLIDE 3 ============ -->
+<h2>Slide 3: V-GAP → RATS Role Mapping</h2>
+
+<table>
+  <tr><th>RATS Role</th><th>V-GAP Entity</th><th>What It Does</th></tr>
+  <tr><td>Attester</td><td>Location Anchor Host (LAH)</td><td>Produces <code>lah-bundle</code> — TPM quote + geo proof</td></tr>
+  <tr><td>Verifier</td><td>Host Identity Mgmt Plane</td><td>Validates TPM, PCRs, geo proofs → Attestation Result</td></tr>
+  <tr><td>Endorser</td><td>Mobile Network Operator</td><td>Signs location claim within carrier visibility</td></tr>
+  <tr><td>Relying Party + CA</td><td>Workload Identity Mgmt Plane</td><td>Issues X.509-SVID only if attestation passes</td></tr>
+  <tr><td>Downstream RP</td><td>mTLS peer</td><td>Trusts CA signature as proxy for verified residency</td></tr>
+</table>
+
+<h3>Evidence Flow (background-check model, RFC 9334 §3.2)</h3>
+
+<pre>
+LAH (Attester) ──→ lah-bundle ──→ Verifier ◄── MNO Endorsement
+                                      │
+                              Attestation Result
+                                      │
+                                      ▼
+                      RP + CA ──→ X.509-SVID (CRITICAL ext)
+                                      │
+                                      ▼
+                             Downstream RP (mTLS)
+</pre>
+
+<p><strong>Key design:</strong> RP acts as "trust translator" — embeds attestation result into standard X.509, so downstream consumers don't need to understand RATS or V-GAP.</p>
+
+<div class="speaker-note">
+  <strong>Speaker note:</strong> "This is the background-check model from RFC 9334. The Attester never sees the result — it goes straight from Verifier to RP. The RP bakes it into a standard cert."
+</div>
+
+<hr class="slide-sep">
+
+<!-- ============ SLIDE 4 ============ -->
+<h2>Slide 4: Next Steps — Path to WG Adoption</h2>
+
+<h3>1. Merge with draft-richardson-rats-geographic-results-01</h3>
+<ul>
+  <li>Richardson: defines <strong>geographic claim encoding</strong> in EAR (Attestation Results)</li>
+  <li>V-GAP: defines the <strong>evidence profile and verification flow</strong> that produces those results</li>
+  <li>Complementary — "how you get the evidence" + "how you encode the result"</li>
+</ul>
+
+<h3>2. WG Adoption Request</h3>
+<ul>
+  <li>Draft restructured to <strong>Standards Track</strong> (category: std)</li>
+  <li>Core V-GAP profile is normative; operational guidance in informative appendices</li>
+  <li>Reference implementation: <a href="https://github.com/lfedgeai/AegisSovereignAI">github.com/lfedgeai/AegisSovereignAI</a></li>
+</ul>
+
+<h3>3. Feedback Requested</h3>
+<ul>
+  <li>RATS role mapping — is the "trust translator" (RP + CA) pattern the right fit?</li>
+  <li>Privacy technique extensibility — currently <code>none</code> and <code>zkp</code>, should we define a registry?</li>
+  <li>Proximity profiles — deferred to future docs, any interest in co-authoring?</li>
+</ul>
+
+<div class="speaker-note">
+  <strong>Speaker note:</strong> "We'd like to merge with Michael's draft — our scopes are complementary. We're asking the WG if there's interest in adoption."
+</div>
+
+</body>
+</html>

@@ -31,7 +31,7 @@
 |:------|:-----|:----|
 | Layer 1 | Workload ↔ Agent binding | Transitive Attestation (draft-mw-wimse) |
 | Layer 2 | Platform integrity | TPM quote + PCR validation (this document) |
-| Layer 3 | Residency verification | Geolocation proof + MNO endorsement (this document) |
+| Layer 3 | Residency verification | Geolocation proof + location endorsement (this document) |
 
 - Credential issued **only when both layers pass** — fail-closed via X.509 CRITICAL extension
 
@@ -47,14 +47,14 @@
 |:----------|:-------------|:-------------|
 | **Attester** | Location Anchor Host (LAH) | Produces `lah-bundle` — TPM quote + geo proof |
 | **Verifier** | Host Identity Mgmt Plane | Validates TPM, PCRs, geo proofs → Attestation Result |
-| **Endorser** | Mobile Network Operator | Signs location claim within carrier visibility |
+| **Endorser** | Location Endorser (e.g., MNO) | Signs location claim; MAY be an MNO, satellite operator, or other trusted location authority |
 | **Relying Party + CA** | Workload Identity Mgmt Plane | Issues X.509-SVID only if attestation passes |
 | **Downstream RP** | mTLS peer | Trusts CA signature as proxy for verified residency |
 
 **Evidence flow** (background-check model, RFC 9334 §3.2):
 
 ```
-LAH (Attester) → lah-bundle → Verifier ← MNO Endorsement
+LAH (Attester) → lah-bundle → Verifier ← Location Endorsement
                                   ↓
                           Attestation Result
                                   ↓
@@ -65,7 +65,7 @@ LAH (Attester) → lah-bundle → Verifier ← MNO Endorsement
 
 **Key design choice:** RP acts as "trust translator" — embeds attestation result into standard X.509, so downstream consumers don't need to understand RATS or V-GAP.
 
-> **Speaker note:** "This is the background-check model from RFC 9334. The Attester never sees the result — it goes straight from Verifier to RP. The RP then bakes it into a standard cert."
+> **Speaker note:** "This is the background-check model from RFC 9334. The Attester never sees the result — it goes straight from Verifier to RP. The RP then bakes it into a standard cert. Note that the Endorser role is not limited to MNOs — our PoC uses an MNO via the CAMARA interface, but the architecture accommodates any trusted location authority: satellite operators, fixed infrastructure providers, or other parties with authoritative location visibility."
 
 ---
 

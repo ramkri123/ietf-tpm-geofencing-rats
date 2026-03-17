@@ -9,7 +9,7 @@
 
 - Software-only identities (bearer tokens, SVIDs) are **stolen, replayed, or proxied** — no binding to physical hardware
 - IP-based geolocation is **trivially spoofed** — VPNs, proxies, cloud region labels provide zero cryptographic assurance
-- Regulations (RBI India, South Korea Spatial Data Act) **require provable data residency** — but today's tooling can't prove it
+- Regulations (RBI India, South Korea Spatial Data Act etc.) **require provable data residency** — but today's tooling can't prove it
 - Location metadata is **unsigned** — no integrity, no audit trail, no verifiable provenance
 - Result: **no cryptographic link** between a workload's identity, its platform integrity, and its physical location
 

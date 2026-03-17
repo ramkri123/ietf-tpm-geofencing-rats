@@ -1,6 +1,6 @@
 # IETF 125 — RATS WG Presentation
 ## draft-lkspa-rats-verifiable-geo-fence-00
-Presenter: A. Prasad
+Draft co-authors: R. Krishnan, N. Smith, D. R. Lopez, A. Prasad, S. Addepalli, B. S. S. A. Malepati, G. Arfaoui, M. Epley, V. Masilamani
 
 ---
 

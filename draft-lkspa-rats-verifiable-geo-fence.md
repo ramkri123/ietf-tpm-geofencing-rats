@@ -2,16 +2,16 @@
 title = "Privacy Preserving Verifiable Geofencing with Residency Proofs for Sovereign Workloads"
 abbrev = "V-GAP"
 category = "std"
-docName = "draft-lkspa-rats-verifiable-geo-fence-00"
+docName = "draft-lkspa-rats-verifiable-geo-fence-01"
 ipr = "trust200902"
 area = "Security"
 workgroup = "RATS"
 keyword = ["geofencing", "attestation", "workload identity", "residency", "TPM", "GNSS"]
-date = 2026-03-10
+date = 2026-04-03
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "draft-lkspa-rats-verifiable-geo-fence-00"
+value = "draft-lkspa-rats-verifiable-geo-fence-01"
 stream = "IETF"
 status = "standard"
 
@@ -54,38 +54,6 @@ fullname = "Srinivasa Addepalli"
 organization = "Aryaka"
   [author.address]
   email = "srinivasa.addepalli@aryaka.com"
-
-[[contributor]]
-initials = "B."
-surname = "Malepati"
-fullname = "Bala Siva Sai Akhil Malepati"
-organization = "Independent"
-  [contributor.address]
-  email = "saiakhil2012@yahoo.com"
-
-[[contributor]]
-initials = "G."
-surname = "Arfaoui"
-fullname = "Ghada Arfaoui"
-organization = "Orange"
-  [contributor.address]
-  email = "ghada.arfaoui@orange.com"
-
-[[contributor]]
-initials = "M."
-surname = "Epley"
-fullname = "Michael Epley"
-organization = "Red Hat"
-  [contributor.address]
-  email = "mepley@redhat.com"
-
-[[contributor]]
-initials = "V."
-surname = "Masilamani"
-fullname = "Vijay Masilamani"
-organization = "Independent"
-  [contributor.address]
-  email = "saanvijay20@gmail.com"
 
 %%%
 
@@ -379,6 +347,26 @@ IANA is requested to register the following Object Identifier (OID) in the "SMI 
 - **PEN**: 65284 (IANA Private Enterprise Number assigned to Ram Krishnan)
 
 {backmatter}
+
+# Contributors
+
+The following individuals have contributed to this document:
+
+Bala Siva Sai Akhil Malepati  
+Independent  
+Email: saiakhil2012@yahoo.com
+
+Ghada Arfaoui  
+Orange  
+Email: ghada.arfaoui@orange.com
+
+Michael Epley  
+Red Hat  
+Email: mepley@redhat.com
+
+Vijay Masilamani  
+Independent  
+Email: saanvijay20@gmail.com
 
 # Operational Guidance
 

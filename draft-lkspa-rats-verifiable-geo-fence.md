@@ -98,7 +98,7 @@ V-GAP covers platform integrity verification (Layer 2) and residency verificatio
 
 V-GAP addresses the complementary **input side**: the Evidence profile the Attester produces, the hardware-binding mechanism (TPM quote) that makes location evidence verifiable, and the verification procedure the Verifier applies to produce an Attestation Result. V-GAP Evidence is what a Verifier appraises to yield the kind of geographic result claims that {{I-D.richardson-rats-geographic-results}} encodes.
 
-The two documents are intended to compose: a Verifier that appraises a V-GAP `lah-bundle` could express its conclusion as an Attestation Result using the geographic claims defined in {{I-D.richardson-rats-geographic-results}}.
+The two documents are intended to compose: a Verifier that appraises a V-GAP `lah-bundle` could express its conclusion as an Attestation Result using the geographic claims defined in {{I-D.richardson-rats-geographic-results}}. V-GAP is self-contained; use of that encoding is OPTIONAL and is one possible way a Verifier may express its conclusions — consumers MAY enforce geofence policy directly from the Attestation Result, use the V-GAP X.509 extension (OID `1.3.6.1.4.1.65284.1.1`) as the trust signal, or adopt any other result encoding their deployment requires.
 
 One gap in the combined stack is not addressed by either document: the mapping from a raw location fix or geofence proof to a named legal jurisdiction (for example, from "inside polygon P" to "in jurisdiction X"). This mapping raises its own trust questions — who maintains the polygon-to-jurisdiction database, under what authority, and how that mapping is kept current — and is deferred to future work.
 

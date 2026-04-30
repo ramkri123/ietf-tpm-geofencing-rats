@@ -81,6 +81,13 @@
 </tr>
 </tbody>
 </table></section>
+
+<section anchor="relationship-to-related-work"><name>Relationship to Related Work</name>
+<t>defines how a Verifier encodes geographic location conclusions — jurisdiction-level results such as country, subdivision, and city — as EAT Attestation Result claims for consumption by a Relying Party. That draft addresses the <strong>output encoding</strong> side of the attestation pipeline.</t>
+<t>V-GAP addresses the complementary <strong>input side</strong>: the Evidence profile the Attester produces, the hardware-binding mechanism (TPM quote) that makes location evidence verifiable, and the verification procedure the Verifier applies to produce an Attestation Result. V-GAP Evidence is what a Verifier appraises to yield the kind of geographic result claims that {{I-D.richardson-rats-geographic-results}} encodes.</t>
+<t>The two documents are intended to compose: a Verifier that appraises a V-GAP <tt>lah-bundle</tt> could express its conclusion as an Attestation Result using the geographic claims defined in {{I-D.richardson-rats-geographic-results}}.</t>
+<t>One gap in the combined stack is not addressed by either document: the mapping from a raw location fix or geofence proof to a named legal jurisdiction (for example, from &quot;inside polygon P&quot; to &quot;in jurisdiction X&quot;). This mapping raises its own trust questions — who maintains the polygon-to-jurisdiction database, under what authority, and how that mapping is kept current — and is deferred to future work.</t>
+</section>
 </section>
 
 <section anchor="conventions-and-definitions"><name>Conventions and Definitions</name>

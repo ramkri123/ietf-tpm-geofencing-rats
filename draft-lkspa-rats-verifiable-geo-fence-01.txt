@@ -93,19 +93,19 @@ Table of Contents
 
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   3
      1.1.  Scope and Layering  . . . . . . . . . . . . . . . . . . .   4
-   2.  Conventions and Definitions . . . . . . . . . . . . . . . . .   5
-     2.1.  Abbreviations . . . . . . . . . . . . . . . . . . . . . .   5
+     1.2.  Relationship to Related Work  . . . . . . . . . . . . . .   5
+   2.  Conventions and Definitions . . . . . . . . . . . . . . . . .   6
+     2.1.  Abbreviations . . . . . . . . . . . . . . . . . . . . . .   6
    3.  Key Terms . . . . . . . . . . . . . . . . . . . . . . . . . .   6
    4.  Use Cases . . . . . . . . . . . . . . . . . . . . . . . . . .   7
-     4.1.  Server-centric Enforcement  . . . . . . . . . . . . . . .   7
-     4.2.  User-centric Enforcement  . . . . . . . . . . . . . . . .   7
-     4.3.  Compliance and Risk Reduction . . . . . . . . . . . . . .   8
-   5.  Verifiable Geofencing Attestation Profile (V-GAP) . . . . . .   8
-     5.1.  RATS Role Mapping . . . . . . . . . . . . . . . . . . . .   8
-     5.2.  Evidence Flow . . . . . . . . . . . . . . . . . . . . . .   9
-     5.3.  V-GAP Evidence Structure  . . . . . . . . . . . . . . . .  10
-       5.3.1.  Top-Level Structure . . . . . . . . . . . . . . . . .  10
-       5.3.2.  lah-bundle Fields . . . . . . . . . . . . . . . . . .  11
+     4.1.  Server-centric Enforcement  . . . . . . . . . . . . . . .   8
+     4.2.  User-centric Enforcement  . . . . . . . . . . . . . . . .   8
+     4.3.  Compliance and Risk Reduction . . . . . . . . . . . . . .   9
+   5.  Verifiable Geofencing Attestation Profile (V-GAP) . . . . . .   9
+     5.1.  RATS Role Mapping . . . . . . . . . . . . . . . . . . . .   9
+     5.2.  Evidence Flow . . . . . . . . . . . . . . . . . . . . . .  10
+     5.3.  V-GAP Evidence Structure  . . . . . . . . . . . . . . . .  11
+       5.3.1.  Top-Level Structure . . . . . . . . . . . . . . . . .  11
 
 
 
@@ -114,40 +114,41 @@ Krishnan, et al.         Expires 1 November 2026                [Page 2]
 Internet-Draft                    V-GAP                       April 2026
 
 
-       5.3.3.  geolocation-payload Variants  . . . . . . . . . . . .  13
-       5.3.4.  MNO Endorsement (RATS Endorsement)  . . . . . . . . .  14
-       5.3.5.  Workload Identity Binding . . . . . . . . . . . . . .  15
-     5.4.  TPM Quote Verification Procedure  . . . . . . . . . . . .  15
-     5.5.  Freshness and Replay Prevention . . . . . . . . . . . . .  15
-   6.  Security Considerations . . . . . . . . . . . . . . . . . . .  16
-     6.1.  Location Spoofing . . . . . . . . . . . . . . . . . . . .  17
-       6.1.1.  GNSS Spoofing . . . . . . . . . . . . . . . . . . . .  17
-       6.1.2.  Mobile Network Spoofing . . . . . . . . . . . . . . .  17
-       6.1.3.  Location Trust Levels . . . . . . . . . . . . . . . .  18
-     6.2.  Zero-Knowledge Proof Security . . . . . . . . . . . . . .  18
-   7.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  19
-   Appendix A.  Contributors . . . . . . . . . . . . . . . . . . . .  19
-   Appendix B.  Operational Guidance . . . . . . . . . . . . . . . .  20
-     B.1.  Gating Credentials on Verified Evidence . . . . . . . . .  20
-     B.2.  Distributed Identity Issuance and Scaling . . . . . . . .  20
-     B.3.  Mobility and Sovereign Handover . . . . . . . . . . . . .  21
-     B.4.  Location Anchor Hosts . . . . . . . . . . . . . . . . . .  21
-   Appendix C.  Scalable Fleet Management  . . . . . . . . . . . . .  21
-     C.1.  Nonce Chain and Merkle Audit Log  . . . . . . . . . . . .  21
-     C.2.  Key Registry and Synchronization  . . . . . . . . . . . .  22
-     C.3.  Key Rotation  . . . . . . . . . . . . . . . . . . . . . .  22
-       C.3.1.  Example Rotation Proof  . . . . . . . . . . . . . . .  22
-     C.4.  Credential Activation and Re-Verification . . . . . . . .  22
-     C.5.  Revocation and Health Signals . . . . . . . . . . . . . .  23
-     C.6.  Disconnected Operation (Leased Identity)  . . . . . . . .  23
-   Appendix D.  Deployment Patterns  . . . . . . . . . . . . . . . .  23
-   Appendix E.  Policy Use . . . . . . . . . . . . . . . . . . . . .  24
-   Appendix F.  V-GAP Examples and Sensor Recipes  . . . . . . . . .  24
-     F.1.  Example Instance (privacy-technique = "zkp")  . . . . . .  24
-     F.2.  Sensor Type Input Recipes . . . . . . . . . . . . . . . .  25
-   Appendix G.  Implementation Status  . . . . . . . . . . . . . . .  25
-   Appendix H.  Data Residency References  . . . . . . . . . . . . .  26
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  26
+       5.3.2.  lah-bundle Fields . . . . . . . . . . . . . . . . . .  12
+       5.3.3.  geolocation-payload Variants  . . . . . . . . . . . .  14
+       5.3.4.  MNO Endorsement (RATS Endorsement)  . . . . . . . . .  15
+       5.3.5.  Workload Identity Binding . . . . . . . . . . . . . .  16
+     5.4.  TPM Quote Verification Procedure  . . . . . . . . . . . .  16
+     5.5.  Freshness and Replay Prevention . . . . . . . . . . . . .  16
+   6.  Security Considerations . . . . . . . . . . . . . . . . . . .  17
+     6.1.  Location Spoofing . . . . . . . . . . . . . . . . . . . .  18
+       6.1.1.  GNSS Spoofing . . . . . . . . . . . . . . . . . . . .  18
+       6.1.2.  Mobile Network Spoofing . . . . . . . . . . . . . . .  18
+       6.1.3.  Location Trust Levels . . . . . . . . . . . . . . . .  19
+     6.2.  Zero-Knowledge Proof Security . . . . . . . . . . . . . .  19
+   7.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  20
+   Appendix A.  Contributors . . . . . . . . . . . . . . . . . . . .  20
+   Appendix B.  Operational Guidance . . . . . . . . . . . . . . . .  21
+     B.1.  Gating Credentials on Verified Evidence . . . . . . . . .  21
+     B.2.  Distributed Identity Issuance and Scaling . . . . . . . .  21
+     B.3.  Mobility and Sovereign Handover . . . . . . . . . . . . .  22
+     B.4.  Location Anchor Hosts . . . . . . . . . . . . . . . . . .  22
+   Appendix C.  Scalable Fleet Management  . . . . . . . . . . . . .  22
+     C.1.  Nonce Chain and Merkle Audit Log  . . . . . . . . . . . .  22
+     C.2.  Key Registry and Synchronization  . . . . . . . . . . . .  23
+     C.3.  Key Rotation  . . . . . . . . . . . . . . . . . . . . . .  23
+       C.3.1.  Example Rotation Proof  . . . . . . . . . . . . . . .  23
+     C.4.  Credential Activation and Re-Verification . . . . . . . .  23
+     C.5.  Revocation and Health Signals . . . . . . . . . . . . . .  24
+     C.6.  Disconnected Operation (Leased Identity)  . . . . . . . .  24
+   Appendix D.  Deployment Patterns  . . . . . . . . . . . . . . . .  24
+   Appendix E.  Policy Use . . . . . . . . . . . . . . . . . . . . .  25
+   Appendix F.  V-GAP Examples and Sensor Recipes  . . . . . . . . .  25
+     F.1.  Example Instance (privacy-technique = "zkp")  . . . . . .  25
+     F.2.  Sensor Type Input Recipes . . . . . . . . . . . . . . . .  26
+   Appendix G.  Implementation Status  . . . . . . . . . . . . . . .  26
+   Appendix H.  Data Residency References  . . . . . . . . . . . . .  27
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  27
 
 1.  Introduction
 
@@ -161,7 +162,6 @@ Internet-Draft                    V-GAP                       April 2026
    *  *Unverifiable location metadata:* Location tags for data objects
       are typically unsigned, making provenance and integrity difficult
       to validate.
-
 
 
 
@@ -255,6 +255,46 @@ Internet-Draft                    V-GAP                       April 2026
 
                                   Table 1
 
+1.2.  Relationship to Related Work
+
+   defines how a Verifier encodes geographic location conclusions —
+   jurisdiction-level results such as country, subdivision, and city —
+   as EAT Attestation Result claims for consumption by a Relying Party.
+   That draft addresses the *output encoding* side of the attestation
+   pipeline.
+
+   V-GAP addresses the complementary *input side*: the Evidence profile
+   the Attester produces, the hardware-binding mechanism (TPM quote)
+   that makes location evidence verifiable, and the verification
+   procedure the Verifier applies to produce an Attestation Result.
+   V-GAP Evidence is what a Verifier appraises to yield the kind of
+   geographic result claims that {{I-D.richardson-rats-geographic-
+   results}} encodes.
+
+
+
+
+
+
+
+Krishnan, et al.         Expires 1 November 2026                [Page 5]
+
+Internet-Draft                    V-GAP                       April 2026
+
+
+   The two documents are intended to compose: a Verifier that appraises
+   a V-GAP lah-bundle could express its conclusion as an Attestation
+   Result using the geographic claims defined in {{I-D.richardson-rats-
+   geographic-results}}.
+
+   One gap in the combined stack is not addressed by either document:
+   the mapping from a raw location fix or geofence proof to a named
+   legal jurisdiction (for example, from "inside polygon P" to "in
+   jurisdiction X").  This mapping raises its own trust questions — who
+   maintains the polygon-to-jurisdiction database, under what authority,
+   and how that mapping is kept current — and is deferred to future
+   work.
+
 2.  Conventions and Definitions
 
    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
@@ -274,14 +314,6 @@ Internet-Draft                    V-GAP                       April 2026
    *  *IMA*: Integrity Measurement Architecture
    *  *IMEI*: International Mobile Equipment Identity
    *  *IMSI*: International Mobile Subscriber Identity
-
-
-
-Krishnan, et al.         Expires 1 November 2026                [Page 5]
-
-Internet-Draft                    V-GAP                       April 2026
-
-
    *  *LAH*: Location Anchor Host
    *  *OOB*: Out-of-Band
    *  *PCR*: Platform Configuration Register
@@ -298,6 +330,14 @@ Internet-Draft                    V-GAP                       April 2026
 
    Data Residency:  Requirement that data processing and storage remain
       within an approved geographic boundary.
+
+
+
+Krishnan, et al.         Expires 1 November 2026                [Page 6]
+
+Internet-Draft                    V-GAP                       April 2026
+
+
    Geofencing:  Enforcement that workloads execute only on approved
       hosts within an approved geographic boundary.
    Workload Identity Agent:  On-host component that issues workload
@@ -330,14 +370,6 @@ Internet-Draft                    V-GAP                       April 2026
       platform health state (often via OOB paths).  In RATS terms, this
       plane acts as the Verifier.
    V-GAP (Verifiable Geofencing Attestation Profile):  Nested evidence
-
-
-
-Krishnan, et al.         Expires 1 November 2026                [Page 6]
-
-Internet-Draft                    V-GAP                       April 2026
-
-
       format defined in this document for binding identity to verified
       platform integrity and verified residency.
    N_fusion (Workload Fusion Nonce):  Fresh nonce used to bind identity
@@ -351,6 +383,16 @@ Internet-Draft                    V-GAP                       April 2026
    workloads and (optionally) users.  Common use cases fall into:
    server-centric enforcement, user-centric enforcement, and compliance
    and risk reduction.
+
+
+
+
+
+
+Krishnan, et al.         Expires 1 November 2026                [Page 7]
+
+Internet-Draft                    V-GAP                       April 2026
+
 
 4.1.  Server-centric Enforcement
 
@@ -384,16 +426,6 @@ Internet-Draft                    V-GAP                       April 2026
    Enterprises may also need trustworthy location signals for user-
    facing access decisions.
 
-
-
-
-
-
-Krishnan, et al.         Expires 1 November 2026                [Page 7]
-
-Internet-Draft                    V-GAP                       April 2026
-
-
    *  *Geofenced access control:* User access is permitted only when the
       user (or user device) proves it is within an allowed boundary,
       ideally without requiring precise location disclosure.
@@ -407,6 +439,16 @@ Internet-Draft                    V-GAP                       April 2026
       actions can be allowed only when the operator proves presence
       within allowed geographies, reducing policy and insider-risk
       exposure.
+
+
+
+
+
+
+Krishnan, et al.         Expires 1 November 2026                [Page 8]
+
+Internet-Draft                    V-GAP                       April 2026
+
 
 4.3.  Compliance and Risk Reduction
 
@@ -445,7 +487,21 @@ Internet-Draft                    V-GAP                       April 2026
 
 
 
-Krishnan, et al.         Expires 1 November 2026                [Page 8]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Krishnan, et al.         Expires 1 November 2026                [Page 9]
 
 Internet-Draft                    V-GAP                       April 2026
 
@@ -501,7 +557,7 @@ Internet-Draft                    V-GAP                       April 2026
 
 
 
-Krishnan, et al.         Expires 1 November 2026                [Page 9]
+Krishnan, et al.         Expires 1 November 2026               [Page 10]
 
 Internet-Draft                    V-GAP                       April 2026
 
@@ -557,7 +613,7 @@ Internet-Draft                    V-GAP                       April 2026
 
 
 
-Krishnan, et al.         Expires 1 November 2026               [Page 10]
+Krishnan, et al.         Expires 1 November 2026               [Page 11]
 
 Internet-Draft                    V-GAP                       April 2026
 
@@ -613,7 +669,7 @@ Internet-Draft                    V-GAP                       April 2026
 
 
 
-Krishnan, et al.         Expires 1 November 2026               [Page 11]
+Krishnan, et al.         Expires 1 November 2026               [Page 12]
 
 Internet-Draft                    V-GAP                       April 2026
 
@@ -669,7 +725,7 @@ Internet-Draft                    V-GAP                       April 2026
 
 
 
-Krishnan, et al.         Expires 1 November 2026               [Page 12]
+Krishnan, et al.         Expires 1 November 2026               [Page 13]
 
 Internet-Draft                    V-GAP                       April 2026
 
@@ -725,7 +781,7 @@ Internet-Draft                    V-GAP                       April 2026
 
 
 
-Krishnan, et al.         Expires 1 November 2026               [Page 13]
+Krishnan, et al.         Expires 1 November 2026               [Page 14]
 
 Internet-Draft                    V-GAP                       April 2026
 
@@ -781,7 +837,7 @@ Internet-Draft                    V-GAP                       April 2026
 
 
 
-Krishnan, et al.         Expires 1 November 2026               [Page 14]
+Krishnan, et al.         Expires 1 November 2026               [Page 15]
 
 Internet-Draft                    V-GAP                       April 2026
 
@@ -837,7 +893,7 @@ Internet-Draft                    V-GAP                       April 2026
 
 
 
-Krishnan, et al.         Expires 1 November 2026               [Page 15]
+Krishnan, et al.         Expires 1 November 2026               [Page 16]
 
 Internet-Draft                    V-GAP                       April 2026
 
@@ -893,7 +949,7 @@ Internet-Draft                    V-GAP                       April 2026
 
 
 
-Krishnan, et al.         Expires 1 November 2026               [Page 16]
+Krishnan, et al.         Expires 1 November 2026               [Page 17]
 
 Internet-Draft                    V-GAP                       April 2026
 
@@ -949,7 +1005,7 @@ Internet-Draft                    V-GAP                       April 2026
 
 
 
-Krishnan, et al.         Expires 1 November 2026               [Page 17]
+Krishnan, et al.         Expires 1 November 2026               [Page 18]
 
 Internet-Draft                    V-GAP                       April 2026
 
@@ -1005,7 +1061,7 @@ Internet-Draft                    V-GAP                       April 2026
 
 
 
-Krishnan, et al.         Expires 1 November 2026               [Page 18]
+Krishnan, et al.         Expires 1 November 2026               [Page 19]
 
 Internet-Draft                    V-GAP                       April 2026
 
@@ -1061,7 +1117,7 @@ Appendix A.  Contributors
 
 
 
-Krishnan, et al.         Expires 1 November 2026               [Page 19]
+Krishnan, et al.         Expires 1 November 2026               [Page 20]
 
 Internet-Draft                    V-GAP                       April 2026
 
@@ -1117,7 +1173,7 @@ B.2.  Distributed Identity Issuance and Scaling
 
 
 
-Krishnan, et al.         Expires 1 November 2026               [Page 20]
+Krishnan, et al.         Expires 1 November 2026               [Page 21]
 
 Internet-Draft                    V-GAP                       April 2026
 
@@ -1173,7 +1229,7 @@ C.1.  Nonce Chain and Merkle Audit Log
 
 
 
-Krishnan, et al.         Expires 1 November 2026               [Page 21]
+Krishnan, et al.         Expires 1 November 2026               [Page 22]
 
 Internet-Draft                    V-GAP                       April 2026
 
@@ -1229,7 +1285,7 @@ C.4.  Credential Activation and Re-Verification
 
 
 
-Krishnan, et al.         Expires 1 November 2026               [Page 22]
+Krishnan, et al.         Expires 1 November 2026               [Page 23]
 
 Internet-Draft                    V-GAP                       April 2026
 
@@ -1285,7 +1341,7 @@ Appendix D.  Deployment Patterns
 
 
 
-Krishnan, et al.         Expires 1 November 2026               [Page 23]
+Krishnan, et al.         Expires 1 November 2026               [Page 24]
 
 Internet-Draft                    V-GAP                       April 2026
 
@@ -1341,7 +1397,7 @@ F.1.  Example Instance (privacy-technique = "zkp")
 
 
 
-Krishnan, et al.         Expires 1 November 2026               [Page 24]
+Krishnan, et al.         Expires 1 November 2026               [Page 25]
 
 Internet-Draft                    V-GAP                       April 2026
 
@@ -1397,7 +1453,7 @@ Appendix G.  Implementation Status
 
 
 
-Krishnan, et al.         Expires 1 November 2026               [Page 25]
+Krishnan, et al.         Expires 1 November 2026               [Page 26]
 
 Internet-Draft                    V-GAP                       April 2026
 
@@ -1453,7 +1509,7 @@ Authors' Addresses
 
 
 
-Krishnan, et al.         Expires 1 November 2026               [Page 26]
+Krishnan, et al.         Expires 1 November 2026               [Page 27]
 
 Internet-Draft                    V-GAP                       April 2026
 
@@ -1509,4 +1565,4 @@ Internet-Draft                    V-GAP                       April 2026
 
 
 
-Krishnan, et al.         Expires 1 November 2026               [Page 27]
+Krishnan, et al.         Expires 1 November 2026               [Page 28]

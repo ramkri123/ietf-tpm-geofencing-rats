@@ -92,6 +92,16 @@ V-GAP covers platform integrity verification (Layer 2) and residency verificatio
 | **Layer 2** | This document | Verify platform integrity for the Workload Identity Agent (platform Evidence). |
 | **Layer 3** | This document | Verify platform residency within an approved boundary (location Evidence). |
 
+## Relationship to Related Work
+
+{{I-D.richardson-rats-geographic-results}} defines how a Verifier encodes geographic location conclusions — jurisdiction-level results such as country, subdivision, and city — as EAT Attestation Result claims for consumption by a Relying Party. That draft addresses the **output encoding** side of the attestation pipeline.
+
+V-GAP addresses the complementary **input side**: the Evidence profile the Attester produces, the hardware-binding mechanism (TPM quote) that makes location evidence verifiable, and the verification procedure the Verifier applies to produce an Attestation Result. V-GAP Evidence is what a Verifier appraises to yield the kind of geographic result claims that {{I-D.richardson-rats-geographic-results}} encodes.
+
+The two documents are intended to compose: a Verifier that appraises a V-GAP `lah-bundle` could express its conclusion as an Attestation Result using the geographic claims defined in {{I-D.richardson-rats-geographic-results}}.
+
+One gap in the combined stack is not addressed by either document: the mapping from a raw location fix or geofence proof to a named legal jurisdiction (for example, from "inside polygon P" to "in jurisdiction X"). This mapping raises its own trust questions — who maintains the polygon-to-jurisdiction database, under what authority, and how that mapping is kept current — and is deferred to future work.
+
 # Conventions and Definitions
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 {{!RFC2119}} {{!RFC8174}} when, and only when, they appear in all capitals, as shown here.

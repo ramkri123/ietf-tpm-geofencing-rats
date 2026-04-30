@@ -14,7 +14,7 @@
 </postal><email>a.prasad@oracle.com</email>
 </address></author><author initials="S." surname="Addepalli" fullname="Srinivasa Addepalli"><organization>Aryaka</organization><address><postal><street></street>
 </postal><email>srinivasa.addepalli@aryaka.com</email>
-</address></author><date year="2026" month="April" day="3"></date>
+</address></author><date year="2026" month="April" day="30"></date>
 <area>Security</area>
 <workgroup>RATS</workgroup>
 <keyword>geofencing</keyword>
@@ -494,13 +494,88 @@ Downstream Relying Party (mTLS peer)
 
 <ul spacing="compact">
 <li><strong>Replay and mix-and-match</strong>: Use nonces and evidence stapling so that old location evidence cannot be combined with a fresh platform quote (or vice versa).</li>
-<li><strong>Location spoofing</strong>: Treat sensor and network inputs as adversarial. Prefer multiple, corroborating sources where feasible, and apply conservative policy when evidence quality degrades.</li>
+<li><strong>Location spoofing</strong>: GNSS and mobile network signals must be treated as adversarial inputs; per-source threats and mitigations are detailed in the subsections below.</li>
 <li><strong>Relay and displacement</strong>: When proximity mechanisms are introduced in future profiles, implementers should be aware that they are vulnerable to relay attacks and anchor displacement. Mitigations (such as tight RTT-based acceptance windows and anchor health attestation) are deferred to those future profiles.</li>
 <li><strong>Management plane compromise</strong>: OOB paths reduce dependence on the host OS but introduce dependence on the management controller and its network. Protect this plane with secure boot, authenticated updates, strong access controls, network segmentation, and audit logging.</li>
 <li><strong>Time and freshness</strong>: Verifiers MUST enforce bounded freshness windows and MUST define recovery behavior (re-attestation, quarantine, or revocation) when clocks drift or evidence becomes stale.</li>
 <li><strong>Registry and allowlist integrity</strong>: Protect key registries and policy stores against tampering; treat them as high-value privileged assets.</li>
 <li><strong>Privacy</strong>: Avoid unnecessary collection or retention of precise location data. Prefer &quot;in-zone&quot; proofs (ZKP) where policy permits.</li>
 </ul>
+
+<section anchor="location-spoofing"><name>Location Spoofing</name>
+
+<section anchor="gnss-spoofing"><name>GNSS Spoofing</name>
+<t>GNSS signals are unauthenticated by default and can be spoofed via synthetic signal generators (e.g., software-defined radio replay of valid signals) or multipath injection. Implementers SHOULD apply mitigations proportional to the required assurance level:</t>
+
+<ul spacing="compact">
+<li><strong>Signal authentication</strong>: Galileo OSNMA (Open Service Navigation Message Authentication) provides cryptographic authentication of navigation messages and is the strongest available civilian countermeasure. GPS GAIA offers equivalent protection for GPS III signals. Implementations SHOULD prefer authenticated GNSS signals where available.</li>
+<li><strong>Multi-constellation cross-validation</strong>: Cross-checking fixes across independent constellations (GPS, Galileo, GLONASS, BeiDou) substantially raises the cost of spoofing; consistent simultaneous spoofing of all constellations requires significantly more attacker capability.</li>
+<li><strong>Anomaly detection</strong>: Sudden position jumps, implausible velocity changes, and anomalous signal-to-noise ratios are indicators of spoofing or jamming. Evidence that fails these checks SHOULD be rejected.</li>
+</ul>
+</section>
+
+<section anchor="mobile-network-spoofing"><name>Mobile Network Spoofing</name>
+<t>Mobile network location evidence is subject to distinct threats:</t>
+
+<ul spacing="compact">
+<li><strong>IMSI catchers and rogue base stations</strong>: Attacker-controlled base stations can force a device onto a fake cell, yielding attacker-controlled location if evidence derives from device-reported cell identity.</li>
+<li><strong>SS7/Diameter abuse</strong>: Attackers with access to legacy carrier signaling can issue location queries that yield false or manipulated carrier-side location data.</li>
+<li><strong>MNO root key compromise</strong>: The <tt>mno-endorsement</tt> is only as trustworthy as the MNO signing root. Verifiers MUST validate the <tt>mno-key-cert</tt> certificate chain to a known MNO root and SHOULD treat a root compromise as requiring immediate policy revocation.</li>
+</ul>
+<t>The CAMARA API model — where location is derived from carrier network infrastructure rather than device-reported cell identifiers — is more resistant to IMSI catcher attacks and is the RECOMMENDED approach when MNO corroboration is used.</t>
+</section>
+
+<section anchor="location-trust-levels"><name>Location Trust Levels</name>
+<t>The quality indicator defined in Composite Geolocation SHOULD be mapped to a location trust level enforced by the Verifier as a precondition for a positive Attestation Result. The following non-normative tiers illustrate a conformant policy:</t>
+<table>
+<thead>
+<tr>
+<th align="left">Trust Level</th>
+<th align="left">Evidence Basis</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">Low</td>
+<td align="left">Single unauthenticated GNSS fix, no corroboration</td>
+</tr>
+
+<tr>
+<td align="left">Medium</td>
+<td align="left">Multi-constellation GNSS with anomaly detection, or network-side MNO corroboration (CAMARA) alone</td>
+</tr>
+
+<tr>
+<td align="left">High</td>
+<td align="left">Authenticated GNSS (OSNMA or GAIA), or Medium GNSS + MNO corroboration</td>
+</tr>
+
+<tr>
+<td align="left">Highest</td>
+<td align="left">Authenticated GNSS + independent network-side MNO corroboration (CAMARA) + anomaly detection</td>
+</tr>
+</tbody>
+</table><t>The security value of multi-source corroboration derives from <strong>channel independence</strong>: GNSS and MNO evidence travel over different physical and logical channels. Requiring consistent evidence from both simultaneously raises the bar for spoofing. Verifiers SHOULD require a minimum trust level commensurate with the sensitivity of the enforced geofence policy, and SHOULD apply conservative policy (downgrade or reject the Attestation Result) when evidence quality degrades.</t>
+</section>
+</section>
+
+<section anchor="zero-knowledge-proof-security"><name>Zero-Knowledge Proof Security</name>
+<t>V-GAP's <tt>privacy-technique = &quot;zkp&quot;</tt> mode uses Plonky2 STARK proofs. The following properties and threats apply:</t>
+
+<ul>
+<li><t><strong>Circuit correctness is the primary attack surface.</strong> A ZKP proves only what its arithmetic circuit encodes. Errors in the geofence boundary circuit — including precision errors, off-by-one boundary conditions, or incorrect coordinate system handling — yield proofs that are cryptographically valid but semantically incorrect. The geofence circuit MUST be independently audited before deployment.</t>
+</li>
+<li><t><strong>No trusted setup.</strong> Plonky2 is STARK-based and requires no trusted setup phase, eliminating the class of attacks arising from compromised SNARK setup parameters. Implementations substituting a different <tt>zkp-format</tt> MUST ensure it also provides transparent setup, or MUST document the resulting trust assumptions.</t>
+</li>
+<li><t><strong>Computational soundness.</strong> STARK security is computational, not unconditional, and relies on the collision resistance of the underlying hash function. Implementations SHOULD target at least 128-bit security and MUST document the proof system parameters (field size, hash function, FRI parameters) to enable independent security analysis.</t>
+</li>
+<li><t><strong>Proof freshness.</strong> A valid ZKP proves location at proof-generation time. The nonce and timestamp freshness requirements that apply to <tt>tpm-quote-seal</tt> apply equally to ZKP proofs: Verifiers MUST reject proofs whose <tt>timestamp</tt> falls outside the configured freshness window.</t>
+</li>
+<li><t><strong>Prover integrity.</strong> A compromised prover can produce false proofs even for a correctly specified circuit. This threat is mitigated by V-GAP's TPM binding: the <tt>tpm-quote-seal</tt> covers <tt>geolocation-proof-hash</tt>, so a false proof can only be embedded in a bundle that also passes TPM quote verification for an approved platform. The ZKP privacy guarantee is only meaningful in conjunction with verified platform integrity.</t>
+</li>
+</ul>
+</section>
 </section>
 
 <section anchor="iana-considerations"><name>IANA Considerations</name>

@@ -1232,7 +1232,7 @@ li > p:last-of-type:only-child {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Krishnan, et al.</td>
-<td class="center">Expires 5 October 2026</td>
+<td class="center">Expires 1 November 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1245,12 +1245,12 @@ li > p:last-of-type:only-child {
 <dd class="internet-draft">draft-lkspa-rats-verifiable-geo-fence-01</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-04-03" class="published">3 April 2026</time>
+<time datetime="2026-04-30" class="published">30 April 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-10-05">5 October 2026</time></dd>
+<dd class="expires"><time datetime="2026-11-01">1 November 2026</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1302,7 +1302,7 @@ li > p:last-of-type:only-child {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 5 October 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 1 November 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1403,6 +1403,25 @@ li > p:last-of-type:only-child {
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
             <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1">
+                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="auto internal xref">6.1</a>.  <a href="#name-location-spoofing" class="internal xref">Location Spoofing</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1.2.1">
+                    <p id="section-toc.1-1.6.2.1.2.1.1"><a href="#section-6.1.1" class="auto internal xref">6.1.1</a>.  <a href="#name-gnss-spoofing" class="internal xref">GNSS Spoofing</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1.2.2">
+                    <p id="section-toc.1-1.6.2.1.2.2.1"><a href="#section-6.1.2" class="auto internal xref">6.1.2</a>.  <a href="#name-mobile-network-spoofing" class="internal xref">Mobile Network Spoofing</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1.2.3">
+                    <p id="section-toc.1-1.6.2.1.2.3.1"><a href="#section-6.1.3" class="auto internal xref">6.1.3</a>.  <a href="#name-location-trust-levels" class="internal xref">Location Trust Levels</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2">
+                <p id="section-toc.1-1.6.2.2.1"><a href="#section-6.2" class="auto internal xref">6.2</a>.  <a href="#name-zero-knowledge-proof-securi" class="internal xref">Zero-Knowledge Proof Security</a></p>
+</li>
+            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
             <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
@@ -2147,7 +2166,7 @@ Downstream Relying Party (mTLS peer)
           <strong>Replay and mix-and-match</strong>: Use nonces and evidence stapling so that old location evidence cannot be combined with a fresh platform quote (or vice versa).<a href="#section-6-2.1" class="pilcrow">¶</a>
 </li>
         <li class="compact" id="section-6-2.2">
-          <strong>Location spoofing</strong>: Treat sensor and network inputs as adversarial. Prefer multiple, corroborating sources where feasible, and apply conservative policy when evidence quality degrades.<a href="#section-6-2.2" class="pilcrow">¶</a>
+          <strong>Location spoofing</strong>: GNSS and mobile network signals must be treated as adversarial inputs; per-source threats and mitigations are detailed in the subsections below.<a href="#section-6-2.2" class="pilcrow">¶</a>
 </li>
         <li class="compact" id="section-6-2.3">
           <strong>Relay and displacement</strong>: When proximity mechanisms are introduced in future profiles, implementers should be aware that they are vulnerable to relay attacks and anchor displacement. Mitigations (such as tight RTT-based acceptance windows and anchor health attestation) are deferred to those future profiles.<a href="#section-6-2.3" class="pilcrow">¶</a>
@@ -2165,6 +2184,113 @@ Downstream Relying Party (mTLS peer)
           <strong>Privacy</strong>: Avoid unnecessary collection or retention of precise location data. Prefer "in-zone" proofs (ZKP) where policy permits.<a href="#section-6-2.7" class="pilcrow">¶</a>
 </li>
       </ul>
+<div id="location-spoofing">
+<section id="section-6.1">
+        <h3 id="name-location-spoofing">
+<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-location-spoofing" class="section-name selfRef">Location Spoofing</a>
+        </h3>
+<div id="gnss-spoofing">
+<section id="section-6.1.1">
+          <h4 id="name-gnss-spoofing">
+<a href="#section-6.1.1" class="section-number selfRef">6.1.1. </a><a href="#name-gnss-spoofing" class="section-name selfRef">GNSS Spoofing</a>
+          </h4>
+<p id="section-6.1.1-1">GNSS signals are unauthenticated by default and can be spoofed via synthetic signal generators (e.g., software-defined radio replay of valid signals) or multipath injection. Implementers SHOULD apply mitigations proportional to the required assurance level:<a href="#section-6.1.1-1" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="section-6.1.1-2.1">
+              <strong>Signal authentication</strong>: Galileo OSNMA (Open Service Navigation Message Authentication) provides cryptographic authentication of navigation messages and is the strongest available civilian countermeasure. GPS GAIA offers equivalent protection for GPS III signals. Implementations SHOULD prefer authenticated GNSS signals where available.<a href="#section-6.1.1-2.1" class="pilcrow">¶</a>
+</li>
+            <li class="compact" id="section-6.1.1-2.2">
+              <strong>Multi-constellation cross-validation</strong>: Cross-checking fixes across independent constellations (GPS, Galileo, GLONASS, BeiDou) substantially raises the cost of spoofing; consistent simultaneous spoofing of all constellations requires significantly more attacker capability.<a href="#section-6.1.1-2.2" class="pilcrow">¶</a>
+</li>
+            <li class="compact" id="section-6.1.1-2.3">
+              <strong>Anomaly detection</strong>: Sudden position jumps, implausible velocity changes, and anomalous signal-to-noise ratios are indicators of spoofing or jamming. Evidence that fails these checks SHOULD be rejected.<a href="#section-6.1.1-2.3" class="pilcrow">¶</a>
+</li>
+          </ul>
+</section>
+</div>
+<div id="mobile-network-spoofing">
+<section id="section-6.1.2">
+          <h4 id="name-mobile-network-spoofing">
+<a href="#section-6.1.2" class="section-number selfRef">6.1.2. </a><a href="#name-mobile-network-spoofing" class="section-name selfRef">Mobile Network Spoofing</a>
+          </h4>
+<p id="section-6.1.2-1">Mobile network location evidence is subject to distinct threats:<a href="#section-6.1.2-1" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="section-6.1.2-2.1">
+              <strong>IMSI catchers and rogue base stations</strong>: Attacker-controlled base stations can force a device onto a fake cell, yielding attacker-controlled location if evidence derives from device-reported cell identity.<a href="#section-6.1.2-2.1" class="pilcrow">¶</a>
+</li>
+            <li class="compact" id="section-6.1.2-2.2">
+              <strong>SS7/Diameter abuse</strong>: Attackers with access to legacy carrier signaling can issue location queries that yield false or manipulated carrier-side location data.<a href="#section-6.1.2-2.2" class="pilcrow">¶</a>
+</li>
+            <li class="compact" id="section-6.1.2-2.3">
+              <strong>MNO root key compromise</strong>: The <code>mno-endorsement</code> is only as trustworthy as the MNO signing root. Verifiers MUST validate the <code>mno-key-cert</code> certificate chain to a known MNO root and SHOULD treat a root compromise as requiring immediate policy revocation.<a href="#section-6.1.2-2.3" class="pilcrow">¶</a>
+</li>
+          </ul>
+<p id="section-6.1.2-3">The CAMARA API model — where location is derived from carrier network infrastructure rather than device-reported cell identifiers — is more resistant to IMSI catcher attacks and is the RECOMMENDED approach when MNO corroboration is used.<a href="#section-6.1.2-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="location-trust-levels">
+<section id="section-6.1.3">
+          <h4 id="name-location-trust-levels">
+<a href="#section-6.1.3" class="section-number selfRef">6.1.3. </a><a href="#name-location-trust-levels" class="section-name selfRef">Location Trust Levels</a>
+          </h4>
+<p id="section-6.1.3-1">The quality indicator defined in Composite Geolocation SHOULD be mapped to a location trust level enforced by the Verifier as a precondition for a positive Attestation Result. The following non-normative tiers illustrate a conformant policy:<a href="#section-6.1.3-1" class="pilcrow">¶</a></p>
+<table class="center" id="table-8">
+            <caption><a href="#table-8" class="selfRef">Table 8</a></caption>
+<thead>
+              <tr>
+                <th class="text-left" rowspan="1" colspan="1">Trust Level</th>
+                <th class="text-left" rowspan="1" colspan="1">Evidence Basis</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">Low</td>
+                <td class="text-left" rowspan="1" colspan="1">Single unauthenticated GNSS fix, no corroboration</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">Medium</td>
+                <td class="text-left" rowspan="1" colspan="1">Multi-constellation GNSS with anomaly detection, or network-side MNO corroboration (CAMARA) alone</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">High</td>
+                <td class="text-left" rowspan="1" colspan="1">Authenticated GNSS (OSNMA or GAIA), or Medium GNSS + MNO corroboration</td>
+              </tr>
+              <tr>
+                <td class="text-left" rowspan="1" colspan="1">Highest</td>
+                <td class="text-left" rowspan="1" colspan="1">Authenticated GNSS + independent network-side MNO corroboration (CAMARA) + anomaly detection</td>
+              </tr>
+            </tbody>
+          </table>
+<p id="section-6.1.3-3">The security value of multi-source corroboration derives from <strong>channel independence</strong>: GNSS and MNO evidence travel over different physical and logical channels. Requiring consistent evidence from both simultaneously raises the bar for spoofing. Verifiers SHOULD require a minimum trust level commensurate with the sensitivity of the enforced geofence policy, and SHOULD apply conservative policy (downgrade or reject the Attestation Result) when evidence quality degrades.<a href="#section-6.1.3-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="zero-knowledge-proof-security">
+<section id="section-6.2">
+        <h3 id="name-zero-knowledge-proof-securi">
+<a href="#section-6.2" class="section-number selfRef">6.2. </a><a href="#name-zero-knowledge-proof-securi" class="section-name selfRef">Zero-Knowledge Proof Security</a>
+        </h3>
+<p id="section-6.2-1">V-GAP's <code>privacy-technique = "zkp"</code> mode uses Plonky2 STARK proofs. The following properties and threats apply:<a href="#section-6.2-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-6.2-2.1">
+            <p id="section-6.2-2.1.1"><strong>Circuit correctness is the primary attack surface.</strong> A ZKP proves only what its arithmetic circuit encodes. Errors in the geofence boundary circuit — including precision errors, off-by-one boundary conditions, or incorrect coordinate system handling — yield proofs that are cryptographically valid but semantically incorrect. The geofence circuit MUST be independently audited before deployment.<a href="#section-6.2-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.2-2.2">
+            <p id="section-6.2-2.2.1"><strong>No trusted setup.</strong> Plonky2 is STARK-based and requires no trusted setup phase, eliminating the class of attacks arising from compromised SNARK setup parameters. Implementations substituting a different <code>zkp-format</code> MUST ensure it also provides transparent setup, or MUST document the resulting trust assumptions.<a href="#section-6.2-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.2-2.3">
+            <p id="section-6.2-2.3.1"><strong>Computational soundness.</strong> STARK security is computational, not unconditional, and relies on the collision resistance of the underlying hash function. Implementations SHOULD target at least 128-bit security and MUST document the proof system parameters (field size, hash function, FRI parameters) to enable independent security analysis.<a href="#section-6.2-2.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.2-2.4">
+            <p id="section-6.2-2.4.1"><strong>Proof freshness.</strong> A valid ZKP proves location at proof-generation time. The nonce and timestamp freshness requirements that apply to <code>tpm-quote-seal</code> apply equally to ZKP proofs: Verifiers MUST reject proofs whose <code>timestamp</code> falls outside the configured freshness window.<a href="#section-6.2-2.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.2-2.5">
+            <p id="section-6.2-2.5.1"><strong>Prover integrity.</strong> A compromised prover can produce false proofs even for a correctly specified circuit. This threat is mitigated by V-GAP's TPM binding: the <code>tpm-quote-seal</code> covers <code>geolocation-proof-hash</code>, so a false proof can only be embedded in a bundle that also passes TPM quote verification for an approved platform. The ZKP privacy guarantee is only meaningful in conjunction with verified platform integrity.<a href="#section-6.2-2.5.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
 </section>
 </div>
 <div id="iana-considerations">
@@ -2296,8 +2422,8 @@ Email: saanvijay20@gmail.com<a href="#appendix-A-5" class="pilcrow">¶</a></p>
 nonce[n]  = HMAC(secret, n || chain[n-1])
 </pre><a href="#appendix-C.1-2" class="pilcrow">¶</a>
 </div>
-<table class="center" id="table-8">
-          <caption><a href="#table-8" class="selfRef">Table 8</a></caption>
+<table class="center" id="table-9">
+          <caption><a href="#table-9" class="selfRef">Table 9</a></caption>
 <thead>
             <tr>
               <th class="text-left" rowspan="1" colspan="1">Mechanism</th>
@@ -2494,8 +2620,8 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
 <a href="#appendix-F.2" class="section-number selfRef">F.2. </a><a href="#name-sensor-type-input-recipes" class="section-name selfRef">Sensor Type Input Recipes</a>
         </h3>
 <p id="appendix-F.2-1">The following recipes define how <code>geolocation-id-hash</code> is constructed from different sensor types. The Verifier sees only the opaque hash — never the raw identifiers.<a href="#appendix-F.2-1" class="pilcrow">¶</a></p>
-<table class="center" id="table-9">
-          <caption><a href="#table-9" class="selfRef">Table 9</a></caption>
+<table class="center" id="table-10">
+          <caption><a href="#table-10" class="selfRef">Table 10</a></caption>
 <thead>
             <tr>
               <th class="text-left" rowspan="1" colspan="1">Sensor Type</th>

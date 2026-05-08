@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- name="GENERATOR" content="github.com/mmarkdown/mmark Mmark Markdown Processor - mmark.miek.nl" -->
-<rfc version="3" ipr="trust200902" docName="draft-lkspa-rats-verifiable-geo-fence-01" submissionType="IETF" category="std" xml:lang="en" xmlns:xi="http://www.w3.org/2001/XInclude" indexInclude="true">
+<rfc version="3" ipr="trust200902" docName="draft-lkspa-rats-verifiable-geo-fence-02" submissionType="IETF" category="std" xml:lang="en" xmlns:xi="http://www.w3.org/2001/XInclude" indexInclude="true">
 
 <front>
-<title abbrev="V-GAP">Privacy Preserving Verifiable Geofencing with Residency Proofs for Sovereign Workloads</title><seriesInfo value="draft-lkspa-rats-verifiable-geo-fence-01" stream="IETF" status="standard" name="Internet-Draft"></seriesInfo>
+<title abbrev="V-GAP">Privacy Preserving Verifiable Geofencing with Residency Proofs</title><seriesInfo value="draft-lkspa-rats-verifiable-geo-fence-02" stream="IETF" status="standard" name="Internet-Draft"></seriesInfo>
 <author initials="R." surname="Krishnan" fullname="Ram Krishnan"><organization>JPMorgan Chase &amp; Co.</organization><address><postal><street></street>
 </postal><email>ramkri123@gmail.com</email>
 </address></author><author initials="N." surname="Smith" fullname="Ned Smith"><organization>Intel</organization><address><postal><street></street>
@@ -14,20 +14,20 @@
 </postal><email>a.prasad@oracle.com</email>
 </address></author><author initials="S." surname="Addepalli" fullname="Srinivasa Addepalli"><organization>Aryaka</organization><address><postal><street></street>
 </postal><email>srinivasa.addepalli@aryaka.com</email>
-</address></author><date year="2026" month="April" day="30"></date>
+</address></author><date year="2026" month="May" day="8"></date>
 <area>Security</area>
 <workgroup>RATS</workgroup>
 <keyword>geofencing</keyword>
 <keyword>attestation</keyword>
-<keyword>workload identity</keyword>
 <keyword>residency</keyword>
 <keyword>TPM</keyword>
 <keyword>GNSS</keyword>
+<keyword>RATS</keyword>
 
 <abstract>
-<t>Modern cloud and distributed computing rely heavily on software-only identities and bearer tokens that are easily stolen, replayed, or used from unauthorized locations. Furthermore, traditional methods of location verification — such as IP-address-based geolocation — are easily spoofed via VPNs or proxies and significantly compromise infrastructure security and privacy for sovereign workloads and high-assurance environments.</t>
-<t>This document defines the <strong>Verifiable Geofencing Attestation Profile (V-GAP)</strong>, a profile of the RATS Architecture {{!RFC9334}}, that solves these challenges through hardware-rooted cryptographic verifiability. A host machine runs a Workload Identity Agent for managing the workload identities on that platform. This profile replaces implicit trust and spoofable indicators with cryptographically verifiable hardware-rooted Evidence of integrity and location for this agent. Critically, this framework prioritizes location privacy by utilizing Zero-Knowledge Proofs (ZKPs), allowing a workload to prove it is within a compliant zone without disclosing precise coordinates.</t>
-<t>By binding software identities to persistent silicon identities and verified physical residency, V-GAP establishes a silicon-to-workload chain of trust. It ensures that sensitive operations are only performed by authorized workloads running on untampered hardware in cryptographically verified, privacy-preserving geographic boundaries, fulfilling the high-assurance requirements of the WIMSE Architecture {{!I-D.ietf-wimse-architecture}}.</t>
+<t>Modern cloud and distributed computing rely heavily on software-only identities and bearer tokens that are easily stolen, replayed, or used from unauthorized locations. Furthermore, traditional methods of location verification — such as IP-address-based geolocation — are easily spoofed via VPNs or proxies and significantly compromise infrastructure security and privacy for sovereign and high-assurance environments.</t>
+<t>This document defines the <strong>Verifiable Geofencing Attestation Profile (V-GAP)</strong>, a profile of the RATS Architecture {{!RFC9334}}, that addresses these challenges through hardware-rooted cryptographic verifiability. V-GAP profiles a two-layer Attester: a TPM (Attesting Environment) measures a Workload Identity Agent (Target Environment), while geolocation Claims from one or more location sensors are sealed by the TPM into a single Evidence structure. This framework prioritizes location privacy by supporting Zero-Knowledge Proofs (ZKPs), allowing an Attester to prove it is within a compliant zone without disclosing precise coordinates.</t>
+<t>By binding software agent identity to a persistent silicon root of trust and verified physical residency, V-GAP establishes a hardware-to-agent chain of trust. It ensures that a Relying Party can verify that an agent is running on untampered hardware within cryptographically verified, privacy-preserving geographic boundaries before issuing credentials or authorizing operations.</t>
 </abstract>
 
 </front>
@@ -42,51 +42,61 @@
 <li><strong>Token theft and replay:</strong> Bearer tokens can be copied and replayed from unauthorized hosts or locations.</li>
 <li><strong>Implicit trust in &quot;region&quot; and transit:</strong> A relying party often cannot cryptographically verify a server's physical residency, and requests may traverse intermediaries that expand the effective trust boundary.</li>
 </ul>
-<t>This document defines the Verifiable Geofencing Attestation Profile (V-GAP), a profile of the RATS Architecture {{!RFC9334}} that makes <strong>platform integrity</strong> and <strong>geofence residency</strong> verifiable inputs to workload credential issuance. V-GAP enables a Relying Party (or credential issuer) to require Evidence that:</t>
+<t>This document defines the Verifiable Geofencing Attestation Profile (V-GAP), a profile of the RATS Architecture {{!RFC9334}} that makes <strong>platform integrity</strong> and <strong>geofence residency</strong> cryptographically verifiable. V-GAP enables a Verifier to appraise Evidence that:</t>
 
 <ol spacing="compact">
-<li>the Workload Identity Agent is running on an approved, measured platform (platform integrity); and</li>
-<li>that platform is resident within an approved geographic boundary, optionally without revealing coordinates (residency).</li>
+<li>the Workload Identity Agent (Target Environment) is running on an approved, measured platform whose Attesting Environment is a TPM (platform integrity); and</li>
+<li>the platform is resident within an approved geographic boundary, optionally without revealing coordinates (residency).</li>
 </ol>
-<t>To maintain location privacy while providing cryptographic verifiability, V-GAP supports Transparent Zero-Knowledge Proofs (ZKPs) — non-interactive, hash-based proofs that allow a platform to demonstrate &quot;in-zone&quot; residency without disclosing exact coordinates and without requiring a trusted setup.</t>
+<t>To maintain location privacy while providing cryptographic verifiability, V-GAP supports Transparent Zero-Knowledge Proofs (ZKPs) — non-interactive, hash-based proofs that allow an Attester to demonstrate &quot;in-zone&quot; residency without disclosing exact coordinates and without requiring a trusted setup.</t>
 
-<section anchor="scope-and-layering"><name>Scope and Layering</name>
-<t>V-GAP covers platform integrity verification (Layer 2) and residency verification (Layer 3). It assumes that the binding of individual workloads to the local Workload Identity Agent (Layer 1) is established by a co-location mechanism such as {{!I-D.mw-wimse-transitive-attestation}}. Together, these three layers form a complete chain of trust from silicon to workload, as required by the WIMSE Architecture {{!I-D.ietf-wimse-architecture}}.</t>
+<section anchor="scope-and-layered-attestation"><name>Scope and Layered Attestation</name>
+<t>V-GAP profiles a two-layer Attester, following the layered attestation model defined in {{!RFC9334}}, Section 3.2. Using the terminology of RFC 9334 Figure 3:</t>
 <table>
 <thead>
 <tr>
 <th align="left">Layer</th>
-<th align="left">Scope</th>
+<th align="left">RFC 9334 Role</th>
+<th align="left">V-GAP Entity</th>
 <th align="left">Responsibility</th>
 </tr>
 </thead>
 
 <tbody>
 <tr>
-<td align="left"><strong>Layer 1</strong></td>
-<td align="left">{{!I-D.mw-wimse-transitive-attestation}}</td>
-<td align="left">Bind workload to a local Workload Identity Agent (co-location).</td>
+<td align="left"><strong>Layer A</strong> (immutable root)</td>
+<td align="left">Attesting Environment</td>
+<td align="left">TPM + Location Sensor (Claim source)</td>
+<td align="left">Measures the agent binary; seals all Claims (integrity + geolocation) into a TPM quote. Endorsed by TPM manufacturer (EK cert) and optionally by MNO (<tt>mno-endorsement</tt>).</td>
 </tr>
 
 <tr>
-<td align="left"><strong>Layer 2</strong></td>
-<td align="left">This document</td>
-<td align="left">Verify platform integrity for the Workload Identity Agent (platform Evidence).</td>
-</tr>
-
-<tr>
-<td align="left"><strong>Layer 3</strong></td>
-<td align="left">This document</td>
-<td align="left">Verify platform residency within an approved boundary (location Evidence).</td>
+<td align="left"><strong>Layer B</strong> (measured agent)</td>
+<td align="left">Target Environment + Evidence assembler</td>
+<td align="left">Workload Identity Agent</td>
+<td align="left">Measured by the TPM (<tt>target-environment-image-digest</tt>). Collects Claims from the TPM and location sensor(s), constructs the <tt>lah-bundle</tt>, and conveys Evidence to the Verifier.</td>
 </tr>
 </tbody>
-</table></section>
+</table><t>The binding of individual workloads to the local Workload Identity Agent — and the credential issuance that follows a positive Attestation Result — are out of scope for this profile. Those concerns are addressed by complementary work such as {{I-D.mw-wimse-transitive-attestation}} and the WIMSE Architecture {{I-D.ietf-wimse-architecture}}. See the WIMSE Integration appendix for a mapping.</t>
+</section>
 
 <section anchor="relationship-to-related-work"><name>Relationship to Related Work</name>
 <t>defines how a Verifier encodes geographic location conclusions — jurisdiction-level results such as country, subdivision, and city — as EAT Attestation Result claims for consumption by a Relying Party. That draft addresses the <strong>output encoding</strong> side of the attestation pipeline.</t>
 <t>V-GAP addresses the complementary <strong>input side</strong>: the Evidence profile the Attester produces, the hardware-binding mechanism (TPM quote) that makes location evidence verifiable, and the verification procedure the Verifier applies to produce an Attestation Result. V-GAP Evidence is what a Verifier appraises to yield the kind of geographic result claims that {{I-D.richardson-rats-geographic-results}} encodes.</t>
 <t>The two documents are intended to compose: a Verifier that appraises a V-GAP <tt>lah-bundle</tt> could express its conclusion as an Attestation Result using the geographic claims defined in {{I-D.richardson-rats-geographic-results}}. V-GAP is self-contained; use of that encoding is OPTIONAL and is one possible way a Verifier may express its conclusions — consumers MAY enforce geofence policy directly from the Attestation Result, use the V-GAP X.509 extension (OID <tt>1.3.6.1.4.1.65284.1.1</tt>) as the trust signal, or adopt any other result encoding their deployment requires.</t>
 <t>One gap in the combined stack is not addressed by either document: the mapping from a raw location fix or geofence proof to a named legal jurisdiction (for example, from &quot;inside polygon P&quot; to &quot;in jurisdiction X&quot;). This mapping raises its own trust questions — who maintains the polygon-to-jurisdiction database, under what authority, and how that mapping is kept current — and is deferred to future work.</t>
+
+<section anchor="platform-ownership-and-confidential-computing"><name>Platform Ownership and Confidential Computing</name>
+<t>Intel's Platform Ownership Endorsement (POE) architecture enables remote parties to establish who is in physical possession of the hardware running workloads, using CoRIM-formatted endorsements tied to Platform Instance Identities (PIIDs). POE addresses a complementary concern to V-GAP: POE establishes platform <strong>ownership</strong> (who controls the hardware), while V-GAP establishes platform <strong>residency</strong> (where the hardware is). In deployments using Intel SGX or Intel TDX, a POE could serve as an additional Endorsement consumed by the V-GAP Verifier, strengthening confidence that the Attester is both owned by an approved party and resident within an approved boundary.</t>
+</section>
+
+<section anchor="geolocation-methods-as-composable-claim-sources"><name>Geolocation Methods as Composable Claim Sources</name>
+<t>V-GAP is designed so that different geolocation methods (GNSS, MNO/CAMARA, timing-based, provider region attestation) can independently produce Claims that feed into a common Evidence structure and ultimately into a common Attestation Result format. Each method has distinct security properties and threat models (see Security Considerations). Implementations SHOULD treat geolocation methods as composable and independently appraised Claim sources rather than requiring a single method. This design allows the security considerations for each method to be evaluated independently while the Attestation Result remains uniform.</t>
+</section>
+
+<section anchor="other-potentially-related-work"><name>Other Potentially Related Work</name>
+<t>The &quot;Sovereign Certificates&quot; initiative (sovcert.org) has been raised as potentially related work. The website appears to be a single-entity effort without broad community review or standardization process participation. Future revisions of this document will assess alignment or differentiation if the initiative matures or publishes through a recognized standards body.</t>
+</section>
 </section>
 </section>
 
@@ -126,46 +136,46 @@
 <dt>Data Residency:</dt>
 <dd>Requirement that data processing and storage remain within an approved geographic boundary.</dd>
 <dt>Geofencing:</dt>
-<dd>Enforcement that workloads execute only on approved hosts within an approved geographic boundary.</dd>
+<dd>Enforcement that agents and services execute only on approved hosts within an approved geographic boundary.</dd>
+<dt>Attesting Environment:</dt>
+<dd>An environment capable of collecting Claims about a Target Environment and producing Evidence. In V-GAP, the TPM serves as the Attesting Environment.</dd>
+<dt>Target Environment:</dt>
+<dd>An environment about which Claims are collected by an Attesting Environment. In V-GAP, the Workload Identity Agent is the Target Environment measured by the TPM.</dd>
 <dt>Workload Identity Agent:</dt>
-<dd>On-host component that issues workload identities (for example, SVIDs) to local workloads, subject to verifier-approved evidence.</dd>
+<dd>On-host component (Target Environment) whose binary integrity is measured by the TPM. Once verified, it assembles the V-GAP Evidence structure.</dd>
 <dt>Location Anchor Host (LAH):</dt>
-<dd>Trusted host or device that produces location evidence used to establish residency within a geofence. In RATS terms, the LAH is the Attester.</dd>
-<dt>Workload Host:</dt>
-<dd>Physical or virtual machine running the Workload Identity Agent and workloads; produces platform evidence. Unless otherwise stated, this document assumes the unified deployment model in which the Workload Host and the Location Anchor Host (LAH) are the same machine.</dd>
+<dd>Host or device that acts as the Attester ({{!RFC9334}}). Contains the TPM (Attesting Environment), the Workload Identity Agent (Target Environment), and one or more geolocation Claim sources (for example, GNSS receiver or MNO-connected modem).</dd>
+<dt>Claim Source (Geolocation):</dt>
+<dd>A sensor or service that provides geolocation Claims (for example, coordinates, ZKP proof) to the Evidence assembler. The Claim source is not an Attesting Environment; its output is sealed into the TPM quote alongside platform integrity Claims.</dd>
 <dt>Composite Geolocation:</dt>
-<dd>Location estimate fused from multiple sources and accompanied by a quality indicator.</dd>
-<dt>Proof of Residency (PoR) / Co-location:</dt>
-<dd>Evidence that binds a workload (or Workload Host) to an approved local environment and geofence for a specific attestation interval.</dd>
+<dd>Location estimate fused from multiple Claim sources and accompanied by a quality indicator.</dd>
+<dt>Proof of Residency (PoR):</dt>
+<dd>Evidence that a platform is within an approved geofence for a specific attestation interval.</dd>
 <dt>Silicon Root of Trust:</dt>
-<dd>Hardware trust anchor that supports measured boot and protects attestation keys.</dd>
+<dd>Hardware trust anchor (for example, TPM) that supports measured boot, protects attestation keys, and acts as the Attesting Environment.</dd>
 <dt>Transparent Zero-Knowledge Proof:</dt>
 <dd>ZKP that does not require a trusted setup; used to prove &quot;inside an approved zone&quot; without revealing precise coordinates.</dd>
-<dt>Workload Identity Management Plane:</dt>
-<dd>Issues and validates workload identities and trust bundles based on verifier results and policy. In RATS terms, this plane acts as the Relying Party and Credential Issuer.</dd>
-<dt>Host Identity Management Plane:</dt>
-<dd>Verifies platform integrity and residency evidence, and manages attestation key registration and platform health state (often via OOB paths). In RATS terms, this plane acts as the Verifier.</dd>
 <dt>V-GAP (Verifiable Geofencing Attestation Profile):</dt>
-<dd>Nested evidence format defined in this document for binding identity to verified platform integrity and verified residency.</dd>
-<dt>N_fusion (Workload Fusion Nonce):</dt>
-<dd>Fresh nonce used to bind identity issuance to a specific attestation interval, delivered by the Workload Identity Management Plane. Corresponds to the <tt>nonce</tt> field in the <tt>lah-bundle</tt>.</dd>
+<dd>Evidence profile defined in this document, binding platform integrity and verified residency into a single hardware-sealed Evidence structure (<tt>lah-bundle</tt>).</dd>
+<dt>N_fusion:</dt>
+<dd>Fresh nonce for each attestation interval. Initiated by the Relying Party and delivered to the Attester by the Verifier. Corresponds to the <tt>nonce</tt> field in the <tt>lah-bundle</tt>. Provides freshness per {{!RFC9334}}, Section 10.2.</dd>
 </dl>
 </section>
 
 <section anchor="use-cases"><name>Use Cases</name>
-<t>This profile supports attested data residency and geofencing for workloads and (optionally) users. Common use cases fall into: server-centric enforcement, user-centric enforcement, and compliance and risk reduction.</t>
+<t>This profile supports attested data residency and geofencing for platforms running identity agents and (optionally) user devices. Common use cases fall into: server-centric enforcement, user-centric enforcement, and compliance and risk reduction.</t>
 
 <section anchor="server-centric-enforcement"><name>Server-centric Enforcement</name>
-<t>Enterprises need cryptographic proof that workloads run only on approved hosts within an approved geographic boundary, and that data flows only between approved boundaries.</t>
+<t>Enterprises need cryptographic proof that identity agents run only on approved hosts within an approved geographic boundary, and that credentials are issued only from verified platforms.</t>
 
 <ul>
-<li><t><strong>Workload-to-workload (general):</strong> Relying parties accept workload identities only when the issuing host attests platform integrity and &quot;in-zone&quot; residency, preventing credentials from being used outside the approved boundary.</t>
+<li><t><strong>Platform-to-platform (general):</strong> Relying Parties accept credentials only when the issuing Attester's Evidence demonstrates platform integrity and &quot;in-zone&quot; residency, preventing credentials from being used outside the approved boundary.</t>
 </li>
-<li><t><strong>Agentic AI workloads:</strong> An AI agent may access sensitive data or perform sensitive actions only when its Workload Identity Agent presents hardware-rooted integrity evidence and a verifiable &quot;in-zone&quot; proof (optionally privacy-preserving), binding identity to both platform state and residency.</t>
+<li><t><strong>Agentic AI platforms:</strong> An AI agent platform may issue credentials for sensitive operations only when its Attester presents hardware-rooted integrity Evidence and a verifiable &quot;in-zone&quot; proof (optionally privacy-preserving), binding identity to both platform state and residency.</t>
 </li>
-<li><t><strong>Federated / edge AI (key or model release):</strong> High-value artifacts (e.g., decryption keys or model weights in federated learning) are released only when the partner/edge host attests it is integral and resident within the required boundary. This is useful for intermittently connected sites.</t>
+<li><t><strong>Federated / edge AI (key or model release):</strong> High-value artifacts (e.g., decryption keys or model weights in federated learning) are released only when the partner/edge Attester demonstrates integrity and residency within the required boundary. This is useful for intermittently connected sites.</t>
 </li>
-<li><t><strong>User-to-server:</strong> Clients validate that the server endpoint is operating within an approved boundary (e.g., by policy tied to the server's attested identity and residency evidence).</t>
+<li><t><strong>Server verification:</strong> Clients validate that a server endpoint is operating within an approved boundary (e.g., by policy tied to the Attestation Result for that server's platform).</t>
 </li>
 </ul>
 </section>
@@ -184,12 +194,12 @@
 </section>
 
 <section anchor="compliance-and-risk-reduction"><name>Compliance and Risk Reduction</name>
-<t>Geofence attestation provides audit-ready evidence to support data residency and sovereignty controls, and it can also reduce non-compliance risk from misconfiguration or spoofable signals. Even when not mandated, &quot;in-zone&quot; proofs help address: configuration drift, edge relocation/proxying, contractual residency requirements, and location-privacy minimization (proving &quot;inside the zone&quot; without storing coordinates).</t>
+<t>Geofence attestation provides audit-ready Evidence to support data residency and sovereignty controls, and it can also reduce non-compliance risk from misconfiguration or spoofable signals. Even when not mandated, &quot;in-zone&quot; proofs help address: configuration drift, edge relocation/proxying, contractual residency requirements, and location-privacy minimization (proving &quot;inside the zone&quot; without storing coordinates).</t>
 </section>
 </section>
 
 <section anchor="verifiable-geofencing-attestation-profile-v-gap"><name>Verifiable Geofencing Attestation Profile (V-GAP)</name>
-<t>V-GAP is a profile of the RATS Architecture {{!RFC9334}} that binds a Workload Identity Agent to (1) hardware-rooted platform integrity and (2) verified residency within a configured geofence. The Attester (Location Anchor Host) produces a V-GAP Evidence structure (<tt>lah-bundle</tt>) that the Verifier (Host Identity Management Plane) appraises to produce an Attestation Result.</t>
+<t>V-GAP is a profile of the RATS Architecture {{!RFC9334}} that binds a Workload Identity Agent (Target Environment) to (1) hardware-rooted platform integrity via a TPM (Attesting Environment) and (2) verified residency within a configured geofence via sealed geolocation Claims. The Attester (Location Anchor Host) produces a V-GAP Evidence structure (<tt>lah-bundle</tt>) that a Verifier appraises to produce an Attestation Result.</t>
 
 <section anchor="rats-role-mapping"><name>RATS Role Mapping</name>
 <t>V-GAP instantiates the RATS Architecture {{!RFC9334}} with the following role assignments.</t>
@@ -206,66 +216,86 @@
 <tr>
 <td align="left">Attester</td>
 <td align="left">Location Anchor Host (LAH)</td>
-<td align="left">Produces V-GAP Evidence (the <tt>lah-bundle</tt>), including TPM quotes and geolocation claims.</td>
+<td align="left">Contains the Attesting Environment (TPM) and Target Environment (Workload Identity Agent). Produces V-GAP Evidence (the <tt>lah-bundle</tt>), including TPM quotes and geolocation Claims.</td>
 </tr>
 
 <tr>
 <td align="left">Verifier</td>
-<td align="left">Host Identity Management Plane</td>
-<td align="left">Appraises V-GAP Evidence — validates TPM quotes, checks PCRs, verifies geolocation proofs — and produces an Attestation Result.</td>
+<td align="left">Verifier (for example, Keylime Verifier or HPE OneView)</td>
+<td align="left">Appraises V-GAP Evidence — validates TPM quotes, checks PCRs against Reference Values, verifies geolocation proofs — and produces an Attestation Result.</td>
 </tr>
 
 <tr>
-<td align="left">Endorser</td>
+<td align="left">Endorser (hardware)</td>
+<td align="left">TPM Manufacturer</td>
+<td align="left">Provides Endorsements (EK certificate chain) vouching for the TPM's identity and signing capability.</td>
+</tr>
+
+<tr>
+<td align="left">Endorser (location)</td>
 <td align="left">Mobile Network Operator (MNO)</td>
-<td align="left">Provides a location Endorsement (<tt>mno-endorsement</tt>) attesting device location within carrier visibility.</td>
+<td align="left">Provides a location Endorsement (<tt>mno-endorsement</tt>) attesting device location within carrier visibility. OPTIONAL.</td>
 </tr>
 
 <tr>
-<td align="left">Relying Party + Credential Issuer</td>
-<td align="left">Workload Identity Management Plane</td>
-<td align="left">Consumes the Attestation Result and decides whether to issue or renew workload credentials (e.g., X.509-SVIDs). Also acts as the CA that signs the credential.</td>
+<td align="left">Reference Value Provider</td>
+<td align="left">Platform administrator or supply chain entity</td>
+<td align="left">Supplies Reference Values: known-good PCR values, approved agent binary digests (<tt>target-environment-image-digest</tt>), and geofence boundary definitions.</td>
 </tr>
 
 <tr>
-<td align="left">Downstream Relying Party (note 1)</td>
-<td align="left">mTLS peer / service consumer</td>
-<td align="left">Consumes the workload credential containing the V-GAP extension; trusts the CA signature as proxy for verified integrity and residency.</td>
+<td align="left">Relying Party</td>
+<td align="left">Credential issuer or policy decision point</td>
+<td align="left">Consumes the Attestation Result and applies its Appraisal Policy for Attestation Results to decide whether to issue credentials, release keys, or authorize operations.</td>
+</tr>
+
+<tr>
+<td align="left">Verifier Owner</td>
+<td align="left">Security administrator</td>
+<td align="left">Configures the Appraisal Policy for Evidence: freshness windows, required trust levels, approved PCR sets, and geofence policy.</td>
+</tr>
+
+<tr>
+<td align="left">Relying Party Owner</td>
+<td align="left">Policy administrator</td>
+<td align="left">Configures the Appraisal Policy for Attestation Results: which Verifiers are trusted, minimum result freshness, and required Claims in the Attestation Result.</td>
 </tr>
 </tbody>
-</table><t>Note 1: &quot;Downstream Relying Party&quot; is not a role defined by {{!RFC9334}}. It is used here to distinguish the entity that consumes the issued credential from the Relying Party that consumes the Attestation Result.</t>
-</section>
+</table></section>
 
 <section anchor="evidence-flow"><name>Evidence Flow</name>
-<t>The V-GAP evidence flow follows the RATS background-check model ({{!RFC9334}}, Section 3.2): the Attester conveys Evidence to the Verifier, the Verifier appraises it and conveys the Attestation Result to the Relying Party.</t>
+<t>The V-GAP Evidence flow follows the RATS background-check model ({{!RFC9334}}, Section 5.2): the Attester conveys Evidence to the Verifier (possibly via a Relying Party), the Verifier appraises it using Reference Values and Endorsements, and conveys the Attestation Result to the Relying Party.</t>
 
-<artwork><![CDATA[Attester (LAH)
-    |
-    | V-GAP Evidence (lah-bundle)
-    v
-Verifier (Host Identity Mgmt Plane)  <--- Endorsement (MNO)
-    |
-    | Attestation Result
-    v
-Relying Party + Credential Issuer (Workload Identity Mgmt Plane)
-    |
-    | X.509-SVID with V-GAP extension
-    v
-Downstream Relying Party (mTLS peer)
+<artwork><![CDATA[                                    Reference Value
+Endorser         Endorser            Provider
+(TPM Mfr)        (MNO)              (Admin)
+   |               |                   |
+   | EK cert        | mno-endorsement   | PCRs, agent digest,
+   | chain          |                   | geofence polygons
+   v               v                   v
+Attester (LAH)                      Verifier
+  [TPM: Attesting Env]              Appraises Evidence
+  [Agent: Target Env]  -- lah-bundle -->  against Reference Values
+  [Sensor: Claim source]                  and Endorsements
+                                        |
+                          Attestation Result
+                                        |
+                                        v
+                                  Relying Party
+                            (applies Appraisal Policy
+                             for Attestation Results)
 ]]></artwork>
-<t>The Relying Party in V-GAP also acts as a Credential Issuer (CA): it materializes the Attestation Result into an X.509 workload identity credential (for example, a SPIFFE SVID) containing the V-GAP Evidence as a CRITICAL extension. This &quot;trust translator&quot; pattern allows downstream consumers to rely on standard X.509/mTLS verification without needing to understand RATS or V-GAP directly.</t>
-<t>Implementations of this profile MUST mark the X.509 extension containing the V-GAP Evidence Bundle as CRITICAL. When marked CRITICAL, any downstream Relying Party that does not understand the extension MUST reject the credential, enforcing fail-closed behavior for residency-constrained workloads.</t>
+<t>The Attestation Result produced by the Verifier is the output of V-GAP's RATS pipeline. What the Relying Party does with the Attestation Result — issue a credential, release a key, authorize an operation — is a Relying Party policy decision outside the scope of this profile. See the WIMSE Integration appendix for one such consumption pattern.</t>
 </section>
 
 <section anchor="v-gap-evidence-structure"><name>V-GAP Evidence Structure</name>
-<t>The <tt>lah-bundle</tt> is the RATS Evidence structure defined by this profile. It is a hardware-sealed object embedded as an X.509 extension (OID <tt>1.3.6.1.4.1.65284.1.1</tt>) in the workload identity credential (for example, a SPIFFE SVID). It binds a workload identity to physically verifiable claims — TPM hardware identity, privacy-preserving geolocation, and agent binary integrity — without exposing PII.</t>
+<t>The <tt>lah-bundle</tt> is the RATS Evidence structure defined by this profile. It is a hardware-sealed object produced by the Attester (LAH) and conveyed to the Verifier for appraisal. It binds platform integrity Claims (TPM identity, agent binary measurement) and geolocation Claims into a single TPM-quoted Evidence structure.</t>
 
 <section anchor="top-level-structure"><name>Top-Level Structure</name>
 
 <sourcecode type="json"><![CDATA[{
   "lah-bundle": { },
-  "mno-endorsement": { },
-  "workload": { }
+  "mno-endorsement": { }
 }
 ]]></sourcecode>
 </section>
@@ -284,7 +314,7 @@ Downstream Relying Party (mTLS peer)
 <tbody>
 <tr>
 <td align="left"><tt>tpm-ak</tt></td>
-<td align="left">string (Base64URL)</td>
+<td align="left">string (PEM)</td>
 <td align="center">Yes</td>
 <td align="left">TPM Attestation Key public key (PEM-encoded). Hardware identity anchor. The TPM enforces that only this key can produce <tt>tpm-quote-seal</tt> — proving co-residency.</td>
 </tr>
@@ -293,14 +323,14 @@ Downstream Relying Party (mTLS peer)
 <td align="left"><tt>geolocation-id-hash</tt></td>
 <td align="left">string (Base64URL)</td>
 <td align="center">Yes</td>
-<td align="left">SHA-256 over <tt>tpm-ak-bytes</tt> concatenated with any sensor-specific identifiers (see Sensor Type Input Recipes appendix for per-sensor constructions). Binds the TPM identity anchor to the geolocation sensor identity. Sensor integrity is assumed to be established by the host management plane via an out-of-band channel.</td>
+<td align="left">SHA-256 over the DER-encoded bytes of <tt>tpm-ak</tt> (denoted <tt>tpm-ak-bytes</tt>) concatenated with any sensor-specific identifiers (see Sensor Type Input Recipes appendix for per-sensor constructions). Binds the TPM identity anchor to the geolocation sensor identity. Sensor integrity is assumed to be established via an out-of-band channel (for example, hardware inventory or supply chain attestation).</td>
 </tr>
 
 <tr>
 <td align="left"><tt>geolocation-proof-hash</tt></td>
 <td align="left">string (Base64URL)</td>
 <td align="center">Yes</td>
-<td align="left">SHA-256 commitment over <tt>geolocation-payload</tt>. Required in both privacy modes. When <tt>privacy-technique=zkp</tt>: <tt>SHA-256(zkp-proof-bytes)</tt>. When <tt>privacy-technique=none</tt>: <tt>SHA-256(JCS({lat, lon, accuracy}))</tt>.</td>
+<td align="left">SHA-256 commitment over <tt>geolocation-payload</tt>, Base64URL-encoded. Required in both privacy modes. When <tt>privacy-technique=zkp</tt>: <tt>Base64URL(SHA-256(zkp-proof-bytes))</tt>. When <tt>privacy-technique=none</tt>: <tt>Base64URL(SHA-256(JCS({lat, lon, accuracy})))</tt> (JCS per {{!RFC8785}}).</td>
 </tr>
 
 <tr>
@@ -321,7 +351,7 @@ Downstream Relying Party (mTLS peer)
 <td align="left"><tt>nonce</tt></td>
 <td align="left">string (Base64URL)</td>
 <td align="center">Yes</td>
-<td align="left">Freshness nonce (N_fusion) issued by the Relying Party (Workload Identity Management Plane) for each attestation interval. Implementations may use chained nonce constructions for additional audit guarantees (see Nonce Chain and Merkle Audit Log appendix).</td>
+<td align="left">Freshness nonce (N_fusion) initiated by the Relying Party and delivered to the Attester by the Verifier for each attestation interval, per the nonce-based freshness model in {{!RFC9334}}, Section 10.2. Implementations may use chained nonce constructions for additional audit guarantees (see Nonce Chain and Merkle Audit Log appendix).</td>
 </tr>
 
 <tr>
@@ -335,14 +365,14 @@ Downstream Relying Party (mTLS peer)
 <td align="left"><tt>tpm-quote-seal</tt></td>
 <td align="left">string (Base64URL)</td>
 <td align="center">Yes</td>
-<td align="left"><tt>TPM2_Quote</tt> produced by the AK in <tt>tpm-ak</tt>. Qualifying data = <tt>SHA-256(JCS({tpm-ak, geolocation-id-hash, geolocation-proof-hash, privacy-technique, nonce, timestamp, workload-identity-agent-image-digest}))</tt>. Binds all fields into a single hardware-sealed statement.</td>
+<td align="left"><tt>TPM2_Quote</tt> produced by the AK in <tt>tpm-ak</tt>. Qualifying data = <tt>SHA-256(JCS({tpm-ak, geolocation-id-hash, geolocation-proof-hash, privacy-technique, nonce, timestamp, target-environment-image-digest}))</tt>. Binds all fields into a single hardware-sealed statement.</td>
 </tr>
 
 <tr>
-<td align="left"><tt>workload-identity-agent-image-digest</tt></td>
+<td align="left"><tt>target-environment-image-digest</tt></td>
 <td align="left">string (hex SHA-256)</td>
 <td align="center">Yes</td>
-<td align="left">SHA-256 digest of the Workload Identity Agent binary, measured at attestation time by the Verifier (Host Identity Management Plane). Detects agent binary compromise on every renewal cycle.</td>
+<td align="left">SHA-256 digest of the Target Environment (Workload Identity Agent) binary, measured at attestation time. Compared by the Verifier against Reference Values to detect agent binary compromise.</td>
 </tr>
 </tbody>
 </table></section>
@@ -439,35 +469,52 @@ Downstream Relying Party (mTLS peer)
 </tr>
 </tbody>
 </table></section>
+</section>
 
-<section anchor="workload-binding"><name>Workload Identity Binding</name>
-<t>The <tt>workload</tt> object binds the V-GAP Evidence to a specific workload identity, enabling the Verifier to associate platform and residency claims with the credential being issued.</t>
+<section anchor="attestation-result"><name>Attestation Result</name>
+<t>Upon successful appraisal of the <tt>lah-bundle</tt>, the Verifier produces an Attestation Result ({{!RFC9334}}, Section 8.4). This profile does not mandate a specific encoding for the Attestation Result. Implementations MAY express results using:</t>
+
+<ul spacing="compact">
+<li>EAT Attestation Result claims, including geographic claims per {{I-D.richardson-rats-geographic-results}};</li>
+<li>an X.509 extension (OID <tt>1.3.6.1.4.1.65284.1.1</tt>) embedded in a credential issued by a Relying Party acting as CA; or</li>
+<li>any other result encoding that satisfies the Relying Party's Appraisal Policy for Attestation Results.</li>
+</ul>
+<t>The Attestation Result MUST convey at minimum:</t>
 <table>
 <thead>
 <tr>
-<th align="left">Field</th>
-<th align="left">Type</th>
-<th align="center">Required</th>
+<th align="left">Claim</th>
 <th align="left">Description</th>
 </tr>
 </thead>
 
 <tbody>
 <tr>
-<td align="left"><tt>workload-id</tt></td>
-<td align="left">string (SPIFFE ID)</td>
-<td align="center">Yes</td>
-<td align="left">The workload's SPIFFE identity URI (e.g., <tt>spiffe://example.org/python-app</tt>).</td>
+<td align="left">Platform integrity</td>
+<td align="left">Whether the TPM quote was valid and PCR values matched Reference Values.</td>
 </tr>
 
 <tr>
-<td align="left"><tt>key-source</tt></td>
-<td align="left">string</td>
-<td align="center">Yes</td>
-<td align="left">Identifier for the origin of the workload's key material (for example, <tt>&quot;tpm-app-key&quot;</tt>). Values are deployment-specific; this field is recorded for audit and policy evaluation.</td>
+<td align="left">Agent integrity</td>
+<td align="left">Whether <tt>target-environment-image-digest</tt> matched a known-good Reference Value.</td>
+</tr>
+
+<tr>
+<td align="left">Residency</td>
+<td align="left">Whether the geolocation proof (raw or ZKP) satisfied the configured geofence policy.</td>
+</tr>
+
+<tr>
+<td align="left">Freshness</td>
+<td align="left">The attestation interval (nonce and timestamp) for which the result is valid.</td>
+</tr>
+
+<tr>
+<td align="left">Trust level</td>
+<td align="left">The location trust level achieved (see Location Trust Levels).</td>
 </tr>
 </tbody>
-</table></section>
+</table><t>When the Attestation Result is embedded in an X.509 extension and marked CRITICAL, any downstream consumer that does not understand the extension MUST reject the credential, enforcing fail-closed behavior.</t>
 </section>
 
 <section anchor="tpm-quote-verification-procedure"><name>TPM Quote Verification Procedure</name>
@@ -477,7 +524,7 @@ Downstream Relying Party (mTLS peer)
 <li>Decode <tt>tpm-quote-seal</tt> (Base64URL → bytes)</li>
 <li>Parse <tt>TPMS_ATTEST</tt> structure</li>
 <li>Assert <tt>TPMS_ATTEST.type == TPM_ST_ATTEST_QUOTE</tt></li>
-<li>Compute <tt>expected_qd = SHA-256(JCS({tpm-ak, geolocation-id-hash, geolocation-proof-hash, privacy-technique, nonce, timestamp, workload-identity-agent-image-digest}))</tt></li>
+<li>Compute <tt>expected_qd = SHA-256(JCS({tpm-ak, geolocation-id-hash, geolocation-proof-hash, privacy-technique, nonce, timestamp, target-environment-image-digest}))</tt></li>
 <li>Assert <tt>TPMS_ATTEST.qualifyingData == expected_qd</tt></li>
 <li>Verify signature over <tt>TPMS_ATTEST</tt> bytes using <tt>tpm-ak</tt> public key (RSASSA-PKCS1-v1_5 or ECDSA)</li>
 </ol>
@@ -488,11 +535,11 @@ Downstream Relying Party (mTLS peer)
 <t>To prevent mix-and-match and replay attacks, Verifiers MUST enforce the following:</t>
 
 <ul spacing="compact">
-<li>Attestation Results MUST be fresh and MUST be bound to the credential issuance event (for example, by cryptographically binding freshness values used for platform quotes and workload credential issuance within the Verifier result).</li>
-<li>The <tt>nonce</tt> field in the <tt>lah-bundle</tt> MUST be a freshness value issued by the Relying Party (Workload Identity Management Plane) for each attestation interval.</li>
+<li>Attestation Results MUST be fresh and MUST be bound to the appraisal event (for example, by cryptographically binding freshness values used for platform quotes within the Attestation Result).</li>
+<li>The <tt>nonce</tt> field in the <tt>lah-bundle</tt> MUST be a freshness value initiated by the Relying Party and delivered to the Attester by the Verifier for each attestation interval, per the nonce-based freshness model in {{!RFC9334}}, Section 10.2.</li>
 <li>Verifiers MUST reject Evidence where the <tt>timestamp</tt> falls outside the configured freshness window.</li>
 </ul>
-<t>Where policy requires it, the Verifier can additionally require that an agent software measurement (for example, image digest) is covered by validated platform Evidence, reducing the risk that a modified or unauthorized agent obtains credentials.</t>
+<t>Where policy requires it, the Verifier can additionally require that the Target Environment measurement (<tt>target-environment-image-digest</tt>) matches an approved Reference Value, reducing the risk that a modified or unauthorized agent produces accepted Evidence.</t>
 </section>
 </section>
 
@@ -503,19 +550,41 @@ Downstream Relying Party (mTLS peer)
 <li><strong>Replay and mix-and-match</strong>: Use nonces and evidence stapling so that old location evidence cannot be combined with a fresh platform quote (or vice versa).</li>
 <li><strong>Location spoofing</strong>: GNSS and mobile network signals must be treated as adversarial inputs; per-source threats and mitigations are detailed in the subsections below.</li>
 <li><strong>Relay and displacement</strong>: When proximity mechanisms are introduced in future profiles, implementers should be aware that they are vulnerable to relay attacks and anchor displacement. Mitigations (such as tight RTT-based acceptance windows and anchor health attestation) are deferred to those future profiles.</li>
-<li><strong>Management plane compromise</strong>: OOB paths reduce dependence on the host OS but introduce dependence on the management controller and its network. Protect this plane with secure boot, authenticated updates, strong access controls, network segmentation, and audit logging.</li>
+<li><strong>Management controller compromise</strong>: OOB paths reduce dependence on the host OS but introduce dependence on the management controller and its network. Protect this component with secure boot, authenticated updates, strong access controls, network segmentation, and audit logging.</li>
 <li><strong>Time and freshness</strong>: Verifiers MUST enforce bounded freshness windows and MUST define recovery behavior (re-attestation, quarantine, or revocation) when clocks drift or evidence becomes stale.</li>
-<li><strong>Registry and allowlist integrity</strong>: Protect key registries and policy stores against tampering; treat them as high-value privileged assets.</li>
-<li><strong>Privacy</strong>: Avoid unnecessary collection or retention of precise location data. Prefer &quot;in-zone&quot; proofs (ZKP) where policy permits.</li>
+<li><strong>Registry and allowlist integrity</strong>: Protect Reference Value stores and Appraisal Policy configurations against tampering; treat them as high-value privileged assets.</li>
+<li><strong>Privacy</strong>: Avoid unnecessary collection or retention of precise location data. Prefer &quot;in-zone&quot; proofs (ZKP) where policy permits. See the Privacy Applicability note below.</li>
 </ul>
 
+<section anchor="privacy-applicability"><name>Privacy Applicability</name>
+<t>The relevance of location privacy varies significantly by deployment context:</t>
+
+<ul spacing="compact">
+<li><strong>Datacenter and server environments</strong>: When an Attester is a server in a known datacenter, the physical location of the hardware is typically not sensitive — it may be a matter of public record or contractual documentation. In such deployments, <tt>privacy-technique = &quot;none&quot;</tt> (raw coordinates) is appropriate and the ZKP overhead is unnecessary.</li>
+<li><strong>User-facing and edge environments</strong>: When an Attester is a user device or edge node, precise coordinates may constitute Personally Identifiable Information (PII). In such deployments, <tt>privacy-technique = &quot;zkp&quot;</tt> SHOULD be used to prove geofence compliance without disclosing exact location.</li>
+<li><strong>Mixed deployments</strong>: Appraisal Policy for Evidence SHOULD allow the Verifier Owner to configure which privacy technique is acceptable per Attester class or per geofence policy.</li>
+</ul>
+<t>Implementers SHOULD select the privacy technique appropriate to their deployment context rather than applying ZKP uniformly.</t>
+</section>
+
 <section anchor="location-spoofing"><name>Location Spoofing</name>
+
+<section anchor="fundamental-limitation-sensor-data-provenance"><name>Fundamental Limitation: Sensor Data Provenance</name>
+<t>It is important to acknowledge that binding location Claims to a TPM quote (hardware provenance) does NOT, by itself, guarantee that the underlying sensor data is correct. A TPM can faithfully seal whatever data the sensor provides — including spoofed data. The TPM proves that the sealed data came from the measured platform; it does not prove that the sensor's input signals were authentic.</t>
+<t>Therefore, the security of V-GAP's geolocation Claims depends on BOTH:</t>
+
+<ol spacing="compact">
+<li><strong>Hardware provenance</strong> (addressed by the TPM quote and <tt>target-environment-image-digest</tt>): ensuring the data was processed by an approved, untampered platform.</li>
+<li><strong>Sensor input integrity</strong> (addressed by the mitigations below): ensuring the sensor received authentic signals rather than spoofed or replayed inputs.</li>
+</ol>
+<t>Implementers MUST NOT rely solely on TPM binding as evidence of correct location. The Appraisal Policy for Evidence SHOULD require corroborating evidence from independent channels and SHOULD specify minimum signal authentication requirements commensurate with the geofence policy's sensitivity.</t>
+</section>
 
 <section anchor="gnss-spoofing"><name>GNSS Spoofing</name>
 <t>GNSS signals are unauthenticated by default and can be spoofed via synthetic signal generators (e.g., software-defined radio replay of valid signals) or multipath injection. Implementers SHOULD apply mitigations proportional to the required assurance level:</t>
 
 <ul spacing="compact">
-<li><strong>Signal authentication</strong>: Galileo OSNMA (Open Service Navigation Message Authentication) provides cryptographic authentication of navigation messages and is the strongest available civilian countermeasure. GPS GAIA offers equivalent protection for GPS III signals. Implementations SHOULD prefer authenticated GNSS signals where available.</li>
+<li><strong>Signal authentication</strong>: Galileo OSNMA (Open Service Navigation Message Authentication) provides cryptographic authentication of navigation messages and is the strongest available civilian countermeasure. GPS NMA (Chimera), the Navigation Message Authentication scheme for GPS III L1C signals, offers equivalent protection. Implementations SHOULD prefer authenticated GNSS signals where available.</li>
 <li><strong>Multi-constellation cross-validation</strong>: Cross-checking fixes across independent constellations (GPS, Galileo, GLONASS, BeiDou) substantially raises the cost of spoofing; consistent simultaneous spoofing of all constellations requires significantly more attacker capability.</li>
 <li><strong>Anomaly detection</strong>: Sudden position jumps, implausible velocity changes, and anomalous signal-to-noise ratios are indicators of spoofing or jamming. Evidence that fails these checks SHOULD be rejected.</li>
 </ul>
@@ -530,6 +599,7 @@ Downstream Relying Party (mTLS peer)
 <li><strong>MNO root key compromise</strong>: The <tt>mno-endorsement</tt> is only as trustworthy as the MNO signing root. Verifiers MUST validate the <tt>mno-key-cert</tt> certificate chain to a known MNO root and SHOULD treat a root compromise as requiring immediate policy revocation.</li>
 </ul>
 <t>The CAMARA API model — where location is derived from carrier network infrastructure rather than device-reported cell identifiers — is more resistant to IMSI catcher attacks and is the RECOMMENDED approach when MNO corroboration is used.</t>
+<t>Notwithstanding these mitigations, MNO-derived location is ultimately under the control of the carrier infrastructure. A compromised or coerced MNO can produce false location endorsements. Verifiers SHOULD treat MNO endorsements as corroborating evidence rather than sole proof of residency, and Appraisal Policies SHOULD require independent corroboration (for example, GNSS + MNO) for high-assurance geofence policies.</t>
 </section>
 
 <section anchor="location-trust-levels"><name>Location Trust Levels</name>
@@ -555,7 +625,7 @@ Downstream Relying Party (mTLS peer)
 
 <tr>
 <td align="left">High</td>
-<td align="left">Authenticated GNSS (OSNMA or GAIA), or Medium GNSS + MNO corroboration</td>
+<td align="left">Authenticated GNSS (OSNMA or GPS NMA/Chimera), or Medium GNSS + MNO corroboration</td>
 </tr>
 
 <tr>
@@ -575,7 +645,7 @@ Downstream Relying Party (mTLS peer)
 </li>
 <li><t><strong>No trusted setup.</strong> Plonky2 is STARK-based and requires no trusted setup phase, eliminating the class of attacks arising from compromised SNARK setup parameters. Implementations substituting a different <tt>zkp-format</tt> MUST ensure it also provides transparent setup, or MUST document the resulting trust assumptions.</t>
 </li>
-<li><t><strong>Computational soundness.</strong> STARK security is computational, not unconditional, and relies on the collision resistance of the underlying hash function. Implementations SHOULD target at least 128-bit security and MUST document the proof system parameters (field size, hash function, FRI parameters) to enable independent security analysis.</t>
+<li><t><strong>Computational soundness.</strong> STARK security is computational, not unconditional, and relies on the collision resistance of the underlying hash function. Implementations SHOULD target at least 128-bit security. Note that Plonky2's default parameters target approximately 100 bits of security; achieving 128 bits requires explicit non-default parameter selection (field size, hash function, FRI blowup factor). Implementations MUST document the proof system parameters actually used to enable independent security analysis.</t>
 </li>
 <li><t><strong>Proof freshness.</strong> A valid ZKP proves location at proof-generation time. The nonce and timestamp freshness requirements that apply to <tt>tpm-quote-seal</tt> apply equally to ZKP proofs: Verifiers MUST reject proofs whose <tt>timestamp</tt> falls outside the configured freshness window.</t>
 </li>
@@ -590,10 +660,11 @@ Downstream Relying Party (mTLS peer)
 
 <ul spacing="compact">
 <li><strong>OID</strong>: <tt>1.3.6.1.4.1.65284.1.1</tt></li>
-<li><strong>Description</strong>: Verifiable Geofencing Attestation Profile (V-GAP) Evidence Bundle</li>
+<li><strong>Description</strong>: Verifiable Geofencing Attestation Profile (V-GAP) Evidence / Attestation Result</li>
 <li><strong>Reference</strong>: This document.</li>
-<li><strong>PEN</strong>: 65284 (IANA Private Enterprise Number assigned to Ram Krishnan)</li>
+<li><strong>PEN</strong>: 65284 (IANA Private Enterprise Number currently assigned to Ram Krishnan)</li>
 </ul>
+<t>Note: PEN 65284 is used provisionally for this draft. Prior to publication as an RFC, a formally allocated OID arc appropriate for an IETF standard MUST be obtained through the IANA process. The authors will coordinate with IANA to determine the appropriate registry and allocation procedure.</t>
 </section>
 
 </middle>
@@ -618,31 +689,32 @@ Email: saanvijay20@gmail.com</t>
 
 <section anchor="operational-guidance"><name>Operational Guidance</name>
 
-<section anchor="gating-credentials-on-verified-evidence"><name>Gating Credentials on Verified Evidence</name>
-<t>This profile assumes two cooperating control planes, mapped to RATS roles:</t>
+<section anchor="gating-decisions-on-attestation-results"><name>Gating Decisions on Attestation Results</name>
+<t>A Relying Party consumes the Attestation Result produced by the Verifier and applies its Appraisal Policy for Attestation Results to make application-specific decisions. Common decision types include:</t>
 
 <ul spacing="compact">
-<li><strong>Verifier (Host Identity Management Plane):</strong> Appraises platform integrity and residency Evidence and produces an Attestation Result.</li>
-<li><strong>Relying Party + Credential Issuer (Workload Identity Management Plane):</strong> Issues or renews workload identities (for example, SVIDs) only when the Attestation Result satisfies policy. Also acts as the CA that signs the resulting credential.</li>
+<li><strong>Credential issuance</strong>: Issue or renew a workload credential only when the Attestation Result satisfies policy.</li>
+<li><strong>Key release</strong>: Release decryption keys or model weights only to Attesters with a positive, fresh Attestation Result.</li>
+<li><strong>Access authorization</strong>: Gate access to sensitive APIs or data stores on a valid Attestation Result.</li>
 </ul>
 <t>In intermittently connected edge deployments, local operation can continue during outages, while centralized policy can be enforced on renewal and on release of high-value secrets once connectivity is available.</t>
 </section>
 
-<section anchor="distributed-identity-issuance-and-scaling"><name>Distributed Identity Issuance and Scaling</name>
-<t>To support edge deployments and intermittent connectivity, identity issuance may be distributed within a sovereign boundary.</t>
+<section anchor="distributed-credential-issuance-and-scaling"><name>Distributed Credential Issuance and Scaling</name>
+<t>To support edge deployments and intermittent connectivity, credential issuance by a Relying Party may be distributed within a sovereign boundary.</t>
 
 <ul spacing="compact">
-<li><strong>Edge issuance</strong>: Workload identities (for example, SVIDs) may be issued by an issuer deployed within the same boundary as the workloads.</li>
-<li><strong>Scoping</strong>: Issued identities should be scoped so they are not accepted outside the intended deployment boundary (for example, via trust bundle partitioning and policy).</li>
-<li><strong>Renewal gating</strong>: Issuers should renew short-lived identities only when the Verifier result for integrity and residency is valid for the requested freshness window.</li>
+<li><strong>Edge issuance</strong>: Credentials may be issued by a Relying Party deployed within the same boundary as the Attesters.</li>
+<li><strong>Scoping</strong>: Issued credentials should be scoped so they are not accepted outside the intended deployment boundary (for example, via trust bundle partitioning and policy).</li>
+<li><strong>Renewal gating</strong>: Relying Parties should renew short-lived credentials only when the Attestation Result for integrity and residency is valid for the requested freshness window.</li>
 </ul>
 </section>
 
-<section anchor="mobility-and-sovereign-handover"><name>Mobility and Sovereign Handover</name>
-<t>When a workload moves between anchors or boundaries, the Workload Identity Agent should obtain a new V-GAP bundle that reflects the new LAH and current residency.</t>
+<section anchor="mobility-and-handover"><name>Mobility and Handover</name>
+<t>When an Attester moves between anchors or boundaries, the Target Environment (Workload Identity Agent) should trigger a new V-GAP attestation cycle that reflects the new LAH and current residency.</t>
 <t>Verifiers should treat this as a normal re-attestation event:
 - platform integrity continuity can remain stable, but
-- residency checks should be re-evaluated for the new anchor/boundary.</t>
+- residency Claims should be re-evaluated against the geofence policy for the new anchor/boundary.</t>
 </section>
 
 <section anchor="location-anchor-hosts"><name>Location Anchor Hosts</name>
@@ -675,7 +747,7 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
 <tbody>
 <tr>
 <td align="left">Chained nonce</td>
-<td align="left">Input control — agent cannot submit without responding to the management plane's current state.</td>
+<td align="left">Input control — Attester cannot submit without responding to the Verifier's current state.</td>
 </tr>
 
 <tr>
@@ -688,7 +760,7 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
 <section anchor="key-registry-and-synchronization"><name>Key Registry and Synchronization</name>
 
 <ul spacing="compact">
-<li>A Cloud (central) Verifier (Host Identity Management Plane) maintains a registry of accepted AK public keys and associated metadata (for example, EK certificate chain, hardware identity, and status).</li>
+<li>A central Verifier maintains a registry of accepted AK public keys and associated metadata (for example, EK certificate chain, hardware identity, and status).</li>
 <li>An Edge Verifier may maintain a local registry to support disconnected operation and periodically synchronizes updates to the central registry.</li>
 </ul>
 </section>
@@ -697,7 +769,7 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
 <t>To prevent rogue key injection during rotation:</t>
 
 <ul spacing="compact">
-<li>The central registry should accept a new AK only if the edge plane provides a rotation proof that chains the new AK to previously accepted state.</li>
+<li>The central registry should accept a new AK only if the Edge Verifier provides a rotation proof that chains the new AK to previously accepted state.</li>
 <li>A rotation proof should be a JCS-canonicalized object signed by the previously accepted AK (or, if available, validated by a fresh hardware-rooted OOB quote).</li>
 </ul>
 
@@ -735,17 +807,17 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
 <section anchor="revocation-and-health-signals"><name>Revocation and Health Signals</name>
 
 <ul spacing="compact">
-<li>The edge plane should maintain a per-node health signal (for example, tamper, firmware policy violations).</li>
+<li>The Edge Verifier should maintain a per-node health signal (for example, tamper, firmware policy violations).</li>
 <li>On severe health signals, the Verifier should revoke the relevant AK(s) and reject identities derived from them according to policy.</li>
 </ul>
 </section>
 
-<section anchor="disconnected-operation-leased-identity"><name>Disconnected Operation (Leased Identity)</name>
-<t>For intermittent connectivity, the Verifier may issue identities with extended validity (a lease) under policy. If a lease is used:</t>
+<section anchor="disconnected-operation-leased-attestation-result"><name>Disconnected Operation (Leased Attestation Result)</name>
+<t>For intermittent connectivity, the Verifier may produce Attestation Results with extended validity (a lease) under policy. If a lease is used:</t>
 
 <ul spacing="compact">
-<li>The edge plane should revoke or refuse renewal locally on tamper/drift signals.</li>
-<li>The workload should re-attest and satisfy current policy on reconnection before renewal or release of high-value secrets.</li>
+<li>The Verifier should revoke or cease producing positive results locally on tamper/drift signals.</li>
+<li>The Attester should re-attest and satisfy current policy on reconnection before the Relying Party accepts a new Attestation Result or releases high-value secrets.</li>
 </ul>
 </section>
 </section>
@@ -754,11 +826,11 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
 <t>Implementations commonly fall into the following patterns, differing in how platform integrity Evidence and the <tt>tpm-quote-seal</tt> are collected:</t>
 
 <ul>
-<li><t><strong>In-band host attestation</strong>: Evidence collected by host software (for example, Keylime-style deployments). In this pattern, the Relying Party (for example, SPIRE Server) generates <tt>N_fusion</tt> and shares it with the Verifier (for example, the Keylime Verifier) over a server-to-server channel. The Keylime Verifier then delivers <tt>N_fusion</tt> to the Keylime Agent running on the host, which collects TPM and geolocation evidence, assembles the <tt>lah-bundle</tt>, and returns it via the host-side channel. This pattern is well-suited to commodity servers and cloud VMs where a BMC path is not available or not required.</t>
+<li><t><strong>In-band host attestation</strong>: Evidence collected by host software (for example, Keylime-style deployments). In this pattern, the Relying Party generates <tt>N_fusion</tt> and shares it with the Verifier (for example, the Keylime Verifier) over a server-to-server channel. The Verifier then delivers <tt>N_fusion</tt> to the Attester on the host, which collects TPM and geolocation Claims, assembles the <tt>lah-bundle</tt>, and returns it via the host-side channel. This pattern is well-suited to commodity servers and cloud VMs where a BMC path is not available or not required.</t>
 </li>
-<li><t><strong>Out-of-band management</strong>: Evidence collected via a management controller / BMC path (for example, iLO-class OOB management such as HPE OneView). In this pattern, the Relying Party (for example, SPIRE Server) generates <tt>N_fusion</tt> and shares it with the Verifier (for example, HPE OneView) over a server-to-server channel. The Verifier delivers <tt>N_fusion</tt> to the host via the BMC / OOB path — bypassing the host OS entirely. The host TPM seals the <tt>lah-bundle</tt> with that nonce, and the sealed bundle is returned via the same OOB path. This pattern is recommended for high-assurance environments where the host OS is part of the threat model.</t>
+<li><t><strong>Out-of-band management</strong>: Evidence collected via a management controller / BMC path (for example, iLO-class OOB management such as HPE OneView). In this pattern, the Relying Party generates <tt>N_fusion</tt> and shares it with the Verifier (for example, HPE OneView) over a server-to-server channel. The Verifier delivers <tt>N_fusion</tt> to the host via the BMC / OOB path — bypassing the host OS entirely. The host TPM seals the <tt>lah-bundle</tt> with that nonce, and the sealed bundle is returned via the same OOB path. This pattern is recommended for high-assurance environments where the host OS is part of the threat model.</t>
 </li>
-<li><t><strong>Cloud-hosted attestation environments</strong>: Provider mechanisms exposing measured boot and TPM-backed claims (for example, Nitro-class enclaves or shielded VM instances). The cloud provider supplies a hardware-rooted quote that can serve as the <tt>tpm-quote-seal</tt>; the geolocation claim is typically derived from the provider's zone or region attestation. Implementations should verify that the provider's attestation scope satisfies the geofence policy.</t>
+<li><t><strong>Cloud-hosted attestation environments</strong>: Provider mechanisms exposing measured boot and TPM-backed Claims (for example, Nitro-class enclaves or shielded VM instances). The cloud provider supplies a hardware-rooted quote that can serve as the <tt>tpm-quote-seal</tt>; the geolocation Claim is typically derived from the provider's zone or region attestation. Implementations should verify that the provider's attestation scope satisfies the geofence policy.</t>
 </li>
 </ul>
 </section>
@@ -767,9 +839,9 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
 <t>Relying parties and credential issuers can use V-GAP Attestation Results as inputs to authorization.</t>
 
 <ul spacing="compact">
-<li><strong>ABAC</strong>: Residency and integrity can be mandatory claims for sensitive operations.</li>
-<li><strong>KMS gatekeeping</strong>: Release of high-value assets (for example, decryption keys) should depend on a recent successful verification result.</li>
-<li><strong>Fail closed</strong>: If V-GAP Evidence is carried in an X.509 extension and marked CRITICAL, any implementation that does not understand the extension will reject the credential.</li>
+<li><strong>ABAC</strong>: Residency and integrity Claims from the Attestation Result can be mandatory attributes for sensitive operations.</li>
+<li><strong>KMS gatekeeping</strong>: Release of high-value assets (for example, decryption keys) should depend on a recent, positive Attestation Result.</li>
+<li><strong>Fail closed</strong>: When the Attestation Result is embedded in an X.509 extension marked CRITICAL, any consumer that does not understand the extension will reject the credential.</li>
 </ul>
 </section>
 
@@ -790,15 +862,11 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
     "nonce": "ZmUyZjdmMzlmZGVlZWQxOTM1YjY0Mjk0...",
     "timestamp": 1740693456,
     "tpm-quote-seal": "ARoAAQALAAUACwEA...",
-    "workload-identity-agent-image-digest": "a1b2c3d4e5f6...64-char-hex-sha256"
+    "target-environment-image-digest": "a1b2c3d4e5f6...64-char-hex-sha256"
   },
   "mno-endorsement": {
     "mno-key-cert": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8A...",
     "mno-sig": "MEYCIQDx9z2k..."
-  },
-  "workload": {
-    "workload-id": "spiffe://example.org/python-app",
-    "key-source": "tpm-app-key"
   }
 }
 ]]></sourcecode>
@@ -841,12 +909,91 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
 
 <ul spacing="compact">
 <li><strong>TPM 2.0</strong> hardware root of trust (AK-based quotes, PCR 15 TOCTOU protection)</li>
-<li><strong>SPIRE</strong> (Relying Party + Credential Issuer) with a custom <tt>unifiedidentity</tt> plugin that embeds the <tt>lah-bundle</tt> as an X.509 extension (OID <tt>1.3.6.1.4.1.65284.1.1</tt>)</li>
-<li><strong>Keylime</strong> (Verifier) with IMA measurement of the SPIRE agent binary (<tt>workload-identity-agent-image-digest</tt>)</li>
+<li><strong>SPIRE</strong> (Relying Party) with a custom <tt>unifiedidentity</tt> plugin that consumes V-GAP Attestation Results and embeds them as an X.509 extension (OID <tt>1.3.6.1.4.1.65284.1.1</tt>)</li>
+<li><strong>Keylime</strong> (Verifier) with IMA measurement of the Target Environment binary (<tt>target-environment-image-digest</tt>)</li>
 <li><strong>Plonky2</strong> STARK prover for <tt>privacy-technique = &quot;zkp&quot;</tt> geofence proofs</li>
 <li><strong>Geolocation sensor cascade</strong>: Mobile/CAMARA, GNSS/GPS, and config-file fallback with IMEI/IMSI binding for <tt>geolocation-id-hash</tt></li>
 </ul>
-<t>The implementation includes automated end-to-end tests (<tt>./run-demo.sh</tt>) that exercise the full attestation flow from TPM quote construction through ZKP proof generation and SVID issuance with embedded V-GAP Evidence.</t>
+<t>The implementation includes automated end-to-end tests (<tt>./run-demo.sh</tt>) that exercise the full attestation flow from TPM quote construction through ZKP proof generation and Attestation Result consumption.</t>
+</section>
+
+<section anchor="wimse-integration"><name>WIMSE Integration</name>
+<t>This appendix describes how a WIMSE deployment consumes V-GAP Attestation Results. The mapping is informative and does not constrain V-GAP's RATS profile.</t>
+
+<section anchor="relationship-to-wimse-architecture"><name>Relationship to WIMSE Architecture</name>
+<t>The WIMSE Architecture {{I-D.ietf-wimse-architecture}} defines a credential issuance and workload identity framework. V-GAP produces Attestation Results that WIMSE credential issuers consume as trust inputs. The following mapping shows how V-GAP RATS roles correspond to WIMSE entities:</t>
+<table>
+<thead>
+<tr>
+<th align="left">V-GAP RATS Role</th>
+<th align="left">WIMSE Entity</th>
+<th align="left">Function</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">Attester (LAH)</td>
+<td align="left">Platform hosting the SPIRE Agent</td>
+<td align="left">Produces V-GAP Evidence about the agent and platform.</td>
+</tr>
+
+<tr>
+<td align="left">Verifier</td>
+<td align="left">Platform integrity service (for example, Keylime)</td>
+<td align="left">Appraises Evidence and produces Attestation Results.</td>
+</tr>
+
+<tr>
+<td align="left">Relying Party</td>
+<td align="left">SPIRE Server (Credential Issuer / CA)</td>
+<td align="left">Consumes the Attestation Result; issues or renews X.509-SVIDs only when the result satisfies its Appraisal Policy for Attestation Results.</td>
+</tr>
+
+<tr>
+<td align="left">(out of V-GAP scope)</td>
+<td align="left">Workload</td>
+<td align="left">Receives its credential (for example, SVID) from the SPIRE Agent via transitive attestation {{I-D.mw-wimse-transitive-attestation}}.</td>
+</tr>
+
+<tr>
+<td align="left">(out of V-GAP scope)</td>
+<td align="left">Downstream service consumer (mTLS peer)</td>
+<td align="left">Consumes the issued credential; trusts the CA signature as proxy for verified integrity and residency.</td>
+</tr>
+</tbody>
+</table></section>
+
+<section anchor="workload-binding-fields"><name>Workload Binding Fields</name>
+<t>In a WIMSE deployment the Relying Party (SPIRE Server) may require additional context to associate the Attestation Result with a specific credential issuance event. The following fields are carried outside the V-GAP Evidence structure, typically in the credential issuance request or as Relying Party policy inputs:</t>
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left"><tt>workload-id</tt></td>
+<td align="left">string (SPIFFE ID)</td>
+<td align="left">The workload's SPIFFE identity URI (for example, <tt>spiffe://example.org/python-app</tt>).</td>
+</tr>
+
+<tr>
+<td align="left"><tt>key-source</tt></td>
+<td align="left">string</td>
+<td align="left">Identifier for the origin of the workload's key material (for example, <tt>&quot;tpm-app-key&quot;</tt>). Deployment-specific.</td>
+</tr>
+</tbody>
+</table><t>These fields are not part of V-GAP Evidence. They are consumed by the Relying Party when applying its Appraisal Policy for Attestation Results.</t>
+</section>
+
+<section anchor="x-509-extension-for-downstream-consumers"><name>X.509 Extension for Downstream Consumers</name>
+<t>When the WIMSE Relying Party acts as a CA (for example, SPIRE Server issuing X.509-SVIDs), it MAY embed V-GAP Attestation Result information as an X.509 extension (OID <tt>1.3.6.1.4.1.65284.1.1</tt>). Implementations SHOULD mark this extension as CRITICAL so that any downstream consumer that does not understand it will reject the credential, enforcing fail-closed behavior for residency-constrained workloads.</t>
+</section>
 </section>
 
 <section anchor="data-residency-references"><name>Data Residency References</name>

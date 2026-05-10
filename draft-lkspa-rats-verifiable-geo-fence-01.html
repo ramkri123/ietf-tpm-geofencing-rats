@@ -15,29 +15,28 @@
        This document defines the  Verifiable Geofencing Attestation Profile (V-GAP) , a profile of the RATS Architecture {{!RFC9334}}, that addresses these challenges through hardware-rooted cryptographic verifiability. V-GAP profiles a two-layer Attester: a TPM (Attesting Environment) measures a Workload Identity Agent (Target Environment), while geolocation Claims from one or more location sensors are sealed by the TPM into a single Evidence structure. This framework prioritizes location privacy by supporting Zero-Knowledge Proofs (ZKPs), allowing an Attester to prove it is within a compliant zone without disclosing precise coordinates. 
        By binding software agent identity to a persistent silicon root of trust and verified physical residency, V-GAP establishes a hardware-to-agent chain of trust. It ensures that a Relying Party can verify that an agent is running on untampered hardware within cryptographically verified, privacy-preserving geographic boundaries before issuing credentials or authorizing operations. 
     " name="description">
-<meta content="xml2rfc 3.31.0" name="generator">
+<meta content="xml2rfc 3.29.0" name="generator">
 <meta content="geofencing" name="keyword">
 <meta content="attestation" name="keyword">
 <meta content="residency" name="keyword">
 <meta content="TPM" name="keyword">
 <meta content="GNSS" name="keyword">
 <meta content="RATS" name="keyword">
-<meta content="draft-lkspa-rats-verifiable-geo-fence-02" name="ietf.draft">
+<meta name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.31.0
+  xml2rfc 3.29.0
     Python 3.10.12
     ConfigArgParse 1.7.1
     google-i18n-address 3.1.1
-    intervaltree 3.2.1
+    intervaltree 3.1.0
     Jinja2 3.1.6
-    lxml 6.0.2
-    platformdirs 4.5.1
-    pycountry 26.2.16
-    pypdf 6.7.5
+    lxml 5.4.0
+    platformdirs 4.3.8
+    pycountry 24.6.1
     PyYAML 5.4.1
-    requests 2.32.5
-    wcwidth 0.6.0
-    weasyprint 68.1
+    requests 2.31.0
+    setuptools 80.9.0
+    wcwidth 0.2.13
 -->
 <link href="draft-lkspa-rats-verifiable-geo-fence-01.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
@@ -55,9 +54,9 @@
 */
 
 /* fonts */
-@import url('https://static.ietf.org/fonts/noto-sans/import.css'); /* Sans-serif */
-@import url('https://static.ietf.org/fonts/noto-serif/import.css'); /* Serif (print) */
-@import url('https://static.ietf.org/fonts/roboto-mono/import.css'); /* Monospace */
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans'); /* Sans-serif */
+@import url('https://fonts.googleapis.com/css?family=Noto+Serif'); /* Serif (print) */
+@import url('https://fonts.googleapis.com/css?family=Roboto+Mono'); /* Monospace */
 
 :root {
   --font-sans: 'Noto Sans', Arial, Helvetica, sans-serif;
@@ -1199,7 +1198,6 @@ dl > dd > dl {
 /* This should match the element list in writer.text.TextWriter.render_dl() */
 dd > div.artwork:first-child,
 dd > aside:first-child,
-dd > blockquote:first-child,
 dd > figure:first-child,
 dd > ol:first-child,
 dd > div.sourcecode:first-child,
@@ -1224,6 +1222,7 @@ li > p:last-of-type:only-child {
 <script type="application/javascript">async function addMetadata(){try{const e=document.styleSheets[0].cssRules;for(let t=0;t<e.length;t++)if(/#identifiers/.exec(e[t].selectorText)){const a=e[t].cssText.replace("#identifiers","#external-updates");document.styleSheets[0].insertRule(a,document.styleSheets[0].cssRules.length)}}catch(e){console.log(e)}const e=document.getElementById("external-metadata");if(e)try{var t,a="",o=function(e){const t=document.getElementsByTagName("meta");for(let a=0;a<t.length;a++)if(t[a].getAttribute("name")===e)return t[a].getAttribute("content");return""}("rfc.number");if(o){t="https://www.rfc-editor.org/rfc/rfc"+o+".json";try{const e=await fetch(t);a=await e.json()}catch(e){t=document.URL.indexOf("html")>=0?document.URL.replace(/html$/,"json"):document.URL+".json";const o=await fetch(t);a=await o.json()}}if(!a)return;e.style.display="block";const s="",d="https://datatracker.ietf.org/doc",n="https://datatracker.ietf.org/ipr/search",c="https://www.rfc-editor.org/info",l=a.doc_id.toLowerCase(),i=a.doc_id.slice(0,3).toLowerCase(),f=a.doc_id.slice(3).replace(/^0+/,""),u={status:"Status",obsoletes:"Obsoletes",obsoleted_by:"Obsoleted By",updates:"Updates",updated_by:"Updated By",see_also:"See Also",errata_url:"Errata"};let h="<dl style='overflow:hidden' id='external-updates'>";["status","obsoletes","obsoleted_by","updates","updated_by","see_also","errata_url"].forEach(e=>{if("status"==e){a[e]=a[e].toLowerCase();var t=a[e].split(" "),o=t.length,w="",p=1;for(let e=0;e<o;e++)p<o?w=w+r(t[e])+" ":w+=r(t[e]),p++;a[e]=w}else if("obsoletes"==e||"obsoleted_by"==e||"updates"==e||"updated_by"==e){var g,m="",b=1;g=a[e].length;for(let t=0;t<g;t++)a[e][t]&&(a[e][t]=String(a[e][t]).toLowerCase(),m=b<g?m+"<a href='"+s+"/rfc/".concat(a[e][t])+"'>"+a[e][t].slice(3)+"</a>, ":m+"<a href='"+s+"/rfc/".concat(a[e][t])+"'>"+a[e][t].slice(3)+"</a>",b++);a[e]=m}else if("see_also"==e){var y,L="",C=1;y=a[e].length;for(let t=0;t<y;t++)if(a[e][t]){a[e][t]=String(a[e][t]);var _=a[e][t].slice(0,3),v=a[e][t].slice(3).replace(/^0+/,"");L=C<y?"RFC"!=_?L+"<a href='"+s+"/info/"+_.toLowerCase().concat(v.toLowerCase())+"'>"+_+" "+v+"</a>, ":L+"<a href='"+s+"/info/"+_.toLowerCase().concat(v.toLowerCase())+"'>"+v+"</a>, ":"RFC"!=_?L+"<a href='"+s+"/info/"+_.toLowerCase().concat(v.toLowerCase())+"'>"+_+" "+v+"</a>":L+"<a href='"+s+"/info/"+_.toLowerCase().concat(v.toLowerCase())+"'>"+v+"</a>",C++}a[e]=L}else if("errata_url"==e){var R="";R=a[e]?R+"<a href='"+a[e]+"'>Errata exist</a> | <a href='"+d+"/"+l+"'>Datatracker</a>| <a href='"+n+"/?"+i+"="+f+"&submit="+i+"'>IPR</a> | <a href='"+c+"/"+l+"'>Info page</a>":"<a href='"+d+"/"+l+"'>Datatracker</a> | <a href='"+n+"/?"+i+"="+f+"&submit="+i+"'>IPR</a> | <a href='"+c+"/"+l+"'>Info page</a>",a[e]=R}""!=a[e]?"Errata"==u[e]?h+=`<dt>More info:</dt><dd>${a[e]}</dd>`:h+=`<dt>${u[e]}:</dt><dd>${a[e]}</dd>`:"Errata"==u[e]&&(h+=`<dt>More info:</dt><dd>${a[e]}</dd>`)}),h+="</dl>",e.innerHTML=h}catch(e){console.log(e)}else console.log("Could not locate metadata <div> element");function r(e){return e.charAt(0).toUpperCase()+e.slice(1)}}window.removeEventListener("load",addMetadata),window.addEventListener("load",addMetadata);</script>
 </head>
 <body class="xml2rfc">
+<script src="metadata.min.js"></script>
 <table class="ears">
 <thead><tr>
 <td class="left">Internet-Draft</td>
@@ -1400,7 +1399,7 @@ li > p:last-of-type:only-child {
                     <p id="section-toc.1-1.5.2.3.2.3.1"><a href="#section-5.3.3" class="auto internal xref">5.3.3</a>.  <a href="#name-geolocation-payload-variant" class="internal xref">geolocation-payload Variants</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.3.2.4">
-                    <p id="section-toc.1-1.5.2.3.2.4.1"><a href="#section-5.3.4" class="auto internal xref">5.3.4</a>.  <a href="#name-mno-endorsement-rats-endors" class="internal xref">MNO Endorsement (RATS Endorsement)</a></p>
+                    <p id="section-toc.1-1.5.2.3.2.4.1"><a href="#section-5.3.4" class="auto internal xref">5.3.4</a>.  <a href="#name-mno-location-evidence-signe" class="internal xref">MNO Location Evidence (Signed Claim Source)</a></p>
 </li>
                 </ul>
 </li>
@@ -1447,92 +1446,103 @@ li > p:last-of-type:only-child {
             <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
-            <p id="section-toc.1-1.8.1"><a href="#appendix-A" class="auto internal xref">Appendix A</a>.  <a href="#name-contributors" class="internal xref">Contributors</a></p>
-</li>
-          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
-            <p id="section-toc.1-1.9.1"><a href="#appendix-B" class="auto internal xref">Appendix B</a>.  <a href="#name-operational-guidance" class="internal xref">Operational Guidance</a></p>
+            <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-references" class="internal xref">References</a></p>
 <ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.1">
-                <p id="section-toc.1-1.9.2.1.1"><a href="#appendix-B.1" class="auto internal xref">B.1</a>.  <a href="#name-gating-decisions-on-attesta" class="internal xref">Gating Decisions on Attestation Results</a></p>
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.1">
+                <p id="section-toc.1-1.8.2.1.1"><a href="#section-8.1" class="auto internal xref">8.1</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
 </li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.2">
-                <p id="section-toc.1-1.9.2.2.1"><a href="#appendix-B.2" class="auto internal xref">B.2</a>.  <a href="#name-distributed-credential-issu" class="internal xref">Distributed Credential Issuance and Scaling</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.3">
-                <p id="section-toc.1-1.9.2.3.1"><a href="#appendix-B.3" class="auto internal xref">B.3</a>.  <a href="#name-mobility-and-handover" class="internal xref">Mobility and Handover</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.4">
-                <p id="section-toc.1-1.9.2.4.1"><a href="#appendix-B.4" class="auto internal xref">B.4</a>.  <a href="#name-location-anchor-hosts" class="internal xref">Location Anchor Hosts</a></p>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.2">
+                <p id="section-toc.1-1.8.2.2.1"><a href="#section-8.2" class="auto internal xref">8.2</a>.  <a href="#name-informative-references" class="internal xref">Informative References</a></p>
 </li>
             </ul>
 </li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
+            <p id="section-toc.1-1.9.1"><a href="#appendix-A" class="auto internal xref">Appendix A</a>.  <a href="#name-contributors" class="internal xref">Contributors</a></p>
+</li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
-            <p id="section-toc.1-1.10.1"><a href="#appendix-C" class="auto internal xref">Appendix C</a>.  <a href="#name-scalable-fleet-management" class="internal xref">Scalable Fleet Management</a></p>
+            <p id="section-toc.1-1.10.1"><a href="#appendix-B" class="auto internal xref">Appendix B</a>.  <a href="#name-operational-guidance" class="internal xref">Operational Guidance</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.1">
-                <p id="section-toc.1-1.10.2.1.1"><a href="#appendix-C.1" class="auto internal xref">C.1</a>.  <a href="#name-nonce-chain-and-merkle-audi" class="internal xref">Nonce Chain and Merkle Audit Log</a></p>
+                <p id="section-toc.1-1.10.2.1.1"><a href="#appendix-B.1" class="auto internal xref">B.1</a>.  <a href="#name-gating-decisions-on-attesta" class="internal xref">Gating Decisions on Attestation Results</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.2">
-                <p id="section-toc.1-1.10.2.2.1"><a href="#appendix-C.2" class="auto internal xref">C.2</a>.  <a href="#name-key-registry-and-synchroniz" class="internal xref">Key Registry and Synchronization</a></p>
+                <p id="section-toc.1-1.10.2.2.1"><a href="#appendix-B.2" class="auto internal xref">B.2</a>.  <a href="#name-distributed-credential-issu" class="internal xref">Distributed Credential Issuance and Scaling</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.3">
-                <p id="section-toc.1-1.10.2.3.1"><a href="#appendix-C.3" class="auto internal xref">C.3</a>.  <a href="#name-key-rotation" class="internal xref">Key Rotation</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.3.2.1">
-                    <p id="section-toc.1-1.10.2.3.2.1.1"><a href="#appendix-C.3.1" class="auto internal xref">C.3.1</a>.  <a href="#name-example-rotation-proof" class="internal xref">Example Rotation Proof</a></p>
-</li>
-                </ul>
+                <p id="section-toc.1-1.10.2.3.1"><a href="#appendix-B.3" class="auto internal xref">B.3</a>.  <a href="#name-mobility-and-handover" class="internal xref">Mobility and Handover</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.4">
-                <p id="section-toc.1-1.10.2.4.1"><a href="#appendix-C.4" class="auto internal xref">C.4</a>.  <a href="#name-credential-activation-and-r" class="internal xref">Credential Activation and Re-Verification</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.5">
-                <p id="section-toc.1-1.10.2.5.1"><a href="#appendix-C.5" class="auto internal xref">C.5</a>.  <a href="#name-revocation-and-health-signa" class="internal xref">Revocation and Health Signals</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.6">
-                <p id="section-toc.1-1.10.2.6.1"><a href="#appendix-C.6" class="auto internal xref">C.6</a>.  <a href="#name-disconnected-operation-leas" class="internal xref">Disconnected Operation (Leased Attestation Result)</a></p>
+                <p id="section-toc.1-1.10.2.4.1"><a href="#appendix-B.4" class="auto internal xref">B.4</a>.  <a href="#name-location-anchor-hosts" class="internal xref">Location Anchor Hosts</a></p>
 </li>
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
-            <p id="section-toc.1-1.11.1"><a href="#appendix-D" class="auto internal xref">Appendix D</a>.  <a href="#name-deployment-patterns" class="internal xref">Deployment Patterns</a></p>
+            <p id="section-toc.1-1.11.1"><a href="#appendix-C" class="auto internal xref">Appendix C</a>.  <a href="#name-scalable-fleet-management" class="internal xref">Scalable Fleet Management</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.1">
+                <p id="section-toc.1-1.11.2.1.1"><a href="#appendix-C.1" class="auto internal xref">C.1</a>.  <a href="#name-nonce-chain-and-merkle-audi" class="internal xref">Nonce Chain and Merkle Audit Log</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.2">
+                <p id="section-toc.1-1.11.2.2.1"><a href="#appendix-C.2" class="auto internal xref">C.2</a>.  <a href="#name-key-registry-and-synchroniz" class="internal xref">Key Registry and Synchronization</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.3">
+                <p id="section-toc.1-1.11.2.3.1"><a href="#appendix-C.3" class="auto internal xref">C.3</a>.  <a href="#name-key-rotation" class="internal xref">Key Rotation</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.3.2.1">
+                    <p id="section-toc.1-1.11.2.3.2.1.1"><a href="#appendix-C.3.1" class="auto internal xref">C.3.1</a>.  <a href="#name-example-rotation-proof" class="internal xref">Example Rotation Proof</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.4">
+                <p id="section-toc.1-1.11.2.4.1"><a href="#appendix-C.4" class="auto internal xref">C.4</a>.  <a href="#name-credential-activation-and-r" class="internal xref">Credential Activation and Re-Verification</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.5">
+                <p id="section-toc.1-1.11.2.5.1"><a href="#appendix-C.5" class="auto internal xref">C.5</a>.  <a href="#name-revocation-and-health-signa" class="internal xref">Revocation and Health Signals</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.6">
+                <p id="section-toc.1-1.11.2.6.1"><a href="#appendix-C.6" class="auto internal xref">C.6</a>.  <a href="#name-disconnected-operation-leas" class="internal xref">Disconnected Operation (Leased Attestation Result)</a></p>
+</li>
+            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12">
-            <p id="section-toc.1-1.12.1"><a href="#appendix-E" class="auto internal xref">Appendix E</a>.  <a href="#name-policy-use" class="internal xref">Policy Use</a></p>
+            <p id="section-toc.1-1.12.1"><a href="#appendix-D" class="auto internal xref">Appendix D</a>.  <a href="#name-deployment-patterns" class="internal xref">Deployment Patterns</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13">
-            <p id="section-toc.1-1.13.1"><a href="#appendix-F" class="auto internal xref">Appendix F</a>.  <a href="#name-v-gap-examples-and-sensor-r" class="internal xref">V-GAP Examples and Sensor Recipes</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.1">
-                <p id="section-toc.1-1.13.2.1.1"><a href="#appendix-F.1" class="auto internal xref">F.1</a>.  <a href="#name-example-instance-privacy-te" class="internal xref">Example Instance (privacy-technique = "zkp")</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.2">
-                <p id="section-toc.1-1.13.2.2.1"><a href="#appendix-F.2" class="auto internal xref">F.2</a>.  <a href="#name-sensor-type-input-recipes" class="internal xref">Sensor Type Input Recipes</a></p>
-</li>
-            </ul>
+            <p id="section-toc.1-1.13.1"><a href="#appendix-E" class="auto internal xref">Appendix E</a>.  <a href="#name-policy-use" class="internal xref">Policy Use</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14">
-            <p id="section-toc.1-1.14.1"><a href="#appendix-G" class="auto internal xref">Appendix G</a>.  <a href="#name-implementation-status" class="internal xref">Implementation Status</a></p>
-</li>
-          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.15">
-            <p id="section-toc.1-1.15.1"><a href="#appendix-H" class="auto internal xref">Appendix H</a>.  <a href="#name-wimse-integration" class="internal xref">WIMSE Integration</a></p>
+            <p id="section-toc.1-1.14.1"><a href="#appendix-F" class="auto internal xref">Appendix F</a>.  <a href="#name-v-gap-examples-and-sensor-r" class="internal xref">V-GAP Examples and Sensor Recipes</a></p>
 <ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.15.2.1">
-                <p id="section-toc.1-1.15.2.1.1"><a href="#appendix-H.1" class="auto internal xref">H.1</a>.  <a href="#name-relationship-to-wimse-archi" class="internal xref">Relationship to WIMSE Architecture</a></p>
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14.2.1">
+                <p id="section-toc.1-1.14.2.1.1"><a href="#appendix-F.1" class="auto internal xref">F.1</a>.  <a href="#name-example-instance-privacy-te" class="internal xref">Example Instance (privacy-technique = "zkp")</a></p>
 </li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.15.2.2">
-                <p id="section-toc.1-1.15.2.2.1"><a href="#appendix-H.2" class="auto internal xref">H.2</a>.  <a href="#name-workload-binding-fields" class="internal xref">Workload Binding Fields</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.15.2.3">
-                <p id="section-toc.1-1.15.2.3.1"><a href="#appendix-H.3" class="auto internal xref">H.3</a>.  <a href="#name-x509-extension-for-downstre" class="internal xref">X.509 Extension for Downstream Consumers</a></p>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14.2.2">
+                <p id="section-toc.1-1.14.2.2.1"><a href="#appendix-F.2" class="auto internal xref">F.2</a>.  <a href="#name-sensor-type-input-recipes" class="internal xref">Sensor Type Input Recipes</a></p>
 </li>
             </ul>
 </li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.15">
+            <p id="section-toc.1-1.15.1"><a href="#appendix-G" class="auto internal xref">Appendix G</a>.  <a href="#name-implementation-status" class="internal xref">Implementation Status</a></p>
+</li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.16">
-            <p id="section-toc.1-1.16.1"><a href="#appendix-I" class="auto internal xref">Appendix I</a>.  <a href="#name-data-residency-references" class="internal xref">Data Residency References</a></p>
+            <p id="section-toc.1-1.16.1"><a href="#appendix-H" class="auto internal xref">Appendix H</a>.  <a href="#name-wimse-integration" class="internal xref">WIMSE Integration</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.16.2.1">
+                <p id="section-toc.1-1.16.2.1.1"><a href="#appendix-H.1" class="auto internal xref">H.1</a>.  <a href="#name-relationship-to-wimse-archi" class="internal xref">Relationship to WIMSE Architecture</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.16.2.2">
+                <p id="section-toc.1-1.16.2.2.1"><a href="#appendix-H.2" class="auto internal xref">H.2</a>.  <a href="#name-workload-binding-fields" class="internal xref">Workload Binding Fields</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.16.2.3">
+                <p id="section-toc.1-1.16.2.3.1"><a href="#appendix-H.3" class="auto internal xref">H.3</a>.  <a href="#name-x509-extension-for-downstre" class="internal xref">X.509 Extension for Downstream Consumers</a></p>
+</li>
+            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.17">
-            <p id="section-toc.1-1.17.1"><a href="#appendix-J" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
+            <p id="section-toc.1-1.17.1"><a href="#appendix-I" class="auto internal xref">Appendix I</a>.  <a href="#name-data-residency-references" class="internal xref">Data Residency References</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.18">
+            <p id="section-toc.1-1.18.1"><a href="#appendix-J" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
 </li>
         </ul>
 </nav>
@@ -1544,22 +1554,24 @@ li > p:last-of-type:only-child {
 <a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
 <p id="section-1-1">Operators of sovereign and high-assurance workloads need cryptographic assurance that sensitive computation occurs only on approved hardware within approved geographic boundaries. Traditional methods — IP-based geolocation, region labels, bearer tokens — are easily spoofed, stolen, or replayed and provide no hardware-rooted verifiability. Key gaps include:<a href="#section-1-1" class="pilcrow">¶</a></p>
-<ul class="compact">
-<li class="compact" id="section-1-2.1">
-          <strong>Unverifiable location metadata:</strong> Location tags for data objects are typically unsigned, making provenance and integrity difficult to validate.<a href="#section-1-2.1" class="pilcrow">¶</a>
+<ul class="normal">
+<li class="normal" id="section-1-2.1">
+          <p id="section-1-2.1.1"><strong>Unverifiable location metadata:</strong> Location tags for data objects are typically unsigned, making provenance and integrity difficult to validate.<a href="#section-1-2.1.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="compact" id="section-1-2.2">
-          <strong>Token theft and replay:</strong> Bearer tokens can be copied and replayed from unauthorized hosts or locations.<a href="#section-1-2.2" class="pilcrow">¶</a>
+        <li class="normal" id="section-1-2.2">
+          <p id="section-1-2.2.1"><strong>Token theft and replay:</strong> Bearer tokens can be copied and replayed from unauthorized hosts or locations.<a href="#section-1-2.2.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="compact" id="section-1-2.3">
-          <strong>Implicit trust in "region" and transit:</strong> A relying party often cannot cryptographically verify a server's physical residency, and requests may traverse intermediaries that expand the effective trust boundary.<a href="#section-1-2.3" class="pilcrow">¶</a>
+        <li class="normal" id="section-1-2.3">
+          <p id="section-1-2.3.1"><strong>Implicit trust in "region" and transit:</strong> A relying party often cannot cryptographically verify a server's physical residency, and requests may traverse intermediaries that expand the effective trust boundary.<a href="#section-1-2.3.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
 <p id="section-1-3">This document defines the Verifiable Geofencing Attestation Profile (V-GAP), a profile of the RATS Architecture {{!RFC9334}} that makes <strong>platform integrity</strong> and <strong>geofence residency</strong> cryptographically verifiable. V-GAP enables a Verifier to appraise Evidence that:<a href="#section-1-3" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="compact type-1" id="section-1-4">
-<li id="section-1-4.1">the Workload Identity Agent (Target Environment) is running on an approved, measured platform whose Attesting Environment is a TPM (platform integrity); and<a href="#section-1-4.1" class="pilcrow">¶</a>
+<ol start="1" type="1" class="normal type-1" id="section-1-4">
+<li id="section-1-4.1">
+          <p id="section-1-4.1.1">the Workload Identity Agent (Target Environment) is running on an approved, measured platform whose Attesting Environment is a TPM (platform integrity); and<a href="#section-1-4.1.1" class="pilcrow">¶</a></p>
 </li>
-        <li id="section-1-4.2">the platform is resident within an approved geographic boundary, optionally without revealing coordinates (residency).<a href="#section-1-4.2" class="pilcrow">¶</a>
+        <li id="section-1-4.2">
+          <p id="section-1-4.2.1">that platform is resident within an approved geographic boundary, optionally without revealing coordinates (residency).<a href="#section-1-4.2.1" class="pilcrow">¶</a></p>
 </li>
       </ol>
 <p id="section-1-5">To maintain location privacy while providing cryptographic verifiability, V-GAP supports Transparent Zero-Knowledge Proofs (ZKPs) — non-interactive, hash-based proofs that allow an Attester to demonstrate "in-zone" residency without disclosing exact coordinates and without requiring a trusted setup.<a href="#section-1-5" class="pilcrow">¶</a></p>
@@ -1585,7 +1597,7 @@ li > p:last-of-type:only-child {
                 <strong>Layer A</strong> (immutable root)</td>
               <td class="text-left" rowspan="1" colspan="1">Attesting Environment</td>
               <td class="text-left" rowspan="1" colspan="1">TPM + Location Sensor (Claim source)</td>
-              <td class="text-left" rowspan="1" colspan="1">Measures the agent binary; seals all Claims (integrity + geolocation) into a TPM quote. Endorsed by TPM manufacturer (EK cert) and optionally by MNO (<code>mno-endorsement</code>).</td>
+              <td class="text-left" rowspan="1" colspan="1">Measures the agent binary; seals all Claims (integrity + geolocation) into a TPM quote. Endorsed by TPM manufacturer (EK cert). MNO location statements (<code>mno-location</code>), when present, are integrated as a signed Claim source.</td>
             </tr>
             <tr>
               <td class="text-left" rowspan="1" colspan="1">
@@ -1621,7 +1633,7 @@ li > p:last-of-type:only-child {
           <h4 id="name-geolocation-methods-as-comp">
 <a href="#section-1.2.2" class="section-number selfRef">1.2.2. </a><a href="#name-geolocation-methods-as-comp" class="section-name selfRef">Geolocation Methods as Composable Claim Sources</a>
           </h4>
-<p id="section-1.2.2-1">V-GAP is designed so that different geolocation methods (GNSS, MNO/CAMARA, timing-based, provider region attestation) can independently produce Claims that feed into a common Evidence structure and ultimately into a common Attestation Result format. Each method has distinct security properties and threat models (see Security Considerations). Implementations SHOULD treat geolocation methods as composable and independently appraised Claim sources rather than requiring a single method. This design allows the security considerations for each method to be evaluated independently while the Attestation Result remains uniform.<a href="#section-1.2.2-1" class="pilcrow">¶</a></p>
+<p id="section-1.2.2-1">V-GAP is designed so that different geolocation methods (GNSS, MNO/CAMARA, timing-based, provider region attestation, latency-bounded anchor networks such as SovCert, and emerging quantum-derived location proofs) can independently produce Claims that feed into a common Evidence structure and ultimately into a common Attestation Result format. Each method has distinct security properties and threat models (see Security Considerations). Implementations SHOULD treat geolocation methods as composable and independently appraised Claim sources rather than requiring a single method. This design allows the security considerations for each method to be evaluated independently while the Attestation Result remains uniform.<a href="#section-1.2.2-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="other-potentially-related-work">
@@ -1629,7 +1641,7 @@ li > p:last-of-type:only-child {
           <h4 id="name-other-potentially-related-w">
 <a href="#section-1.2.3" class="section-number selfRef">1.2.3. </a><a href="#name-other-potentially-related-w" class="section-name selfRef">Other Potentially Related Work</a>
           </h4>
-<p id="section-1.2.3-1">The "Sovereign Certificates" initiative (sovcert.org) has been raised as potentially related work. The website appears to be a single-entity effort without broad community review or standardization process participation. Future revisions of this document will assess alignment or differentiation if the initiative matures or publishes through a recognized standards body.<a href="#section-1.2.3-1" class="pilcrow">¶</a></p>
+<p id="section-1.2.3-1">The "Sovereign Certificates" initiative (sovcert.org) proposes latency-bounded location inference using dedicated network anchors. The initiative appears to be a single-entity effort without broad community review or standardization process participation. Nonetheless, the SovCert proposal is structurally compatible with V-GAP: SovCert "anchors" produce signed location measurements that are functionally equivalent to other geolocation Claim sources (GNSS, MNO/CAMARA, timing-based). A SovCert location statement could be integrated into the V-GAP Evidence structure as an additional signed Claim source, following the same composable model used for MNO location evidence (see <code>mno-location</code>). Future revisions of this document will assess formal integration if the initiative matures or publishes through a recognized standards body.<a href="#section-1.2.3-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1647,66 +1659,69 @@ li > p:last-of-type:only-child {
         <h3 id="name-abbreviations">
 <a href="#section-2.1" class="section-number selfRef">2.1. </a><a href="#name-abbreviations" class="section-name selfRef">Abbreviations</a>
         </h3>
-<ul class="compact">
-<li class="compact" id="section-2.1-1.1">
-            <strong>AK</strong>: Attestation Key<a href="#section-2.1-1.1" class="pilcrow">¶</a>
+<ul class="normal">
+<li class="normal" id="section-2.1-1.1">
+            <p id="section-2.1-1.1.1"><strong>AK</strong>: Attestation Key<a href="#section-2.1-1.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact" id="section-2.1-1.2">
-            <strong>BMC</strong>: Baseboard Management Controller<a href="#section-2.1-1.2" class="pilcrow">¶</a>
+          <li class="normal" id="section-2.1-1.2">
+            <p id="section-2.1-1.2.1"><strong>BMC</strong>: Baseboard Management Controller<a href="#section-2.1-1.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact" id="section-2.1-1.3">
-            <strong>DAA</strong>: Direct Anonymous Attestation<a href="#section-2.1-1.3" class="pilcrow">¶</a>
+          <li class="normal" id="section-2.1-1.3">
+            <p id="section-2.1-1.3.1"><strong>DAA</strong>: Direct Anonymous Attestation<a href="#section-2.1-1.3.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact" id="section-2.1-1.4">
-            <strong>EAT</strong>: Entity Attestation Token<a href="#section-2.1-1.4" class="pilcrow">¶</a>
+          <li class="normal" id="section-2.1-1.4">
+            <p id="section-2.1-1.4.1"><strong>EAT</strong>: Entity Attestation Token<a href="#section-2.1-1.4.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact" id="section-2.1-1.5">
-            <strong>EK</strong>: Endorsement Key<a href="#section-2.1-1.5" class="pilcrow">¶</a>
+          <li class="normal" id="section-2.1-1.5">
+            <p id="section-2.1-1.5.1"><strong>EK</strong>: Endorsement Key<a href="#section-2.1-1.5.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact" id="section-2.1-1.6">
-            <strong>GNSS</strong>: Global Navigation Satellite System<a href="#section-2.1-1.6" class="pilcrow">¶</a>
+          <li class="normal" id="section-2.1-1.6">
+            <p id="section-2.1-1.6.1"><strong>GNSS</strong>: Global Navigation Satellite System<a href="#section-2.1-1.6.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact" id="section-2.1-1.7">
-            <strong>IMA</strong>: Integrity Measurement Architecture<a href="#section-2.1-1.7" class="pilcrow">¶</a>
+          <li class="normal" id="section-2.1-1.7">
+            <p id="section-2.1-1.7.1"><strong>IMA</strong>: Integrity Measurement Architecture<a href="#section-2.1-1.7.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact" id="section-2.1-1.8">
-            <strong>IMEI</strong>: International Mobile Equipment Identity<a href="#section-2.1-1.8" class="pilcrow">¶</a>
+          <li class="normal" id="section-2.1-1.8">
+            <p id="section-2.1-1.8.1"><strong>IMEI</strong>: International Mobile Equipment Identity<a href="#section-2.1-1.8.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact" id="section-2.1-1.9">
-            <strong>IMSI</strong>: International Mobile Subscriber Identity<a href="#section-2.1-1.9" class="pilcrow">¶</a>
+          <li class="normal" id="section-2.1-1.9">
+            <p id="section-2.1-1.9.1"><strong>IMSI</strong>: International Mobile Subscriber Identity<a href="#section-2.1-1.9.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact" id="section-2.1-1.10">
-            <strong>LAH</strong>: Location Anchor Host<a href="#section-2.1-1.10" class="pilcrow">¶</a>
+          <li class="normal" id="section-2.1-1.10">
+            <p id="section-2.1-1.10.1"><strong>LAH</strong>: Location Anchor Host<a href="#section-2.1-1.10.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact" id="section-2.1-1.11">
-            <strong>OOB</strong>: Out-of-Band<a href="#section-2.1-1.11" class="pilcrow">¶</a>
+          <li class="normal" id="section-2.1-1.11">
+            <p id="section-2.1-1.11.1"><strong>MNO</strong>: Mobile Network Operator<a href="#section-2.1-1.11.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact" id="section-2.1-1.12">
-            <strong>PCR</strong>: Platform Configuration Register<a href="#section-2.1-1.12" class="pilcrow">¶</a>
+          <li class="normal" id="section-2.1-1.12">
+            <p id="section-2.1-1.12.1"><strong>OOB</strong>: Out-of-Band<a href="#section-2.1-1.12.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact" id="section-2.1-1.13">
-            <strong>PoR</strong>: Proof of Residency<a href="#section-2.1-1.13" class="pilcrow">¶</a>
+          <li class="normal" id="section-2.1-1.13">
+            <p id="section-2.1-1.13.1"><strong>PCR</strong>: Platform Configuration Register<a href="#section-2.1-1.13.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact" id="section-2.1-1.14">
-            <strong>SPDM</strong>: Security Protocol and Data Model<a href="#section-2.1-1.14" class="pilcrow">¶</a>
+          <li class="normal" id="section-2.1-1.14">
+            <p id="section-2.1-1.14.1"><strong>PoR</strong>: Proof of Residency<a href="#section-2.1-1.14.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact" id="section-2.1-1.15">
-            <strong>STARK</strong>: Scalable Transparent ARgument of Knowledge<a href="#section-2.1-1.15" class="pilcrow">¶</a>
+          <li class="normal" id="section-2.1-1.15">
+            <p id="section-2.1-1.15.1"><strong>SPDM</strong>: Security Protocol and Data Model<a href="#section-2.1-1.15.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact" id="section-2.1-1.16">
-            <strong>SVID</strong>: SPIFFE Verifiable Identity Document<a href="#section-2.1-1.16" class="pilcrow">¶</a>
+          <li class="normal" id="section-2.1-1.16">
+            <p id="section-2.1-1.16.1"><strong>STARK</strong>: Scalable Transparent ARgument of Knowledge<a href="#section-2.1-1.16.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact" id="section-2.1-1.17">
-            <strong>TEE</strong>: Trusted Execution Environment<a href="#section-2.1-1.17" class="pilcrow">¶</a>
+          <li class="normal" id="section-2.1-1.17">
+            <p id="section-2.1-1.17.1"><strong>SVID</strong>: SPIFFE Verifiable Identity Document<a href="#section-2.1-1.17.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact" id="section-2.1-1.18">
-            <strong>TPM</strong>: Trusted Platform Module<a href="#section-2.1-1.18" class="pilcrow">¶</a>
+          <li class="normal" id="section-2.1-1.18">
+            <p id="section-2.1-1.18.1"><strong>TEE</strong>: Trusted Execution Environment<a href="#section-2.1-1.18.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact" id="section-2.1-1.19">
-            <strong>V-GAP</strong>: Verifiable Geofencing Attestation Profile<a href="#section-2.1-1.19" class="pilcrow">¶</a>
+          <li class="normal" id="section-2.1-1.19">
+            <p id="section-2.1-1.19.1"><strong>TPM</strong>: Trusted Platform Module<a href="#section-2.1-1.19.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact" id="section-2.1-1.20">
-            <strong>ZKP</strong>: Zero-Knowledge Proof<a href="#section-2.1-1.20" class="pilcrow">¶</a>
+          <li class="normal" id="section-2.1-1.20">
+            <p id="section-2.1-1.20.1"><strong>V-GAP</strong>: Verifiable Geofencing Attestation Profile<a href="#section-2.1-1.20.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-2.1-1.21">
+            <p id="section-2.1-1.21.1"><strong>ZKP</strong>: Zero-Knowledge Proof<a href="#section-2.1-1.21.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>
@@ -1718,57 +1733,70 @@ li > p:last-of-type:only-child {
       <h2 id="name-key-terms">
 <a href="#section-3" class="section-number selfRef">3. </a><a href="#name-key-terms" class="section-name selfRef">Key Terms</a>
       </h2>
-<span class="break"></span><dl class="dlCompact dlParallel" id="section-3-1">
+<span class="break"></span><dl class="dlParallel" id="section-3-1">
         <dt id="section-3-1.1">Data Residency:</dt>
-        <dd style="margin-left: 1.5em" id="section-3-1.2">Requirement that data processing and storage remain within an approved geographic boundary.<a href="#section-3-1.2" class="pilcrow">¶</a>
+        <dd style="margin-left: 1.5em" id="section-3-1.2">
+          <p id="section-3-1.2.1">Requirement that data processing and storage remain within an approved geographic boundary.<a href="#section-3-1.2.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 <dt id="section-3-1.3">Geofencing:</dt>
-        <dd style="margin-left: 1.5em" id="section-3-1.4">Enforcement that agents and services execute only on approved hosts within an approved geographic boundary.<a href="#section-3-1.4" class="pilcrow">¶</a>
+        <dd style="margin-left: 1.5em" id="section-3-1.4">
+          <p id="section-3-1.4.1">Enforcement that agents and services execute only on approved hosts within an approved geographic boundary.<a href="#section-3-1.4.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 <dt id="section-3-1.5">Attesting Environment:</dt>
-        <dd style="margin-left: 1.5em" id="section-3-1.6">An environment capable of collecting Claims about a Target Environment and producing Evidence. In V-GAP, the TPM serves as the Attesting Environment.<a href="#section-3-1.6" class="pilcrow">¶</a>
+        <dd style="margin-left: 1.5em" id="section-3-1.6">
+          <p id="section-3-1.6.1">An environment capable of collecting Claims about a Target Environment and producing Evidence. In V-GAP, the TPM serves as the Attesting Environment.<a href="#section-3-1.6.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 <dt id="section-3-1.7">Target Environment:</dt>
-        <dd style="margin-left: 1.5em" id="section-3-1.8">An environment about which Claims are collected by an Attesting Environment. In V-GAP, the Workload Identity Agent is the Target Environment measured by the TPM.<a href="#section-3-1.8" class="pilcrow">¶</a>
+        <dd style="margin-left: 1.5em" id="section-3-1.8">
+          <p id="section-3-1.8.1">An environment about which Claims are collected by an Attesting Environment. In V-GAP, the Workload Identity Agent is the Target Environment measured by the TPM.<a href="#section-3-1.8.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 <dt id="section-3-1.9">Workload Identity Agent:</dt>
-        <dd style="margin-left: 1.5em" id="section-3-1.10">On-host component (Target Environment) whose binary integrity is measured by the TPM. Once verified, it assembles the V-GAP Evidence structure.<a href="#section-3-1.10" class="pilcrow">¶</a>
+        <dd style="margin-left: 1.5em" id="section-3-1.10">
+          <p id="section-3-1.10.1">On-host component (Target Environment) whose binary integrity is measured by the TPM. Once verified, it assembles the V-GAP Evidence structure.<a href="#section-3-1.10.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 <dt id="section-3-1.11">Location Anchor Host (LAH):</dt>
-        <dd style="margin-left: 1.5em" id="section-3-1.12">Host or device that acts as the Attester ({{!RFC9334}}). Contains the TPM (Attesting Environment), the Workload Identity Agent (Target Environment), and one or more geolocation Claim sources (for example, GNSS receiver or MNO-connected modem).<a href="#section-3-1.12" class="pilcrow">¶</a>
+        <dd style="margin-left: 1.5em" id="section-3-1.12">
+          <p id="section-3-1.12.1">Host or device that acts as the Attester ({{!RFC9334}}). Contains the TPM (Attesting Environment), the Workload Identity Agent (Target Environment), and one or more geolocation Claim sources (for example, GNSS receiver or MNO-connected modem).<a href="#section-3-1.12.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 <dt id="section-3-1.13">Claim Source (Geolocation):</dt>
-        <dd style="margin-left: 1.5em" id="section-3-1.14">A sensor or service that provides geolocation Claims (for example, coordinates, ZKP proof) to the Evidence assembler. The Claim source is not an Attesting Environment; its output is sealed into the TPM quote alongside platform integrity Claims.<a href="#section-3-1.14" class="pilcrow">¶</a>
+        <dd style="margin-left: 1.5em" id="section-3-1.14">
+          <p id="section-3-1.14.1">A sensor or service that provides geolocation Claims (for example, coordinates, ZKP proof) to the Evidence assembler. The Claim source is not an Attesting Environment; its output is sealed into the TPM quote alongside platform integrity Claims.<a href="#section-3-1.14.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 <dt id="section-3-1.15">Composite Geolocation:</dt>
-        <dd style="margin-left: 1.5em" id="section-3-1.16">Location estimate fused from multiple Claim sources and accompanied by a quality indicator.<a href="#section-3-1.16" class="pilcrow">¶</a>
+        <dd style="margin-left: 1.5em" id="section-3-1.16">
+          <p id="section-3-1.16.1">Location estimate fused from multiple Claim sources and accompanied by a quality indicator.<a href="#section-3-1.16.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 <dt id="section-3-1.17">Proof of Residency (PoR):</dt>
-        <dd style="margin-left: 1.5em" id="section-3-1.18">Evidence that a platform is within an approved geofence for a specific attestation interval.<a href="#section-3-1.18" class="pilcrow">¶</a>
+        <dd style="margin-left: 1.5em" id="section-3-1.18">
+          <p id="section-3-1.18.1">Evidence that a platform is within an approved geofence for a specific attestation interval.<a href="#section-3-1.18.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 <dt id="section-3-1.19">Silicon Root of Trust:</dt>
-        <dd style="margin-left: 1.5em" id="section-3-1.20">Hardware trust anchor (for example, TPM) that supports measured boot, protects attestation keys, and acts as the Attesting Environment.<a href="#section-3-1.20" class="pilcrow">¶</a>
+        <dd style="margin-left: 1.5em" id="section-3-1.20">
+          <p id="section-3-1.20.1">Hardware trust anchor (for example, TPM) that supports measured boot, protects attestation keys, and acts as the Attesting Environment.<a href="#section-3-1.20.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 <dt id="section-3-1.21">Transparent Zero-Knowledge Proof:</dt>
-        <dd style="margin-left: 1.5em" id="section-3-1.22">ZKP that does not require a trusted setup; used to prove "inside an approved zone" without revealing precise coordinates.<a href="#section-3-1.22" class="pilcrow">¶</a>
+        <dd style="margin-left: 1.5em" id="section-3-1.22">
+          <p id="section-3-1.22.1">ZKP that does not require a trusted setup; used to prove "inside an approved zone" without revealing precise coordinates.<a href="#section-3-1.22.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 <dt id="section-3-1.23">V-GAP (Verifiable Geofencing Attestation Profile):</dt>
-        <dd style="margin-left: 1.5em" id="section-3-1.24">Evidence profile defined in this document, binding platform integrity and verified residency into a single hardware-sealed Evidence structure (<code>lah-bundle</code>).<a href="#section-3-1.24" class="pilcrow">¶</a>
+        <dd style="margin-left: 1.5em" id="section-3-1.24">
+          <p id="section-3-1.24.1">Evidence profile defined in this document, binding platform integrity and verified residency into a single hardware-sealed Evidence structure (<code>lah-bundle</code>).<a href="#section-3-1.24.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
 <dt id="section-3-1.25">N_fusion:</dt>
-        <dd style="margin-left: 1.5em" id="section-3-1.26">Fresh nonce for each attestation interval. Initiated by the Relying Party and delivered to the Attester by the Verifier. Corresponds to the <code>nonce</code> field in the <code>lah-bundle</code>. Provides freshness per {{!RFC9334}}, Section 10.2.<a href="#section-3-1.26" class="pilcrow">¶</a>
+        <dd style="margin-left: 1.5em" id="section-3-1.26">
+          <p id="section-3-1.26.1">Fresh nonce issued by the Relying Party for each attestation interval. Corresponds to the <code>nonce</code> field in the <code>lah-bundle</code>. Provides freshness per {{!RFC9334}}, Section 10.<a href="#section-3-1.26.1" class="pilcrow">¶</a></p>
 </dd>
       <dd class="break"></dd>
 </dl>
@@ -1864,14 +1892,9 @@ li > p:last-of-type:only-child {
               <td class="text-left" rowspan="1" colspan="1">Appraises V-GAP Evidence — validates TPM quotes, checks PCRs against Reference Values, verifies geolocation proofs — and produces an Attestation Result.</td>
             </tr>
             <tr>
-              <td class="text-left" rowspan="1" colspan="1">Endorser (hardware)</td>
+              <td class="text-left" rowspan="1" colspan="1">Endorser</td>
               <td class="text-left" rowspan="1" colspan="1">TPM Manufacturer</td>
               <td class="text-left" rowspan="1" colspan="1">Provides Endorsements (EK certificate chain) vouching for the TPM's identity and signing capability.</td>
-            </tr>
-            <tr>
-              <td class="text-left" rowspan="1" colspan="1">Endorser (location)</td>
-              <td class="text-left" rowspan="1" colspan="1">Mobile Network Operator (MNO)</td>
-              <td class="text-left" rowspan="1" colspan="1">Provides a location Endorsement (<code>mno-endorsement</code>) attesting device location within carrier visibility. OPTIONAL.</td>
             </tr>
             <tr>
               <td class="text-left" rowspan="1" colspan="1">Reference Value Provider</td>
@@ -1895,6 +1918,7 @@ li > p:last-of-type:only-child {
             </tr>
           </tbody>
         </table>
+<p id="section-5.1-3">Note: The Mobile Network Operator (MNO), when present, provides a signed location statement (<code>mno-location</code>) that the Attester integrates into its Evidence as a signed Claim source. This is attester-collected Evidence — not a RATS Endorsement — because the MNO asserts network-observed location, not the Attester's identity or characteristics. The same model applies to other external signed location sources (such as SovCert anchors or quantum-derived proofs), which MAY similarly be integrated as signed Claim sources within the <code>lah-bundle</code>.<a href="#section-5.1-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="evidence-flow">
@@ -1902,19 +1926,20 @@ li > p:last-of-type:only-child {
         <h3 id="name-evidence-flow">
 <a href="#section-5.2" class="section-number selfRef">5.2. </a><a href="#name-evidence-flow" class="section-name selfRef">Evidence Flow</a>
         </h3>
-<p id="section-5.2-1">The V-GAP Evidence flow follows the RATS background-check model ({{!RFC9334}}, Section 5.2): the Attester conveys Evidence to the Verifier (possibly via a Relying Party), the Verifier appraises it using Reference Values and Endorsements, and conveys the Attestation Result to the Relying Party.<a href="#section-5.2-1" class="pilcrow">¶</a></p>
+<p id="section-5.2-1">The V-GAP evidence flow follows the RATS background-check model ({{!RFC9334}}, Section 5.2): the Attester conveys Evidence to the Verifier (possibly via a Relying Party), the Verifier appraises it using Reference Values and Endorsements, and conveys the Attestation Result to the Relying Party.<a href="#section-5.2-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-5.2-2">
 <pre>                                    Reference Value
-Endorser         Endorser            Provider
-(TPM Mfr)        (MNO)              (Admin)
-   |               |                   |
-   | EK cert        | mno-endorsement   | PCRs, agent digest,
-   | chain          |                   | geofence polygons
-   v               v                   v
+Endorser                             Provider
+(TPM Mfr)                            (Admin)
+   |                                   |
+   | EK cert                           | PCRs, agent digest,
+   | chain                             | geofence polygons
+   v                                   v
 Attester (LAH)                      Verifier
   [TPM: Attesting Env]              Appraises Evidence
   [Agent: Target Env]  -- lah-bundle --&gt;  against Reference Values
-  [Sensor: Claim source]                  and Endorsements
+  [Sensor(s): Claim sources]               and Endorsements
+  [MNO (opt): signed Claim source]
                                         |
                           Attestation Result
                                         |
@@ -1941,10 +1966,11 @@ Attester (LAH)                      Verifier
 <div class="lang-json sourcecode" id="section-5.3.1-1">
 <pre>{
   "lah-bundle": { },
-  "mno-endorsement": { }
+  "mno-location": { }
 }
 </pre><a href="#section-5.3.1-1" class="pilcrow">¶</a>
 </div>
+<p id="section-5.3.1-2">When present, the <code>lah-bundle</code> fields are serialized using JSON Canonicalization Scheme (JCS) for hash computation. In the bundle, <code>tpm-ak</code> is carried as a PEM-encoded public key string, but hash inputs such as <code>tpm-ak-bytes</code> are derived from the raw DER bytes of the same public key.<a href="#section-5.3.1-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="lah-bundle-fields">
@@ -1967,7 +1993,7 @@ Attester (LAH)                      Verifier
                 <td class="text-left" rowspan="1" colspan="1">
                   <code>tpm-ak</code>
 </td>
-                <td class="text-left" rowspan="1" colspan="1">string (PEM)</td>
+                <td class="text-left" rowspan="1" colspan="1">string (Base64URL)</td>
                 <td class="text-center" rowspan="1" colspan="1">Yes</td>
                 <td class="text-left" rowspan="1" colspan="1">TPM Attestation Key public key (PEM-encoded). Hardware identity anchor. The TPM enforces that only this key can produce <code>tpm-quote-seal</code> — proving co-residency.</td>
               </tr>
@@ -1977,7 +2003,7 @@ Attester (LAH)                      Verifier
 </td>
                 <td class="text-left" rowspan="1" colspan="1">string (Base64URL)</td>
                 <td class="text-center" rowspan="1" colspan="1">Yes</td>
-                <td class="text-left" rowspan="1" colspan="1">SHA-256 over the DER-encoded bytes of <code>tpm-ak</code> (denoted <code>tpm-ak-bytes</code>) concatenated with any sensor-specific identifiers (see Sensor Type Input Recipes appendix for per-sensor constructions). Binds the TPM identity anchor to the geolocation sensor identity. Sensor integrity is assumed to be established via an out-of-band channel (for example, hardware inventory or supply chain attestation).</td>
+                <td class="text-left" rowspan="1" colspan="1">SHA-256 over <code>tpm-ak-bytes</code> concatenated with any sensor-specific identifiers (see Sensor Type Input Recipes appendix for per-sensor constructions). Binds the TPM identity anchor to the geolocation sensor identity. Sensor integrity is assumed to be established via an out-of-band channel (for example, hardware inventory or supply chain attestation).</td>
               </tr>
               <tr>
                 <td class="text-left" rowspan="1" colspan="1">
@@ -1985,7 +2011,7 @@ Attester (LAH)                      Verifier
 </td>
                 <td class="text-left" rowspan="1" colspan="1">string (Base64URL)</td>
                 <td class="text-center" rowspan="1" colspan="1">Yes</td>
-                <td class="text-left" rowspan="1" colspan="1">SHA-256 commitment over <code>geolocation-payload</code>, Base64URL-encoded. Required in both privacy modes. When <code>privacy-technique=zkp</code>: <code>Base64URL(SHA-256(zkp-proof-bytes))</code>. When <code>privacy-technique=none</code>: <code>Base64URL(SHA-256(JCS({lat, lon, accuracy})))</code> (JCS per {{!RFC8785}}).</td>
+                <td class="text-left" rowspan="1" colspan="1">SHA-256 commitment over <code>geolocation-payload</code>. Required in both privacy modes. When <code>privacy-technique=zkp</code>: <code>SHA-256(zkp-proof-bytes)</code>. When <code>privacy-technique=none</code>: <code>SHA-256(JCS({lat, lon, accuracy}))</code>.</td>
               </tr>
               <tr>
                 <td class="text-left" rowspan="1" colspan="1">
@@ -2002,7 +2028,7 @@ Attester (LAH)                      Verifier
 </td>
                 <td class="text-left" rowspan="1" colspan="1">object</td>
                 <td class="text-center" rowspan="1" colspan="1">Yes</td>
-                <td class="text-left" rowspan="1" colspan="1">Inner location data. Structure depends on <code>privacy-technique</code> (see Payload Variants below). Committed to by <code>geolocation-proof-hash</code> and optionally signed by <code>mno-endorsement.mno-sig</code>.</td>
+                <td class="text-left" rowspan="1" colspan="1">Inner location data. Structure depends on <code>privacy-technique</code> (see Payload Variants below). Committed to by <code>geolocation-proof-hash</code> and optionally signed by <code>mno-location.mno-sig</code>.</td>
               </tr>
               <tr>
                 <td class="text-left" rowspan="1" colspan="1">
@@ -2010,7 +2036,7 @@ Attester (LAH)                      Verifier
 </td>
                 <td class="text-left" rowspan="1" colspan="1">string (Base64URL)</td>
                 <td class="text-center" rowspan="1" colspan="1">Yes</td>
-                <td class="text-left" rowspan="1" colspan="1">Freshness nonce (N_fusion) initiated by the Relying Party and delivered to the Attester by the Verifier for each attestation interval, per the nonce-based freshness model in {{!RFC9334}}, Section 10.2. Implementations may use chained nonce constructions for additional audit guarantees (see Nonce Chain and Merkle Audit Log appendix).</td>
+                <td class="text-left" rowspan="1" colspan="1">Freshness nonce (N_fusion) issued by the Relying Party for each attestation interval, per {{!RFC9334}}, Section 10.2. Implementations may use chained nonce constructions for additional audit guarantees (see Nonce Chain and Merkle Audit Log appendix).</td>
               </tr>
               <tr>
                 <td class="text-left" rowspan="1" colspan="1">
@@ -2035,7 +2061,7 @@ Attester (LAH)                      Verifier
 </td>
                 <td class="text-left" rowspan="1" colspan="1">string (hex SHA-256)</td>
                 <td class="text-center" rowspan="1" colspan="1">Yes</td>
-                <td class="text-left" rowspan="1" colspan="1">SHA-256 digest of the Target Environment (Workload Identity Agent) binary, measured at attestation time. Compared by the Verifier against Reference Values to detect agent binary compromise.</td>
+                <td class="text-left" rowspan="1" colspan="1">SHA-256 digest of the Target Environment (Workload Identity Agent) binary, measured at attestation time. This digest is computed over the measured binary image bytes or artifact bytes that the TPM records. Compared by the Verifier against Reference Values to detect agent binary compromise.</td>
               </tr>
             </tbody>
           </table>
@@ -2118,12 +2144,12 @@ Attester (LAH)                      Verifier
 <p id="section-5.3.3-6"><code>geolocation-proof-hash = Base64URL(SHA-256(zkp-proof-bytes))</code><a href="#section-5.3.3-6" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="mno-endorsement">
+<div id="mno-location">
 <section id="section-5.3.4">
-          <h4 id="name-mno-endorsement-rats-endors">
-<a href="#section-5.3.4" class="section-number selfRef">5.3.4. </a><a href="#name-mno-endorsement-rats-endors" class="section-name selfRef">MNO Endorsement (RATS Endorsement)</a>
+          <h4 id="name-mno-location-evidence-signe">
+<a href="#section-5.3.4" class="section-number selfRef">5.3.4. </a><a href="#name-mno-location-evidence-signe" class="section-name selfRef">MNO Location Evidence (Signed Claim Source)</a>
           </h4>
-<p id="section-5.3.4-1">The <code>mno-endorsement</code> is a RATS Endorsement {{!RFC9334}}: a signed statement from a third party (the Mobile Network Operator) about the Attester's location. The MNO attests device location within carrier visibility but does not sign host-level fields. This element is OPTIONAL at the top level; when present, its fields are REQUIRED.<a href="#section-5.3.4-1" class="pilcrow">¶</a></p>
+<p id="section-5.3.4-1">The <code>mno-location</code> element carries a signed location statement from a Mobile Network Operator (MNO). In RATS terms, this is attester-collected Evidence — a signed Claim source — rather than a RATS Endorsement: the MNO asserts network-observed device location within carrier visibility but does not vouch for the Attester's identity or platform characteristics. This element is OPTIONAL at the top level; when present, its fields are REQUIRED.<a href="#section-5.3.4-1" class="pilcrow">¶</a></p>
 <table class="center" id="table-6">
             <caption><a href="#table-6" class="selfRef">Table 6</a></caption>
 <thead>
@@ -2141,7 +2167,7 @@ Attester (LAH)                      Verifier
 </td>
                 <td class="text-left" rowspan="1" colspan="1">string (Base64URL DER)</td>
                 <td class="text-center" rowspan="1" colspan="1">Yes</td>
-                <td class="text-left" rowspan="1" colspan="1">MNO signing certificate. Verifiers SHOULD validate this certificate chains to a known MNO root before accepting the endorsement.</td>
+                <td class="text-left" rowspan="1" colspan="1">MNO signing certificate. Verifiers SHOULD validate this certificate chains to a known MNO root before accepting the location statement.</td>
               </tr>
               <tr>
                 <td class="text-left" rowspan="1" colspan="1">
@@ -2163,12 +2189,15 @@ Attester (LAH)                      Verifier
 <a href="#section-5.4" class="section-number selfRef">5.4. </a><a href="#name-attestation-result" class="section-name selfRef">Attestation Result</a>
         </h3>
 <p id="section-5.4-1">Upon successful appraisal of the <code>lah-bundle</code>, the Verifier produces an Attestation Result ({{!RFC9334}}, Section 8.4). This profile does not mandate a specific encoding for the Attestation Result. Implementations MAY express results using:<a href="#section-5.4-1" class="pilcrow">¶</a></p>
-<ul class="compact">
-<li class="compact" id="section-5.4-2.1">EAT Attestation Result claims, including geographic claims per {{I-D.richardson-rats-geographic-results}};<a href="#section-5.4-2.1" class="pilcrow">¶</a>
+<ul class="normal">
+<li class="normal" id="section-5.4-2.1">
+            <p id="section-5.4-2.1.1">EAT Attestation Result claims, including geographic claims per {{I-D.richardson-rats-geographic-results}};<a href="#section-5.4-2.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact" id="section-5.4-2.2">an X.509 extension (OID <code>1.3.6.1.4.1.65284.1.1</code>) embedded in a credential issued by a Relying Party acting as CA; or<a href="#section-5.4-2.2" class="pilcrow">¶</a>
+          <li class="normal" id="section-5.4-2.2">
+            <p id="section-5.4-2.2.1">an X.509 extension (OID <code>1.3.6.1.4.1.65284.1.1</code>) embedded in a credential issued by a Relying Party acting as CA; or<a href="#section-5.4-2.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact" id="section-5.4-2.3">any other result encoding that satisfies the Relying Party's Appraisal Policy for Attestation Results.<a href="#section-5.4-2.3" class="pilcrow">¶</a>
+          <li class="normal" id="section-5.4-2.3">
+            <p id="section-5.4-2.3.1">any other result encoding that satisfies the Relying Party's Appraisal Policy for Attestation Results.<a href="#section-5.4-2.3.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="section-5.4-3">The Attestation Result MUST convey at minimum:<a href="#section-5.4-3" class="pilcrow">¶</a></p>
@@ -2212,18 +2241,24 @@ Attester (LAH)                      Verifier
 <a href="#section-5.5" class="section-number selfRef">5.5. </a><a href="#name-tpm-quote-verification-proc" class="section-name selfRef">TPM Quote Verification Procedure</a>
         </h3>
 <p id="section-5.5-1">The Verifier MUST perform the following steps to validate the <code>tpm-quote-seal</code>:<a href="#section-5.5-1" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="compact type-1" id="section-5.5-2">
-<li id="section-5.5-2.1">Decode <code>tpm-quote-seal</code> (Base64URL → bytes)<a href="#section-5.5-2.1" class="pilcrow">¶</a>
+<ol start="1" type="1" class="normal type-1" id="section-5.5-2">
+<li id="section-5.5-2.1">
+            <p id="section-5.5-2.1.1">Decode <code>tpm-quote-seal</code> (Base64URL → bytes)<a href="#section-5.5-2.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li id="section-5.5-2.2">Parse <code>TPMS_ATTEST</code> structure<a href="#section-5.5-2.2" class="pilcrow">¶</a>
+          <li id="section-5.5-2.2">
+            <p id="section-5.5-2.2.1">Parse <code>TPMS_ATTEST</code> structure<a href="#section-5.5-2.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li id="section-5.5-2.3">Assert <code>TPMS_ATTEST.type == TPM_ST_ATTEST_QUOTE</code><a href="#section-5.5-2.3" class="pilcrow">¶</a>
+          <li id="section-5.5-2.3">
+            <p id="section-5.5-2.3.1">Assert <code>TPMS_ATTEST.type == TPM_ST_ATTEST_QUOTE</code><a href="#section-5.5-2.3.1" class="pilcrow">¶</a></p>
 </li>
-          <li id="section-5.5-2.4">Compute <code>expected_qd = SHA-256(JCS({tpm-ak, geolocation-id-hash, geolocation-proof-hash, privacy-technique, nonce, timestamp, target-environment-image-digest}))</code><a href="#section-5.5-2.4" class="pilcrow">¶</a>
+          <li id="section-5.5-2.4">
+            <p id="section-5.5-2.4.1">Compute <code>expected_qd = SHA-256(JCS({tpm-ak, geolocation-id-hash, geolocation-proof-hash, privacy-technique, nonce, timestamp, target-environment-image-digest}))</code><a href="#section-5.5-2.4.1" class="pilcrow">¶</a></p>
 </li>
-          <li id="section-5.5-2.5">Assert <code>TPMS_ATTEST.qualifyingData == expected_qd</code><a href="#section-5.5-2.5" class="pilcrow">¶</a>
+          <li id="section-5.5-2.5">
+            <p id="section-5.5-2.5.1">Assert <code>TPMS_ATTEST.qualifyingData == expected_qd</code><a href="#section-5.5-2.5.1" class="pilcrow">¶</a></p>
 </li>
-          <li id="section-5.5-2.6">Verify signature over <code>TPMS_ATTEST</code> bytes using <code>tpm-ak</code> public key (RSASSA-PKCS1-v1_5 or ECDSA)<a href="#section-5.5-2.6" class="pilcrow">¶</a>
+          <li id="section-5.5-2.6">
+            <p id="section-5.5-2.6.1">Verify signature over <code>TPMS_ATTEST</code> bytes using <code>tpm-ak</code> public key (RSASSA-PKCS1-v1_5 or ECDSA)<a href="#section-5.5-2.6.1" class="pilcrow">¶</a></p>
 </li>
         </ol>
 <p id="section-5.5-3">If any step fails, the Verifier MUST reject the Evidence and MUST NOT produce a positive Attestation Result.<a href="#section-5.5-3" class="pilcrow">¶</a></p>
@@ -2235,12 +2270,15 @@ Attester (LAH)                      Verifier
 <a href="#section-5.6" class="section-number selfRef">5.6. </a><a href="#name-freshness-and-replay-preven" class="section-name selfRef">Freshness and Replay Prevention</a>
         </h3>
 <p id="section-5.6-1">To prevent mix-and-match and replay attacks, Verifiers MUST enforce the following:<a href="#section-5.6-1" class="pilcrow">¶</a></p>
-<ul class="compact">
-<li class="compact" id="section-5.6-2.1">Attestation Results MUST be fresh and MUST be bound to the appraisal event (for example, by cryptographically binding freshness values used for platform quotes within the Attestation Result).<a href="#section-5.6-2.1" class="pilcrow">¶</a>
+<ul class="normal">
+<li class="normal" id="section-5.6-2.1">
+            <p id="section-5.6-2.1.1">Attestation Results MUST be fresh and MUST be bound to the appraisal event (for example, by cryptographically binding freshness values used for platform quotes within the Attestation Result).<a href="#section-5.6-2.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact" id="section-5.6-2.2">The <code>nonce</code> field in the <code>lah-bundle</code> MUST be a freshness value initiated by the Relying Party and delivered to the Attester by the Verifier for each attestation interval, per the nonce-based freshness model in {{!RFC9334}}, Section 10.2.<a href="#section-5.6-2.2" class="pilcrow">¶</a>
+          <li class="normal" id="section-5.6-2.2">
+            <p id="section-5.6-2.2.1">The <code>nonce</code> field in the <code>lah-bundle</code> MUST be a freshness value issued by the Relying Party for each attestation interval, per the nonce-based freshness model in {{!RFC9334}}, Section 10.2.<a href="#section-5.6-2.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact" id="section-5.6-2.3">Verifiers MUST reject Evidence where the <code>timestamp</code> falls outside the configured freshness window.<a href="#section-5.6-2.3" class="pilcrow">¶</a>
+          <li class="normal" id="section-5.6-2.3">
+            <p id="section-5.6-2.3.1">Verifiers MUST reject Evidence where the <code>timestamp</code> falls outside the configured freshness window.<a href="#section-5.6-2.3.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="section-5.6-3">Where policy requires it, the Verifier can additionally require that the Target Environment measurement (<code>target-environment-image-digest</code>) matches an approved Reference Value, reducing the risk that a modified or unauthorized agent produces accepted Evidence.<a href="#section-5.6-3" class="pilcrow">¶</a></p>
@@ -2254,27 +2292,27 @@ Attester (LAH)                      Verifier
 <a href="#section-6" class="section-number selfRef">6. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
       </h2>
 <p id="section-6-1">V-GAP reduces reliance on spoofable location signals and stolen tokens by making integrity and residency cryptographically verifiable. Implementers still need to address the following threats:<a href="#section-6-1" class="pilcrow">¶</a></p>
-<ul class="compact">
-<li class="compact" id="section-6-2.1">
-          <strong>Replay and mix-and-match</strong>: Use nonces and evidence stapling so that old location evidence cannot be combined with a fresh platform quote (or vice versa).<a href="#section-6-2.1" class="pilcrow">¶</a>
+<ul class="normal">
+<li class="normal" id="section-6-2.1">
+          <p id="section-6-2.1.1"><strong>Replay and mix-and-match</strong>: Use nonces and evidence stapling so that old location evidence cannot be combined with a fresh platform quote (or vice versa).<a href="#section-6-2.1.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="compact" id="section-6-2.2">
-          <strong>Location spoofing</strong>: GNSS and mobile network signals must be treated as adversarial inputs; per-source threats and mitigations are detailed in the subsections below.<a href="#section-6-2.2" class="pilcrow">¶</a>
+        <li class="normal" id="section-6-2.2">
+          <p id="section-6-2.2.1"><strong>Location spoofing</strong>: GNSS and mobile network signals must be treated as adversarial inputs; per-source threats and mitigations are detailed in the subsections below.<a href="#section-6-2.2.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="compact" id="section-6-2.3">
-          <strong>Relay and displacement</strong>: When proximity mechanisms are introduced in future profiles, implementers should be aware that they are vulnerable to relay attacks and anchor displacement. Mitigations (such as tight RTT-based acceptance windows and anchor health attestation) are deferred to those future profiles.<a href="#section-6-2.3" class="pilcrow">¶</a>
+        <li class="normal" id="section-6-2.3">
+          <p id="section-6-2.3.1"><strong>Relay and displacement</strong>: When proximity mechanisms are introduced in future profiles, implementers should be aware that they are vulnerable to relay attacks and anchor displacement. Mitigations (such as tight RTT-based acceptance windows and anchor health attestation) are deferred to those future profiles.<a href="#section-6-2.3.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="compact" id="section-6-2.4">
-          <strong>Management controller compromise</strong>: OOB paths reduce dependence on the host OS but introduce dependence on the management controller and its network. Protect this component with secure boot, authenticated updates, strong access controls, network segmentation, and audit logging.<a href="#section-6-2.4" class="pilcrow">¶</a>
+        <li class="normal" id="section-6-2.4">
+          <p id="section-6-2.4.1"><strong>Management controller compromise</strong>: OOB paths reduce dependence on the host OS but introduce dependence on the management controller and its network. Protect this component with secure boot, authenticated updates, strong access controls, network segmentation, and audit logging.<a href="#section-6-2.4.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="compact" id="section-6-2.5">
-          <strong>Time and freshness</strong>: Verifiers MUST enforce bounded freshness windows and MUST define recovery behavior (re-attestation, quarantine, or revocation) when clocks drift or evidence becomes stale.<a href="#section-6-2.5" class="pilcrow">¶</a>
+        <li class="normal" id="section-6-2.5">
+          <p id="section-6-2.5.1"><strong>Time and freshness</strong>: Verifiers MUST enforce bounded freshness windows and MUST define recovery behavior (re-attestation, quarantine, or revocation) when clocks drift or evidence becomes stale.<a href="#section-6-2.5.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="compact" id="section-6-2.6">
-          <strong>Registry and allowlist integrity</strong>: Protect Reference Value stores and Appraisal Policy configurations against tampering; treat them as high-value privileged assets.<a href="#section-6-2.6" class="pilcrow">¶</a>
+        <li class="normal" id="section-6-2.6">
+          <p id="section-6-2.6.1"><strong>Registry and allowlist integrity</strong>: Protect Reference Value stores and Appraisal Policy configurations against tampering; treat them as high-value privileged assets.<a href="#section-6-2.6.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="compact" id="section-6-2.7">
-          <strong>Privacy</strong>: Avoid unnecessary collection or retention of precise location data. Prefer "in-zone" proofs (ZKP) where policy permits. See the Privacy Applicability note below.<a href="#section-6-2.7" class="pilcrow">¶</a>
+        <li class="normal" id="section-6-2.7">
+          <p id="section-6-2.7.1"><strong>Privacy</strong>: Avoid unnecessary collection or retention of precise location data. Prefer "in-zone" proofs (ZKP) where policy permits. See the Privacy Applicability note below.<a href="#section-6-2.7.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
 <div id="privacy-applicability">
@@ -2283,15 +2321,15 @@ Attester (LAH)                      Verifier
 <a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-privacy-applicability" class="section-name selfRef">Privacy Applicability</a>
         </h3>
 <p id="section-6.1-1">The relevance of location privacy varies significantly by deployment context:<a href="#section-6.1-1" class="pilcrow">¶</a></p>
-<ul class="compact">
-<li class="compact" id="section-6.1-2.1">
-            <strong>Datacenter and server environments</strong>: When an Attester is a server in a known datacenter, the physical location of the hardware is typically not sensitive — it may be a matter of public record or contractual documentation. In such deployments, <code>privacy-technique = "none"</code> (raw coordinates) is appropriate and the ZKP overhead is unnecessary.<a href="#section-6.1-2.1" class="pilcrow">¶</a>
+<ul class="normal">
+<li class="normal" id="section-6.1-2.1">
+            <p id="section-6.1-2.1.1"><strong>Datacenter and server environments</strong>: When an Attester is a server in a known datacenter, the physical location of the hardware is typically not sensitive — it may be a matter of public record or contractual documentation. In such deployments, <code>privacy-technique = "none"</code> (raw coordinates) is appropriate and the ZKP overhead is unnecessary.<a href="#section-6.1-2.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact" id="section-6.1-2.2">
-            <strong>User-facing and edge environments</strong>: When an Attester is a user device or edge node, precise coordinates may constitute Personally Identifiable Information (PII). In such deployments, <code>privacy-technique = "zkp"</code> SHOULD be used to prove geofence compliance without disclosing exact location.<a href="#section-6.1-2.2" class="pilcrow">¶</a>
+          <li class="normal" id="section-6.1-2.2">
+            <p id="section-6.1-2.2.1"><strong>User-facing and edge environments</strong>: When an Attester is a user device or edge node, precise coordinates may constitute Personally Identifiable Information (PII). In such deployments, <code>privacy-technique = "zkp"</code> SHOULD be used to prove geofence compliance without disclosing exact location.<a href="#section-6.1-2.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact" id="section-6.1-2.3">
-            <strong>Mixed deployments</strong>: Appraisal Policy for Evidence SHOULD allow the Verifier Owner to configure which privacy technique is acceptable per Attester class or per geofence policy.<a href="#section-6.1-2.3" class="pilcrow">¶</a>
+          <li class="normal" id="section-6.1-2.3">
+            <p id="section-6.1-2.3.1"><strong>Mixed deployments</strong>: Appraisal Policy for Evidence SHOULD allow the Verifier Owner to configure which privacy technique is acceptable per Attester class or per geofence policy.<a href="#section-6.1-2.3.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="section-6.1-3">Implementers SHOULD select the privacy technique appropriate to their deployment context rather than applying ZKP uniformly.<a href="#section-6.1-3" class="pilcrow">¶</a></p>
@@ -2309,12 +2347,12 @@ Attester (LAH)                      Verifier
           </h4>
 <p id="section-6.2.1-1">It is important to acknowledge that binding location Claims to a TPM quote (hardware provenance) does NOT, by itself, guarantee that the underlying sensor data is correct. A TPM can faithfully seal whatever data the sensor provides — including spoofed data. The TPM proves that the sealed data came from the measured platform; it does not prove that the sensor's input signals were authentic.<a href="#section-6.2.1-1" class="pilcrow">¶</a></p>
 <p id="section-6.2.1-2">Therefore, the security of V-GAP's geolocation Claims depends on BOTH:<a href="#section-6.2.1-2" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="compact type-1" id="section-6.2.1-3">
+<ol start="1" type="1" class="normal type-1" id="section-6.2.1-3">
 <li id="section-6.2.1-3.1">
-              <strong>Hardware provenance</strong> (addressed by the TPM quote and <code>target-environment-image-digest</code>): ensuring the data was processed by an approved, untampered platform.<a href="#section-6.2.1-3.1" class="pilcrow">¶</a>
+              <p id="section-6.2.1-3.1.1"><strong>Hardware provenance</strong> (addressed by the TPM quote and <code>target-environment-image-digest</code>): ensuring the data was processed by an approved, untampered platform.<a href="#section-6.2.1-3.1.1" class="pilcrow">¶</a></p>
 </li>
             <li id="section-6.2.1-3.2">
-              <strong>Sensor input integrity</strong> (addressed by the mitigations below): ensuring the sensor received authentic signals rather than spoofed or replayed inputs.<a href="#section-6.2.1-3.2" class="pilcrow">¶</a>
+              <p id="section-6.2.1-3.2.1"><strong>Sensor input integrity</strong> (addressed by the mitigations below): ensuring the sensor received authentic signals rather than spoofed or replayed inputs.<a href="#section-6.2.1-3.2.1" class="pilcrow">¶</a></p>
 </li>
           </ol>
 <p id="section-6.2.1-4">Implementers MUST NOT rely solely on TPM binding as evidence of correct location. The Appraisal Policy for Evidence SHOULD require corroborating evidence from independent channels and SHOULD specify minimum signal authentication requirements commensurate with the geofence policy's sensitivity.<a href="#section-6.2.1-4" class="pilcrow">¶</a></p>
@@ -2326,15 +2364,15 @@ Attester (LAH)                      Verifier
 <a href="#section-6.2.2" class="section-number selfRef">6.2.2. </a><a href="#name-gnss-spoofing" class="section-name selfRef">GNSS Spoofing</a>
           </h4>
 <p id="section-6.2.2-1">GNSS signals are unauthenticated by default and can be spoofed via synthetic signal generators (e.g., software-defined radio replay of valid signals) or multipath injection. Implementers SHOULD apply mitigations proportional to the required assurance level:<a href="#section-6.2.2-1" class="pilcrow">¶</a></p>
-<ul class="compact">
-<li class="compact" id="section-6.2.2-2.1">
-              <strong>Signal authentication</strong>: Galileo OSNMA (Open Service Navigation Message Authentication) provides cryptographic authentication of navigation messages and is the strongest available civilian countermeasure. GPS NMA (Chimera), the Navigation Message Authentication scheme for GPS III L1C signals, offers equivalent protection. Implementations SHOULD prefer authenticated GNSS signals where available.<a href="#section-6.2.2-2.1" class="pilcrow">¶</a>
+<ul class="normal">
+<li class="normal" id="section-6.2.2-2.1">
+              <p id="section-6.2.2-2.1.1"><strong>Signal authentication</strong>: Galileo OSNMA (Open Service Navigation Message Authentication) provides cryptographic authentication of navigation messages and is the strongest available civilian countermeasure. GPS GAIA offers equivalent protection for GPS III signals. Implementations SHOULD prefer authenticated GNSS signals where available.<a href="#section-6.2.2-2.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="compact" id="section-6.2.2-2.2">
-              <strong>Multi-constellation cross-validation</strong>: Cross-checking fixes across independent constellations (GPS, Galileo, GLONASS, BeiDou) substantially raises the cost of spoofing; consistent simultaneous spoofing of all constellations requires significantly more attacker capability.<a href="#section-6.2.2-2.2" class="pilcrow">¶</a>
+            <li class="normal" id="section-6.2.2-2.2">
+              <p id="section-6.2.2-2.2.1"><strong>Multi-constellation cross-validation</strong>: Cross-checking fixes across independent constellations (GPS, Galileo, GLONASS, BeiDou) substantially raises the cost of spoofing; consistent simultaneous spoofing of all constellations requires significantly more attacker capability.<a href="#section-6.2.2-2.2.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="compact" id="section-6.2.2-2.3">
-              <strong>Anomaly detection</strong>: Sudden position jumps, implausible velocity changes, and anomalous signal-to-noise ratios are indicators of spoofing or jamming. Evidence that fails these checks SHOULD be rejected.<a href="#section-6.2.2-2.3" class="pilcrow">¶</a>
+            <li class="normal" id="section-6.2.2-2.3">
+              <p id="section-6.2.2-2.3.1"><strong>Anomaly detection</strong>: Sudden position jumps, implausible velocity changes, and anomalous signal-to-noise ratios are indicators of spoofing or jamming. Evidence that fails these checks SHOULD be rejected.<a href="#section-6.2.2-2.3.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
 </section>
@@ -2345,19 +2383,19 @@ Attester (LAH)                      Verifier
 <a href="#section-6.2.3" class="section-number selfRef">6.2.3. </a><a href="#name-mobile-network-spoofing" class="section-name selfRef">Mobile Network Spoofing</a>
           </h4>
 <p id="section-6.2.3-1">Mobile network location evidence is subject to distinct threats:<a href="#section-6.2.3-1" class="pilcrow">¶</a></p>
-<ul class="compact">
-<li class="compact" id="section-6.2.3-2.1">
-              <strong>IMSI catchers and rogue base stations</strong>: Attacker-controlled base stations can force a device onto a fake cell, yielding attacker-controlled location if evidence derives from device-reported cell identity.<a href="#section-6.2.3-2.1" class="pilcrow">¶</a>
+<ul class="normal">
+<li class="normal" id="section-6.2.3-2.1">
+              <p id="section-6.2.3-2.1.1"><strong>IMSI catchers and rogue base stations</strong>: Attacker-controlled base stations can force a device onto a fake cell, yielding attacker-controlled location if evidence derives from device-reported cell identity.<a href="#section-6.2.3-2.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="compact" id="section-6.2.3-2.2">
-              <strong>SS7/Diameter abuse</strong>: Attackers with access to legacy carrier signaling can issue location queries that yield false or manipulated carrier-side location data.<a href="#section-6.2.3-2.2" class="pilcrow">¶</a>
+            <li class="normal" id="section-6.2.3-2.2">
+              <p id="section-6.2.3-2.2.1"><strong>SS7/Diameter abuse</strong>: Attackers with access to legacy carrier signaling can issue location queries that yield false or manipulated carrier-side location data.<a href="#section-6.2.3-2.2.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="compact" id="section-6.2.3-2.3">
-              <strong>MNO root key compromise</strong>: The <code>mno-endorsement</code> is only as trustworthy as the MNO signing root. Verifiers MUST validate the <code>mno-key-cert</code> certificate chain to a known MNO root and SHOULD treat a root compromise as requiring immediate policy revocation.<a href="#section-6.2.3-2.3" class="pilcrow">¶</a>
+            <li class="normal" id="section-6.2.3-2.3">
+              <p id="section-6.2.3-2.3.1"><strong>MNO root key compromise</strong>: The <code>mno-location</code> element is only as trustworthy as the MNO signing root. Verifiers MUST validate the <code>mno-key-cert</code> certificate chain to a known MNO root and SHOULD treat a root compromise as requiring immediate policy revocation.<a href="#section-6.2.3-2.3.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
 <p id="section-6.2.3-3">The CAMARA API model — where location is derived from carrier network infrastructure rather than device-reported cell identifiers — is more resistant to IMSI catcher attacks and is the RECOMMENDED approach when MNO corroboration is used.<a href="#section-6.2.3-3" class="pilcrow">¶</a></p>
-<p id="section-6.2.3-4">Notwithstanding these mitigations, MNO-derived location is ultimately under the control of the carrier infrastructure. A compromised or coerced MNO can produce false location endorsements. Verifiers SHOULD treat MNO endorsements as corroborating evidence rather than sole proof of residency, and Appraisal Policies SHOULD require independent corroboration (for example, GNSS + MNO) for high-assurance geofence policies.<a href="#section-6.2.3-4" class="pilcrow">¶</a></p>
+<p id="section-6.2.3-4">Notwithstanding these mitigations, MNO-derived location is ultimately under the control of the carrier infrastructure. A compromised or coerced MNO can produce false location statements. Verifiers SHOULD treat MNO location statements as corroborating evidence rather than sole proof of residency, and Appraisal Policies SHOULD require independent corroboration (for example, GNSS + MNO) for high-assurance geofence policies.<a href="#section-6.2.3-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="location-trust-levels">
@@ -2385,7 +2423,7 @@ Attester (LAH)                      Verifier
               </tr>
               <tr>
                 <td class="text-left" rowspan="1" colspan="1">High</td>
-                <td class="text-left" rowspan="1" colspan="1">Authenticated GNSS (OSNMA or GPS NMA/Chimera), or Medium GNSS + MNO corroboration</td>
+                <td class="text-left" rowspan="1" colspan="1">Authenticated GNSS (OSNMA or GAIA), or Medium GNSS + MNO corroboration</td>
               </tr>
               <tr>
                 <td class="text-left" rowspan="1" colspan="1">Highest</td>
@@ -2412,13 +2450,16 @@ Attester (LAH)                      Verifier
             <p id="section-6.3-2.2.1"><strong>No trusted setup.</strong> Plonky2 is STARK-based and requires no trusted setup phase, eliminating the class of attacks arising from compromised SNARK setup parameters. Implementations substituting a different <code>zkp-format</code> MUST ensure it also provides transparent setup, or MUST document the resulting trust assumptions.<a href="#section-6.3-2.2.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-6.3-2.3">
-            <p id="section-6.3-2.3.1"><strong>Computational soundness.</strong> STARK security is computational, not unconditional, and relies on the collision resistance of the underlying hash function. Implementations SHOULD target at least 128-bit security. Note that Plonky2's default parameters target approximately 100 bits of security; achieving 128 bits requires explicit non-default parameter selection (field size, hash function, FRI blowup factor). Implementations MUST document the proof system parameters actually used to enable independent security analysis.<a href="#section-6.3-2.3.1" class="pilcrow">¶</a></p>
+            <p id="section-6.3-2.3.1"><strong>Computational soundness.</strong> STARK security is computational, not unconditional, and relies on the collision resistance of the underlying hash function. Implementations SHOULD target at least 128-bit security and MUST document the proof system parameters (field size, hash function, FRI parameters) to enable independent security analysis.<a href="#section-6.3-2.3.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-6.3-2.4">
-            <p id="section-6.3-2.4.1"><strong>Proof freshness.</strong> A valid ZKP proves location at proof-generation time. The nonce and timestamp freshness requirements that apply to <code>tpm-quote-seal</code> apply equally to ZKP proofs: Verifiers MUST reject proofs whose <code>timestamp</code> falls outside the configured freshness window.<a href="#section-6.3-2.4.1" class="pilcrow">¶</a></p>
+            <p id="section-6.3-2.4.1"><strong>URI availability.</strong> When <code>privacy-technique = "zkp"</code>, the Verifier MUST reject Evidence if the <code>zkp-proof-uri</code> cannot be resolved or the fetched proof bytes do not match <code>geolocation-proof-hash</code>.<a href="#section-6.3-2.4.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-6.3-2.5">
-            <p id="section-6.3-2.5.1"><strong>Prover integrity.</strong> A compromised prover can produce false proofs even for a correctly specified circuit. This threat is mitigated by V-GAP's TPM binding: the <code>tpm-quote-seal</code> covers <code>geolocation-proof-hash</code>, so a false proof can only be embedded in a bundle that also passes TPM quote verification for an approved platform. The ZKP privacy guarantee is only meaningful in conjunction with verified platform integrity.<a href="#section-6.3-2.5.1" class="pilcrow">¶</a></p>
+            <p id="section-6.3-2.5.1"><strong>Proof freshness.</strong> A valid ZKP proves location at proof-generation time. The nonce and timestamp freshness requirements that apply to <code>tpm-quote-seal</code> apply equally to ZKP proofs: Verifiers MUST reject proofs whose <code>timestamp</code> falls outside the configured freshness window.<a href="#section-6.3-2.5.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-6.3-2.6">
+            <p id="section-6.3-2.6.1"><strong>Prover integrity.</strong> A compromised prover can produce false proofs even for a correctly specified circuit. This threat is mitigated by V-GAP's TPM binding: the <code>tpm-quote-seal</code> covers <code>geolocation-proof-hash</code>, so a false proof can only be embedded in a bundle that also passes TPM quote verification for an approved platform. The ZKP privacy guarantee is only meaningful in conjunction with verified platform integrity.<a href="#section-6.3-2.6.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>
@@ -2431,21 +2472,69 @@ Attester (LAH)                      Verifier
 <a href="#section-7" class="section-number selfRef">7. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
       </h2>
 <p id="section-7-1">IANA is requested to register the following Object Identifier (OID) in the "SMI Numbers" registry under the "SMI Private Enterprise Numbers" (1.3.6.1.4.1) branch, or as appropriate for the V-GAP profile.<a href="#section-7-1" class="pilcrow">¶</a></p>
-<ul class="compact">
-<li class="compact" id="section-7-2.1">
-          <strong>OID</strong>: <code>1.3.6.1.4.1.65284.1.1</code><a href="#section-7-2.1" class="pilcrow">¶</a>
+<ul class="normal">
+<li class="normal" id="section-7-2.1">
+          <p id="section-7-2.1.1"><strong>OID</strong>: <code>1.3.6.1.4.1.65284.1.1</code><a href="#section-7-2.1.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="compact" id="section-7-2.2">
-          <strong>Description</strong>: Verifiable Geofencing Attestation Profile (V-GAP) Evidence / Attestation Result<a href="#section-7-2.2" class="pilcrow">¶</a>
+        <li class="normal" id="section-7-2.2">
+          <p id="section-7-2.2.1"><strong>Description</strong>: Verifiable Geofencing Attestation Profile (V-GAP) Evidence / Attestation Result<a href="#section-7-2.2.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="compact" id="section-7-2.3">
-          <strong>Reference</strong>: This document.<a href="#section-7-2.3" class="pilcrow">¶</a>
+        <li class="normal" id="section-7-2.3">
+          <p id="section-7-2.3.1"><strong>Reference</strong>: This document.<a href="#section-7-2.3.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="compact" id="section-7-2.4">
-          <strong>PEN</strong>: 65284 (IANA Private Enterprise Number currently assigned to Ram Krishnan)<a href="#section-7-2.4" class="pilcrow">¶</a>
+        <li class="normal" id="section-7-2.4">
+          <p id="section-7-2.4.1"><strong>PEN</strong>: 65284 (IANA Private Enterprise Number assigned to Ram Krishnan)<a href="#section-7-2.4.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
-<p id="section-7-3">Note: PEN 65284 is used provisionally for this draft. Prior to publication as an RFC, a formally allocated OID arc appropriate for an IETF standard MUST be obtained through the IANA process. The authors will coordinate with IANA to determine the appropriate registry and allocation procedure.<a href="#section-7-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="references">
+<section id="section-8">
+      <h2 id="name-references">
+<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-references" class="section-name selfRef">References</a>
+      </h2>
+<div id="normative-references">
+<section id="section-8.1">
+        <h3 id="name-normative-references">
+<a href="#section-8.1" class="section-number selfRef">8.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+        </h3>
+<ul class="normal">
+<li class="normal" id="section-8.1-1.1">
+            <p id="section-8.1-1.1.1">{{!RFC9334}}<a href="#section-8.1-1.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-8.1-1.2">
+            <p id="section-8.1-1.2.1">{{!RFC2119}}<a href="#section-8.1-1.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-8.1-1.3">
+            <p id="section-8.1-1.3.1">{{!RFC8174}}<a href="#section-8.1-1.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-8.1-1.4">
+            <p id="section-8.1-1.4.1">{{I-D.richardson-rats-geographic-results}}<a href="#section-8.1-1.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-8.1-1.5">
+            <p id="section-8.1-1.5.1">{{I-D.mw-wimse-transitive-attestation}}<a href="#section-8.1-1.5.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-8.1-1.6">
+            <p id="section-8.1-1.6.1">{{I-D.ietf-wimse-architecture}}<a href="#section-8.1-1.6.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="informative-references">
+<section id="section-8.2">
+        <h3 id="name-informative-references">
+<a href="#section-8.2" class="section-number selfRef">8.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
+        </h3>
+<ul class="normal">
+<li class="normal" id="section-8.2-1.1">
+            <p id="section-8.2-1.1.1">{{!RFC7942}}<a href="#section-8.2-1.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-8.2-1.2">
+            <p id="section-8.2-1.2.1">{{I-D.ramki-ptp-hardware-rooted-attestation}}<a href="#section-8.2-1.2.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
 </section>
 </div>
 <div id="contributors">
@@ -2479,15 +2568,15 @@ Email: saanvijay20@gmail.com<a href="#appendix-A-5" class="pilcrow">¶</a></p>
 <a href="#appendix-B.1" class="section-number selfRef">B.1. </a><a href="#name-gating-decisions-on-attesta" class="section-name selfRef">Gating Decisions on Attestation Results</a>
         </h3>
 <p id="appendix-B.1-1">A Relying Party consumes the Attestation Result produced by the Verifier and applies its Appraisal Policy for Attestation Results to make application-specific decisions. Common decision types include:<a href="#appendix-B.1-1" class="pilcrow">¶</a></p>
-<ul class="compact">
-<li class="compact" id="appendix-B.1-2.1">
-            <strong>Credential issuance</strong>: Issue or renew a workload credential only when the Attestation Result satisfies policy.<a href="#appendix-B.1-2.1" class="pilcrow">¶</a>
+<ul class="normal">
+<li class="normal" id="appendix-B.1-2.1">
+            <p id="appendix-B.1-2.1.1"><strong>Credential issuance</strong>: Issue or renew a workload credential only when the Attestation Result satisfies policy.<a href="#appendix-B.1-2.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact" id="appendix-B.1-2.2">
-            <strong>Key release</strong>: Release decryption keys or model weights only to Attesters with a positive, fresh Attestation Result.<a href="#appendix-B.1-2.2" class="pilcrow">¶</a>
+          <li class="normal" id="appendix-B.1-2.2">
+            <p id="appendix-B.1-2.2.1"><strong>Key release</strong>: Release decryption keys or model weights only to Attesters with a positive, fresh Attestation Result.<a href="#appendix-B.1-2.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact" id="appendix-B.1-2.3">
-            <strong>Access authorization</strong>: Gate access to sensitive APIs or data stores on a valid Attestation Result.<a href="#appendix-B.1-2.3" class="pilcrow">¶</a>
+          <li class="normal" id="appendix-B.1-2.3">
+            <p id="appendix-B.1-2.3.1"><strong>Access authorization</strong>: Gate access to sensitive APIs or data stores on a valid Attestation Result.<a href="#appendix-B.1-2.3.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="appendix-B.1-3">In intermittently connected edge deployments, local operation can continue during outages, while centralized policy can be enforced on renewal and on release of high-value secrets once connectivity is available.<a href="#appendix-B.1-3" class="pilcrow">¶</a></p>
@@ -2499,15 +2588,15 @@ Email: saanvijay20@gmail.com<a href="#appendix-A-5" class="pilcrow">¶</a></p>
 <a href="#appendix-B.2" class="section-number selfRef">B.2. </a><a href="#name-distributed-credential-issu" class="section-name selfRef">Distributed Credential Issuance and Scaling</a>
         </h3>
 <p id="appendix-B.2-1">To support edge deployments and intermittent connectivity, credential issuance by a Relying Party may be distributed within a sovereign boundary.<a href="#appendix-B.2-1" class="pilcrow">¶</a></p>
-<ul class="compact">
-<li class="compact" id="appendix-B.2-2.1">
-            <strong>Edge issuance</strong>: Credentials may be issued by a Relying Party deployed within the same boundary as the Attesters.<a href="#appendix-B.2-2.1" class="pilcrow">¶</a>
+<ul class="normal">
+<li class="normal" id="appendix-B.2-2.1">
+            <p id="appendix-B.2-2.1.1"><strong>Edge issuance</strong>: Credentials may be issued by a Relying Party deployed within the same boundary as the Attesters.<a href="#appendix-B.2-2.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact" id="appendix-B.2-2.2">
-            <strong>Scoping</strong>: Issued credentials should be scoped so they are not accepted outside the intended deployment boundary (for example, via trust bundle partitioning and policy).<a href="#appendix-B.2-2.2" class="pilcrow">¶</a>
+          <li class="normal" id="appendix-B.2-2.2">
+            <p id="appendix-B.2-2.2.1"><strong>Scoping</strong>: Issued credentials should be scoped so they are not accepted outside the intended deployment boundary (for example, via trust bundle partitioning and policy).<a href="#appendix-B.2-2.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact" id="appendix-B.2-2.3">
-            <strong>Renewal gating</strong>: Relying Parties should renew short-lived credentials only when the Attestation Result for integrity and residency is valid for the requested freshness window.<a href="#appendix-B.2-2.3" class="pilcrow">¶</a>
+          <li class="normal" id="appendix-B.2-2.3">
+            <p id="appendix-B.2-2.3.1"><strong>Renewal gating</strong>: Relying Parties should renew short-lived credentials only when the Attestation Result for integrity and residency is valid for the requested freshness window.<a href="#appendix-B.2-2.3.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>
@@ -2529,12 +2618,12 @@ Email: saanvijay20@gmail.com<a href="#appendix-A-5" class="pilcrow">¶</a></p>
 <a href="#appendix-B.4" class="section-number selfRef">B.4. </a><a href="#name-location-anchor-hosts" class="section-name selfRef">Location Anchor Hosts</a>
         </h3>
 <p id="appendix-B.4-1">To scale location sensing, a deployment may use dedicated anchors:<a href="#appendix-B.4-1" class="pilcrow">¶</a></p>
-<ul class="compact">
-<li class="compact" id="appendix-B.4-2.1">
-            <strong>End-user anchors</strong>: A user device (for example, a phone) can serve as an LAH for a nearby client device. The mechanism by which the anchor establishes its own location (and any proximity evidence it may provide) is out of scope for this document.<a href="#appendix-B.4-2.1" class="pilcrow">¶</a>
+<ul class="normal">
+<li class="normal" id="appendix-B.4-2.1">
+            <p id="appendix-B.4-2.1.1"><strong>End-user anchors</strong>: A user device (for example, a phone) can serve as an LAH for a nearby client device. The mechanism by which the anchor establishes its own location (and any proximity evidence it may provide) is out of scope for this document.<a href="#appendix-B.4-2.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact" id="appendix-B.4-2.2">
-            <strong>Data center anchors</strong>: A small set of hosts can act as LAHs for a cluster. Timing-based mechanisms (for example, PTP-derived) may assist in establishing relative location; protocol details are deferred to future profiling work (see {{I-D.ramki-ptp-hardware-rooted-attestation}}).<a href="#appendix-B.4-2.2" class="pilcrow">¶</a>
+          <li class="normal" id="appendix-B.4-2.2">
+            <p id="appendix-B.4-2.2.1"><strong>Data center anchors</strong>: A small set of hosts can act as LAHs for a cluster. Timing-based mechanisms (for example, PTP-derived) may assist in establishing relative location; protocol details are deferred to future profiling work (see {{I-D.ramki-ptp-hardware-rooted-attestation}}).<a href="#appendix-B.4-2.2.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>
@@ -2584,10 +2673,12 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
         <h3 id="name-key-registry-and-synchroniz">
 <a href="#appendix-C.2" class="section-number selfRef">C.2. </a><a href="#name-key-registry-and-synchroniz" class="section-name selfRef">Key Registry and Synchronization</a>
         </h3>
-<ul class="compact">
-<li class="compact" id="appendix-C.2-1.1">A central Verifier maintains a registry of accepted AK public keys and associated metadata (for example, EK certificate chain, hardware identity, and status).<a href="#appendix-C.2-1.1" class="pilcrow">¶</a>
+<ul class="normal">
+<li class="normal" id="appendix-C.2-1.1">
+            <p id="appendix-C.2-1.1.1">A central Verifier maintains a registry of accepted AK public keys and associated metadata (for example, EK certificate chain, hardware identity, and status).<a href="#appendix-C.2-1.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact" id="appendix-C.2-1.2">An Edge Verifier may maintain a local registry to support disconnected operation and periodically synchronizes updates to the central registry.<a href="#appendix-C.2-1.2" class="pilcrow">¶</a>
+          <li class="normal" id="appendix-C.2-1.2">
+            <p id="appendix-C.2-1.2.1">An Edge Verifier may maintain a local registry to support disconnected operation and periodically synchronizes updates to the central registry.<a href="#appendix-C.2-1.2.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>
@@ -2598,10 +2689,12 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
 <a href="#appendix-C.3" class="section-number selfRef">C.3. </a><a href="#name-key-rotation" class="section-name selfRef">Key Rotation</a>
         </h3>
 <p id="appendix-C.3-1">To prevent rogue key injection during rotation:<a href="#appendix-C.3-1" class="pilcrow">¶</a></p>
-<ul class="compact">
-<li class="compact" id="appendix-C.3-2.1">The central registry should accept a new AK only if the Edge Verifier provides a rotation proof that chains the new AK to previously accepted state.<a href="#appendix-C.3-2.1" class="pilcrow">¶</a>
+<ul class="normal">
+<li class="normal" id="appendix-C.3-2.1">
+            <p id="appendix-C.3-2.1.1">The central registry should accept a new AK only if the Edge Verifier provides a rotation proof that chains the new AK to previously accepted state.<a href="#appendix-C.3-2.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact" id="appendix-C.3-2.2">A rotation proof should be a JCS-canonicalized object signed by the previously accepted AK (or, if available, validated by a fresh hardware-rooted OOB quote).<a href="#appendix-C.3-2.2" class="pilcrow">¶</a>
+          <li class="normal" id="appendix-C.3-2.2">
+            <p id="appendix-C.3-2.2.1">A rotation proof should be a JCS-canonicalized object signed by the previously accepted AK (or, if available, validated by a fresh hardware-rooted OOB quote).<a href="#appendix-C.3-2.2.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <div id="example-rotation-proof">
@@ -2629,16 +2722,21 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
 <a href="#appendix-C.4" class="section-number selfRef">C.4. </a><a href="#name-credential-activation-and-r" class="section-name selfRef">Credential Activation and Re-Verification</a>
         </h3>
 <p id="appendix-C.4-1">Credential activation (for example, <code>TPM2_MakeCredential</code>) is expensive to run on every request. Verifiers should perform it on events such as:<a href="#appendix-C.4-1" class="pilcrow">¶</a></p>
-<ul class="compact">
-<li class="compact" id="appendix-C.4-2.1">Initial onboarding<br><a href="#appendix-C.4-2.1" class="pilcrow">¶</a>
+<ul class="normal">
+<li class="normal" id="appendix-C.4-2.1">
+            <p id="appendix-C.4-2.1.1">Initial onboarding<br><a href="#appendix-C.4-2.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact" id="appendix-C.4-2.2">Reboot / reset detection (for example, TPM clock/reset counters)<br><a href="#appendix-C.4-2.2" class="pilcrow">¶</a>
+          <li class="normal" id="appendix-C.4-2.2">
+            <p id="appendix-C.4-2.2.1">Reboot / reset detection (for example, TPM clock/reset counters)<br><a href="#appendix-C.4-2.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact" id="appendix-C.4-2.3">Policy violations or drift signals (for example, firmware or inventory changes)<br><a href="#appendix-C.4-2.3" class="pilcrow">¶</a>
+          <li class="normal" id="appendix-C.4-2.3">
+            <p id="appendix-C.4-2.3.1">Policy violations or drift signals (for example, firmware or inventory changes)<br><a href="#appendix-C.4-2.3.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact" id="appendix-C.4-2.4">Failure of location evidence checks<br><a href="#appendix-C.4-2.4" class="pilcrow">¶</a>
+          <li class="normal" id="appendix-C.4-2.4">
+            <p id="appendix-C.4-2.4.1">Failure of location evidence checks<br><a href="#appendix-C.4-2.4.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact" id="appendix-C.4-2.5">Explicit elevation to higher assurance policy<br><a href="#appendix-C.4-2.5" class="pilcrow">¶</a>
+          <li class="normal" id="appendix-C.4-2.5">
+            <p id="appendix-C.4-2.5.1">Explicit elevation to higher assurance policy<br><a href="#appendix-C.4-2.5.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="appendix-C.4-3">Between full activations, Verifiers may accept fresh quotes from registered AKs as proof of continued compliance, subject to policy.<a href="#appendix-C.4-3" class="pilcrow">¶</a></p>
@@ -2649,10 +2747,12 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
         <h3 id="name-revocation-and-health-signa">
 <a href="#appendix-C.5" class="section-number selfRef">C.5. </a><a href="#name-revocation-and-health-signa" class="section-name selfRef">Revocation and Health Signals</a>
         </h3>
-<ul class="compact">
-<li class="compact" id="appendix-C.5-1.1">The Edge Verifier should maintain a per-node health signal (for example, tamper, firmware policy violations).<a href="#appendix-C.5-1.1" class="pilcrow">¶</a>
+<ul class="normal">
+<li class="normal" id="appendix-C.5-1.1">
+            <p id="appendix-C.5-1.1.1">The Edge Verifier should maintain a per-node health signal (for example, tamper, firmware policy violations).<a href="#appendix-C.5-1.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact" id="appendix-C.5-1.2">On severe health signals, the Verifier should revoke the relevant AK(s) and reject identities derived from them according to policy.<a href="#appendix-C.5-1.2" class="pilcrow">¶</a>
+          <li class="normal" id="appendix-C.5-1.2">
+            <p id="appendix-C.5-1.2.1">On severe health signals, the Verifier should revoke the relevant AK(s) and reject identities derived from them according to policy.<a href="#appendix-C.5-1.2.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>
@@ -2663,10 +2763,12 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
 <a href="#appendix-C.6" class="section-number selfRef">C.6. </a><a href="#name-disconnected-operation-leas" class="section-name selfRef">Disconnected Operation (Leased Attestation Result)</a>
         </h3>
 <p id="appendix-C.6-1">For intermittent connectivity, the Verifier may produce Attestation Results with extended validity (a lease) under policy. If a lease is used:<a href="#appendix-C.6-1" class="pilcrow">¶</a></p>
-<ul class="compact">
-<li class="compact" id="appendix-C.6-2.1">The Verifier should revoke or cease producing positive results locally on tamper/drift signals.<a href="#appendix-C.6-2.1" class="pilcrow">¶</a>
+<ul class="normal">
+<li class="normal" id="appendix-C.6-2.1">
+            <p id="appendix-C.6-2.1.1">The Verifier should revoke or cease producing positive results locally on tamper/drift signals.<a href="#appendix-C.6-2.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact" id="appendix-C.6-2.2">The Attester should re-attest and satisfy current policy on reconnection before the Relying Party accepts a new Attestation Result or releases high-value secrets.<a href="#appendix-C.6-2.2" class="pilcrow">¶</a>
+          <li class="normal" id="appendix-C.6-2.2">
+            <p id="appendix-C.6-2.2.1">The Attester should re-attest and satisfy current policy on reconnection before the Relying Party accepts a new Attestation Result or releases high-value secrets.<a href="#appendix-C.6-2.2.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>
@@ -2698,15 +2800,15 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
 <a href="#appendix-E" class="section-number selfRef">Appendix E. </a><a href="#name-policy-use" class="section-name selfRef">Policy Use</a>
       </h2>
 <p id="appendix-E-1">Relying parties and credential issuers can use V-GAP Attestation Results as inputs to authorization.<a href="#appendix-E-1" class="pilcrow">¶</a></p>
-<ul class="compact">
-<li class="compact" id="appendix-E-2.1">
-          <strong>ABAC</strong>: Residency and integrity Claims from the Attestation Result can be mandatory attributes for sensitive operations.<a href="#appendix-E-2.1" class="pilcrow">¶</a>
+<ul class="normal">
+<li class="normal" id="appendix-E-2.1">
+          <p id="appendix-E-2.1.1"><strong>ABAC</strong>: Residency and integrity Claims from the Attestation Result can be mandatory attributes for sensitive operations.<a href="#appendix-E-2.1.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="compact" id="appendix-E-2.2">
-          <strong>KMS gatekeeping</strong>: Release of high-value assets (for example, decryption keys) should depend on a recent, positive Attestation Result.<a href="#appendix-E-2.2" class="pilcrow">¶</a>
+        <li class="normal" id="appendix-E-2.2">
+          <p id="appendix-E-2.2.1"><strong>KMS gatekeeping</strong>: Release of high-value assets (for example, decryption keys) should depend on a recent, positive Attestation Result.<a href="#appendix-E-2.2.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="compact" id="appendix-E-2.3">
-          <strong>Fail closed</strong>: When the Attestation Result is embedded in an X.509 extension marked CRITICAL, any consumer that does not understand the extension will reject the credential.<a href="#appendix-E-2.3" class="pilcrow">¶</a>
+        <li class="normal" id="appendix-E-2.3">
+          <p id="appendix-E-2.3.1"><strong>Fail closed</strong>: When the Attestation Result is embedded in an X.509 extension marked CRITICAL, any consumer that does not understand the extension will reject the credential.<a href="#appendix-E-2.3.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
 </section>
@@ -2737,7 +2839,7 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
     "tpm-quote-seal": "ARoAAQALAAUACwEA...",
     "target-environment-image-digest": "a1b2c3d4e5f6...64-char-hex-sha256"
   },
-  "mno-endorsement": {
+  "mno-location": {
     "mno-key-cert": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8A...",
     "mno-sig": "MEYCIQDx9z2k..."
   }
@@ -2786,33 +2888,33 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
       </h2>
 <p id="appendix-G-1">[Note to RFC Editor: This section may be removed before publication as per {{!RFC7942}}.]<a href="#appendix-G-1" class="pilcrow">¶</a></p>
 <p id="appendix-G-2">A reference implementation of the V-GAP profile is publicly available:<a href="#appendix-G-2" class="pilcrow">¶</a></p>
-<ul class="compact">
-<li class="compact" id="appendix-G-3.1">
-          <strong>Repository</strong>: <a href="https://github.com/lfedgeai/AegisSovereignAI">https://github.com/lfedgeai/AegisSovereignAI</a><a href="#appendix-G-3.1" class="pilcrow">¶</a>
+<ul class="normal">
+<li class="normal" id="appendix-G-3.1">
+          <p id="appendix-G-3.1.1"><strong>Repository</strong>: <a href="https://github.com/lfedgeai/AegisSovereignAI">https://github.com/lfedgeai/AegisSovereignAI</a><a href="#appendix-G-3.1.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="compact" id="appendix-G-3.2">
-          <strong>Path</strong>: <code>hybrid-cloud-poc/</code><a href="#appendix-G-3.2" class="pilcrow">¶</a>
+        <li class="normal" id="appendix-G-3.2">
+          <p id="appendix-G-3.2.1"><strong>Path</strong>: <code>hybrid-cloud-poc/</code><a href="#appendix-G-3.2.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="compact" id="appendix-G-3.3">
-          <strong>License</strong>: Apache 2.0<a href="#appendix-G-3.3" class="pilcrow">¶</a>
+        <li class="normal" id="appendix-G-3.3">
+          <p id="appendix-G-3.3.1"><strong>License</strong>: Apache 2.0<a href="#appendix-G-3.3.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
 <p id="appendix-G-4">The implementation demonstrates the <strong>in-band host attestation</strong> deployment pattern ({{deployment-patterns-informative}}) using:<a href="#appendix-G-4" class="pilcrow">¶</a></p>
-<ul class="compact">
-<li class="compact" id="appendix-G-5.1">
-          <strong>TPM 2.0</strong> hardware root of trust (AK-based quotes, PCR 15 TOCTOU protection)<a href="#appendix-G-5.1" class="pilcrow">¶</a>
+<ul class="normal">
+<li class="normal" id="appendix-G-5.1">
+          <p id="appendix-G-5.1.1"><strong>TPM 2.0</strong> hardware root of trust (AK-based quotes, PCR 15 TOCTOU protection)<a href="#appendix-G-5.1.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="compact" id="appendix-G-5.2">
-          <strong>SPIRE</strong> (Relying Party) with a custom <code>unifiedidentity</code> plugin that consumes V-GAP Attestation Results and embeds them as an X.509 extension (OID <code>1.3.6.1.4.1.65284.1.1</code>)<a href="#appendix-G-5.2" class="pilcrow">¶</a>
+        <li class="normal" id="appendix-G-5.2">
+          <p id="appendix-G-5.2.1"><strong>SPIRE</strong> (Relying Party) with a custom <code>unifiedidentity</code> plugin that consumes V-GAP Attestation Results and embeds them as an X.509 extension (OID <code>1.3.6.1.4.1.65284.1.1</code>)<a href="#appendix-G-5.2.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="compact" id="appendix-G-5.3">
-          <strong>Keylime</strong> (Verifier) with IMA measurement of the Target Environment binary (<code>target-environment-image-digest</code>)<a href="#appendix-G-5.3" class="pilcrow">¶</a>
+        <li class="normal" id="appendix-G-5.3">
+          <p id="appendix-G-5.3.1"><strong>Keylime</strong> (Verifier) with IMA measurement of the Target Environment binary (<code>target-environment-image-digest</code>)<a href="#appendix-G-5.3.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="compact" id="appendix-G-5.4">
-          <strong>Plonky2</strong> STARK prover for <code>privacy-technique = "zkp"</code> geofence proofs<a href="#appendix-G-5.4" class="pilcrow">¶</a>
+        <li class="normal" id="appendix-G-5.4">
+          <p id="appendix-G-5.4.1"><strong>Plonky2</strong> STARK prover for <code>privacy-technique = "zkp"</code> geofence proofs<a href="#appendix-G-5.4.1" class="pilcrow">¶</a></p>
 </li>
-        <li class="compact" id="appendix-G-5.5">
-          <strong>Geolocation sensor cascade</strong>: Mobile/CAMARA, GNSS/GPS, and config-file fallback with IMEI/IMSI binding for <code>geolocation-id-hash</code><a href="#appendix-G-5.5" class="pilcrow">¶</a>
+        <li class="normal" id="appendix-G-5.5">
+          <p id="appendix-G-5.5.1"><strong>Geolocation sensor cascade</strong>: Mobile/CAMARA, GNSS/GPS, and config-file fallback with IMEI/IMSI binding for <code>geolocation-id-hash</code><a href="#appendix-G-5.5.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
 <p id="appendix-G-6">The implementation includes automated end-to-end tests (<code>./run-demo.sh</code>) that exercise the full attestation flow from TPM quote construction through ZKP proof generation and Attestation Result consumption.<a href="#appendix-G-6" class="pilcrow">¶</a></p>

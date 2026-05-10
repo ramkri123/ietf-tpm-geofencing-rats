@@ -16,7 +16,6 @@ Expires: 9 November 2026                                           Intel
 
 
      Privacy Preserving Verifiable Geofencing with Residency Proofs
-                draft-lkspa-rats-verifiable-geo-fence-02
 
 Abstract
 
@@ -53,6 +52,7 @@ Status of This Memo
 
 
 
+
 Krishnan, et al.         Expires 9 November 2026                [Page 1]
 
 Internet-Draft                    V-GAP                         May 2026
@@ -86,7 +86,7 @@ Copyright Notice
 
 Table of Contents
 
-   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   3
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   4
      1.1.  Scope and Layered Attestation . . . . . . . . . . . . . .   4
      1.2.  Relationship to Related Work  . . . . . . . . . . . . . .   5
        1.2.1.  Platform Ownership and Confidential Computing . . . .   6
@@ -94,18 +94,18 @@ Table of Contents
        1.2.3.  Other Potentially Related Work  . . . . . . . . . . .   7
    2.  Conventions and Definitions . . . . . . . . . . . . . . . . .   7
      2.1.  Abbreviations . . . . . . . . . . . . . . . . . . . . . .   7
-   3.  Key Terms . . . . . . . . . . . . . . . . . . . . . . . . . .   7
-   4.  Use Cases . . . . . . . . . . . . . . . . . . . . . . . . . .   8
+   3.  Key Terms . . . . . . . . . . . . . . . . . . . . . . . . . .   8
+   4.  Use Cases . . . . . . . . . . . . . . . . . . . . . . . . . .   9
      4.1.  Server-centric Enforcement  . . . . . . . . . . . . . . .   9
-     4.2.  User-centric Enforcement  . . . . . . . . . . . . . . . .   9
+     4.2.  User-centric Enforcement  . . . . . . . . . . . . . . . .  10
      4.3.  Compliance and Risk Reduction . . . . . . . . . . . . . .  10
-   5.  Verifiable Geofencing Attestation Profile (V-GAP) . . . . . .  10
-     5.1.  RATS Role Mapping . . . . . . . . . . . . . . . . . . . .  10
-     5.2.  Evidence Flow . . . . . . . . . . . . . . . . . . . . . .  11
-     5.3.  V-GAP Evidence Structure  . . . . . . . . . . . . . . . .  12
-       5.3.1.  Top-Level Structure . . . . . . . . . . . . . . . . .  12
-       5.3.2.  lah-bundle Fields . . . . . . . . . . . . . . . . . .  13
-       5.3.3.  geolocation-payload Variants  . . . . . . . . . . . .  15
+   5.  Verifiable Geofencing Attestation Profile (V-GAP) . . . . . .  11
+     5.1.  RATS Role Mapping . . . . . . . . . . . . . . . . . . . .  11
+     5.2.  Evidence Flow . . . . . . . . . . . . . . . . . . . . . .  12
+     5.3.  V-GAP Evidence Structure  . . . . . . . . . . . . . . . .  13
+       5.3.1.  Top-Level Structure . . . . . . . . . . . . . . . . .  13
+       5.3.2.  lah-bundle Fields . . . . . . . . . . . . . . . . . .  14
+       5.3.3.  geolocation-payload Variants  . . . . . . . . . . . .  16
 
 
 
@@ -114,45 +114,61 @@ Krishnan, et al.         Expires 9 November 2026                [Page 2]
 Internet-Draft                    V-GAP                         May 2026
 
 
-       5.3.4.  MNO Endorsement (RATS Endorsement)  . . . . . . . . .  16
-     5.4.  Attestation Result  . . . . . . . . . . . . . . . . . . .  17
-     5.5.  TPM Quote Verification Procedure  . . . . . . . . . . . .  17
-     5.6.  Freshness and Replay Prevention . . . . . . . . . . . . .  18
-   6.  Security Considerations . . . . . . . . . . . . . . . . . . .  18
-     6.1.  Privacy Applicability . . . . . . . . . . . . . . . . . .  19
-     6.2.  Location Spoofing . . . . . . . . . . . . . . . . . . . .  19
-       6.2.1.  Fundamental Limitation: Sensor Data Provenance  . . .  20
-       6.2.2.  GNSS Spoofing . . . . . . . . . . . . . . . . . . . .  20
-       6.2.3.  Mobile Network Spoofing . . . . . . . . . . . . . . .  21
-       6.2.4.  Location Trust Levels . . . . . . . . . . . . . . . .  21
-     6.3.  Zero-Knowledge Proof Security . . . . . . . . . . . . . .  22
-   7.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  23
-   Appendix A.  Contributors . . . . . . . . . . . . . . . . . . . .  23
-   Appendix B.  Operational Guidance . . . . . . . . . . . . . . . .  24
-     B.1.  Gating Decisions on Attestation Results . . . . . . . . .  24
-     B.2.  Distributed Credential Issuance and Scaling . . . . . . .  24
-     B.3.  Mobility and Handover . . . . . . . . . . . . . . . . . .  25
-     B.4.  Location Anchor Hosts . . . . . . . . . . . . . . . . . .  25
-   Appendix C.  Scalable Fleet Management  . . . . . . . . . . . . .  25
-     C.1.  Nonce Chain and Merkle Audit Log  . . . . . . . . . . . .  25
-     C.2.  Key Registry and Synchronization  . . . . . . . . . . . .  26
-     C.3.  Key Rotation  . . . . . . . . . . . . . . . . . . . . . .  26
-       C.3.1.  Example Rotation Proof  . . . . . . . . . . . . . . .  26
-     C.4.  Credential Activation and Re-Verification . . . . . . . .  26
-     C.5.  Revocation and Health Signals . . . . . . . . . . . . . .  27
-     C.6.  Disconnected Operation (Leased Attestation Result)  . . .  27
-   Appendix D.  Deployment Patterns  . . . . . . . . . . . . . . . .  27
-   Appendix E.  Policy Use . . . . . . . . . . . . . . . . . . . . .  28
-   Appendix F.  V-GAP Examples and Sensor Recipes  . . . . . . . . .  28
-     F.1.  Example Instance (privacy-technique = "zkp")  . . . . . .  28
-     F.2.  Sensor Type Input Recipes . . . . . . . . . . . . . . . .  29
-   Appendix G.  Implementation Status  . . . . . . . . . . . . . . .  29
-   Appendix H.  WIMSE Integration  . . . . . . . . . . . . . . . . .  30
-     H.1.  Relationship to WIMSE Architecture  . . . . . . . . . . .  30
-     H.2.  Workload Binding Fields . . . . . . . . . . . . . . . . .  31
-     H.3.  X.509 Extension for Downstream Consumers  . . . . . . . .  32
-   Appendix I.  Data Residency References  . . . . . . . . . . . . .  32
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  32
+       5.3.4.  MNO Location Evidence (Signed Claim Source) . . . . .  17
+     5.4.  Attestation Result  . . . . . . . . . . . . . . . . . . .  18
+     5.5.  TPM Quote Verification Procedure  . . . . . . . . . . . .  19
+     5.6.  Freshness and Replay Prevention . . . . . . . . . . . . .  20
+   6.  Security Considerations . . . . . . . . . . . . . . . . . . .  20
+     6.1.  Privacy Applicability . . . . . . . . . . . . . . . . . .  21
+     6.2.  Location Spoofing . . . . . . . . . . . . . . . . . . . .  21
+       6.2.1.  Fundamental Limitation: Sensor Data Provenance  . . .  21
+       6.2.2.  GNSS Spoofing . . . . . . . . . . . . . . . . . . . .  22
+       6.2.3.  Mobile Network Spoofing . . . . . . . . . . . . . . .  22
+       6.2.4.  Location Trust Levels . . . . . . . . . . . . . . . .  23
+     6.3.  Zero-Knowledge Proof Security . . . . . . . . . . . . . .  24
+   7.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  25
+   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  25
+     8.1.  Normative References  . . . . . . . . . . . . . . . . . .  25
+     8.2.  Informative References  . . . . . . . . . . . . . . . . .  26
+   Appendix A.  Contributors . . . . . . . . . . . . . . . . . . . .  26
+   Appendix B.  Operational Guidance . . . . . . . . . . . . . . . .  26
+     B.1.  Gating Decisions on Attestation Results . . . . . . . . .  26
+     B.2.  Distributed Credential Issuance and Scaling . . . . . . .  27
+     B.3.  Mobility and Handover . . . . . . . . . . . . . . . . . .  27
+     B.4.  Location Anchor Hosts . . . . . . . . . . . . . . . . . .  27
+   Appendix C.  Scalable Fleet Management  . . . . . . . . . . . . .  28
+     C.1.  Nonce Chain and Merkle Audit Log  . . . . . . . . . . . .  28
+     C.2.  Key Registry and Synchronization  . . . . . . . . . . . .  28
+     C.3.  Key Rotation  . . . . . . . . . . . . . . . . . . . . . .  28
+       C.3.1.  Example Rotation Proof  . . . . . . . . . . . . . . .  29
+     C.4.  Credential Activation and Re-Verification . . . . . . . .  29
+     C.5.  Revocation and Health Signals . . . . . . . . . . . . . .  29
+     C.6.  Disconnected Operation (Leased Attestation Result)  . . .  30
+   Appendix D.  Deployment Patterns  . . . . . . . . . . . . . . . .  30
+   Appendix E.  Policy Use . . . . . . . . . . . . . . . . . . . . .  31
+   Appendix F.  V-GAP Examples and Sensor Recipes  . . . . . . . . .  31
+     F.1.  Example Instance (privacy-technique = "zkp")  . . . . . .  31
+     F.2.  Sensor Type Input Recipes . . . . . . . . . . . . . . . .  31
+   Appendix G.  Implementation Status  . . . . . . . . . . . . . . .  32
+   Appendix H.  WIMSE Integration  . . . . . . . . . . . . . . . . .  33
+     H.1.  Relationship to WIMSE Architecture  . . . . . . . . . . .  33
+     H.2.  Workload Binding Fields . . . . . . . . . . . . . . . . .  34
+     H.3.  X.509 Extension for Downstream Consumers  . . . . . . . .  35
+   Appendix I.  Data Residency References  . . . . . . . . . . . . .  35
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  35
+
+
+
+
+
+
+
+
+
+Krishnan, et al.         Expires 9 November 2026                [Page 3]
+
+Internet-Draft                    V-GAP                         May 2026
+
 
 1.  Introduction
 
@@ -163,18 +179,13 @@ Internet-Draft                    V-GAP                         May 2026
    easily spoofed, stolen, or replayed and provide no hardware-rooted
    verifiability.  Key gaps include:
 
-
-
-Krishnan, et al.         Expires 9 November 2026                [Page 3]
-
-Internet-Draft                    V-GAP                         May 2026
-
-
    *  *Unverifiable location metadata:* Location tags for data objects
       are typically unsigned, making provenance and integrity difficult
       to validate.
+
    *  *Token theft and replay:* Bearer tokens can be copied and replayed
       from unauthorized hosts or locations.
+
    *  *Implicit trust in "region" and transit:* A relying party often
       cannot cryptographically verify a server's physical residency, and
       requests may traverse intermediaries that expand the effective
@@ -188,7 +199,8 @@ Internet-Draft                    V-GAP                         May 2026
    1.  the Workload Identity Agent (Target Environment) is running on an
        approved, measured platform whose Attesting Environment is a TPM
        (platform integrity); and
-   2.  the platform is resident within an approved geographic boundary,
+
+   2.  that platform is resident within an approved geographic boundary,
        optionally without revealing coordinates (residency).
 
    To maintain location privacy while providing cryptographic
@@ -209,18 +221,6 @@ Internet-Draft                    V-GAP                         May 2026
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 Krishnan, et al.         Expires 9 November 2026                [Page 4]
 
 Internet-Draft                    V-GAP                         May 2026
@@ -234,8 +234,10 @@ Internet-Draft                    V-GAP                         May 2026
    |(immutable|Environment|Location|all Claims (integrity +           |
    |root)     |           |Sensor  |geolocation) into a TPM quote.    |
    |          |           |(Claim  |Endorsed by TPM manufacturer (EK  |
-   |          |           |source) |cert) and optionally by MNO (mno- |
-   |          |           |        |endorsement).                     |
+   |          |           |source) |cert).  MNO location statements   |
+   |          |           |        |(mno-location), when present, are |
+   |          |           |        |integrated as a signed Claim      |
+   |          |           |        |source.                           |
    +----------+-----------+--------+----------------------------------+
    |*Layer B* |Target     |Workload|Measured by the TPM (target-      |
    |(measured |Environment|Identity|environment-image-digest).        |
@@ -270,10 +272,8 @@ Internet-Draft                    V-GAP                         May 2026
    geographic result claims that {{I-D.richardson-rats-geographic-
    results}} encodes.
 
-   The two documents are intended to compose: a Verifier that appraises
-   a V-GAP lah-bundle could express its conclusion as an Attestation
-   Result using the geographic claims defined in {{I-D.richardson-rats-
-   geographic-results}}. V-GAP is self-contained; use of that encoding
+
+
 
 
 
@@ -282,6 +282,10 @@ Krishnan, et al.         Expires 9 November 2026                [Page 5]
 Internet-Draft                    V-GAP                         May 2026
 
 
+   The two documents are intended to compose: a Verifier that appraises
+   a V-GAP lah-bundle could express its conclusion as an Attestation
+   Result using the geographic claims defined in {{I-D.richardson-rats-
+   geographic-results}}. V-GAP is self-contained; use of that encoding
    is OPTIONAL and is one possible way a Verifier may express its
    conclusions — consumers MAY enforce geofence policy directly from the
    Attestation Result, use the V-GAP X.509 extension (OID
@@ -313,20 +317,16 @@ Internet-Draft                    V-GAP                         May 2026
 1.2.2.  Geolocation Methods as Composable Claim Sources
 
    V-GAP is designed so that different geolocation methods (GNSS, MNO/
-   CAMARA, timing-based, provider region attestation) can independently
-   produce Claims that feed into a common Evidence structure and
-   ultimately into a common Attestation Result format.  Each method has
-   distinct security properties and threat models (see Security
-   Considerations).  Implementations SHOULD treat geolocation methods as
-   composable and independently appraised Claim sources rather than
-   requiring a single method.  This design allows the security
-   considerations for each method to be evaluated independently while
-   the Attestation Result remains uniform.
-
-
-
-
-
+   CAMARA, timing-based, provider region attestation, latency-bounded
+   anchor networks such as SovCert, and emerging quantum-derived
+   location proofs) can independently produce Claims that feed into a
+   common Evidence structure and ultimately into a common Attestation
+   Result format.  Each method has distinct security properties and
+   threat models (see Security Considerations).  Implementations SHOULD
+   treat geolocation methods as composable and independently appraised
+   Claim sources rather than requiring a single method.  This design
+   allows the security considerations for each method to be evaluated
+   independently while the Attestation Result remains uniform.
 
 
 
@@ -340,12 +340,19 @@ Internet-Draft                    V-GAP                         May 2026
 
 1.2.3.  Other Potentially Related Work
 
-   The "Sovereign Certificates" initiative (sovcert.org) has been raised
-   as potentially related work.  The website appears to be a single-
-   entity effort without broad community review or standardization
-   process participation.  Future revisions of this document will assess
-   alignment or differentiation if the initiative matures or publishes
-   through a recognized standards body.
+   The "Sovereign Certificates" initiative (sovcert.org) proposes
+   latency-bounded location inference using dedicated network anchors.
+   The initiative appears to be a single-entity effort without broad
+   community review or standardization process participation.
+   Nonetheless, the SovCert proposal is structurally compatible with
+   V-GAP: SovCert "anchors" produce signed location measurements that
+   are functionally equivalent to other geolocation Claim sources (GNSS,
+   MNO/CAMARA, timing-based).  A SovCert location statement could be
+   integrated into the V-GAP Evidence structure as an additional signed
+   Claim source, following the same composable model used for MNO
+   location evidence (see mno-location).  Future revisions of this
+   document will assess formal integration if the initiative matures or
+   publishes through a recognized standards body.
 
 2.  Conventions and Definitions
 
@@ -358,33 +365,26 @@ Internet-Draft                    V-GAP                         May 2026
 2.1.  Abbreviations
 
    *  *AK*: Attestation Key
+
    *  *BMC*: Baseboard Management Controller
+
    *  *DAA*: Direct Anonymous Attestation
+
    *  *EAT*: Entity Attestation Token
+
    *  *EK*: Endorsement Key
+
    *  *GNSS*: Global Navigation Satellite System
+
    *  *IMA*: Integrity Measurement Architecture
+
    *  *IMEI*: International Mobile Equipment Identity
+
    *  *IMSI*: International Mobile Subscriber Identity
+
    *  *LAH*: Location Anchor Host
-   *  *OOB*: Out-of-Band
-   *  *PCR*: Platform Configuration Register
-   *  *PoR*: Proof of Residency
-   *  *SPDM*: Security Protocol and Data Model
-   *  *STARK*: Scalable Transparent ARgument of Knowledge
-   *  *SVID*: SPIFFE Verifiable Identity Document
-   *  *TEE*: Trusted Execution Environment
-   *  *TPM*: Trusted Platform Module
-   *  *V-GAP*: Verifiable Geofencing Attestation Profile
-   *  *ZKP*: Zero-Knowledge Proof
 
-3.  Key Terms
-
-   Data Residency:  Requirement that data processing and storage remain
-      within an approved geographic boundary.
-   Geofencing:  Enforcement that agents and services execute only on
-      approved hosts within an approved geographic boundary.
-   Attesting Environment:  An environment capable of collecting Claims
+   *  *MNO*: Mobile Network Operator
 
 
 
@@ -394,53 +394,53 @@ Krishnan, et al.         Expires 9 November 2026                [Page 7]
 Internet-Draft                    V-GAP                         May 2026
 
 
+   *  *OOB*: Out-of-Band
+
+   *  *PCR*: Platform Configuration Register
+
+   *  *PoR*: Proof of Residency
+
+   *  *SPDM*: Security Protocol and Data Model
+
+   *  *STARK*: Scalable Transparent ARgument of Knowledge
+
+   *  *SVID*: SPIFFE Verifiable Identity Document
+
+   *  *TEE*: Trusted Execution Environment
+
+   *  *TPM*: Trusted Platform Module
+
+   *  *V-GAP*: Verifiable Geofencing Attestation Profile
+
+   *  *ZKP*: Zero-Knowledge Proof
+
+3.  Key Terms
+
+   Data Residency:  Requirement that data processing and storage remain
+      within an approved geographic boundary.
+
+   Geofencing:  Enforcement that agents and services execute only on
+      approved hosts within an approved geographic boundary.
+
+   Attesting Environment:  An environment capable of collecting Claims
       about a Target Environment and producing Evidence.  In V-GAP, the
       TPM serves as the Attesting Environment.
+
    Target Environment:  An environment about which Claims are collected
       by an Attesting Environment.  In V-GAP, the Workload Identity
       Agent is the Target Environment measured by the TPM.
+
    Workload Identity Agent:  On-host component (Target Environment)
       whose binary integrity is measured by the TPM.  Once verified, it
       assembles the V-GAP Evidence structure.
+
    Location Anchor Host (LAH):  Host or device that acts as the Attester
       ({{!RFC9334}}).  Contains the TPM (Attesting Environment), the
       Workload Identity Agent (Target Environment), and one or more
       geolocation Claim sources (for example, GNSS receiver or MNO-
       connected modem).
+
    Claim Source (Geolocation):  A sensor or service that provides
-      geolocation Claims (for example, coordinates, ZKP proof) to the
-      Evidence assembler.  The Claim source is not an Attesting
-      Environment; its output is sealed into the TPM quote alongside
-      platform integrity Claims.
-   Composite Geolocation:  Location estimate fused from multiple Claim
-      sources and accompanied by a quality indicator.
-   Proof of Residency (PoR):  Evidence that a platform is within an
-      approved geofence for a specific attestation interval.
-   Silicon Root of Trust:  Hardware trust anchor (for example, TPM) that
-      supports measured boot, protects attestation keys, and acts as the
-      Attesting Environment.
-   Transparent Zero-Knowledge Proof:  ZKP that does not require a
-      trusted setup; used to prove "inside an approved zone" without
-      revealing precise coordinates.
-   V-GAP (Verifiable Geofencing Attestation Profile):  Evidence profile
-      defined in this document, binding platform integrity and verified
-      residency into a single hardware-sealed Evidence structure (lah-
-      bundle).
-   N_fusion:  Fresh nonce for each attestation interval.  Initiated by
-      the Relying Party and delivered to the Attester by the Verifier.
-      Corresponds to the nonce field in the lah-bundle.  Provides
-      freshness per {{!RFC9334}}, Section 10.2.
-
-4.  Use Cases
-
-   This profile supports attested data residency and geofencing for
-   platforms running identity agents and (optionally) user devices.
-   Common use cases fall into: server-centric enforcement, user-centric
-   enforcement, and compliance and risk reduction.
-
-
-
-
 
 
 
@@ -449,6 +449,41 @@ Krishnan, et al.         Expires 9 November 2026                [Page 8]
 
 Internet-Draft                    V-GAP                         May 2026
 
+
+      geolocation Claims (for example, coordinates, ZKP proof) to the
+      Evidence assembler.  The Claim source is not an Attesting
+      Environment; its output is sealed into the TPM quote alongside
+      platform integrity Claims.
+
+   Composite Geolocation:  Location estimate fused from multiple Claim
+      sources and accompanied by a quality indicator.
+
+   Proof of Residency (PoR):  Evidence that a platform is within an
+      approved geofence for a specific attestation interval.
+
+   Silicon Root of Trust:  Hardware trust anchor (for example, TPM) that
+      supports measured boot, protects attestation keys, and acts as the
+      Attesting Environment.
+
+   Transparent Zero-Knowledge Proof:  ZKP that does not require a
+      trusted setup; used to prove "inside an approved zone" without
+      revealing precise coordinates.
+
+   V-GAP (Verifiable Geofencing Attestation Profile):  Evidence profile
+      defined in this document, binding platform integrity and verified
+      residency into a single hardware-sealed Evidence structure (lah-
+      bundle).
+
+   N_fusion:  Fresh nonce issued by the Relying Party for each
+      attestation interval.  Corresponds to the nonce field in the lah-
+      bundle.  Provides freshness per {{!RFC9334}}, Section 10.
+
+4.  Use Cases
+
+   This profile supports attested data residency and geofencing for
+   platforms running identity agents and (optionally) user devices.
+   Common use cases fall into: server-centric enforcement, user-centric
+   enforcement, and compliance and risk reduction.
 
 4.1.  Server-centric Enforcement
 
@@ -460,6 +495,16 @@ Internet-Draft                    V-GAP                         May 2026
       credentials only when the issuing Attester's Evidence demonstrates
       platform integrity and "in-zone" residency, preventing credentials
       from being used outside the approved boundary.
+
+
+
+
+
+
+Krishnan, et al.         Expires 9 November 2026                [Page 9]
+
+Internet-Draft                    V-GAP                         May 2026
+
 
    *  *Agentic AI platforms:* An AI agent platform may issue credentials
       for sensitive operations only when its Attester presents hardware-
@@ -496,16 +541,6 @@ Internet-Draft                    V-GAP                         May 2026
       within allowed geographies, reducing policy and insider-risk
       exposure.
 
-
-
-
-
-
-Krishnan, et al.         Expires 9 November 2026                [Page 9]
-
-Internet-Draft                    V-GAP                         May 2026
-
-
 4.3.  Compliance and Risk Reduction
 
    Geofence attestation provides audit-ready Evidence to support data
@@ -515,6 +550,17 @@ Internet-Draft                    V-GAP                         May 2026
    drift, edge relocation/proxying, contractual residency requirements,
    and location-privacy minimization (proving "inside the zone" without
    storing coordinates).
+
+
+
+
+
+
+
+Krishnan, et al.         Expires 9 November 2026               [Page 10]
+
+Internet-Draft                    V-GAP                         May 2026
+
 
 5.  Verifiable Geofencing Attestation Profile (V-GAP)
 
@@ -549,22 +595,9 @@ Internet-Draft                    V-GAP                         May 2026
     |              |HPE OneView) | an Attestation Result.             |
     +--------------+-------------+------------------------------------+
     |Endorser      |TPM          | Provides Endorsements (EK          |
-    |(hardware)    |Manufacturer | certificate chain) vouching for    |
+    |              |Manufacturer | certificate chain) vouching for    |
     |              |             | the TPM's identity and signing     |
     |              |             | capability.                        |
-    +--------------+-------------+------------------------------------+
-    |Endorser      |Mobile       | Provides a location Endorsement    |
-
-
-
-Krishnan, et al.         Expires 9 November 2026               [Page 10]
-
-Internet-Draft                    V-GAP                         May 2026
-
-
-    |(location)    |Network      | (mno-endorsement) attesting device |
-    |              |Operator     | location within carrier            |
-    |              |(MNO)        | visibility.  OPTIONAL.             |
     +--------------+-------------+------------------------------------+
     |Reference     |Platform     | Supplies Reference Values: known-  |
     |Value Provider|administrator| good PCR values, approved agent    |
@@ -577,6 +610,14 @@ Internet-Draft                    V-GAP                         May 2026
     |              |policy       | for Attestation Results to decide  |
     |              |decision     | whether to issue credentials,      |
     |              |point        | release keys, or authorize         |
+
+
+
+Krishnan, et al.         Expires 9 November 2026               [Page 11]
+
+Internet-Draft                    V-GAP                         May 2026
+
+
     |              |             | operations.                        |
     +--------------+-------------+------------------------------------+
     |Verifier Owner|Security     | Configures the Appraisal Policy    |
@@ -593,9 +634,19 @@ Internet-Draft                    V-GAP                         May 2026
 
                                   Table 2
 
+   Note: The Mobile Network Operator (MNO), when present, provides a
+   signed location statement (mno-location) that the Attester integrates
+   into its Evidence as a signed Claim source.  This is attester-
+   collected Evidence — not a RATS Endorsement — because the MNO asserts
+   network-observed location, not the Attester's identity or
+   characteristics.  The same model applies to other external signed
+   location sources (such as SovCert anchors or quantum-derived proofs),
+   which MAY similarly be integrated as signed Claim sources within the
+   lah-bundle.
+
 5.2.  Evidence Flow
 
-   The V-GAP Evidence flow follows the RATS background-check model
+   The V-GAP evidence flow follows the RATS background-check model
    ({{!RFC9334}}, Section 5.2): the Attester conveys Evidence to the
    Verifier (possibly via a Relying Party), the Verifier appraises it
    using Reference Values and Endorsements, and conveys the Attestation
@@ -613,22 +664,28 @@ Internet-Draft                    V-GAP                         May 2026
 
 
 
-Krishnan, et al.         Expires 9 November 2026               [Page 11]
+
+
+
+
+
+Krishnan, et al.         Expires 9 November 2026               [Page 12]
 
 Internet-Draft                    V-GAP                         May 2026
 
 
                                        Reference Value
-   Endorser         Endorser            Provider
-   (TPM Mfr)        (MNO)              (Admin)
-      |               |                   |
-      | EK cert        | mno-endorsement   | PCRs, agent digest,
-      | chain          |                   | geofence polygons
-      v               v                   v
+   Endorser                             Provider
+   (TPM Mfr)                            (Admin)
+      |                                   |
+      | EK cert                           | PCRs, agent digest,
+      | chain                             | geofence polygons
+      v                                   v
    Attester (LAH)                      Verifier
      [TPM: Attesting Env]              Appraises Evidence
      [Agent: Target Env]  -- lah-bundle -->  against Reference Values
-     [Sensor: Claim source]                  and Endorsements
+     [Sensor(s): Claim sources]               and Endorsements
+     [MNO (opt): signed Claim source]
                                            |
                              Attestation Result
                                            |
@@ -656,20 +713,19 @@ Internet-Draft                    V-GAP                         May 2026
 
    {
      "lah-bundle": { },
-     "mno-endorsement": { }
+     "mno-location": { }
    }
 
+   When present, the lah-bundle fields are serialized using JSON
+   Canonicalization Scheme (JCS) for hash computation.  In the bundle,
+   tpm-ak is carried as a PEM-encoded public key string, but hash inputs
+   such as tpm-ak-bytes are derived from the raw DER bytes of the same
+   public key.
 
 
 
 
-
-
-
-
-
-
-Krishnan, et al.         Expires 9 November 2026               [Page 12]
+Krishnan, et al.         Expires 9 November 2026               [Page 13]
 
 Internet-Draft                    V-GAP                         May 2026
 
@@ -680,7 +736,7 @@ Internet-Draft                    V-GAP                         May 2026
    | Field        | Type        | Required | Description              |
    +==============+=============+==========+==========================+
    | tpm-ak       | string      |   Yes    | TPM Attestation Key      |
-   |              | (PEM)       |          | public key (PEM-         |
+   |              | (Base64URL) |          | public key (PEM-         |
    |              |             |          | encoded).  Hardware      |
    |              |             |          | identity anchor.  The    |
    |              |             |          | TPM enforces that only   |
@@ -688,11 +744,9 @@ Internet-Draft                    V-GAP                         May 2026
    |              |             |          | tpm-quote-seal — proving |
    |              |             |          | co-residency.            |
    +--------------+-------------+----------+--------------------------+
-   | geolocation- | string      |   Yes    | SHA-256 over the DER-    |
-   | id-hash      | (Base64URL) |          | encoded bytes of tpm-ak  |
-   |              |             |          | (denoted tpm-ak-bytes)   |
-   |              |             |          | concatenated with any    |
-   |              |             |          | sensor-specific          |
+   | geolocation- | string      |   Yes    | SHA-256 over tpm-ak-     |
+   | id-hash      | (Base64URL) |          | bytes concatenated with  |
+   |              |             |          | any sensor-specific      |
    |              |             |          | identifiers (see Sensor  |
    |              |             |          | Type Input Recipes       |
    |              |             |          | appendix for per-sensor  |
@@ -708,33 +762,30 @@ Internet-Draft                    V-GAP                         May 2026
    |              |             |          | chain attestation).      |
    +--------------+-------------+----------+--------------------------+
    | geolocation- | string      |   Yes    | SHA-256 commitment over  |
-   | proof-hash   | (Base64URL) |          | geolocation-payload,     |
-   |              |             |          | Base64URL-encoded.       |
+   | proof-hash   | (Base64URL) |          | geolocation-payload.     |
    |              |             |          | Required in both privacy |
    |              |             |          | modes.  When privacy-    |
-   |              |             |          | technique=zkp:           |
-   |              |             |          | Base64URL(SHA-256(zkp-   |
-   |              |             |          | proof-bytes)).  When     |
-   |              |             |          | privacy-technique=none:  |
-   |              |             |          | Base64URL(SHA-           |
+   |              |             |          | technique=zkp: SHA-      |
+   |              |             |          | 256(zkp-proof-bytes).    |
+   |              |             |          | When privacy-            |
+   |              |             |          | technique=none: SHA-     |
    |              |             |          | 256(JCS({lat, lon,       |
-   |              |             |          | accuracy}))) (JCS per    |
-   |              |             |          | {{!RFC8785}}).           |
+   |              |             |          | accuracy})).             |
    +--------------+-------------+----------+--------------------------+
    | privacy-     | string enum |   Yes    | "none" = raw lat/lon/    |
-
-
-
-Krishnan, et al.         Expires 9 November 2026               [Page 13]
-
-Internet-Draft                    V-GAP                         May 2026
-
-
    | technique    |             |          | accuracy in payload.     |
    |              |             |          | "zkp" = zero-knowledge   |
    |              |             |          | proof URI in payload.    |
    |              |             |          | Controls location        |
    |              |             |          | privacy only; device     |
+
+
+
+Krishnan, et al.         Expires 9 November 2026               [Page 14]
+
+Internet-Draft                    V-GAP                         May 2026
+
+
    |              |             |          | identity privacy is      |
    |              |             |          | always protected via     |
    |              |             |          | geolocation-id-hash.     |
@@ -746,17 +797,13 @@ Internet-Draft                    V-GAP                         May 2026
    |              |             |          | Committed to by          |
    |              |             |          | geolocation-proof-hash   |
    |              |             |          | and optionally signed by |
-   |              |             |          | mno-endorsement.mno-sig. |
+   |              |             |          | mno-location.mno-sig.    |
    +--------------+-------------+----------+--------------------------+
    | nonce        | string      |   Yes    | Freshness nonce          |
-   |              | (Base64URL) |          | (N_fusion) initiated by  |
-   |              |             |          | the Relying Party and    |
-   |              |             |          | delivered to the         |
-   |              |             |          | Attester by the Verifier |
-   |              |             |          | for each attestation     |
-   |              |             |          | interval, per the nonce- |
-   |              |             |          | based freshness model in |
-   |              |             |          | {{!RFC9334}},            |
+   |              | (Base64URL) |          | (N_fusion) issued by the |
+   |              |             |          | Relying Party for each   |
+   |              |             |          | attestation interval,    |
+   |              |             |          | per {{!RFC9334}},        |
    |              |             |          | Section 10.2.            |
    |              |             |          | Implementations may use  |
    |              |             |          | chained nonce            |
@@ -778,14 +825,6 @@ Internet-Draft                    V-GAP                         May 2026
    |              |             |          | geolocation-id-hash,     |
    |              |             |          | geolocation-proof-hash,  |
    |              |             |          | privacy-technique,       |
-
-
-
-Krishnan, et al.         Expires 9 November 2026               [Page 14]
-
-Internet-Draft                    V-GAP                         May 2026
-
-
    |              |             |          | nonce, timestamp,        |
    |              |             |          | target-environment-      |
    |              |             |          | image-digest})).  Binds  |
@@ -795,12 +834,25 @@ Internet-Draft                    V-GAP                         May 2026
    +--------------+-------------+----------+--------------------------+
    | target-      | string (hex |   Yes    | SHA-256 digest of the    |
    | environment- | SHA-256)    |          | Target Environment       |
+
+
+
+Krishnan, et al.         Expires 9 November 2026               [Page 15]
+
+Internet-Draft                    V-GAP                         May 2026
+
+
    | image-digest |             |          | (Workload Identity       |
    |              |             |          | Agent) binary, measured  |
    |              |             |          | at attestation time.     |
-   |              |             |          | Compared by the Verifier |
-   |              |             |          | against Reference Values |
-   |              |             |          | to detect agent binary   |
+   |              |             |          | This digest is computed  |
+   |              |             |          | over the measured binary |
+   |              |             |          | image bytes or artifact  |
+   |              |             |          | bytes that the TPM       |
+   |              |             |          | records.  Compared by    |
+   |              |             |          | the Verifier against     |
+   |              |             |          | Reference Values to      |
+   |              |             |          | detect agent binary      |
    |              |             |          | compromise.              |
    +--------------+-------------+----------+--------------------------+
 
@@ -837,7 +889,11 @@ Internet-Draft                    V-GAP                         May 2026
 
 
 
-Krishnan, et al.         Expires 9 November 2026               [Page 15]
+
+
+
+
+Krishnan, et al.         Expires 9 November 2026               [Page 16]
 
 Internet-Draft                    V-GAP                         May 2026
 
@@ -860,13 +916,43 @@ Internet-Draft                    V-GAP                         May 2026
 
    geolocation-proof-hash = Base64URL(SHA-256(zkp-proof-bytes))
 
-5.3.4.  MNO Endorsement (RATS Endorsement)
+5.3.4.  MNO Location Evidence (Signed Claim Source)
 
-   The mno-endorsement is a RATS Endorsement {{!RFC9334}}: a signed
-   statement from a third party (the Mobile Network Operator) about the
-   Attester's location.  The MNO attests device location within carrier
-   visibility but does not sign host-level fields.  This element is
-   OPTIONAL at the top level; when present, its fields are REQUIRED.
+   The mno-location element carries a signed location statement from a
+   Mobile Network Operator (MNO).  In RATS terms, this is attester-
+   collected Evidence — a signed Claim source — rather than a RATS
+   Endorsement: the MNO asserts network-observed device location within
+   carrier visibility but does not vouch for the Attester's identity or
+   platform characteristics.  This element is OPTIONAL at the top level;
+   when present, its fields are REQUIRED.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Krishnan, et al.         Expires 9 November 2026               [Page 17]
+
+Internet-Draft                    V-GAP                         May 2026
+
 
    +==============+=============+==========+==========================+
    | Field        | Type        | Required | Description              |
@@ -876,8 +962,8 @@ Internet-Draft                    V-GAP                         May 2026
    |              | DER)        |          | validate this            |
    |              |             |          | certificate chains to a  |
    |              |             |          | known MNO root before    |
-   |              |             |          | accepting the            |
-   |              |             |          | endorsement.             |
+   |              |             |          | accepting the location   |
+   |              |             |          | statement.               |
    +--------------+-------------+----------+--------------------------+
    | mno-sig      | string      |   Yes    | ECDSA/EdDSA signature    |
    |              | (Base64URL) |          | over JCS(geolocation-    |
@@ -891,13 +977,6 @@ Internet-Draft                    V-GAP                         May 2026
 
                                  Table 6
 
-
-
-Krishnan, et al.         Expires 9 November 2026               [Page 16]
-
-Internet-Draft                    V-GAP                         May 2026
-
-
 5.4.  Attestation Result
 
    Upon successful appraisal of the lah-bundle, the Verifier produces an
@@ -907,12 +986,29 @@ Internet-Draft                    V-GAP                         May 2026
 
    *  EAT Attestation Result claims, including geographic claims per
       {{I-D.richardson-rats-geographic-results}};
+
    *  an X.509 extension (OID 1.3.6.1.4.1.65284.1.1) embedded in a
       credential issued by a Relying Party acting as CA; or
+
    *  any other result encoding that satisfies the Relying Party's
       Appraisal Policy for Attestation Results.
 
    The Attestation Result MUST convey at minimum:
+
+
+
+
+
+
+
+
+
+
+
+Krishnan, et al.         Expires 9 November 2026               [Page 18]
+
+Internet-Draft                    V-GAP                         May 2026
+
 
     +====================+============================================+
     | Claim              | Description                                |
@@ -945,25 +1041,30 @@ Internet-Draft                    V-GAP                         May 2026
    quote-seal:
 
    1.  Decode tpm-quote-seal (Base64URL → bytes)
+
    2.  Parse TPMS_ATTEST structure
 
-
-
-Krishnan, et al.         Expires 9 November 2026               [Page 17]
-
-Internet-Draft                    V-GAP                         May 2026
-
-
    3.  Assert TPMS_ATTEST.type == TPM_ST_ATTEST_QUOTE
+
    4.  Compute expected_qd = SHA-256(JCS({tpm-ak, geolocation-id-hash,
        geolocation-proof-hash, privacy-technique, nonce, timestamp,
        target-environment-image-digest}))
+
    5.  Assert TPMS_ATTEST.qualifyingData == expected_qd
+
    6.  Verify signature over TPMS_ATTEST bytes using tpm-ak public key
        (RSASSA-PKCS1-v1_5 or ECDSA)
 
    If any step fails, the Verifier MUST reject the Evidence and MUST NOT
    produce a positive Attestation Result.
+
+
+
+
+Krishnan, et al.         Expires 9 November 2026               [Page 19]
+
+Internet-Draft                    V-GAP                         May 2026
+
 
 5.6.  Freshness and Replay Prevention
 
@@ -974,10 +1075,11 @@ Internet-Draft                    V-GAP                         May 2026
       appraisal event (for example, by cryptographically binding
       freshness values used for platform quotes within the Attestation
       Result).
-   *  The nonce field in the lah-bundle MUST be a freshness value
-      initiated by the Relying Party and delivered to the Attester by
-      the Verifier for each attestation interval, per the nonce-based
-      freshness model in {{!RFC9334}}, Section 10.2.
+
+   *  The nonce field in the lah-bundle MUST be a freshness value issued
+      by the Relying Party for each attestation interval, per the nonce-
+      based freshness model in {{!RFC9334}}, Section 10.2.
+
    *  Verifiers MUST reject Evidence where the timestamp falls outside
       the configured freshness window.
 
@@ -996,37 +1098,39 @@ Internet-Draft                    V-GAP                         May 2026
    *  *Replay and mix-and-match*: Use nonces and evidence stapling so
       that old location evidence cannot be combined with a fresh
       platform quote (or vice versa).
+
    *  *Location spoofing*: GNSS and mobile network signals must be
       treated as adversarial inputs; per-source threats and mitigations
       are detailed in the subsections below.
-
-
-
-
-
-
-Krishnan, et al.         Expires 9 November 2026               [Page 18]
-
-Internet-Draft                    V-GAP                         May 2026
-
 
    *  *Relay and displacement*: When proximity mechanisms are introduced
       in future profiles, implementers should be aware that they are
       vulnerable to relay attacks and anchor displacement.  Mitigations
       (such as tight RTT-based acceptance windows and anchor health
       attestation) are deferred to those future profiles.
+
    *  *Management controller compromise*: OOB paths reduce dependence on
       the host OS but introduce dependence on the management controller
       and its network.  Protect this component with secure boot,
       authenticated updates, strong access controls, network
       segmentation, and audit logging.
+
+
+
+Krishnan, et al.         Expires 9 November 2026               [Page 20]
+
+Internet-Draft                    V-GAP                         May 2026
+
+
    *  *Time and freshness*: Verifiers MUST enforce bounded freshness
       windows and MUST define recovery behavior (re-attestation,
       quarantine, or revocation) when clocks drift or evidence becomes
       stale.
+
    *  *Registry and allowlist integrity*: Protect Reference Value stores
       and Appraisal Policy configurations against tampering; treat them
       as high-value privileged assets.
+
    *  *Privacy*: Avoid unnecessary collection or retention of precise
       location data.  Prefer "in-zone" proofs (ZKP) where policy
       permits.  See the Privacy Applicability note below.
@@ -1042,11 +1146,13 @@ Internet-Draft                    V-GAP                         May 2026
       contractual documentation.  In such deployments, privacy-technique
       = "none" (raw coordinates) is appropriate and the ZKP overhead is
       unnecessary.
+
    *  *User-facing and edge environments*: When an Attester is a user
       device or edge node, precise coordinates may constitute Personally
       Identifiable Information (PII).  In such deployments, privacy-
       technique = "zkp" SHOULD be used to prove geofence compliance
       without disclosing exact location.
+
    *  *Mixed deployments*: Appraisal Policy for Evidence SHOULD allow
       the Verifier Owner to configure which privacy technique is
       acceptable per Attester class or per geofence policy.
@@ -1055,16 +1161,6 @@ Internet-Draft                    V-GAP                         May 2026
    deployment context rather than applying ZKP uniformly.
 
 6.2.  Location Spoofing
-
-
-
-
-
-
-Krishnan, et al.         Expires 9 November 2026               [Page 19]
-
-Internet-Draft                    V-GAP                         May 2026
-
 
 6.2.1.  Fundamental Limitation: Sensor Data Provenance
 
@@ -1075,12 +1171,20 @@ Internet-Draft                    V-GAP                         May 2026
    proves that the sealed data came from the measured platform; it does
    not prove that the sensor's input signals were authentic.
 
+
+
+Krishnan, et al.         Expires 9 November 2026               [Page 21]
+
+Internet-Draft                    V-GAP                         May 2026
+
+
    Therefore, the security of V-GAP's geolocation Claims depends on
    BOTH:
 
    1.  *Hardware provenance* (addressed by the TPM quote and target-
        environment-image-digest): ensuring the data was processed by an
        approved, untampered platform.
+
    2.  *Sensor input integrity* (addressed by the mitigations below):
        ensuring the sensor received authentic signals rather than
        spoofed or replayed inputs.
@@ -1101,39 +1205,45 @@ Internet-Draft                    V-GAP                         May 2026
    *  *Signal authentication*: Galileo OSNMA (Open Service Navigation
       Message Authentication) provides cryptographic authentication of
       navigation messages and is the strongest available civilian
-      countermeasure.  GPS NMA (Chimera), the Navigation Message
-      Authentication scheme for GPS III L1C signals, offers equivalent
-      protection.  Implementations SHOULD prefer authenticated GNSS
-      signals where available.
+      countermeasure.  GPS GAIA offers equivalent protection for GPS III
+      signals.  Implementations SHOULD prefer authenticated GNSS signals
+      where available.
+
    *  *Multi-constellation cross-validation*: Cross-checking fixes
       across independent constellations (GPS, Galileo, GLONASS, BeiDou)
       substantially raises the cost of spoofing; consistent simultaneous
       spoofing of all constellations requires significantly more
       attacker capability.
+
    *  *Anomaly detection*: Sudden position jumps, implausible velocity
       changes, and anomalous signal-to-noise ratios are indicators of
       spoofing or jamming.  Evidence that fails these checks SHOULD be
       rejected.
 
-
-
-Krishnan, et al.         Expires 9 November 2026               [Page 20]
-
-Internet-Draft                    V-GAP                         May 2026
-
-
 6.2.3.  Mobile Network Spoofing
 
    Mobile network location evidence is subject to distinct threats:
+
+
+
+
+
+
+Krishnan, et al.         Expires 9 November 2026               [Page 22]
+
+Internet-Draft                    V-GAP                         May 2026
+
 
    *  *IMSI catchers and rogue base stations*: Attacker-controlled base
       stations can force a device onto a fake cell, yielding attacker-
       controlled location if evidence derives from device-reported cell
       identity.
+
    *  *SS7/Diameter abuse*: Attackers with access to legacy carrier
       signaling can issue location queries that yield false or
       manipulated carrier-side location data.
-   *  *MNO root key compromise*: The mno-endorsement is only as
+
+   *  *MNO root key compromise*: The mno-location element is only as
       trustworthy as the MNO signing root.  Verifiers MUST validate the
       mno-key-cert certificate chain to a known MNO root and SHOULD
       treat a root compromise as requiring immediate policy revocation.
@@ -1145,8 +1255,8 @@ Internet-Draft                    V-GAP                         May 2026
 
    Notwithstanding these mitigations, MNO-derived location is ultimately
    under the control of the carrier infrastructure.  A compromised or
-   coerced MNO can produce false location endorsements.  Verifiers
-   SHOULD treat MNO endorsements as corroborating evidence rather than
+   coerced MNO can produce false location statements.  Verifiers SHOULD
+   treat MNO location statements as corroborating evidence rather than
    sole proof of residency, and Appraisal Policies SHOULD require
    independent corroboration (for example, GNSS + MNO) for high-
    assurance geofence policies.
@@ -1173,7 +1283,9 @@ Internet-Draft                    V-GAP                         May 2026
 
 
 
-Krishnan, et al.         Expires 9 November 2026               [Page 21]
+
+
+Krishnan, et al.         Expires 9 November 2026               [Page 23]
 
 Internet-Draft                    V-GAP                         May 2026
 
@@ -1186,8 +1298,8 @@ Internet-Draft                    V-GAP                         May 2026
     | Medium      | Multi-constellation GNSS with anomaly detection,  |
     |             | or network-side MNO corroboration (CAMARA) alone  |
     +-------------+---------------------------------------------------+
-    | High        | Authenticated GNSS (OSNMA or GPS NMA/Chimera), or |
-    |             | Medium GNSS + MNO corroboration                   |
+    | High        | Authenticated GNSS (OSNMA or GAIA), or Medium     |
+    |             | GNSS + MNO corroboration                          |
     +-------------+---------------------------------------------------+
     | Highest     | Authenticated GNSS + independent network-side MNO |
     |             | corroboration (CAMARA) + anomaly detection        |
@@ -1222,23 +1334,28 @@ Internet-Draft                    V-GAP                         May 2026
       a different zkp-format MUST ensure it also provides transparent
       setup, or MUST document the resulting trust assumptions.
 
-   *  *Computational soundness.* STARK security is computational, not
-      unconditional, and relies on the collision resistance of the
-      underlying hash function.  Implementations SHOULD target at least
-      128-bit security.  Note that Plonky2's default parameters target
 
 
 
-Krishnan, et al.         Expires 9 November 2026               [Page 22]
+
+
+
+
+Krishnan, et al.         Expires 9 November 2026               [Page 24]
 
 Internet-Draft                    V-GAP                         May 2026
 
 
-      approximately 100 bits of security; achieving 128 bits requires
-      explicit non-default parameter selection (field size, hash
-      function, FRI blowup factor).  Implementations MUST document the
-      proof system parameters actually used to enable independent
+   *  *Computational soundness.* STARK security is computational, not
+      unconditional, and relies on the collision resistance of the
+      underlying hash function.  Implementations SHOULD target at least
+      128-bit security and MUST document the proof system parameters
+      (field size, hash function, FRI parameters) to enable independent
       security analysis.
+
+   *  *URI availability.* When privacy-technique = "zkp", the Verifier
+      MUST reject Evidence if the zkp-proof-uri cannot be resolved or
+      the fetched proof bytes do not match geolocation-proof-hash.
 
    *  *Proof freshness.* A valid ZKP proves location at proof-generation
       time.  The nonce and timestamp freshness requirements that apply
@@ -1262,17 +1379,44 @@ Internet-Draft                    V-GAP                         May 2026
    profile.
 
    *  *OID*: 1.3.6.1.4.1.65284.1.1
+
    *  *Description*: Verifiable Geofencing Attestation Profile (V-GAP)
       Evidence / Attestation Result
-   *  *Reference*: This document.
-   *  *PEN*: 65284 (IANA Private Enterprise Number currently assigned to
-      Ram Krishnan)
 
-   Note: PEN 65284 is used provisionally for this draft.  Prior to
-   publication as an RFC, a formally allocated OID arc appropriate for
-   an IETF standard MUST be obtained through the IANA process.  The
-   authors will coordinate with IANA to determine the appropriate
-   registry and allocation procedure.
+   *  *Reference*: This document.
+
+   *  *PEN*: 65284 (IANA Private Enterprise Number assigned to Ram
+      Krishnan)
+
+8.  References
+
+8.1.  Normative References
+
+   *  {{!RFC9334}}
+
+
+
+
+Krishnan, et al.         Expires 9 November 2026               [Page 25]
+
+Internet-Draft                    V-GAP                         May 2026
+
+
+   *  {{!RFC2119}}
+
+   *  {{!RFC8174}}
+
+   *  {{I-D.richardson-rats-geographic-results}}
+
+   *  {{I-D.mw-wimse-transitive-attestation}}
+
+   *  {{I-D.ietf-wimse-architecture}}
+
+8.2.  Informative References
+
+   *  {{!RFC7942}}
+
+   *  {{I-D.ramki-ptp-hardware-rooted-attestation}}
 
 Appendix A.  Contributors
 
@@ -1281,14 +1425,6 @@ Appendix A.  Contributors
    Bala Siva Sai Akhil Malepati
    Independent
    Email: saiakhil2012@yahoo.com
-
-
-
-
-Krishnan, et al.         Expires 9 November 2026               [Page 23]
-
-Internet-Draft                    V-GAP                         May 2026
-
 
    Ghada Arfaoui
    Orange
@@ -1312,8 +1448,19 @@ B.1.  Gating Decisions on Attestation Results
 
    *  *Credential issuance*: Issue or renew a workload credential only
       when the Attestation Result satisfies policy.
+
+
+
+
+
+Krishnan, et al.         Expires 9 November 2026               [Page 26]
+
+Internet-Draft                    V-GAP                         May 2026
+
+
    *  *Key release*: Release decryption keys or model weights only to
       Attesters with a positive, fresh Attestation Result.
+
    *  *Access authorization*: Gate access to sensitive APIs or data
       stores on a valid Attestation Result.
 
@@ -1330,21 +1477,14 @@ B.2.  Distributed Credential Issuance and Scaling
 
    *  *Edge issuance*: Credentials may be issued by a Relying Party
       deployed within the same boundary as the Attesters.
+
    *  *Scoping*: Issued credentials should be scoped so they are not
       accepted outside the intended deployment boundary (for example,
       via trust bundle partitioning and policy).
+
    *  *Renewal gating*: Relying Parties should renew short-lived
       credentials only when the Attestation Result for integrity and
       residency is valid for the requested freshness window.
-
-
-
-
-
-Krishnan, et al.         Expires 9 November 2026               [Page 24]
-
-Internet-Draft                    V-GAP                         May 2026
-
 
 B.3.  Mobility and Handover
 
@@ -1365,6 +1505,15 @@ B.4.  Location Anchor Hosts
       as an LAH for a nearby client device.  The mechanism by which the
       anchor establishes its own location (and any proximity evidence it
       may provide) is out of scope for this document.
+
+
+
+
+Krishnan, et al.         Expires 9 November 2026               [Page 27]
+
+Internet-Draft                    V-GAP                         May 2026
+
+
    *  *Data center anchors*: A small set of hosts can act as LAHs for a
       cluster.  Timing-based mechanisms (for example, PTP-derived) may
       assist in establishing relative location; protocol details are
@@ -1387,21 +1536,6 @@ C.1.  Nonce Chain and Merkle Audit Log
    chain[n] = SHA-256(chain[n-1] || SHA-256(JCS(bundle[n])))
    nonce[n]  = HMAC(secret, n || chain[n-1])
 
-
-
-
-
-
-
-
-
-
-
-Krishnan, et al.         Expires 9 November 2026               [Page 25]
-
-Internet-Draft                    V-GAP                         May 2026
-
-
    +===============+==================================================+
    | Mechanism     | Role                                             |
    +===============+==================================================+
@@ -1419,6 +1553,7 @@ C.2.  Key Registry and Synchronization
    *  A central Verifier maintains a registry of accepted AK public keys
       and associated metadata (for example, EK certificate chain,
       hardware identity, and status).
+
    *  An Edge Verifier may maintain a local registry to support
       disconnected operation and periodically synchronizes updates to
       the central registry.
@@ -1427,9 +1562,18 @@ C.3.  Key Rotation
 
    To prevent rogue key injection during rotation:
 
+
+
+
+Krishnan, et al.         Expires 9 November 2026               [Page 28]
+
+Internet-Draft                    V-GAP                         May 2026
+
+
    *  The central registry should accept a new AK only if the Edge
       Verifier provides a rotation proof that chains the new AK to
       previously accepted state.
+
    *  A rotation proof should be a JCS-canonicalized object signed by
       the previously accepted AK (or, if available, validated by a fresh
       hardware-rooted OOB quote).
@@ -1450,19 +1594,15 @@ C.4.  Credential Activation and Re-Verification
    to run on every request.  Verifiers should perform it on events such
    as:
 
-
-
-
-Krishnan, et al.         Expires 9 November 2026               [Page 26]
-
-Internet-Draft                    V-GAP                         May 2026
-
-
    *  Initial onboarding
+
    *  Reboot / reset detection (for example, TPM clock/reset counters)
+
    *  Policy violations or drift signals (for example, firmware or
       inventory changes)
+
    *  Failure of location evidence checks
+
    *  Explicit elevation to higher assurance policy
 
    Between full activations, Verifiers may accept fresh quotes from
@@ -1472,8 +1612,19 @@ C.5.  Revocation and Health Signals
 
    *  The Edge Verifier should maintain a per-node health signal (for
       example, tamper, firmware policy violations).
+
    *  On severe health signals, the Verifier should revoke the relevant
       AK(s) and reject identities derived from them according to policy.
+
+
+
+
+
+
+Krishnan, et al.         Expires 9 November 2026               [Page 29]
+
+Internet-Draft                    V-GAP                         May 2026
+
 
 C.6.  Disconnected Operation (Leased Attestation Result)
 
@@ -1483,6 +1634,7 @@ C.6.  Disconnected Operation (Leased Attestation Result)
 
    *  The Verifier should revoke or cease producing positive results
       locally on tamper/drift signals.
+
    *  The Attester should re-attest and satisfy current policy on
       reconnection before the Relying Party accepts a new Attestation
       Result or releases high-value secrets.
@@ -1506,14 +1658,6 @@ Appendix D.  Deployment Patterns
    *  *Out-of-band management*: Evidence collected via a management
       controller / BMC path (for example, iLO-class OOB management such
       as HPE OneView).  In this pattern, the Relying Party generates
-
-
-
-Krishnan, et al.         Expires 9 November 2026               [Page 27]
-
-Internet-Draft                    V-GAP                         May 2026
-
-
       N_fusion and shares it with the Verifier (for example, HPE
       OneView) over a server-to-server channel.  The Verifier delivers
       N_fusion to the host via the BMC / OOB path — bypassing the host
@@ -1531,6 +1675,13 @@ Internet-Draft                    V-GAP                         May 2026
       verify that the provider's attestation scope satisfies the
       geofence policy.
 
+
+
+Krishnan, et al.         Expires 9 November 2026               [Page 30]
+
+Internet-Draft                    V-GAP                         May 2026
+
+
 Appendix E.  Policy Use
 
    Relying parties and credential issuers can use V-GAP Attestation
@@ -1538,9 +1689,11 @@ Appendix E.  Policy Use
 
    *  *ABAC*: Residency and integrity Claims from the Attestation Result
       can be mandatory attributes for sensitive operations.
+
    *  *KMS gatekeeping*: Release of high-value assets (for example,
       decryption keys) should depend on a recent, positive Attestation
       Result.
+
    *  *Fail closed*: When the Attestation Result is embedded in an X.509
       extension marked CRITICAL, any consumer that does not understand
       the extension will reject the credential.
@@ -1548,27 +1701,6 @@ Appendix E.  Policy Use
 Appendix F.  V-GAP Examples and Sensor Recipes
 
 F.1.  Example Instance (privacy-technique = "zkp")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Krishnan, et al.         Expires 9 November 2026               [Page 28]
-
-Internet-Draft                    V-GAP                         May 2026
-
 
    {
      "lah-bundle": {
@@ -1585,7 +1717,7 @@ Internet-Draft                    V-GAP                         May 2026
        "tpm-quote-seal": "ARoAAQALAAUACwEA...",
        "target-environment-image-digest": "a1b2c3d4e5f6...64-char-hex-sha256"
      },
-     "mno-endorsement": {
+     "mno-location": {
        "mno-key-cert": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8A...",
        "mno-sig": "MEYCIQDx9z2k..."
      }
@@ -1596,6 +1728,15 @@ F.2.  Sensor Type Input Recipes
    The following recipes define how geolocation-id-hash is constructed
    from different sensor types.  The Verifier sees only the opaque hash
    — never the raw identifiers.
+
+
+
+
+
+Krishnan, et al.         Expires 9 November 2026               [Page 31]
+
+Internet-Draft                    V-GAP                         May 2026
+
 
       +=================+==========================================+
       | Sensor Type     | geolocation-id-hash Input                |
@@ -1617,18 +1758,11 @@ Appendix G.  Implementation Status
    A reference implementation of the V-GAP profile is publicly
    available:
 
-
-
-
-
-Krishnan, et al.         Expires 9 November 2026               [Page 29]
-
-Internet-Draft                    V-GAP                         May 2026
-
-
    *  *Repository*: https://github.com/lfedgeai/AegisSovereignAI
       (https://github.com/lfedgeai/AegisSovereignAI)
+
    *  *Path*: hybrid-cloud-poc/
+
    *  *License*: Apache 2.0
 
    The implementation demonstrates the *in-band host attestation*
@@ -1636,15 +1770,29 @@ Internet-Draft                    V-GAP                         May 2026
 
    *  *TPM 2.0* hardware root of trust (AK-based quotes, PCR 15 TOCTOU
       protection)
+
    *  *SPIRE* (Relying Party) with a custom unifiedidentity plugin that
       consumes V-GAP Attestation Results and embeds them as an X.509
       extension (OID 1.3.6.1.4.1.65284.1.1)
+
    *  *Keylime* (Verifier) with IMA measurement of the Target
       Environment binary (target-environment-image-digest)
+
    *  *Plonky2* STARK prover for privacy-technique = "zkp" geofence
       proofs
+
    *  *Geolocation sensor cascade*: Mobile/CAMARA, GNSS/GPS, and config-
       file fallback with IMEI/IMSI binding for geolocation-id-hash
+
+
+
+
+
+
+Krishnan, et al.         Expires 9 November 2026               [Page 32]
+
+Internet-Draft                    V-GAP                         May 2026
+
 
    The implementation includes automated end-to-end tests (./run-
    demo.sh) that exercise the full attestation flow from TPM quote
@@ -1677,7 +1825,27 @@ H.1.  Relationship to WIMSE Architecture
 
 
 
-Krishnan, et al.         Expires 9 November 2026               [Page 30]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Krishnan, et al.         Expires 9 November 2026               [Page 33]
 
 Internet-Draft                    V-GAP                         May 2026
 
@@ -1733,7 +1901,7 @@ H.2.  Workload Binding Fields
 
 
 
-Krishnan, et al.         Expires 9 November 2026               [Page 31]
+Krishnan, et al.         Expires 9 November 2026               [Page 34]
 
 Internet-Draft                    V-GAP                         May 2026
 
@@ -1789,7 +1957,7 @@ Authors' Addresses
 
 
 
-Krishnan, et al.         Expires 9 November 2026               [Page 32]
+Krishnan, et al.         Expires 9 November 2026               [Page 35]
 
 Internet-Draft                    V-GAP                         May 2026
 
@@ -1845,4 +2013,4 @@ Internet-Draft                    V-GAP                         May 2026
 
 
 
-Krishnan, et al.         Expires 9 November 2026               [Page 33]
+Krishnan, et al.         Expires 9 November 2026               [Page 36]

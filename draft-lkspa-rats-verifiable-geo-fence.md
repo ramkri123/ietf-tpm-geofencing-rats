@@ -78,7 +78,7 @@ Operators of sovereign and high-assurance workloads need cryptographic assurance
 This document defines the Verifiable Geofencing Attestation Profile (V-GAP), a profile of the RATS Architecture {{!RFC9334}} that makes **platform integrity** and **geofence residency** cryptographically verifiable. V-GAP enables a Verifier to appraise Evidence that:
 
 1. the Workload Identity Agent (Target Environment) is running on an approved, measured platform whose Attesting Environment is a TPM (platform integrity); and
-2. the platform is resident within an approved geographic boundary, optionally without revealing coordinates (residency).
+2. that platform is resident within an approved geographic boundary, optionally without revealing coordinates (residency).
 
 To maintain location privacy while providing cryptographic verifiability, V-GAP supports Transparent Zero-Knowledge Proofs (ZKPs) — non-interactive, hash-based proofs that allow an Attester to demonstrate "in-zone" residency without disclosing exact coordinates and without requiring a trusted setup.
 
@@ -88,7 +88,7 @@ V-GAP profiles a two-layer Attester, following the layered attestation model def
 
 | Layer | RFC 9334 Role | V-GAP Entity | Responsibility |
 | :--- | :--- | :--- | :--- |
-| **Layer A** (immutable root) | Attesting Environment | TPM + Location Sensor (Claim source) | Measures the agent binary; seals all Claims (integrity + geolocation) into a TPM quote. Endorsed by TPM manufacturer (EK cert) and optionally by MNO (`mno-endorsement`). |
+| **Layer A** (immutable root) | Attesting Environment | TPM + Location Sensor (Claim source) | Measures the agent binary; seals all Claims (integrity + geolocation) into a TPM quote. Endorsed by TPM manufacturer (EK cert). MNO location statements (`mno-location`), when present, are integrated as a signed Claim source. |
 | **Layer B** (measured agent) | Target Environment + Evidence assembler | Workload Identity Agent | Measured by the TPM (`target-environment-image-digest`). Collects Claims from the TPM and location sensor(s), constructs the `lah-bundle`, and conveys Evidence to the Verifier. |
 
 The binding of individual workloads to the local Workload Identity Agent — and the credential issuance that follows a positive Attestation Result — are out of scope for this profile. Those concerns are addressed by complementary work such as {{I-D.mw-wimse-transitive-attestation}} and the WIMSE Architecture {{I-D.ietf-wimse-architecture}}. See the WIMSE Integration appendix for a mapping.
@@ -109,11 +109,11 @@ Intel's Platform Ownership Endorsement (POE) architecture enables remote parties
 
 ### Geolocation Methods as Composable Claim Sources
 
-V-GAP is designed so that different geolocation methods (GNSS, MNO/CAMARA, timing-based, provider region attestation) can independently produce Claims that feed into a common Evidence structure and ultimately into a common Attestation Result format. Each method has distinct security properties and threat models (see Security Considerations). Implementations SHOULD treat geolocation methods as composable and independently appraised Claim sources rather than requiring a single method. This design allows the security considerations for each method to be evaluated independently while the Attestation Result remains uniform.
+V-GAP is designed so that different geolocation methods (GNSS, MNO/CAMARA, timing-based, provider region attestation, latency-bounded anchor networks such as SovCert, and emerging quantum-derived location proofs) can independently produce Claims that feed into a common Evidence structure and ultimately into a common Attestation Result format. Each method has distinct security properties and threat models (see Security Considerations). Implementations SHOULD treat geolocation methods as composable and independently appraised Claim sources rather than requiring a single method. This design allows the security considerations for each method to be evaluated independently while the Attestation Result remains uniform.
 
 ### Other Potentially Related Work
 
-The "Sovereign Certificates" initiative (sovcert.org) has been raised as potentially related work. The website appears to be a single-entity effort without broad community review or standardization process participation. Future revisions of this document will assess alignment or differentiation if the initiative matures or publishes through a recognized standards body.
+The "Sovereign Certificates" initiative (sovcert.org) proposes latency-bounded location inference using dedicated network anchors. The initiative appears to be a single-entity effort without broad community review or standardization process participation. Nonetheless, the SovCert proposal is structurally compatible with V-GAP: SovCert "anchors" produce signed location measurements that are functionally equivalent to other geolocation Claim sources (GNSS, MNO/CAMARA, timing-based). A SovCert location statement could be integrated into the V-GAP Evidence structure as an additional signed Claim source, following the same composable model used for MNO location evidence (see `mno-location`). Future revisions of this document will assess formal integration if the initiative matures or publishes through a recognized standards body.
 
 # Conventions and Definitions
 
@@ -131,6 +131,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 - **IMEI**: International Mobile Equipment Identity
 - **IMSI**: International Mobile Subscriber Identity
 - **LAH**: Location Anchor Host
+- **MNO**: Mobile Network Operator
 - **OOB**: Out-of-Band
 - **PCR**: Platform Configuration Register
 - **PoR**: Proof of Residency
@@ -181,7 +182,7 @@ V-GAP (Verifiable Geofencing Attestation Profile):
 : Evidence profile defined in this document, binding platform integrity and verified residency into a single hardware-sealed Evidence structure (`lah-bundle`).
 
 N_fusion:
-: Fresh nonce for each attestation interval. Initiated by the Relying Party and delivered to the Attester by the Verifier. Corresponds to the `nonce` field in the `lah-bundle`. Provides freshness per {{!RFC9334}}, Section 10.2.
+: Fresh nonce issued by the Relying Party for each attestation interval. Corresponds to the `nonce` field in the `lah-bundle`. Provides freshness per {{!RFC9334}}, Section 10.
 
 # Use Cases
 
@@ -227,29 +228,31 @@ V-GAP instantiates the RATS Architecture {{!RFC9334}} with the following role as
 |:-------------------------|:-------------|:---------|
 | Attester | Location Anchor Host (LAH) | Contains the Attesting Environment (TPM) and Target Environment (Workload Identity Agent). Produces V-GAP Evidence (the `lah-bundle`), including TPM quotes and geolocation Claims. |
 | Verifier | Verifier (for example, Keylime Verifier or HPE OneView) | Appraises V-GAP Evidence — validates TPM quotes, checks PCRs against Reference Values, verifies geolocation proofs — and produces an Attestation Result. |
-| Endorser (hardware) | TPM Manufacturer | Provides Endorsements (EK certificate chain) vouching for the TPM's identity and signing capability. |
-| Endorser (location) | Mobile Network Operator (MNO) | Provides a location Endorsement (`mno-endorsement`) attesting device location within carrier visibility. OPTIONAL. |
+| Endorser | TPM Manufacturer | Provides Endorsements (EK certificate chain) vouching for the TPM's identity and signing capability. |
 | Reference Value Provider | Platform administrator or supply chain entity | Supplies Reference Values: known-good PCR values, approved agent binary digests (`target-environment-image-digest`), and geofence boundary definitions. |
 | Relying Party | Credential issuer or policy decision point | Consumes the Attestation Result and applies its Appraisal Policy for Attestation Results to decide whether to issue credentials, release keys, or authorize operations. |
 | Verifier Owner | Security administrator | Configures the Appraisal Policy for Evidence: freshness windows, required trust levels, approved PCR sets, and geofence policy. |
 | Relying Party Owner | Policy administrator | Configures the Appraisal Policy for Attestation Results: which Verifiers are trusted, minimum result freshness, and required Claims in the Attestation Result. |
 
+Note: The Mobile Network Operator (MNO), when present, provides a signed location statement (`mno-location`) that the Attester integrates into its Evidence as a signed Claim source. This is attester-collected Evidence — not a RATS Endorsement — because the MNO asserts network-observed location, not the Attester's identity or characteristics. The same model applies to other external signed location sources (such as SovCert anchors or quantum-derived proofs), which MAY similarly be integrated as signed Claim sources within the `lah-bundle`.
+
 ## Evidence Flow
 
-The V-GAP Evidence flow follows the RATS background-check model ({{!RFC9334}}, Section 5.2): the Attester conveys Evidence to the Verifier (possibly via a Relying Party), the Verifier appraises it using Reference Values and Endorsements, and conveys the Attestation Result to the Relying Party.
+The V-GAP evidence flow follows the RATS background-check model ({{!RFC9334}}, Section 5.2): the Attester conveys Evidence to the Verifier (possibly via a Relying Party), the Verifier appraises it using Reference Values and Endorsements, and conveys the Attestation Result to the Relying Party.
 
 ~~~
                                     Reference Value
-Endorser         Endorser            Provider
-(TPM Mfr)        (MNO)              (Admin)
-   |               |                   |
-   | EK cert        | mno-endorsement   | PCRs, agent digest,
-   | chain          |                   | geofence polygons
-   v               v                   v
+Endorser                             Provider
+(TPM Mfr)                            (Admin)
+   |                                   |
+   | EK cert                           | PCRs, agent digest,
+   | chain                             | geofence polygons
+   v                                   v
 Attester (LAH)                      Verifier
   [TPM: Attesting Env]              Appraises Evidence
   [Agent: Target Env]  -- lah-bundle -->  against Reference Values
-  [Sensor: Claim source]                  and Endorsements
+  [Sensor(s): Claim sources]               and Endorsements
+  [MNO (opt): signed Claim source]
                                         |
                           Attestation Result
                                         |
@@ -270,23 +273,25 @@ The `lah-bundle` is the RATS Evidence structure defined by this profile. It is a
 ```json
 {
   "lah-bundle": { },
-  "mno-endorsement": { }
+  "mno-location": { }
 }
 ```
+
+When present, the `lah-bundle` fields are serialized using JSON Canonicalization Scheme (JCS) for hash computation. In the bundle, `tpm-ak` is carried as a PEM-encoded public key string, but hash inputs such as `tpm-ak-bytes` are derived from the raw DER bytes of the same public key.
 
 ### lah-bundle Fields
 
 | Field | Type | Required | Description |
 |:------|:-----|:--------:|:------------|
-| `tpm-ak` | string (PEM) | Yes | TPM Attestation Key public key (PEM-encoded). Hardware identity anchor. The TPM enforces that only this key can produce `tpm-quote-seal` — proving co-residency. |
-| `geolocation-id-hash` | string (Base64URL) | Yes | SHA-256 over the DER-encoded bytes of `tpm-ak` (denoted `tpm-ak-bytes`) concatenated with any sensor-specific identifiers (see Sensor Type Input Recipes appendix for per-sensor constructions). Binds the TPM identity anchor to the geolocation sensor identity. Sensor integrity is assumed to be established via an out-of-band channel (for example, hardware inventory or supply chain attestation). |
-| `geolocation-proof-hash` | string (Base64URL) | Yes | SHA-256 commitment over `geolocation-payload`, Base64URL-encoded. Required in both privacy modes. When `privacy-technique=zkp`: `Base64URL(SHA-256(zkp-proof-bytes))`. When `privacy-technique=none`: `Base64URL(SHA-256(JCS({lat, lon, accuracy})))` (JCS per {{!RFC8785}}). |
+| `tpm-ak` | string (Base64URL) | Yes | TPM Attestation Key public key (PEM-encoded). Hardware identity anchor. The TPM enforces that only this key can produce `tpm-quote-seal` — proving co-residency. |
+| `geolocation-id-hash` | string (Base64URL) | Yes | SHA-256 over `tpm-ak-bytes` concatenated with any sensor-specific identifiers (see Sensor Type Input Recipes appendix for per-sensor constructions). Binds the TPM identity anchor to the geolocation sensor identity. Sensor integrity is assumed to be established via an out-of-band channel (for example, hardware inventory or supply chain attestation). |
+| `geolocation-proof-hash` | string (Base64URL) | Yes | SHA-256 commitment over `geolocation-payload`. Required in both privacy modes. When `privacy-technique=zkp`: `SHA-256(zkp-proof-bytes)`. When `privacy-technique=none`: `SHA-256(JCS({lat, lon, accuracy}))`. |
 | `privacy-technique` | string enum | Yes | `"none"` = raw lat/lon/accuracy in payload. `"zkp"` = zero-knowledge proof URI in payload. Controls location privacy only; device identity privacy is always protected via `geolocation-id-hash`. |
-| `geolocation-payload` | object | Yes | Inner location data. Structure depends on `privacy-technique` (see Payload Variants below). Committed to by `geolocation-proof-hash` and optionally signed by `mno-endorsement.mno-sig`. |
-| `nonce` | string (Base64URL) | Yes | Freshness nonce (N_fusion) initiated by the Relying Party and delivered to the Attester by the Verifier for each attestation interval, per the nonce-based freshness model in {{!RFC9334}}, Section 10.2. Implementations may use chained nonce constructions for additional audit guarantees (see Nonce Chain and Merkle Audit Log appendix). |
+| `geolocation-payload` | object | Yes | Inner location data. Structure depends on `privacy-technique` (see Payload Variants below). Committed to by `geolocation-proof-hash` and optionally signed by `mno-location.mno-sig`. |
+| `nonce` | string (Base64URL) | Yes | Freshness nonce (N_fusion) issued by the Relying Party for each attestation interval, per {{!RFC9334}}, Section 10.2. Implementations may use chained nonce constructions for additional audit guarantees (see Nonce Chain and Merkle Audit Log appendix). |
 | `timestamp` | integer (int64) | Yes | Unix epoch seconds. Set by the Attester (LAH) at bundle construction time. |
 | `tpm-quote-seal` | string (Base64URL) | Yes | `TPM2_Quote` produced by the AK in `tpm-ak`. Qualifying data = `SHA-256(JCS({tpm-ak, geolocation-id-hash, geolocation-proof-hash, privacy-technique, nonce, timestamp, target-environment-image-digest}))`. Binds all fields into a single hardware-sealed statement. |
-| `target-environment-image-digest` | string (hex SHA-256) | Yes | SHA-256 digest of the Target Environment (Workload Identity Agent) binary, measured at attestation time. Compared by the Verifier against Reference Values to detect agent binary compromise. |
+| `target-environment-image-digest` | string (hex SHA-256) | Yes | SHA-256 digest of the Target Environment (Workload Identity Agent) binary, measured at attestation time. This digest is computed over the measured binary image bytes or artifact bytes that the TPM records. Compared by the Verifier against Reference Values to detect agent binary compromise. |
 
 ### geolocation-payload Variants
 
@@ -309,13 +314,13 @@ The `lah-bundle` is the RATS Evidence structure defined by this profile. It is a
 
 `geolocation-proof-hash = Base64URL(SHA-256(zkp-proof-bytes))`
 
-### MNO Endorsement (RATS Endorsement) {#mno-endorsement}
+### MNO Location Evidence (Signed Claim Source) {#mno-location}
 
-The `mno-endorsement` is a RATS Endorsement {{!RFC9334}}: a signed statement from a third party (the Mobile Network Operator) about the Attester's location. The MNO attests device location within carrier visibility but does not sign host-level fields. This element is OPTIONAL at the top level; when present, its fields are REQUIRED.
+The `mno-location` element carries a signed location statement from a Mobile Network Operator (MNO). In RATS terms, this is attester-collected Evidence — a signed Claim source — rather than a RATS Endorsement: the MNO asserts network-observed device location within carrier visibility but does not vouch for the Attester's identity or platform characteristics. This element is OPTIONAL at the top level; when present, its fields are REQUIRED.
 
 | Field | Type | Required | Description |
 |:------|:-----|:--------:|:------------|
-| `mno-key-cert` | string (Base64URL DER) | Yes | MNO signing certificate. Verifiers SHOULD validate this certificate chains to a known MNO root before accepting the endorsement. |
+| `mno-key-cert` | string (Base64URL DER) | Yes | MNO signing certificate. Verifiers SHOULD validate this certificate chains to a known MNO root before accepting the location statement. |
 | `mno-sig` | string (Base64URL) | Yes | ECDSA/EdDSA signature over `JCS(geolocation-payload)` only. The MNO attests location within carrier visibility — does not sign host fields (`tpm-ak`, `nonce`, `tpm-quote-seal`). |
 
 ## Attestation Result {#attestation-result}
@@ -356,7 +361,7 @@ If any step fails, the Verifier MUST reject the Evidence and MUST NOT produce a 
 To prevent mix-and-match and replay attacks, Verifiers MUST enforce the following:
 
 - Attestation Results MUST be fresh and MUST be bound to the appraisal event (for example, by cryptographically binding freshness values used for platform quotes within the Attestation Result).
-- The `nonce` field in the `lah-bundle` MUST be a freshness value initiated by the Relying Party and delivered to the Attester by the Verifier for each attestation interval, per the nonce-based freshness model in {{!RFC9334}}, Section 10.2.
+- The `nonce` field in the `lah-bundle` MUST be a freshness value issued by the Relying Party for each attestation interval, per the nonce-based freshness model in {{!RFC9334}}, Section 10.2.
 - Verifiers MUST reject Evidence where the `timestamp` falls outside the configured freshness window.
 
 Where policy requires it, the Verifier can additionally require that the Target Environment measurement (`target-environment-image-digest`) matches an approved Reference Value, reducing the risk that a modified or unauthorized agent produces accepted Evidence.
@@ -400,7 +405,7 @@ Implementers MUST NOT rely solely on TPM binding as evidence of correct location
 
 GNSS signals are unauthenticated by default and can be spoofed via synthetic signal generators (e.g., software-defined radio replay of valid signals) or multipath injection. Implementers SHOULD apply mitigations proportional to the required assurance level:
 
-- **Signal authentication**: Galileo OSNMA (Open Service Navigation Message Authentication) provides cryptographic authentication of navigation messages and is the strongest available civilian countermeasure. GPS NMA (Chimera), the Navigation Message Authentication scheme for GPS III L1C signals, offers equivalent protection. Implementations SHOULD prefer authenticated GNSS signals where available.
+- **Signal authentication**: Galileo OSNMA (Open Service Navigation Message Authentication) provides cryptographic authentication of navigation messages and is the strongest available civilian countermeasure. GPS GAIA offers equivalent protection for GPS III signals. Implementations SHOULD prefer authenticated GNSS signals where available.
 - **Multi-constellation cross-validation**: Cross-checking fixes across independent constellations (GPS, Galileo, GLONASS, BeiDou) substantially raises the cost of spoofing; consistent simultaneous spoofing of all constellations requires significantly more attacker capability.
 - **Anomaly detection**: Sudden position jumps, implausible velocity changes, and anomalous signal-to-noise ratios are indicators of spoofing or jamming. Evidence that fails these checks SHOULD be rejected.
 
@@ -410,11 +415,11 @@ Mobile network location evidence is subject to distinct threats:
 
 - **IMSI catchers and rogue base stations**: Attacker-controlled base stations can force a device onto a fake cell, yielding attacker-controlled location if evidence derives from device-reported cell identity.
 - **SS7/Diameter abuse**: Attackers with access to legacy carrier signaling can issue location queries that yield false or manipulated carrier-side location data.
-- **MNO root key compromise**: The `mno-endorsement` is only as trustworthy as the MNO signing root. Verifiers MUST validate the `mno-key-cert` certificate chain to a known MNO root and SHOULD treat a root compromise as requiring immediate policy revocation.
+- **MNO root key compromise**: The `mno-location` element is only as trustworthy as the MNO signing root. Verifiers MUST validate the `mno-key-cert` certificate chain to a known MNO root and SHOULD treat a root compromise as requiring immediate policy revocation.
 
 The CAMARA API model — where location is derived from carrier network infrastructure rather than device-reported cell identifiers — is more resistant to IMSI catcher attacks and is the RECOMMENDED approach when MNO corroboration is used.
 
-Notwithstanding these mitigations, MNO-derived location is ultimately under the control of the carrier infrastructure. A compromised or coerced MNO can produce false location endorsements. Verifiers SHOULD treat MNO endorsements as corroborating evidence rather than sole proof of residency, and Appraisal Policies SHOULD require independent corroboration (for example, GNSS + MNO) for high-assurance geofence policies.
+Notwithstanding these mitigations, MNO-derived location is ultimately under the control of the carrier infrastructure. A compromised or coerced MNO can produce false location statements. Verifiers SHOULD treat MNO location statements as corroborating evidence rather than sole proof of residency, and Appraisal Policies SHOULD require independent corroboration (for example, GNSS + MNO) for high-assurance geofence policies.
 
 ### Location Trust Levels
 
@@ -424,7 +429,7 @@ The quality indicator defined in Composite Geolocation SHOULD be mapped to a loc
 |:------------|:---------------|
 | Low | Single unauthenticated GNSS fix, no corroboration |
 | Medium | Multi-constellation GNSS with anomaly detection, or network-side MNO corroboration (CAMARA) alone |
-| High | Authenticated GNSS (OSNMA or GPS NMA/Chimera), or Medium GNSS + MNO corroboration |
+| High | Authenticated GNSS (OSNMA or GAIA), or Medium GNSS + MNO corroboration |
 | Highest | Authenticated GNSS + independent network-side MNO corroboration (CAMARA) + anomaly detection |
 
 The security value of multi-source corroboration derives from **channel independence**: GNSS and MNO evidence travel over different physical and logical channels. Requiring consistent evidence from both simultaneously raises the bar for spoofing. Verifiers SHOULD require a minimum trust level commensurate with the sensitivity of the enforced geofence policy, and SHOULD apply conservative policy (downgrade or reject the Attestation Result) when evidence quality degrades.
@@ -437,7 +442,9 @@ V-GAP's `privacy-technique = "zkp"` mode uses Plonky2 STARK proofs. The followin
 
 - **No trusted setup.** Plonky2 is STARK-based and requires no trusted setup phase, eliminating the class of attacks arising from compromised SNARK setup parameters. Implementations substituting a different `zkp-format` MUST ensure it also provides transparent setup, or MUST document the resulting trust assumptions.
 
-- **Computational soundness.** STARK security is computational, not unconditional, and relies on the collision resistance of the underlying hash function. Implementations SHOULD target at least 128-bit security. Note that Plonky2's default parameters target approximately 100 bits of security; achieving 128 bits requires explicit non-default parameter selection (field size, hash function, FRI blowup factor). Implementations MUST document the proof system parameters actually used to enable independent security analysis.
+- **Computational soundness.** STARK security is computational, not unconditional, and relies on the collision resistance of the underlying hash function. Implementations SHOULD target at least 128-bit security and MUST document the proof system parameters (field size, hash function, FRI parameters) to enable independent security analysis.
+
+- **URI availability.** When `privacy-technique = "zkp"`, the Verifier MUST reject Evidence if the `zkp-proof-uri` cannot be resolved or the fetched proof bytes do not match `geolocation-proof-hash`.
 
 - **Proof freshness.** A valid ZKP proves location at proof-generation time. The nonce and timestamp freshness requirements that apply to `tpm-quote-seal` apply equally to ZKP proofs: Verifiers MUST reject proofs whose `timestamp` falls outside the configured freshness window.
 
@@ -450,9 +457,23 @@ IANA is requested to register the following Object Identifier (OID) in the "SMI 
 - **OID**: `1.3.6.1.4.1.65284.1.1`
 - **Description**: Verifiable Geofencing Attestation Profile (V-GAP) Evidence / Attestation Result
 - **Reference**: This document.
-- **PEN**: 65284 (IANA Private Enterprise Number currently assigned to Ram Krishnan)
+- **PEN**: 65284 (IANA Private Enterprise Number assigned to Ram Krishnan)
 
-Note: PEN 65284 is used provisionally for this draft. Prior to publication as an RFC, a formally allocated OID arc appropriate for an IETF standard MUST be obtained through the IANA process. The authors will coordinate with IANA to determine the appropriate registry and allocation procedure.
+# References
+
+## Normative References
+
+- {{!RFC9334}}
+- {{!RFC2119}}
+- {{!RFC8174}}
+- {{I-D.richardson-rats-geographic-results}}
+- {{I-D.mw-wimse-transitive-attestation}}
+- {{I-D.ietf-wimse-architecture}}
+
+## Informative References
+
+- {{!RFC7942}}
+- {{I-D.ramki-ptp-hardware-rooted-attestation}}
 
 {backmatter}
 
@@ -615,7 +636,7 @@ Relying parties and credential issuers can use V-GAP Attestation Results as inpu
     "tpm-quote-seal": "ARoAAQALAAUACwEA...",
     "target-environment-image-digest": "a1b2c3d4e5f6...64-char-hex-sha256"
   },
-  "mno-endorsement": {
+  "mno-location": {
     "mno-key-cert": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8A...",
     "mno-sig": "MEYCIQDx9z2k..."
   }

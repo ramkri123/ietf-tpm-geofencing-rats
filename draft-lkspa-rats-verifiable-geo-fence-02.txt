@@ -5,14 +5,16 @@
 RATS                                                         R. Krishnan
 Internet-Draft                                      JPMorgan Chase & Co.
 Intended status: Standards Track                                N. Smith
-Expires: 9 November 2026                                           Intel
+Expires: 24 November 2026                                          Intel
                                                                 D. Lopez
                                                               Telefonica
                                                                A. Prasad
                                                                   Oracle
                                                             S. Addepalli
                                                                   Aryaka
-                                                              8 May 2026
+                                                             H. Birkholz
+                                                          Fraunhofer SIT
+                                                             23 May 2026
 
 
           Verifiable Proof of Environment Attestation Profile
@@ -43,26 +45,19 @@ Abstract
    neither dimension can be forged or transplanted without invalidating
    the other.
 
-
-
-
-
-
-
-
-
-
-
-Krishnan, et al.         Expires 9 November 2026                [Page 1]
-
-Internet-Draft                    V-PEA                         May 2026
-
-
    For the WHERE dimension, V-PEA supports Transparent Zero-Knowledge
    Proofs (ZKPs), enabling an Attester to prove geographic compliance
    without disclosing precise coordinates.  A positive V-PEA Attestation
    Result enables a Relying Party to issue hardware-rooted credentials
    or authorize operations — combining verified execution environment
+
+
+
+Krishnan, et al.        Expires 24 November 2026                [Page 1]
+
+Internet-Draft                    V-PEA                         May 2026
+
+
    (WHAT) with verified physical placement (WHERE) — before releasing
    sensitive assets or granting access.  Integration with workload
    identity systems is described in the WIMSE Integration appendix.
@@ -82,7 +77,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 9 November 2026.
+   This Internet-Draft will expire on 24 November 2026.
 
 Copyright Notice
 
@@ -102,34 +97,34 @@ Table of Contents
 
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   4
      1.1.  Scope and Layered Attestation . . . . . . . . . . . . . .   5
-     1.2.  Relationship to Related Work  . . . . . . . . . . . . . .   6
+     1.2.  Relationship to Related Work  . . . . . . . . . . . . . .   5
        1.2.1.  Platform Ownership and Confidential Computing . . . .   6
-       1.2.2.  Geolocation Methods as Composable Claim Sources . . .   7
+       1.2.2.  Geolocation Methods as Composable Claim Sources . . .   6
        1.2.3.  Other Potentially Related Work  . . . . . . . . . . .   7
+   2.  Conventions and Definitions . . . . . . . . . . . . . . . . .   7
+     2.1.  Abbreviations . . . . . . . . . . . . . . . . . . . . . .   7
+   3.  Key Terms . . . . . . . . . . . . . . . . . . . . . . . . . .   8
+   4.  Use Cases . . . . . . . . . . . . . . . . . . . . . . . . . .   9
+     4.1.  Server-centric Enforcement  . . . . . . . . . . . . . . .  10
 
 
 
-Krishnan, et al.         Expires 9 November 2026                [Page 2]
+Krishnan, et al.        Expires 24 November 2026                [Page 2]
 
 Internet-Draft                    V-PEA                         May 2026
 
 
-   2.  Conventions and Definitions . . . . . . . . . . . . . . . . .   7
-     2.1.  Abbreviations . . . . . . . . . . . . . . . . . . . . . .   7
-   3.  Key Terms . . . . . . . . . . . . . . . . . . . . . . . . . .   8
-   4.  Use Cases . . . . . . . . . . . . . . . . . . . . . . . . . .  10
-     4.1.  Server-centric Enforcement  . . . . . . . . . . . . . . .  10
      4.2.  User-centric Enforcement  . . . . . . . . . . . . . . . .  10
      4.3.  Compliance and Risk Reduction . . . . . . . . . . . . . .  11
    5.  Verifiable Proof of Environment Attestation Profile
            (V-PEA) . . . . . . . . . . . . . . . . . . . . . . . . .  11
      5.1.  RATS Role Mapping . . . . . . . . . . . . . . . . . . . .  11
-     5.2.  Evidence Flow . . . . . . . . . . . . . . . . . . . . . .  13
+     5.2.  Evidence Flow . . . . . . . . . . . . . . . . . . . . . .  12
      5.3.  V-PEA Evidence Structure  . . . . . . . . . . . . . . . .  13
-       5.3.1.  Top-Level Structure . . . . . . . . . . . . . . . . .  14
+       5.3.1.  Top-Level Structure . . . . . . . . . . . . . . . . .  13
        5.3.2.  lah-bundle Fields . . . . . . . . . . . . . . . . . .  14
-       5.3.3.  geolocation-payload Variants  . . . . . . . . . . . .  17
-       5.3.4.  MNO Location Evidence (Signed Claim Source) . . . . .  18
+       5.3.3.  geolocation-payload Variants  . . . . . . . . . . . .  16
+       5.3.4.  MNO Location Evidence (Signed Claim Source) . . . . .  17
      5.4.  Attestation Result  . . . . . . . . . . . . . . . . . . .  18
      5.5.  TPM Quote Verification Procedure  . . . . . . . . . . . .  19
      5.6.  Freshness and Replay Prevention . . . . . . . . . . . . .  20
@@ -162,19 +157,19 @@ Internet-Draft                    V-PEA                         May 2026
    Appendix D.  Deployment Patterns  . . . . . . . . . . . . . . . .  30
    Appendix E.  Policy Use . . . . . . . . . . . . . . . . . . . . .  30
    Appendix F.  V-PEA Examples and Sensor Recipes  . . . . . . . . .  31
-
-
-
-Krishnan, et al.         Expires 9 November 2026                [Page 3]
-
-Internet-Draft                    V-PEA                         May 2026
-
-
      F.1.  Example Instance (privacy-technique = "zkp")  . . . . . .  31
      F.2.  Sensor Type Input Recipes . . . . . . . . . . . . . . . .  31
    Appendix G.  Implementation Status  . . . . . . . . . . . . . . .  32
    Appendix H.  WIMSE Integration  . . . . . . . . . . . . . . . . .  33
      H.1.  Relationship to WIMSE Architecture  . . . . . . . . . . .  33
+
+
+
+Krishnan, et al.        Expires 24 November 2026                [Page 3]
+
+Internet-Draft                    V-PEA                         May 2026
+
+
      H.2.  Workload Binding Fields . . . . . . . . . . . . . . . . .  34
      H.3.  X.509 Extension for Downstream Consumers  . . . . . . . .  35
    Appendix I.  Data Residency References  . . . . . . . . . . . . .  35
@@ -217,19 +212,19 @@ Internet-Draft                    V-PEA                         May 2026
        geographic boundary, optionally without revealing precise
        coordinates (privacy-preserving residency via ZKP).
 
-
-
-
-
-Krishnan, et al.         Expires 9 November 2026                [Page 4]
-
-Internet-Draft                    V-PEA                         May 2026
-
-
    WHAT and WHERE together provide the cryptographic basis for a Relying
    Party to issue credentials or authorize operations.  For integration
    with specific workload identity systems, see the WIMSE Integration
    appendix.
+
+
+
+
+
+Krishnan, et al.        Expires 24 November 2026                [Page 4]
+
+Internet-Draft                    V-PEA                         May 2026
+
 
 1.1.  Scope and Layered Attestation
 
@@ -272,16 +267,6 @@ Internet-Draft                    V-PEA                         May 2026
    transitive-attestation}} and the WIMSE Architecture {{I-D.ietf-wimse-
    architecture}}. See the WIMSE Integration appendix for a mapping.
 
-
-
-
-
-
-Krishnan, et al.         Expires 9 November 2026                [Page 5]
-
-Internet-Draft                    V-PEA                         May 2026
-
-
 1.2.  Relationship to Related Work
 
    defines how a Verifier encodes geographic location conclusions —
@@ -289,6 +274,13 @@ Internet-Draft                    V-PEA                         May 2026
    as EAT Attestation Result Claims for consumption by a Relying Party.
    That draft addresses the *output encoding* side of the attestation
    pipeline.
+
+
+
+Krishnan, et al.        Expires 24 November 2026                [Page 5]
+
+Internet-Draft                    V-PEA                         May 2026
+
 
    V-PEA addresses the complementary *input side*: the Evidence profile
    the Attester produces, the hardware-binding mechanism (TPM quote)
@@ -330,14 +322,6 @@ Internet-Draft                    V-PEA                         May 2026
    both owned by an approved party and resident within an approved
    boundary.
 
-
-
-
-Krishnan, et al.         Expires 9 November 2026                [Page 6]
-
-Internet-Draft                    V-PEA                         May 2026
-
-
 1.2.2.  Geolocation Methods as Composable Claim Sources
 
    V-PEA is designed so that different geolocation methods (GNSS, MNO/
@@ -346,6 +330,14 @@ Internet-Draft                    V-PEA                         May 2026
    location proofs) can independently produce Claims that feed into a
    common Evidence structure and ultimately into a common Attestation
    Result format.  Each method has distinct security properties and
+
+
+
+Krishnan, et al.        Expires 24 November 2026                [Page 6]
+
+Internet-Draft                    V-PEA                         May 2026
+
+
    threat models (see Security Considerations).  Implementations SHOULD
    treat geolocation methods as composable and independently appraised
    Claim sources rather than requiring a single method.  This design
@@ -386,14 +378,6 @@ Internet-Draft                    V-PEA                         May 2026
 
    *  *EAT*: Entity Attestation Token
 
-
-
-
-Krishnan, et al.         Expires 9 November 2026                [Page 7]
-
-Internet-Draft                    V-PEA                         May 2026
-
-
    *  *EK*: Endorsement Key
 
    *  *GNSS*: Global Navigation Satellite System
@@ -401,6 +385,14 @@ Internet-Draft                    V-PEA                         May 2026
    *  *IMA*: Integrity Measurement Architecture
 
    *  *IMEI*: International Mobile Equipment Identity
+
+
+
+
+Krishnan, et al.        Expires 24 November 2026                [Page 7]
+
+Internet-Draft                    V-PEA                         May 2026
+
 
    *  *IMSI*: International Mobile Subscriber Identity
 
@@ -441,15 +433,6 @@ Internet-Draft                    V-PEA                         May 2026
       TPM serves as the Attesting Environment.
 
    Target Environment:  An environment about which Claims are collected
-
-
-
-
-Krishnan, et al.         Expires 9 November 2026                [Page 8]
-
-Internet-Draft                    V-PEA                         May 2026
-
-
       by an Attesting Environment.  In V-PEA, the Workload Identity
       Agent is the Target Environment measured by the TPM.
 
@@ -458,6 +441,15 @@ Internet-Draft                    V-PEA                         May 2026
       assembles the V-PEA Evidence structure.
 
    Location Anchor Host (LAH):  Host or device that acts as the Attester
+
+
+
+
+Krishnan, et al.        Expires 24 November 2026                [Page 8]
+
+Internet-Draft                    V-PEA                         May 2026
+
+
       ({{!RFC9334}}).  Contains the TPM (Attesting Environment), the
       Workload Identity Agent (Target Environment), and one or more
       geolocation Claim sources (for example, GNSS receiver or MNO-
@@ -496,22 +488,23 @@ Internet-Draft                    V-PEA                         May 2026
       attestation interval.  Corresponds to the nonce field in the lah-
       bundle.  Provides freshness per {{!RFC9334}}, Section 10.
 
-
-
-
-
-
-Krishnan, et al.         Expires 9 November 2026                [Page 9]
-
-Internet-Draft                    V-PEA                         May 2026
-
-
 4.  Use Cases
 
    This profile supports hardware-rooted attestation of execution
    environments for platforms running workload agents and (optionally)
    user devices.  Use cases span server-centric enforcement, user-
    centric enforcement, and compliance and risk reduction.
+
+
+
+
+
+
+
+Krishnan, et al.        Expires 24 November 2026                [Page 9]
+
+Internet-Draft                    V-PEA                         May 2026
+
 
 4.1.  Server-centric Enforcement
 
@@ -554,18 +547,20 @@ Internet-Draft                    V-PEA                         May 2026
       infrastructure providing supporting evidence for policy
       enforcement.
 
-
-
-
-Krishnan, et al.         Expires 9 November 2026               [Page 10]
-
-Internet-Draft                    V-PEA                         May 2026
-
-
    *  *Restricted support geographies:* Administrative or support
       actions can be allowed only when the operator proves presence
       within allowed geographies, reducing policy and insider-risk
       exposure.
+
+
+
+
+
+
+Krishnan, et al.        Expires 24 November 2026               [Page 10]
+
+Internet-Draft                    V-PEA                         May 2026
+
 
 4.3.  Compliance and Risk Reduction
 
@@ -610,19 +605,19 @@ Internet-Draft                    V-PEA                         May 2026
     |              |example,     | validates TPM quotes, checks PCRs  |
     |              |Keylime      | against Reference Values, verifies |
     |              |Verifier or  | geolocation proofs — and produces  |
-
-
-
-Krishnan, et al.         Expires 9 November 2026               [Page 11]
-
-Internet-Draft                    V-PEA                         May 2026
-
-
     |              |HPE OneView) | an Attestation Result.             |
     +--------------+-------------+------------------------------------+
     |Endorser      |TPM          | Provides Endorsements (EK          |
     |              |Manufacturer | certificate chain) vouching for    |
     |              |             | the TPM's identity and signing     |
+
+
+
+Krishnan, et al.        Expires 24 November 2026               [Page 11]
+
+Internet-Draft                    V-PEA                         May 2026
+
+
     |              |             | capability.                        |
     +--------------+-------------+------------------------------------+
     |Reference     |Platform     | Supplies Reference Values: known-  |
@@ -662,18 +657,6 @@ Internet-Draft                    V-PEA                         May 2026
    which MAY similarly be integrated as signed Claim sources within the
    lah-bundle.
 
-
-
-
-
-
-
-
-Krishnan, et al.         Expires 9 November 2026               [Page 12]
-
-Internet-Draft                    V-PEA                         May 2026
-
-
 5.2.  Evidence Flow
 
    The V-PEA Evidence flow follows the RATS background-check model
@@ -681,6 +664,15 @@ Internet-Draft                    V-PEA                         May 2026
    Verifier (possibly via a Relying Party), the Verifier appraises it
    using Reference Values and Endorsements, and conveys the Attestation
    Result to the Relying Party.
+
+
+
+
+
+Krishnan, et al.        Expires 24 November 2026               [Page 12]
+
+Internet-Draft                    V-PEA                         May 2026
+
 
                                        Reference Value
    Endorser                             Provider
@@ -723,19 +715,20 @@ Internet-Draft                    V-PEA                         May 2026
    neither dimension can be selectively forged or transplanted without
    invalidating the seal.
 
-
-
-Krishnan, et al.         Expires 9 November 2026               [Page 13]
-
-Internet-Draft                    V-PEA                         May 2026
-
-
 5.3.1.  Top-Level Structure
 
    {
      "lah-bundle": { },
      "mno-location": { }
    }
+
+
+
+
+Krishnan, et al.        Expires 24 November 2026               [Page 13]
+
+Internet-Draft                    V-PEA                         May 2026
+
 
    When present, the lah-bundle fields are serialized using JSON
    Canonicalization Scheme (JCS) for hash computation.  In the bundle,
@@ -778,14 +771,6 @@ Internet-Draft                    V-PEA                         May 2026
    |              |             |          | of-band channel (for      |
    |              |             |          | example, hardware         |
    |              |             |          | inventory or supply       |
-
-
-
-Krishnan, et al.         Expires 9 November 2026               [Page 14]
-
-Internet-Draft                    V-PEA                         May 2026
-
-
    |              |             |          | chain attestation).       |
    +--------------+-------------+----------+---------------------------+
    | geolocation- | string      |   Yes    | SHA-256 commitment over   |
@@ -793,6 +778,14 @@ Internet-Draft                    V-PEA                         May 2026
    |              |             |          | Required in both          |
    |              |             |          | privacy modes.  When      |
    |              |             |          | privacy-technique=zkp:    |
+
+
+
+Krishnan, et al.        Expires 24 November 2026               [Page 14]
+
+Internet-Draft                    V-PEA                         May 2026
+
+
    |              |             |          | SHA-256(zkp-proof-        |
    |              |             |          | bytes).  When privacy-    |
    |              |             |          | technique=none: SHA-      |
@@ -834,14 +827,6 @@ Internet-Draft                    V-PEA                         May 2026
    |              |             |          | Chain and Merkle Audit    |
    |              |             |          | Log appendix).            |
    +--------------+-------------+----------+---------------------------+
-
-
-
-Krishnan, et al.         Expires 9 November 2026               [Page 15]
-
-Internet-Draft                    V-PEA                         May 2026
-
-
    | timestamp    | integer     |   Yes    | Unix epoch seconds.       |
    |              | (int64)     |          | Set by the Attester       |
    |              |             |          | (LAH) at bundle           |
@@ -849,6 +834,14 @@ Internet-Draft                    V-PEA                         May 2026
    +--------------+-------------+----------+---------------------------+
    | tpm-quote-   | string      |   Yes    | TPM2_Quote produced by    |
    | seal         | (Base64URL) |          | the AK in tpm-ak.         |
+
+
+
+Krishnan, et al.        Expires 24 November 2026               [Page 15]
+
+Internet-Draft                    V-PEA                         May 2026
+
+
    |              |             |          | Qualifying data = SHA-    |
    |              |             |          | 256(JCS({tpm-ak,          |
    |              |             |          | geolocation-id-hash,      |
@@ -890,17 +883,20 @@ Internet-Draft                    V-PEA                         May 2026
 
                                   Table 3
 
-
-
-
-Krishnan, et al.         Expires 9 November 2026               [Page 16]
-
-Internet-Draft                    V-PEA                         May 2026
-
-
 5.3.3.  geolocation-payload Variants
 
    *When privacy-technique = "none" (raw coordinates):*
+
+
+
+
+
+
+
+Krishnan, et al.        Expires 24 November 2026               [Page 16]
+
+Internet-Draft                    V-PEA                         May 2026
+
 
       +==========+==================+==========+===================+
       | Field    | Type             | Required | Description       |
@@ -940,20 +936,6 @@ Internet-Draft                    V-PEA                         May 2026
 
    geolocation-proof-hash = Base64URL(SHA-256(zkp-proof-bytes))
 
-
-
-
-
-
-
-
-
-
-Krishnan, et al.         Expires 9 November 2026               [Page 17]
-
-Internet-Draft                    V-PEA                         May 2026
-
-
 5.3.4.  MNO Location Evidence (Signed Claim Source)
 
    The mno-location element carries a signed location statement from a
@@ -963,6 +945,14 @@ Internet-Draft                    V-PEA                         May 2026
    carrier visibility but does not vouch for the Attester's identity or
    platform characteristics.  This element is OPTIONAL at the top level;
    when present, its fields are REQUIRED.
+
+
+
+
+Krishnan, et al.        Expires 24 November 2026               [Page 17]
+
+Internet-Draft                    V-PEA                         May 2026
+
 
    +==============+=============+==========+==========================+
    | Field        | Type        | Required | Description              |
@@ -1003,14 +993,22 @@ Internet-Draft                    V-PEA                         May 2026
    *  any other result encoding that satisfies the Relying Party's
       Appraisal Policy for Attestation Results.
 
+   The Attestation Result MUST convey at minimum:
 
 
-Krishnan, et al.         Expires 9 November 2026               [Page 18]
+
+
+
+
+
+
+
+
+
+Krishnan, et al.        Expires 24 November 2026               [Page 18]
 
 Internet-Draft                    V-PEA                         May 2026
 
-
-   The Attestation Result MUST convey at minimum:
 
     +====================+============================================+
     | Claim              | Description                                |
@@ -1057,17 +1055,16 @@ Internet-Draft                    V-PEA                         May 2026
    6.  Verify signature over TPMS_ATTEST bytes using tpm-ak public key
        (RSASSA-PKCS1-v1_5 or ECDSA)
 
+   If any step fails, the Verifier MUST reject the Evidence and MUST NOT
+   produce a positive Attestation Result.
 
 
 
 
-Krishnan, et al.         Expires 9 November 2026               [Page 19]
+Krishnan, et al.        Expires 24 November 2026               [Page 19]
 
 Internet-Draft                    V-PEA                         May 2026
 
-
-   If any step fails, the Verifier MUST reject the Evidence and MUST NOT
-   produce a positive Attestation Result.
 
 5.6.  Freshness and Replay Prevention
 
@@ -1117,7 +1114,10 @@ Internet-Draft                    V-PEA                         May 2026
 
 
 
-Krishnan, et al.         Expires 9 November 2026               [Page 20]
+
+
+
+Krishnan, et al.        Expires 24 November 2026               [Page 20]
 
 Internet-Draft                    V-PEA                         May 2026
 
@@ -1173,7 +1173,7 @@ Internet-Draft                    V-PEA                         May 2026
 
 
 
-Krishnan, et al.         Expires 9 November 2026               [Page 21]
+Krishnan, et al.        Expires 24 November 2026               [Page 21]
 
 Internet-Draft                    V-PEA                         May 2026
 
@@ -1229,7 +1229,7 @@ Internet-Draft                    V-PEA                         May 2026
 
 
 
-Krishnan, et al.         Expires 9 November 2026               [Page 22]
+Krishnan, et al.        Expires 24 November 2026               [Page 22]
 
 Internet-Draft                    V-PEA                         May 2026
 
@@ -1285,7 +1285,7 @@ Internet-Draft                    V-PEA                         May 2026
 
 
 
-Krishnan, et al.         Expires 9 November 2026               [Page 23]
+Krishnan, et al.        Expires 24 November 2026               [Page 23]
 
 Internet-Draft                    V-PEA                         May 2026
 
@@ -1341,7 +1341,7 @@ Internet-Draft                    V-PEA                         May 2026
 
 
 
-Krishnan, et al.         Expires 9 November 2026               [Page 24]
+Krishnan, et al.        Expires 24 November 2026               [Page 24]
 
 Internet-Draft                    V-PEA                         May 2026
 
@@ -1397,7 +1397,7 @@ Internet-Draft                    V-PEA                         May 2026
 
 
 
-Krishnan, et al.         Expires 9 November 2026               [Page 25]
+Krishnan, et al.        Expires 24 November 2026               [Page 25]
 
 Internet-Draft                    V-PEA                         May 2026
 
@@ -1453,7 +1453,7 @@ B.1.  Gating Decisions on Attestation Results
 
 
 
-Krishnan, et al.         Expires 9 November 2026               [Page 26]
+Krishnan, et al.        Expires 24 November 2026               [Page 26]
 
 Internet-Draft                    V-PEA                         May 2026
 
@@ -1509,7 +1509,7 @@ B.4.  Location Anchor Hosts
 
 
 
-Krishnan, et al.         Expires 9 November 2026               [Page 27]
+Krishnan, et al.        Expires 24 November 2026               [Page 27]
 
 Internet-Draft                    V-PEA                         May 2026
 
@@ -1565,7 +1565,7 @@ C.3.  Key Rotation
 
 
 
-Krishnan, et al.         Expires 9 November 2026               [Page 28]
+Krishnan, et al.        Expires 24 November 2026               [Page 28]
 
 Internet-Draft                    V-PEA                         May 2026
 
@@ -1621,7 +1621,7 @@ C.6.  Disconnected Operation (Leased Attestation Result)
 
 
 
-Krishnan, et al.         Expires 9 November 2026               [Page 29]
+Krishnan, et al.        Expires 24 November 2026               [Page 29]
 
 Internet-Draft                    V-PEA                         May 2026
 
@@ -1677,7 +1677,7 @@ Appendix E.  Policy Use
 
 
 
-Krishnan, et al.         Expires 9 November 2026               [Page 30]
+Krishnan, et al.        Expires 24 November 2026               [Page 30]
 
 Internet-Draft                    V-PEA                         May 2026
 
@@ -1733,7 +1733,7 @@ F.2.  Sensor Type Input Recipes
 
 
 
-Krishnan, et al.         Expires 9 November 2026               [Page 31]
+Krishnan, et al.        Expires 24 November 2026               [Page 31]
 
 Internet-Draft                    V-PEA                         May 2026
 
@@ -1789,7 +1789,7 @@ Appendix G.  Implementation Status
 
 
 
-Krishnan, et al.         Expires 9 November 2026               [Page 32]
+Krishnan, et al.        Expires 24 November 2026               [Page 32]
 
 Internet-Draft                    V-PEA                         May 2026
 
@@ -1845,7 +1845,7 @@ H.1.  Relationship to WIMSE Architecture
 
 
 
-Krishnan, et al.         Expires 9 November 2026               [Page 33]
+Krishnan, et al.        Expires 24 November 2026               [Page 33]
 
 Internet-Draft                    V-PEA                         May 2026
 
@@ -1901,7 +1901,7 @@ H.2.  Workload Binding Fields
 
 
 
-Krishnan, et al.         Expires 9 November 2026               [Page 34]
+Krishnan, et al.        Expires 24 November 2026               [Page 34]
 
 Internet-Draft                    V-PEA                         May 2026
 
@@ -1957,7 +1957,7 @@ Authors' Addresses
 
 
 
-Krishnan, et al.         Expires 9 November 2026               [Page 35]
+Krishnan, et al.        Expires 24 November 2026               [Page 35]
 
 Internet-Draft                    V-PEA                         May 2026
 
@@ -1982,6 +1982,9 @@ Internet-Draft                    V-PEA                         May 2026
    Email: srinivasa.addepalli@aryaka.com
 
 
+   Henk Birkholz
+   Fraunhofer SIT
+   Email: henk.birkholz@ietf.contact
 
 
 
@@ -2010,7 +2013,4 @@ Internet-Draft                    V-PEA                         May 2026
 
 
 
-
-
-
-Krishnan, et al.         Expires 9 November 2026               [Page 36]
+Krishnan, et al.        Expires 24 November 2026               [Page 36]

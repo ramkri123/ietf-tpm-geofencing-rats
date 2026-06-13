@@ -55,6 +55,18 @@ organization = "Aryaka"
   [author.address]
   email = "srinivasa.addepalli@aryaka.com"
 
+[[author]]
+initials = "H."
+surname = "Birkholz"
+fullname = "Henk Birkholz"
+organization = "Fraunhofer SIT"
+  [author.address]
+  email = "henk.birkholz@ietf.contact"
+  street = "Rheinstrasse 75"
+  code = "64295"
+  city = "Darmstadt"
+  country = "Germany"
+
 %%%
 
 .# Abstract

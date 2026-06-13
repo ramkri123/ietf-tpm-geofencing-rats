@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- name="GENERATOR" content="github.com/mmarkdown/mmark Mmark Markdown Processor - mmark.nl" -->
-<rfc version="3" ipr="trust200902" submissionType="IETF" category="std" xml:lang="en" consensus="true" xmlns:xi="http://www.w3.org/2001/XInclude" docName="draft-lkspa-rats-verifiable-geo-fence-02">
+<rfc version="3" ipr="trust200902" submissionType="IETF" category="std" xml:lang="en" consensus="true" xmlns:xi="http://www.w3.org/2001/XInclude">
 
 <front>
 <title abbrev="V-PEA">Verifiable Proof of Environment Attestation Profile</title><seriesInfo value="draft-lkspa-rats-verifiable-geo-fence-02" stream="IETF" status="standard" name="Internet-Draft"></seriesInfo>
@@ -18,6 +18,9 @@
 </address></author>
 <author initials="S." surname="Addepalli" fullname="Srinivasa Addepalli"><organization>Aryaka</organization><address><postal><street></street>
 </postal><email>srinivasa.addepalli@aryaka.com</email>
+</address></author>
+<author initials="H." surname="Birkholz" fullname="Henk Birkholz"><organization>Fraunhofer SIT</organization><address><postal><street></street>
+</postal><email>henk.birkholz@ietf.contact</email>
 </address></author>
 <date year="2026" month="May" day="23"></date>
 <area>Security</area>

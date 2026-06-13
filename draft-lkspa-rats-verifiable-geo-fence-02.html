@@ -10,6 +10,7 @@
 <meta content="Diego R. Lopez" name="author">
 <meta content="A Prasad" name="author">
 <meta content="Srinivasa Addepalli" name="author">
+<meta content="Henk Birkholz" name="author">
 <meta content="
        Operators of regulated, sovereign, and high-assurance deployments require hardware-rooted, machine-verifiable proof that a workload executes in its approved environment. Current remote attestation mechanisms address two relevant properties in isolation: platform integrity — that the hardware and software stack are in an approved, untampered state — and physical residency — that the hardware resides within an approved geographic boundary. Neither property alone is sufficient: integrity without residency permits a valid platform to operate outside approved boundaries; residency without integrity permits a compromised platform to claim valid placement. 
        This document defines the  Verifiable Proof of Environment Attestation Profile (V-PEA) , a profile of the RATS Architecture {{!RFC9334}} that fuses both properties into a single TPM-sealed Evidence structure ( lah-bundle ). V-PEA defines two Evidence dimensions:  WHAT  — hardware provenance (TPM Attestation Key registered and manufacturer-endorsed), platform integrity (firmware and OS state matching reference values), and workload agent software integrity (binary digest matching an approved value); and  WHERE  — physical residency within an approved geographic boundary. A TPM quote seal binds WHAT and WHERE into a single unforgeable statement: neither dimension can be forged or transplanted without invalidating the other. 
@@ -1233,7 +1234,7 @@ li > p:last-of-type:only-child {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Krishnan, et al.</td>
-<td class="center">Expires 9 November 2026</td>
+<td class="center">Expires 24 November 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1246,12 +1247,12 @@ li > p:last-of-type:only-child {
 <dd class="internet-draft">draft-lkspa-rats-verifiable-geo-fence-02</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-05-08" class="published">8 May 2026</time>
+<time datetime="2026-05-23" class="published">23 May 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-11-09">9 November 2026</time></dd>
+<dd class="expires"><time datetime="2026-11-24">24 November 2026</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1273,6 +1274,10 @@ li > p:last-of-type:only-child {
 <div class="author">
       <div class="author-name">S. Addepalli</div>
 <div class="org">Aryaka</div>
+</div>
+<div class="author">
+      <div class="author-name">H. Birkholz</div>
+<div class="org">Fraunhofer SIT</div>
 </div>
 </dd>
 </dl>
@@ -1303,7 +1308,7 @@ li > p:last-of-type:only-child {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 9 November 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 24 November 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -3067,6 +3072,14 @@ nonce[n]  = HMAC(secret, n || chain[n-1])
 <div class="email">
 <span>Email:</span>
 <a href="mailto:srinivasa.addepalli@aryaka.com" class="email">srinivasa.addepalli@aryaka.com</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Henk Birkholz</span></div>
+<div dir="auto" class="left"><span class="org">Fraunhofer SIT</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:henk.birkholz@ietf.contact" class="email">henk.birkholz@ietf.contact</a>
 </div>
 </address>
 </section>

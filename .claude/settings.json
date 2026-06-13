@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//home/ramki/ietf-oauth-tls-session-bound-tokens/**)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(make all *)",
+      "Bash(git push *)",
+      "Bash(curl -s -X POST https://author-tools.ietf.org/api/upload/xml -F file=@draft-mw-oauth-tls-session-bound-tokens-06.xml)",
+      "Bash(curl -s -X POST https://author-tools.ietf.org/api/render/text -F file=@draft-mw-oauth-tls-session-bound-tokens-06.xml)",
+      "Bash(git rm *)",
+      "WebFetch(domain:datatracker.ietf.org)",
+      "WebSearch",
+      "WebFetch(domain:www.rfc-editor.org)",
+      "WebFetch(domain:www.ietf.org)",
+      "Bash(grep -v \"^[0-9]*:.*\\\\*\\\\*\\\\|^[0-9]*:.*^\\\\`\\\\|^[0-9]*:#\\\\|^[0-9]*:--\")",
+      "Bash(grep -v \"^\\\\s*#\\\\|^\\\\s*-\\\\|^\\\\s*|\\\\|^\\\\s*\\\\`\")"
+    ],
+    "additionalDirectories": [
+      "/home/ramki/ietf-oauth-tls-session-bound-tokens"
+    ]
+  }
+}

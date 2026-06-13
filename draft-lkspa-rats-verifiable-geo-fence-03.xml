@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- name="GENERATOR" content="github.com/mmarkdown/mmark Mmark Markdown Processor - mmark.nl" -->
-<rfc version="3" ipr="trust200902" submissionType="IETF" category="std" xml:lang="en" consensus="true" xmlns:xi="http://www.w3.org/2001/XInclude">
+<rfc version="3" docName="draft-lkspa-rats-verifiable-geo-fence-03" ipr="trust200902" submissionType="IETF" category="std" xml:lang="en" consensus="true" xmlns:xi="http://www.w3.org/2001/XInclude">
 
 <front>
 <title abbrev="V-PEA">Verifiable Proof of Environment Attestation Profile</title><seriesInfo value="draft-lkspa-rats-verifiable-geo-fence-03" stream="IETF" status="standard" name="Internet-Draft"></seriesInfo>

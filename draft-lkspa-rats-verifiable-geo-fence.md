@@ -7,7 +7,7 @@ ipr = "trust200902"
 area = "Security"
 workgroup = "RATS"
 keyword = ["environment attestation", "geofencing", "residency", "attestation", "TPM", "GNSS", "RATS", "workload identity"]
-date = 2026-05-23
+date = 2026-06-13
 
 [seriesInfo]
 name = "Internet-Draft"
@@ -22,6 +22,7 @@ fullname = "Ram Krishnan"
 organization = "JPMorgan Chase & Co."
   [author.address]
   email = "ramkri123@gmail.com"
+  country = "United States"
 
 [[author]]
 initials = "N."
@@ -30,6 +31,7 @@ fullname = "Ned Smith"
 organization = "Intel"
   [author.address]
   email = "ned.smith@intel.com"
+  country = "United States"
 
 [[author]]
 initials = "D."
@@ -38,6 +40,7 @@ fullname = "Diego R. Lopez"
 organization = "Telefonica"
   [author.address]
   email = "diego.r.lopez@telefonica.com"
+  country = "Spain"
 
 [[author]]
 initials = "A."
@@ -46,6 +49,7 @@ fullname = "A Prasad"
 organization = "Oracle"
   [author.address]
   email = "a.prasad@oracle.com"
+  country = "United States"
 
 [[author]]
 initials = "S."
@@ -54,6 +58,7 @@ fullname = "Srinivasa Addepalli"
 organization = "Aryaka"
   [author.address]
   email = "srinivasa.addepalli@aryaka.com"
+  country = "United States"
 
 [[author]]
 initials = "H."

@@ -2,7 +2,7 @@
 title = "Verifiable Proof of Environment Attestation Profile"
 abbrev = "V-PEA"
 category = "std"
-docName = "draft-lkspa-rats-verifiable-geo-fence-02"
+docName = "draft-lkspa-rats-verifiable-geo-fence-03"
 ipr = "trust200902"
 area = "Security"
 workgroup = "RATS"
@@ -11,7 +11,7 @@ date = 2026-05-23
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "draft-lkspa-rats-verifiable-geo-fence-02"
+value = "draft-lkspa-rats-verifiable-geo-fence-03"
 stream = "IETF"
 status = "standard"
 
